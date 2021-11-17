@@ -1,0 +1,17 @@
+@import "~bootstrap/scss/bootstrap";
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+
+html{
+    min-height: 100%;
+    body{
+      min-height: 100%;
+    }
+
+    &.not-found {
+        height: 100%;
+        body{
+          height: 100%;
+        }
+      }
+
+  }
