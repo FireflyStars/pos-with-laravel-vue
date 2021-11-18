@@ -1,17 +1,27 @@
 @import "~bootstrap/scss/bootstrap";
 @import "~bootstrap-icons/font/bootstrap-icons.css";
+@import '~animate.css/animate.css';
 
+
+:root{
+  --authlogoheight: 102px;
+  --mainlogoheight: 64px;
+  --lcdtOrange:#e86f29;
+}
 html{
     min-height: 100%;
     body{
       min-height: 100%;
     }
 
-    &.not-found {
+    &.not-found,&.Login,&.ForgotPassword{
         height: 100%;
         body{
           height: 100%;
         }
       }
 
+  }
+  .btn-link{
+    color: var(--lcdtOrange);
   }

@@ -13,9 +13,46 @@ const router = createRouter({
             name:'LandingPage',
             component:()=> import('../components/Main'),
             meta:{
-                authenticated:false
+                authenticated:true
             },
 
+        },
+
+
+
+        {
+            path:'/auth/',
+            name:'AuthPage',
+            component:()=> import('../components/auth/AuthPage'),
+            meta:{
+                authenticated:false
+            },
+            children:[
+                {
+                    path:'/auth/login/',
+                    name:'Login',
+                    component:()=> import('../components/auth/Login'),
+                    meta:{
+                        authenticated:false
+                    }
+                },
+                {
+                    path:'/auth/forgot-password/',
+                    name:'ForgotPassword',
+                    component:()=> import('../components/auth/ForgotPassword'),
+                    meta:{
+                        authenticated:false
+                    }
+                },
+                {
+                    path:'/auth/new-password/:recovery_token',
+                    name:'NewPassword',
+                    component:()=> import('../components/auth/NewPassword'),
+                    meta:{
+                        authenticated:false
+                    }
+                }
+            ]
         },
 
 
