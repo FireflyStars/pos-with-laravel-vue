@@ -53,4 +53,9 @@ class User extends \TCG\Voyager\Models\User
         $roles=DB::table('roles')->select('name')->whereIn('id',$roles_ids)->get();
         return $roles;
     }
+
+    public function affiliate(){
+        return $this->belongsTo(Affiliate::class);
+    }
+
 }

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\lcdtapp;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class GedInfo extends Model
+class ApiSession extends Model
 {
     use HasFactory;
 }
