@@ -13,4 +13,8 @@ class Order extends Model
     public function events(){
         return $this->belongsToMany(Event::class);
     }
+
+    public function zones(){
+        return $this->hasMany(OrderZone::class);
+    }
 }

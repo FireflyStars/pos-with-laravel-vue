@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use App\Models\Event;
+use App\Models\Order;
 use App\Models\Customer;
 use App\Models\lcdtapp\Api;
 use App\Models\lcdtapp\ApiSession;
+use App\Models\Status;
 use App\Models\User;
+use App\Traits\LcdtLog;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +19,8 @@ use Illuminate\Support\Facades\Hash;
 class ApiController extends Controller
 {
     //
+
+    use LcdtLog;
 
     public function index(Request $request){
 
@@ -291,9 +297,28 @@ public function GetEventTypes(Request $request){
     ]);
 
 } 
+
+public function GetStatuses(Request $request){
+    $token_SessionID=$request->post('SessionID');
+    $AccountKey=$request->post('AccountKey');
+    
+
+    if($token_SessionID==null){
+        return $this->response(0,null,'Missing SessionID parameter.');
+    }
+    if($AccountKey==null){
+        return $this->response(0,null,'Missing AccountKey parameter.');
+    }
+
+    //verify sessionid
+    if($this->isExpired($token_SessionID,$AccountKey)){
+        return $this->response(0,null,'Unable to verify account','Invalid or expired session.',null,401);
+    }
+    $statuses=Status::all();
+    return $this->response(1,$statuses);
+
+} 
     public function GetEventDetail(Request $request){
-        $SessionID=$request->post('SessionID');
-        $AccountKey=$request->post('AccountKey');
         $Parameters=$request->post('Parameters');
 
         $valid=$this->isValidAccountKeySessionID($request);
@@ -311,11 +336,136 @@ public function GetEventTypes(Request $request){
          
                 $event->customer;
                 $event->address;
-                $event->orders;
+                
             return $this->response(1,$event);
         }else{
             return $isLoggedIn;
         }
+}
+
+public function GetDevis(Request $request){
+    $Parameters=$request->post('Parameters');
+
+    $valid=$this->isValidAccountKeySessionID($request);
+    if($valid!==true)return $valid;
+    $isLoggedIn=$this->checkLogin($request);
+    if(!isset($Parameters['event_id'])||$this->isBlank($Parameters['event_id'])){
+        return $this->response(0,null,'Missing event_id.');
+    }
+
+
+
+    if($isLoggedIn===true){
+
+        $event=Event::where('id','=',$Parameters['event_id'])->first();
+           ;
+        return $this->response(1, $event->order);
+    }else{
+        return $isLoggedIn;
+    }
+}
+public function SaveEvent(Request $request){
+    $Parameters=$request->post('Parameters');
+    $SessionID=$request->post('SessionID');
+    $AccountKey=$request->post('AccountKey');
+    $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
+
+    $valid=$this->isValidAccountKeySessionID($request);
+    if($valid!==true)return $valid;
+    $isLoggedIn=$this->checkLogin($request);
+    if(!isset($Parameters['customer_id'])||$this->isBlank($Parameters['customer_id'])){
+        return $this->response(0,null,'Missing customer_id.');
+    }
+    if(!isset($Parameters['type'])||$this->isBlank($Parameters['type'])){
+        return $this->response(0,null,'An event type is required.');
+    }
+    if(!isset($Parameters['description'])||$this->isBlank($Parameters['description'])){
+        return $this->response(0,null,'A description is required.');
+    }
+    if(!isset($Parameters['date_start'])||$this->isBlank($Parameters['date_start'])){
+        return $this->response(0,null,'Start date/time is required.');
+    }
+    if(!isset($Parameters['date_end'])||$this->isBlank($Parameters['date_start'])){
+        return $this->response(0,null,'End date/time is required.');
+    }
+    if(!isset($Parameters['name'])||$this->isBlank($Parameters['name'])){
+        return $this->response(0,null,'Event name is required.');
+    }
+
+
+    if($isLoggedIn===true){
+  
+        
+        $event=null;
+        if(isset($Parameters['event_id'])&&$Parameters['event_id']!=null){
+            $event=Event::find($Parameters['event_id']);
+            if($event==null)
+            return $this->response(0,null,'Event not found.');
+    
+            if($event->user_id!=$lcdtapp_api_instance->user_id){
+                return $this->response(0,null,'Unable to save, event not affected to current user.');
+            }
+           
+        }
+
+        if(!isset($Parameters['address_id'])||$Parameters['address_id']==null){
+                $address=Address::where('customer_id','=',$Parameters['customer_id'])->first();
+                $Parameters['address_id']=$address->id;
+        }else{
+            $address=Address::where('id','=',$Parameters['address_id'])->first();
+            if($address==null||$address->customer_id!=$Parameters['customer_id']){
+                return $this->response(0,null,'Invalid user address id','Address does not exist or does not belong to customer.');
+            }
+        }
+
+        if($event==null)
+        $event=new Event();
+
+        $this->l('API SAVE EVENT',json_encode($Parameters),$lcdtapp_api_instance->user->id);
+
+        $event->customer_id=$Parameters['customer_id'];
+        $event->type=$Parameters['type'];
+        $event->affiliate_id=$lcdtapp_api_instance->user->affiliate->id;
+        $event->name=$Parameters['name'];
+        $event->description=$Parameters['description'];
+        $event->datedebut=$Parameters['date_start'];
+        $event->datefin=$Parameters['date_end'];
+        $event->address_id=isset($Parameters['address_id'])?$Parameters['address_id']:null;
+        $event->user_id=isset($Parameters['affected_to_user'])?$Parameters['affected_to_user']:$lcdtapp_api_instance->user_id;
+       // $event->emetteur_id=$lcdtapp_api_instance->user_id;
+        $event->save();
+        return $this->response(1,$event);
+    }else{
+        return $isLoggedIn;
+    }
+}
+public function GetZones(Request $request){
+    $SessionID=$request->post('SessionID');
+    $AccountKey=$request->post('AccountKey');
+    $Parameters=$request->post('Parameters');
+
+    $valid=$this->isValidAccountKeySessionID($request);
+    if($valid!==true)return $valid;
+    $isLoggedIn=$this->checkLogin($request);
+    if(!isset($Parameters['order_id'])||$this->isBlank($Parameters['order_id'])){
+        return $this->response(0,null,'Missing order_id.');
+    }
+
+
+
+    if($isLoggedIn===true){
+        $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
+        $affiliate=$lcdtapp_api_instance->user->affiliate;
+
+        $order=$affiliate->orders->where('id','=',$Parameters['order_id'])->first();
+        if($order==null){
+            return $this->response(0,null,'Order not found.');
+        }
+           
+        return $this->response(1, $order->zones);
+    }else{
+        return $isLoggedIn;
+    }
 }
     public function getApiInstance($AccountKey,$SessionID){
         $lcdtapp_api= DB::table('apis')
