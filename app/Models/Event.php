@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\LcdtLog;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,6 +14,7 @@ use function PHPUnit\Framework\throwException;
 class Event extends Model
 {
     use HasFactory;
+    use LcdtLog;
 
 
     public function customer(){
@@ -38,11 +40,23 @@ class Event extends Model
         return  parent::save($options);
       }
 
-     public function updateStatus($status_id){
+     public function updateStatus($status_id,$user_id=null){
          $eventHistory= new EventHistory();
-         $user=Auth::user();
+         if($user_id==null){
+            $user=Auth::user();
+         }else{
+             $user=User::find($user_id);
+         }
          if($user==null)
          throw new Exception('Cannot update status without user authentication.');
-         //$eventHistory->
+         $eventHistory->user_id=$user->id;
+         $eventHistory->event_id=$this->id;
+         $eventHistory->event_statut_id=$status_id;
+         $eventHistory->save();
+         $this->l('EVENT STATUS UPDATE','status_id',$user->id);
      } 
+
+     public function eventType(){
+         return $this->belongsTo(EventType::class);
+     }
 }

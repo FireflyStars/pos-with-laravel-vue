@@ -17,4 +17,12 @@ class Order extends Model
     public function zones(){
         return $this->hasMany(OrderZone::class);
     }
+
+    public function state(){
+        return $this->belongsTo(OrderState::class);
+    }
+
+    public function updateState($order_state_id,$user_id){
+        
+    }
 }
