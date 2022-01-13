@@ -13,3 +13,14 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+app/Http/Controllers/ApiController.php
+public/test.png
+doc/api  function list1.fw.png
+doc/app.png
+doc/appflow.png
+doc/Diagramme des fonctions LCDT FEG(1).pdf
+doc/Diagramme des fonctions LCDT V3.pdf
+doc/LCDT-13082021-v3.pdf
+doc/ouvrage.png
+doc/Processus LCDT draft V4.pdf
+doc/Status commande.pdf
