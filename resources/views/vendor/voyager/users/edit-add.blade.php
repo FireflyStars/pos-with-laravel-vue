@@ -79,7 +79,10 @@
                                     @endphp
                                     @include('voyager::formfields.relationship')
                                 </div>
-                                <div class="form-group">
+                         
+                            @endcan
+
+                            <div class="form-group">
                                     <label for="affiliate_id">Affiliate</label>
                                     @php
                                         $dataTypeRows = $dataType->{(isset($dataTypeContent->id) ? 'editRows' : 'addRows' )};
@@ -89,7 +92,6 @@
                                     @endphp
                                     @include('voyager::formfields.relationship')
                                 </div>
-                            @endcan
                             @php
                             if (isset($dataTypeContent->locale)) {
                                 $selected_locale = $dataTypeContent->locale;
