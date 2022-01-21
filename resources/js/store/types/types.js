@@ -20,3 +20,8 @@ export const TOASTER_GET_ALL='TOASTER_GET_ALL';//getters
 export const SIDEBAR_MODULE='SIDEBAR_MODULE/'//namespace
 export const SIDEBAR_SET_SLIDEIN='SIDEBAR_SET_SLIDEIN'//mutations
 export const SIDEBAR_GET_SLIDEIN='SIDEBAR_GET_SLIDEIN'//gettes
+
+
+export const SELECT_MODULE='SELECT_MODULE/';//namespace
+export const SET_CURRENT_SELECT='SET_CURRENT_SELECT';//mutations
+export const GET_CURRENT_SELECT='GET_CURRENT_SELECT';//getters
