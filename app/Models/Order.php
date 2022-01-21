@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Traits\Tools;
+
 class Order extends Model
 {
     use HasFactory;
+    use Tools;
 
 
     public function events(){
@@ -24,5 +27,9 @@ class Order extends Model
 
     public function updateState($order_state_id,$user_id){
         
+    }
+
+    public function generateReference(){
+        $this->reference= strtoupper($this->passwdGen(10,'NO_NUMERIC'));
     }
 }
