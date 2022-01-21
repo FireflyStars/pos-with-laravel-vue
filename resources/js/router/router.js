@@ -17,6 +17,15 @@ const router = createRouter({
             },
 
         },
+        {
+            path:'/ComponentsTest',
+            name:'ComponentsTest',
+            component:()=> import('../pages/ComponentsTest'),
+            meta:{
+                authenticated:true
+            },
+
+        },
 
 
 
