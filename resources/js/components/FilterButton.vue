@@ -36,7 +36,7 @@ export default {
     width: 116px;
     left: 0px;
     top: 0px;
-    margin: 1% 3% 0% 0%;
+    margin: 1% 0% 0% 0%;
     /* dark gre */
 
     border: 1px solid #47454b;

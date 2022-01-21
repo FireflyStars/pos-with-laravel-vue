@@ -1,35 +1,32 @@
 <template>
-    <!-- <div class="container">
-        <h1>Custom Vue.js Select Component</h1>
-        <CustomSelect
-            :options="['go', 'python', 'rust', 'javascript']"
-            :default="'go'"
-            class="select"
-            @input="message($event)"
-        />
-    </div> -->
-    <div class="text-end">
-        <filter-button />
-    </div>
+    <Filter
+        :checkboxes_options="[
+            'LARAVEL',
+            'VUE 3',
+            'VUEX',
+            'COMPOSITION',
+            'VUE 3',
+            'VUEX',
+        ]"
+        :select_options="[
+            { value: 0, display: 'Zero' },
+            { value: 1, display: 'One' },
+            { value: 2, display: 'Two' },
+            { value: 3, display: 'Three' },
+            { value: 4, display: 'Four' },
+        ]"
+    />
 </template>
 
 <script>
-import Checkbox from "../components/Checkbox.vue";
-import CustomSelect from "../components/Select.vue";
-import FilterButton from "../components/FilterButton.vue";
+import { ref } from "vue";
+import Filter from "../components/Filter.vue";
 export default {
     components: {
-        CustomSelect,
-        Checkbox,
-        FilterButton,
+        Filter,
     },
     setup() {
-        function message(event) {
-            // alert(event);
-        }
-        return {
-            message,
-        };
+        return {};
     },
 };
 </script>

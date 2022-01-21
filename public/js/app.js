@@ -20057,6 +20057,47 @@ router.beforeEach(_middleware_authentication__WEBPACK_IMPORTED_MODULE_1__["defau
 
 /***/ }),
 
+/***/ "./resources/js/store/modules/filter.js":
+/*!**********************************************!*\
+  !*** ./resources/js/store/modules/filter.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "filter": () => (/* binding */ filter)
+/* harmony export */ });
+/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../types/types */ "./resources/js/store/types/types.js");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+var filter = {
+  namespaced: true,
+  state: {
+    selected_items: []
+  },
+  mutations: _defineProperty({}, _types_types__WEBPACK_IMPORTED_MODULE_0__.SET_SELECTED_BOXES, function (state, payload) {
+    var index = state.selected_items.findIndex(function (object) {
+      return object.id === payload.id;
+    });
+
+    if (index === -1) {
+      state.selected_items.push(payload);
+    }
+  }),
+  actions: {
+    SET_SELECTED_BOXES: function SET_SELECTED_BOXES(context) {
+      return context.commit(_types_types__WEBPACK_IMPORTED_MODULE_0__.SET_SELECTED_BOXES);
+    }
+  },
+  getters: _defineProperty({}, _types_types__WEBPACK_IMPORTED_MODULE_0__.GET_SELECTED_BOXES, function (state) {
+    return state.selected_items;
+  })
+};
+
+/***/ }),
+
 /***/ "./resources/js/store/modules/loader.js":
 /*!**********************************************!*\
   !*** ./resources/js/store/modules/loader.js ***!
@@ -20152,6 +20193,37 @@ var loader = {
   }), _defineProperty(_getters, _types_types__WEBPACK_IMPORTED_MODULE_0__.GET_LOADER_MSG, function (state) {
     return state.loader_msg;
   }), _getters)
+};
+
+/***/ }),
+
+/***/ "./resources/js/store/modules/select.js":
+/*!**********************************************!*\
+  !*** ./resources/js/store/modules/select.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "select": () => (/* binding */ select)
+/* harmony export */ });
+/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../types/types */ "./resources/js/store/types/types.js");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+var select = {
+  namespaced: true,
+  state: {
+    current_clicked: ''
+  },
+  mutations: _defineProperty({}, _types_types__WEBPACK_IMPORTED_MODULE_0__.SET_CURRENT_SELECT, function (state, payload) {
+    return state.current_clicked = payload;
+  }),
+  actions: {},
+  getters: _defineProperty({}, _types_types__WEBPACK_IMPORTED_MODULE_0__.GET_CURRENT_SELECT, function (state) {
+    return state.current_clicked;
+  })
 };
 
 /***/ }),
@@ -20252,19 +20324,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm-bundler.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm-bundler.js");
 /* harmony import */ var _modules_loader__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/loader */ "./resources/js/store/modules/loader.js");
 /* harmony import */ var _modules_toaster__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/toaster */ "./resources/js/store/modules/toaster.js");
 /* harmony import */ var _modules_sidebar__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/sidebar */ "./resources/js/store/modules/sidebar.js");
+/* harmony import */ var _modules_select__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/select */ "./resources/js/store/modules/select.js");
+/* harmony import */ var _modules_filter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/filter */ "./resources/js/store/modules/filter.js");
 
 
 
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,vuex__WEBPACK_IMPORTED_MODULE_3__.createStore)({
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,vuex__WEBPACK_IMPORTED_MODULE_5__.createStore)({
   modules: {
     LOADER_MODULE: _modules_loader__WEBPACK_IMPORTED_MODULE_0__.loader,
     TOASTER_MODULE: _modules_toaster__WEBPACK_IMPORTED_MODULE_1__.toaster,
-    SIDEBAR_MODULE: _modules_sidebar__WEBPACK_IMPORTED_MODULE_2__.sidebar
+    SIDEBAR_MODULE: _modules_sidebar__WEBPACK_IMPORTED_MODULE_2__.sidebar,
+    SELECT_MODULE: _modules_select__WEBPACK_IMPORTED_MODULE_3__.select,
+    FILTER_MODULE: _modules_filter__WEBPACK_IMPORTED_MODULE_4__.filter
   }
 }));
 
@@ -20293,7 +20371,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "TOASTER_GET_ALL": () => (/* binding */ TOASTER_GET_ALL),
 /* harmony export */   "SIDEBAR_MODULE": () => (/* binding */ SIDEBAR_MODULE),
 /* harmony export */   "SIDEBAR_SET_SLIDEIN": () => (/* binding */ SIDEBAR_SET_SLIDEIN),
-/* harmony export */   "SIDEBAR_GET_SLIDEIN": () => (/* binding */ SIDEBAR_GET_SLIDEIN)
+/* harmony export */   "SIDEBAR_GET_SLIDEIN": () => (/* binding */ SIDEBAR_GET_SLIDEIN),
+/* harmony export */   "SELECT_MODULE": () => (/* binding */ SELECT_MODULE),
+/* harmony export */   "SET_CURRENT_SELECT": () => (/* binding */ SET_CURRENT_SELECT),
+/* harmony export */   "GET_CURRENT_SELECT": () => (/* binding */ GET_CURRENT_SELECT),
+/* harmony export */   "SET_SELECTED_BOXES": () => (/* binding */ SET_SELECTED_BOXES),
+/* harmony export */   "GET_SELECTED_BOXES": () => (/* binding */ GET_SELECTED_BOXES)
 /* harmony export */ });
 var LOADER_MODULE = 'LOADER_MODULE/'; //namespace
 
@@ -20324,6 +20407,16 @@ var SIDEBAR_MODULE = 'SIDEBAR_MODULE/'; //namespace
 var SIDEBAR_SET_SLIDEIN = 'SIDEBAR_SET_SLIDEIN'; //mutations
 
 var SIDEBAR_GET_SLIDEIN = 'SIDEBAR_GET_SLIDEIN'; //gettes
+
+var SELECT_MODULE = 'SELECT_MODULE/'; //namespace
+
+var SET_CURRENT_SELECT = 'SET_CURRENT_SELECT'; //mutations
+
+var GET_CURRENT_SELECT = 'GET_CURRENT_SELECT'; //getters
+
+var SET_SELECTED_BOXES = 'SET_SELECTED_BOXES/'; //namespace
+
+var GET_SELECTED_BOXES = 'GET_SELECTED_BOXES'; //getters
 
 /***/ }),
 
