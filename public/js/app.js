@@ -20084,11 +20084,13 @@ var filter = {
 
     if (index === -1) {
       state.selected_items.push(payload);
+    } else {
+      state.selected_items.splice(index, 1);
     }
   }),
   actions: {
-    SET_SELECTED_BOXES: function SET_SELECTED_BOXES(context) {
-      return context.commit(_types_types__WEBPACK_IMPORTED_MODULE_0__.SET_SELECTED_BOXES);
+    SET_SELECTED_BOXES: function SET_SELECTED_BOXES(context, payload) {
+      return context.commit(_types_types__WEBPACK_IMPORTED_MODULE_0__.SET_SELECTED_BOXES, payload);
     }
   },
   getters: _defineProperty({}, _types_types__WEBPACK_IMPORTED_MODULE_0__.GET_SELECTED_BOXES, function (state) {
@@ -20414,9 +20416,9 @@ var SET_CURRENT_SELECT = 'SET_CURRENT_SELECT'; //mutations
 
 var GET_CURRENT_SELECT = 'GET_CURRENT_SELECT'; //getters
 
-var SET_SELECTED_BOXES = 'SET_SELECTED_BOXES/'; //namespace
+var SET_SELECTED_BOXES = 'FILTER_MODULE/SET_SELECTED_BOXES'; //namespace
 
-var GET_SELECTED_BOXES = 'GET_SELECTED_BOXES'; //getters
+var GET_SELECTED_BOXES = 'FILTER_MODULE/GET_SELECTED_BOXES'; //getters
 
 /***/ }),
 

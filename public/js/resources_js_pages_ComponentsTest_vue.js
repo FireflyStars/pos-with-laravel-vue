@@ -48,18 +48,13 @@ __webpack_require__.r(__webpack_exports__);
   setup: function setup() {
     var store = (0,vuex__WEBPACK_IMPORTED_MODULE_4__.useStore)();
     var sel1 = (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_5__.ref)(1);
-    var selected = (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_5__.ref)(null);
     var open = (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_5__.ref)(false);
     return {
       sel1: sel1,
       open: open,
-      selected: selected,
-      doSomething: function doSomething() {
-        return store.dispatch(_store_types_types__WEBPACK_IMPORTED_MODULE_0__.SET_SELECTED_BOXES);
-      } // ...mapActions({
-      //     doSomething: console.log("object"),
-      // }),
-
+      updateSelectedList: function updateSelectedList(event) {
+        return store.dispatch(_store_types_types__WEBPACK_IMPORTED_MODULE_0__.SET_SELECTED_BOXES, event);
+      }
     };
   }
 });
@@ -105,7 +100,7 @@ __webpack_require__.r(__webpack_exports__);
     function togglechkbox() {
       check.value = !check.value;
       emit("checkbox-clicked", {
-        chack: check.value,
+        check: check.value,
         id: props.id,
         name: props.name
       });
@@ -353,7 +348,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       id: i,
       checked_checkbox: false,
       name: option,
-      onCheckboxClicked: $setup.doSomething
+      onCheckboxClicked: $setup.updateSelectedList
     }, null, 8
     /* PROPS */
     , ["id", "name", "onCheckboxClicked"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(option), 1

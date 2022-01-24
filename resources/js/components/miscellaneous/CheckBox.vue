@@ -18,7 +18,7 @@ export default {
         function togglechkbox() {
             check.value = !check.value;
             emit("checkbox-clicked", {
-                chack: check.value,
+                check: check.value,
                 id: props.id,
                 name: props.name,
             });

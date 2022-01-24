@@ -27,5 +27,5 @@ export const SET_CURRENT_SELECT = 'SET_CURRENT_SELECT'; //mutations
 export const GET_CURRENT_SELECT = 'GET_CURRENT_SELECT'; //getters
 
 
-export const SET_SELECTED_BOXES = 'SET_SELECTED_BOXES/'; //namespace
-export const GET_SELECTED_BOXES = 'GET_SELECTED_BOXES'; //getters
+export const SET_SELECTED_BOXES = 'FILTER_MODULE/SET_SELECTED_BOXES'; //namespace
+export const GET_SELECTED_BOXES = 'FILTER_MODULE/GET_SELECTED_BOXES'; //getters

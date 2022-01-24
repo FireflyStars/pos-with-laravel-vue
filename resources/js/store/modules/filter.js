@@ -15,13 +15,15 @@ export const filter = {
 
             if (index === -1) {
                 state.selected_items.push(payload);
+            } else {
+                state.selected_items.splice(index, 1);
             }
 
 
         },
     },
     actions: {
-        SET_SELECTED_BOXES: context => context.commit(SET_SELECTED_BOXES),
+        SET_SELECTED_BOXES: (context, payload) => context.commit(SET_SELECTED_BOXES, payload),
 
     },
     getters: {

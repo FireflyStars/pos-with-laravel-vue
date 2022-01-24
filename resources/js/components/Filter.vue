@@ -23,7 +23,7 @@
                     :id="i"
                     :checked_checkbox="false"
                     :name="option"
-                    @checkbox-clicked="doSomething"
+                    @checkbox-clicked="updateSelectedList"
                 />
                 {{ option }}
             </div>
@@ -76,17 +76,12 @@ export default {
         const store = useStore();
 
         let sel1 = ref(1);
-        let selected = ref(null);
         let open = ref(false);
-
         return {
             sel1,
             open,
-            selected,
-            doSomething: () => store.dispatch(SET_SELECTED_BOXES),
-            // ...mapActions({
-            //     doSomething: console.log("object"),
-            // }),
+            updateSelectedList: (event) =>
+                store.dispatch(SET_SELECTED_BOXES, event),
         };
     },
 };
