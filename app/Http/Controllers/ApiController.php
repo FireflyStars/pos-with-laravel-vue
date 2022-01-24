@@ -6,6 +6,7 @@ use App\Models\Address;
 use App\Models\Event;
 use App\Models\Ged;
 use App\Models\Order;
+use App\Models\OrderZone;
 use App\Models\Customer;
 use App\Models\EventStatus;
 use App\Models\EventType;
@@ -140,6 +141,7 @@ class ApiController extends Controller
             $session->SessionID = $SessionID;
             $session->user_id=$lcdtapp_api->user_id;
             $session->username=$lcdtapp_api->user->name;
+            $session->roles=$lcdtapp_api->user->getRoles();
             return $this->response(1, $session);
 
 
@@ -626,18 +628,11 @@ public function SaveDevis(Request $request){
            
         }
 
-        if($order==null){
-        $order=new Order();
-        $order->generateReference();
-        }
+   
         $this->l('API SAVE DEVIS',json_encode($Parameters),$lcdtapp_api_instance->user->id);
 
-        $order->event_id=$event->id;
-        $order->lang_id=$Parameters['lang_id'];
-        $order->order_type_id=1;//Devis
-        $order->customer_id=$event->customer_id;
-        $order->order_state_id=$order->id==''?1:$order->order_state_id;
-       
+    
+     
 
 
 
@@ -645,31 +640,82 @@ public function SaveDevis(Request $request){
             if(!empty($Parameters['order_zones'])){
                 //order zones
                 foreach($Parameters['order_zones'] as $order_zone){
-                    if(isset($order_zone['ged'])){
-                        if(isset($order_zone['ged']['ged_id'])){
-                            $ged_id=$order_zone['ged']['ged_id'];
-                            if($ged_id==null){
-                                $ged=new Ged();
-                                $ged->user_id=$lcdtapp_api_instance->user->id;
-                                $ged->customer_id=$event->customer_id;
-                            }else if($order->id>0){
-                                $ged=Ged::find($ged_id);
-                                if($ged==null){
-                                    return $this->response(0,null,'Unable to find ged.');
-                                }
-                            }
-                            $order->save();
-                            $ged->order_id=$order->id;
-                            $ged->save();
+                    if(!isset($order_zone->id)||$order_zone->id==null){
+                        $orderZone=new OrderZone();
+                    }else{
+                        $orderZone=OrderZone::find($order_zone->id);
+                        if($orderZone==null){
+                            return $this->response(0,null,'Unable to save, Order zone id'.$order_zone->id.' not found.');
+                        }
 
+                        if($order!=null&&$order->id>0 && $orderZone->order_id!=$order->id){
+                            return $this->response(0,null,'Unable to save, Order zone id'.$order_zone->id.' not linked to order '.$order->id.'.');
+                        }
+                    }
+        
+                   //TODO: all validations first before attempting a save
+                
+                    if(isset($order_zone['ged_details'])){
+                       
+                        foreach($order_zone['ged_details'] as $ged_detail){
+                            if($ged_detail->id>0){
+                                    $ged=GED::find($ged_detail->ged_id);
+                                    if($ged==null)
+                                    return $this->response(0,null,'Unable to save, ged not found'.$ged_detail->id.' not found.');
+                            }
+                        }
+                        
                             
 
-                        }
+                        
 
                     }
                 }
             }
         }
+
+            //if validation successful, save
+
+            if($order==null){
+                $order=new Order();
+                $order->generateReference();
+                $order->event_id=$event->id;
+                $order->lang_id=$Parameters['lang_id'];
+                $order->order_type_id=1;//Devis
+                $order->customer_id=$event->customer_id;
+                $order->order_state_id=$order->id==''?1:$order->order_state_id;
+            }
+
+
+            if(isset($Parameters['order_zones'])&&is_array($Parameters['order_zones'])){
+                if(!empty($Parameters['order_zones'])){
+                    //order zones
+                    foreach($Parameters['order_zones'] as $order_zone){
+                        if(!isset($order_zone->id)||$order_zone->id==null){
+                            $orderZone=new OrderZone();
+                        }else{
+                            $orderZone=OrderZone::find($order_zone->id);
+                        }
+                       //TODO: get ged  by user_id customer_id order_id
+                
+                        $orderZone->name=$order_zone->name;
+                        $orderZone->description=$order_zone->description;
+                        $orderZone->hauteur=$order_zone->hauteur;
+                        $orderZone->moyenacces=$order_zone->moyenacces;
+                        $orderZone->latitude= $order_zone->latitude;
+                        $orderZone->longitude= $order_zone->longitude;
+    
+                        if(isset($order_zone['ged_details'])){
+                           
+                            
+                                
+    
+                            
+    
+                        }
+                    }
+                }
+            }
 
               //update state if necessary
               if($Parameters['order_state_id']!=null)
