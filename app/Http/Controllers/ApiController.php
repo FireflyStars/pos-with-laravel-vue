@@ -141,6 +141,7 @@ class ApiController extends Controller
             $session->SessionID = $SessionID;
             $session->user_id=$lcdtapp_api->user_id;
             $session->username=$lcdtapp_api->user->name;
+            $session->roles=$lcdtapp_api->user->getRoles();
             return $this->response(1, $session);
 
 
