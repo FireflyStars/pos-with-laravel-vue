@@ -9,39 +9,55 @@
             :class="{ open: open }"
             @click="open = !open"
         >
-            <filter-button />
+            <button class="filter-reset" @click.prevent="resetFilter">
+                <div class="text-filter">Reinitialisation</div>
+            </button>
+            <button class="button-filter">
+                <div class="text-filter">Filtre</div>
+                <!-- 
+                <div class="rectangle"></div>
+                <div class="rectangle2"></div>
+                <div class="rectangle3"></div> -->
+            </button>
         </div>
 
         <div class="items" :class="{ selectHide: !open }">
-            <div class="text-title">Champs :</div>
             <div
-                class="checkbox-items"
-                v-for="(option, i) of checkboxes_options"
-                :key="i"
+                class="checkboxes"
+                v-for="(checkboxes, index) of checkboxes_options"
+                :key="index"
             >
-                <check-box
-                    :id="i"
-                    :checked_checkbox="false"
-                    :name="option"
-                    @checkbox-clicked="updateSelectedList"
-                />
-                {{ option }}
-            </div>
-            <div class="text-title mt-2">Grouper par :</div>
-            <div class="button-wrap">
-                <div class="select-group">
-                    <select-options
-                        v-model="sel1"
-                        placeholder="Choose a number"
-                        :options="select_options"
-                        name="select2"
-                        :valid="true"
-                    ></select-options>
+                <div class="text-title">{{ checkboxes.name }} :</div>
+                <div
+                    class="checkbox-items"
+                    v-for="option of checkboxes.options"
+                    :key="option.id"
+                >
+                    <check-box
+                        :id="option.id"
+                        :checked_checkbox="option.name"
+                        :name="option.name"
+                        @checkbox-clicked="updateSelectedList"
+                    >
+                        {{ option.name }}
+                    </check-box>
                 </div>
-                <button class="validate-button text-title" type="submit">
-                    Valider
-                </button>
             </div>
+
+            <select-options
+                v-for="(select, index) of select_options"
+                :key="index"
+                v-model="sel1"
+                placeholder="Choose a number"
+                :options="select.options"
+                :name="select.label"
+                :valid="true"
+                :label="select.label"
+            ></select-options>
+
+            <button class="validate-button text-title" type="submit">
+                Valider
+            </button>
         </div>
     </div>
 </template>
@@ -50,21 +66,24 @@
 import { ref, computed } from "@vue/reactivity";
 import { useStore } from "vuex";
 import { mapGetters, mapMutations, mapActions } from "vuex";
-import { GET_SELECTED_BOXES, SET_SELECTED_BOXES } from "../store/types/types";
+import {
+    GET_SELECTED_BOXES,
+    SET_SELECTED_BOXES,
+    RESET_FILTER,
+} from "../store/types/types";
 
-import FilterButton from "./FilterButton.vue";
 import CheckBox from "./miscellaneous/CheckBox.vue";
 import SelectOptions from "./miscellaneous/SelectOptions.vue";
 export default {
-    components: { FilterButton, CheckBox, SelectOptions },
+    components: { CheckBox, SelectOptions },
     props: {
         checkboxes_options: {
             type: Array,
-            required: true,
+            required: false,
         },
         select_options: {
             type: Array,
-            required: true,
+            required: false,
         },
         tabindex: {
             type: Number,
@@ -77,9 +96,15 @@ export default {
 
         let sel1 = ref(1);
         let open = ref(false);
+        const resetFilter = () => {
+            console.log("reset");
+            store.dispatch(RESET_FILTER);
+        };
+
         return {
             sel1,
             open,
+            resetFilter,
             updateSelectedList: (event) =>
                 store.dispatch(SET_SELECTED_BOXES, event),
         };
@@ -94,25 +119,31 @@ export default {
     text-align: left;
     outline: none;
     width: 307px;
-    height: 445px;
+
+    max-height: 1000px;
     line-height: 47px;
     float: right;
 }
 .custom-filter-dropdown .items {
-    height: 445px;
-    width: 307px;
-    color: #fff;
+    font-family: Almarai;
+    color: #47454b;
+    font-style: normal !important;
+    font-weight: bold !important;
+    font-size: 16px !important;
+
     border-radius: 0px 0px 6px 6px;
-    overflow: hidden;
-    position: absolute;
+    position: relative;
     background: #eeeeee;
     left: 0;
     right: 0;
     z-index: 1;
-    padding: 12%;
+    padding: 5% 12%;
+    overflow: auto;
+    min-height: 500px;
+    height: auto !important;
 }
 
-.custom-filter-dropdown .items div {
+.custom-filter-dropdown .items .checkboxes {
     font-family: Almarai;
     font-style: normal;
     font-weight: bold;
@@ -124,6 +155,8 @@ export default {
 
     color: #868686;
     display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
 }
 
 .custom-filter-dropdown .items .checkbox-items:hover {
@@ -134,7 +167,7 @@ export default {
     display: none;
 }
 .text-title {
-    margin-bottom: 21px;
+    margin-bottom: 16px;
     font-style: normal !important;
     font-weight: bold !important;
     font-size: 16px !important;
@@ -145,54 +178,116 @@ export default {
 
     color: #47454b !important;
 }
-.select-group {
-    height: 21px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    /* left: 726px;
-    top: 5287px;
-    border-radius: 0px;
-    border-style: none;
-
-    font-family: Almarai;
-    font-style: normal;
-    font-weight: bold;
-    font-size: 14px;
-    line-height: 140%; */
-    /* or 20px */
-
-    /* display: flex;
-    align-items: center; */
-
-    /* Medium grey */
-
-    color: #868686;
-}
 .validate-button {
     /* Auto layout */
-
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    justify-self: center;
-
+    margin: 10% 25% 0% 25%;
+    display: block;
     position: relative;
+
+    bottom: 0;
     width: 96px;
     height: 40px;
 
     border: 1px solid #47454b;
     box-sizing: border-box;
     border-radius: 4px;
-    margin-top: 25px;
+    /* margin-top: 25px; */
 }
-.button-wrap {
+</style>
+<style scoped>
+.filter-reset {
+    height: 40px;
+    width: 116px;
+    left: 0px;
+    top: 0px;
+    margin: 1% 3% 0% 0%;
+    /* dark gre */
+
+    border: 1px solid #47454b;
+    box-sizing: border-box;
+    border-radius: 5px;
+}
+.button-filter {
+    /* Rectangle 423 */
+    height: 40px;
+    width: 116px;
+    left: 0px;
+    top: 0px;
+    margin: 1% 0% 0% 0%;
+    /* dark gre */
+
+    border: 1px solid #47454b;
+    box-sizing: border-box;
+    border-radius: 5px;
+}
+.rectangle {
+    height: 2.410329818725586px;
+    width: 21px;
+
+    /* Rectangle 420 */
+
+    position: relative;
+    left: 68.1%;
+    right: 13.79%;
+    bottom: 35%;
+
+    /* dark grey */
+
+    background: #47454b;
+    border-radius: 5px;
+}
+.rectangle2 {
+    height: 2.4103260040283203px;
+    width: 13.674415588378906px;
+
+    border-radius: 5px;
+
+    /* Rectangle 420 */
+
+    position: relative;
+    left: 71.26%;
+    right: 16.95%;
+    bottom: 25%;
+
+    /* dark grey */
+
+    background: #47454b;
+    border-radius: 5px;
+}
+.rectangle3 {
+    height: 2.4103336334228516px;
+    width: 6.3488311767578125px;
+
+    /* Rectangle 422 */
+
+    position: relative;
+    left: 74.42%;
+    right: 20.11%;
+    bottom: 15%;
+
+    /* dark grey */
+
+    background: #47454b;
+    border-radius: 5px;
+}
+.text-filter {
+    height: 12px;
+    width: 69px;
+    left: 12px;
+    top: 14px;
+
+    font-family: Almarai;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 140%;
+    /* or 20px */
+
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
 
-    /* justify-self: center; */
+    /* dark grey */
+
+    color: #47454b;
 }
 </style>

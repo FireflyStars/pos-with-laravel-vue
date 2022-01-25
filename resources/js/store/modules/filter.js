@@ -1,6 +1,7 @@
 import {
     SET_SELECTED_BOXES,
-    GET_SELECTED_BOXES
+    GET_SELECTED_BOXES,
+    RESET_FILTER
 } from '../types/types'
 
 export const filter = {
@@ -21,9 +22,11 @@ export const filter = {
 
 
         },
+        [RESET_FILTER]: (state) => state.selected_items = [],
     },
     actions: {
         SET_SELECTED_BOXES: (context, payload) => context.commit(SET_SELECTED_BOXES, payload),
+        RESET_FILTER: context => context.commit(RESET_FILTER)
 
     },
     getters: {
