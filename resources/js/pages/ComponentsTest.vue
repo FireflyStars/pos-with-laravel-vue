@@ -1,19 +1,60 @@
 <template>
     <Filter
         :checkboxes_options="[
-            'LARAVEL',
-            'VUE 3',
-            'VUEX',
-            'COMPOSITION',
-            'VUE 3',
-            'VUEX',
+            {
+                name: 'Champs',
+                options: [
+                    { id: 1, name: 'LARAVEL', check: false },
+                    { id: 2, name: 'Sail', check: false },
+                    { id: 3, name: 'Eloquent', check: false },
+                ],
+            },
+            {
+                name: 'Champs 2',
+                options: [{ id: 1, name: 'Vue 3', check: false }],
+            },
+            {
+                name: 'Champs 3',
+                options: [
+                    { id: 1, name: 'Vue 3', check: false },
+                    { id: 2, name: 'VUEX', check: false },
+                ],
+            },
+            {
+                name: 'Champs 4',
+                options: [
+                    { id: 1, name: 'Vue 3', check: false },
+                    { id: 2, name: 'VUEX', check: false },
+                ],
+            },
         ]"
         :select_options="[
-            { value: 0, display: 'Zero' },
-            { value: 1, display: 'One' },
-            { value: 2, display: 'Two' },
-            { value: 3, display: 'Three' },
-            { value: 4, display: 'Four' },
+            {
+                label: 'Select',
+                options: [
+                    { value: 0, display: '' },
+                    { value: 1, display: 'One' },
+                    { value: 2, display: 'Two' },
+                ],
+            },
+            {
+                label: 'Select 2',
+                options: [
+                    { value: '', display: '' },
+                    { value: 'b', display: 'A' },
+                    { value: 'c', display: 'B' },
+                ],
+            },
+            {
+                label: 'Select 3',
+                options: [
+                    { value: '', display: '' },
+                    { value: 'respo', display: 'respo' },
+                    { value: 'info', display: 'info' },
+                    { value: 'bi', display: 'BI' },
+                    { value: 'mrk', display: 'MKG' },
+                ],
+            },
         ]"
     />
 </template>

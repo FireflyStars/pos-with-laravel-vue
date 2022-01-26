@@ -98,6 +98,6 @@ header span.chkbox.checked {
     font-weight: lighter;
 }
 .label-margin {
-    margin: 20px 5px 13px 0px;
+    margin: 0px 0px 0px 10px;
 }
 </style>

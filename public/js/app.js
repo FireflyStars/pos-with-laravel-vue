@@ -20069,6 +20069,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "filter": () => (/* binding */ filter)
 /* harmony export */ });
 /* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../types/types */ "./resources/js/store/types/types.js");
+var _mutations;
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
@@ -20077,7 +20079,7 @@ var filter = {
   state: {
     selected_items: []
   },
-  mutations: _defineProperty({}, _types_types__WEBPACK_IMPORTED_MODULE_0__.SET_SELECTED_BOXES, function (state, payload) {
+  mutations: (_mutations = {}, _defineProperty(_mutations, _types_types__WEBPACK_IMPORTED_MODULE_0__.SET_SELECTED_BOXES, function (state, payload) {
     var index = state.selected_items.findIndex(function (object) {
       return object.id === payload.id;
     });
@@ -20087,10 +20089,15 @@ var filter = {
     } else {
       state.selected_items.splice(index, 1);
     }
-  }),
+  }), _defineProperty(_mutations, _types_types__WEBPACK_IMPORTED_MODULE_0__.RESET_FILTER, function (state) {
+    return state.selected_items = [];
+  }), _mutations),
   actions: {
     SET_SELECTED_BOXES: function SET_SELECTED_BOXES(context, payload) {
       return context.commit(_types_types__WEBPACK_IMPORTED_MODULE_0__.SET_SELECTED_BOXES, payload);
+    },
+    RESET_FILTER: function RESET_FILTER(context) {
+      return context.commit(_types_types__WEBPACK_IMPORTED_MODULE_0__.RESET_FILTER);
     }
   },
   getters: _defineProperty({}, _types_types__WEBPACK_IMPORTED_MODULE_0__.GET_SELECTED_BOXES, function (state) {
@@ -20378,7 +20385,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "SET_CURRENT_SELECT": () => (/* binding */ SET_CURRENT_SELECT),
 /* harmony export */   "GET_CURRENT_SELECT": () => (/* binding */ GET_CURRENT_SELECT),
 /* harmony export */   "SET_SELECTED_BOXES": () => (/* binding */ SET_SELECTED_BOXES),
-/* harmony export */   "GET_SELECTED_BOXES": () => (/* binding */ GET_SELECTED_BOXES)
+/* harmony export */   "GET_SELECTED_BOXES": () => (/* binding */ GET_SELECTED_BOXES),
+/* harmony export */   "RESET_FILTER": () => (/* binding */ RESET_FILTER)
 /* harmony export */ });
 var LOADER_MODULE = 'LOADER_MODULE/'; //namespace
 
@@ -20419,6 +20427,8 @@ var GET_CURRENT_SELECT = 'GET_CURRENT_SELECT'; //getters
 var SET_SELECTED_BOXES = 'FILTER_MODULE/SET_SELECTED_BOXES'; //namespace
 
 var GET_SELECTED_BOXES = 'FILTER_MODULE/GET_SELECTED_BOXES'; //getters
+
+var RESET_FILTER = 'FILTER_MODULE/RESET_FILTER'; //getters
 
 /***/ }),
 
