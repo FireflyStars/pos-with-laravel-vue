@@ -281,7 +281,7 @@ class ApiController extends Controller
           
             if($customer->affiliate_id!=$affiliate->id)
                 return $this->response(0,null,'Customer does not belong to user\'s affiliate.'); 
-
+                $customer->makeHidden(['created_at','updated_at','deleted_at']);
             return $this->response(1,$customer);
         }else{
             return $isLoggedIn;
