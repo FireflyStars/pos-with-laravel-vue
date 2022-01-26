@@ -141,6 +141,7 @@ class ApiController extends Controller
             $session->SessionID = $SessionID;
             $session->user_id=$lcdtapp_api->user_id;
             $session->username=$lcdtapp_api->user->name;
+            $session->affiliate_id=$lcdtapp_api->user->affiliate->id;
             $session->roles=$lcdtapp_api->user->getRoles();
             return $this->response(1, $session);
 
@@ -250,6 +251,38 @@ class ApiController extends Controller
 
 
             return $this->response(1,$affiliate->customers->where('active','=',1));
+        }else{
+            return $isLoggedIn;
+        }
+    }
+    public function GetCustomer(Request $request){
+        $Parameters=$request->post('Parameters');
+        $SessionID=$request->post('SessionID');
+        $AccountKey=$request->post('AccountKey');
+
+        $valid=$this->isValidAccountKeySessionID($request);
+        if($valid!==true)return $valid;
+        $isLoggedIn=$this->checkLogin($request);
+
+
+
+        if($isLoggedIn===true){
+            $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
+            $affiliate=$lcdtapp_api_instance->user->affiliate;
+            if($affiliate==null)
+                return $this->response(0,null,'Unable to fetch customer.','User not associated to an affiliate');
+
+            if(!isset($Parameters['customeruuid'])||$this->isBlank($Parameters['customeruuid'])){
+                return $this->response(0,null,'Customer UUID is required.');   
+            }
+            $customer=Customer::where('customeruuid','=',$Parameters['customeruuid'])->first();
+            if($customer==null)
+                return $this->response(0,null,'No customer found.'); 
+          
+            if($customer->affiliate_id!=$affiliate->id)
+                return $this->response(0,null,'Customer does not belong to user\'s affiliate.'); 
+
+            return $this->response(1,$customer);
         }else{
             return $isLoggedIn;
         }
@@ -562,54 +595,34 @@ public function SaveDevis(Request $request){
                 return $this->response(0,null,'Zone name is required.');
             }
      
-            //ged
-            if(isset($order_zone['ged'])){
+            //ged details
 
-                if(isset($order_zone['ged']['ged_id'])){
-                    $ged_id=$order_zone['ged']['ged_id'];
-                    if($ged_id!=null&&$ged_id>0&&!$this->isBlank($ged_id)){
-                        if(isset($Parameters['order_id'])){
-                            if($this->isBlank($Parameters['order_id'])||$Parameters['order_id']<=0||$Parameters['order_id']==null)
-                            return $this->response(0,null,'ged_id specified without specifying order_id.');
-                        }
-                    }
-
-
-                }
-
-                if(isset($order_zone['ged']['ged_details'])&&is_array($order_zone['ged']['ged_details'])){
+                if(isset($order_zone['ged_details'])&&is_array($order_zone['ged_details'])){
                     //ged details
-                    foreach($order_zone['ged']['ged_details'] as $ged_details){
-                        if(!isset($ged_details['ged_category_id'])||$this->isBlank($ged_details['ged_category_id'])){
-                            return $this->response(0,null,'ged_category_id is required.');
+                    foreach($order_zone['ged_details'] as $ged_detail){
+                        if((!isset($ged_detail['description'])||$this->isBlank($ged_detail['description']))&&(!isset($ged_detail['data'])||$this->isBlank($ged_detail['data']))){
+                            return $this->response(0,null,'Invalid ged details','At least a file data or a description is required.');
                         }
 
-                        if(!isset($ged_details['description'])||$this->isBlank($ged_details['description'])){
-                            return $this->response(0,null,'Ged detail description is required.');
-                        }
-
-                        if(!isset($ged_details['data'])||$this->isBlank($ged_details['data'])){
-                            return $this->response(0,null,'Ged file data is required in base64.');
-                        }
-
-                        if(!isset($ged_details['human_readable_filename'])||$this->isBlank($ged_details['human_readable_filename'])){
-                            return $this->response(0,null,'Ged file name is required.');
-                        }
-                        if(!isset($ged_details['latitude'])||$this->isBlank($ged_details['latitude'])){
+                        if(isset($ged_detail['data'])&&!$this->isBlank($ged_detail['data']))
+                            if(!isset($ged_detail['human_readable_filename'])||$this->isBlank($ged_detail['human_readable_filename'])){
+                                return $this->response(0,null,'Ged file name is required.');
+                            }
+                        if(!isset($ged_detail['latitude'])||$this->isBlank($ged_detail['latitude'])){
                             return $this->response(0,null,'Ged latitude is required.');
                         }
-                        if(!isset($ged_details['longitude'])||$this->isBlank($ged_details['longitude'])){
+                        if(!isset($ged_detail['longitude'])||$this->isBlank($ged_detail['longitude'])){
                             return $this->response(0,null,'Ged longitude is required.');
                         }
     
                     }
                 }
-            }
+            
 
            }
        }
     }
-    //end validation
+
 
 
 
@@ -628,11 +641,21 @@ public function SaveDevis(Request $request){
            
         }
 
-   
-        $this->l('API SAVE DEVIS',json_encode($Parameters),$lcdtapp_api_instance->user->id);
+ //remove logo data before saving log       
+$params=$Parameters;
+if(isset($params['order_zones'])&&is_array($params['order_zones'])){
+    if(!empty($params['order_zones'])){
+        foreach($params['order_zones'] as &$order_zone){
+            if(isset($order_zone['ged_details'])){
+                foreach($order_zone['ged_details'] as &$ged_detail){
+                    $ged_detail['data']='REMOVED FOR LCDTLOG..';
+                }
+            }
+        }
+    }
+}
 
-    
-     
+ $this->l('API SAVE DEVIS',json_encode($params),$lcdtapp_api_instance->user->id);
 
 
 
@@ -640,75 +663,122 @@ public function SaveDevis(Request $request){
             if(!empty($Parameters['order_zones'])){
                 //order zones
                 foreach($Parameters['order_zones'] as $order_zone){
-                    if(!isset($order_zone->id)||$order_zone->id==null){
+                    if(!isset($order_zone['id'])||$order_zone['id']==null){
                         $orderZone=new OrderZone();
                     }else{
-                        $orderZone=OrderZone::find($order_zone->id);
+                        $orderZone=OrderZone::find($order_zone['id']);
                         if($orderZone==null){
-                            return $this->response(0,null,'Unable to save, Order zone id'.$order_zone->id.' not found.');
+                            return $this->response(0,null,'Unable to save', 'Order zone id'.$order_zone['id'].' not found.');
                         }
 
                         if($order!=null&&$order->id>0 && $orderZone->order_id!=$order->id){
-                            return $this->response(0,null,'Unable to save, Order zone id'.$order_zone->id.' not linked to order '.$order->id.'.');
+                            return $this->response(0,null,'Unable to save', 'Order zone id'.$orderZone->id.' not linked to order '.$order->id.'.');
                         }
                     }
         
-                   //TODO: all validations first before attempting a save
+              
                 
                     if(isset($order_zone['ged_details'])){
                        
                         foreach($order_zone['ged_details'] as $ged_detail){
-                            if($ged_detail->id>0){
-                                    $ged=GED::find($ged_detail->ged_id);
-                                    if($ged==null)
-                                    return $this->response(0,null,'Unable to save, ged not found'.$ged_detail->id.' not found.');
+                        
+                            if($ged_detail['id']>0){
+                                    $gedDetails=GedDetail::find($ged_detail['id']);
+                                    if($gedDetails==null)
+                                        return $this->response(0,null,'Unable to save', 'ged detail with id'.$ged_detail['id'].' not found.');
+                                    $ged=Ged::find($gedDetails->ged_id);
+                                    if($order!=null&&$order->id>0 && $ged->order_id!=$order->id)
+                                        return $this->response(0,null,'Unable to save', 'ged detail with id'.$ged_detail['id'].' not linked to order '.$order->id.'.');
                             }
                         }
-                        
-                            
-
-                        
 
                     }
                 }
             }
         }
-
+            //end validation
             //if validation successful, save
+
+     
 
             if($order==null){
                 $order=new Order();
                 $order->generateReference();
+                $order->affiliate_id=$lcdtapp_api_instance->user->affiliate->id;
                 $order->event_id=$event->id;
                 $order->lang_id=$Parameters['lang_id'];
-                $order->order_type_id=1;//Devis
                 $order->customer_id=$event->customer_id;
-                $order->order_state_id=$order->id==''?1:$order->order_state_id;
+         
             }
-
+                $order->save();
+                //update state if necessary
+                if($Parameters['order_state_id']==null){
+                    $order->updateState(1,$lcdtapp_api_instance->user_id);//update order to status affaire
+                }else{
+                    $order->updateState($Parameters['order_state_id'],$lcdtapp_api_instance->user_id);//save devis in another status
+                }
 
             if(isset($Parameters['order_zones'])&&is_array($Parameters['order_zones'])){
                 if(!empty($Parameters['order_zones'])){
                     //order zones
                     foreach($Parameters['order_zones'] as $order_zone){
-                        if(!isset($order_zone->id)||$order_zone->id==null){
+                        if(!isset($order_zone['id'])||$this->isBlank($order_zone['id'])||$order_zone['id']==null){
                             $orderZone=new OrderZone();
+                            $orderZone->order_id=$order->id;
                         }else{
-                            $orderZone=OrderZone::find($order_zone->id);
+                            $orderZone=OrderZone::find($order_zone['id']);
                         }
-                       //TODO: get ged  by user_id customer_id order_id
+     
                 
-                        $orderZone->name=$order_zone->name;
-                        $orderZone->description=$order_zone->description;
-                        $orderZone->hauteur=$order_zone->hauteur;
-                        $orderZone->moyenacces=$order_zone->moyenacces;
-                        $orderZone->latitude= $order_zone->latitude;
-                        $orderZone->longitude= $order_zone->longitude;
+                        $orderZone->name=$order_zone['name'];
+                        $orderZone->description=$order_zone['description'];
+                        $orderZone->hauteur=$order_zone['hauteur'];
+                        $orderZone->moyenacces=$order_zone['moyenacces'];
+                        $orderZone->latitude= $order_zone['latitude'];
+                        $orderZone->longitude= $order_zone['longitude'];
+                        $orderZone->save();
     
                         if(isset($order_zone['ged_details'])){
-                           
-                            
-                                
+                            foreach($order_zone['ged_details'] as $ged_detail){
+
+                                if(!isset($ged_detail['id'])||$this->isBlank($ged_detail['id'])||$ged_detail['id']==null){
+                                    $gedDetail=new GedDetail();
+                                    //find existing ged to link to ged detail
+                                    $ged=Ged::where('user_id','=',$lcdtapp_api_instance->user->id)->where('customer_id','=',$event->customer_id)->where('order_id','=',$order->id)->first();
+                                    if($ged==null){
+                                        //new ged
+                                        $ged=new Ged();
+                                        $ged->customer_id=$event->customer_id;
+                                        $ged->order_id=$order->id;
+                                        $ged->user_id=$lcdtapp_api_instance->user->id;
+                                        $ged->save();
+                                    }
+                                    $gedDetail->ged_id=$ged->id;
+                                    $gedDetail->user_id=$lcdtapp_api_instance->user->id;
+                                }else{
+                                    $gedDetail=GedDetail::find($ged_detail['id']);   
+                                }
+                                $gedDetail->order_ouvrage_id=isset($ged_detail['order_ouvrage_id'])?$ged_detail['order_ouvrage_id']:0;
+                                $gedDetail->ged_category_id=isset($ged_detail['ged_category_id'])?$ged_detail['ged_category_id']:0;
+                                $gedDetail->order_zone_id=$orderZone->id;
+                                $gedDetail->description=isset($ged_detail['description'])?$ged_detail['description']:'';
+                                $gedDetail->longitude=isset($ged_detail['longitude'])?$ged_detail['longitude']:'';
+                                $gedDetail->latitude=isset($ged_detail['latitude'])?$ged_detail['latitude']:'';
+                                $gedDetail->save();
+                                $gedDetail=$gedDetail->fresh();//retreve fresh object with all fields
+                        
+                                if( $gedDetail->file==null){//files can only be stored once to avoid duplicates;
+                                    if(isset($ged_detail['data'])&&!$this->isBlank($ged_detail['data'])){
+                                      
+                                        $storedFile=$this->storeFile($ged_detail['data'],$ged_detail['human_readable_filename'],$gedDetail->id);
+                                        $gedDetail->file=$storedFile->file;
+                                        $gedDetail->type=$storedFile->type;
+                                        $gedDetail->storage_path=$storedFile->storage_path;
+                                        $gedDetail->human_readable_filename=$storedFile->human_readable_filename;
+                                    }
+                                }
+                                $gedDetail->save();
+                            }
     
                             
     
@@ -717,32 +787,10 @@ public function SaveDevis(Request $request){
                 }
             }
 
-              //update state if necessary
-              if($Parameters['order_state_id']!=null)
-              $order->updateState($Parameters['order_state_id'],$lcdtapp_api_instance->user_id);
+     
 
-              return $this->response(1,$order);
-       /*
+              return $this->response(1,$order->fresh());
 
-        if($event==null)
-        $event=new Event();
-
-        
-
-        $event->customer_id=$Parameters['customer_id'];
-        $event->event_type_id=$Parameters['event_type_id'];
-        $event->affiliate_id=$lcdtapp_api_instance->user->affiliate->id;
-        $event->name=$Parameters['name'];
-        $event->description=$Parameters['description'];
-        $event->datedebut=$Parameters['date_start'];
-        $event->datefin=$Parameters['date_end'];
-        $event->address_id=isset($Parameters['address_id'])?$Parameters['address_id']:null;// first address of customer
-        $event->user_id=isset($Parameters['affected_to_user'])?$Parameters['affected_to_user']:$lcdtapp_api_instance->user_id;
-        $event->emetteur_id=$lcdtapp_api_instance->user_id;
-        $event->event_origin_id=($event->event_origin_id>0?$event->event_origin_id:$Parameters['event_origin_id']);
-        $event->save();
-        $event->updateStatus(1,$lcdtapp_api_instance->user_id);
-        return $this->response(1,$event);*/
     }else{
         return $isLoggedIn;
     }

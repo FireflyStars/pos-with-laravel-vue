@@ -30,8 +30,7 @@ class GedDetail extends Model
 
         if($this->id==''){
             $user=Auth::user();
-            $uuid = DB::select('select UUID() AS uuid')[0]->uuid;//unique name for file
-            $this->file=$uuid; 
+      
             if($this->user_id=='')
             $this->user_id=$user->id;
         }
