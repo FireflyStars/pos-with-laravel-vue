@@ -65,9 +65,9 @@ __webpack_require__.r(__webpack_exports__);
 
     var featureunavailable = function featureunavailable(feature) {
       store.dispatch("".concat(_store_types_types__WEBPACK_IMPORTED_MODULE_1__.TOASTER_MODULE).concat(_store_types_types__WEBPACK_IMPORTED_MODULE_1__.TOASTER_MESSAGE), {
-        message: feature + ' feature not yet implemented.',
+        message: feature + " feature not yet implemented.",
         ttl: 5,
-        type: 'success'
+        type: "success"
       });
     };
 
@@ -76,12 +76,12 @@ __webpack_require__.r(__webpack_exports__);
     };
 
     var showbarcodemodal = function showbarcodemodal() {
-      featureunavailable('Barcode');
+      featureunavailable("Barcode");
     };
 
     var neworder = function neworder() {
       router.push({
-        name: 'NewOrder',
+        name: "NewOrder",
         params: {}
       });
     };
@@ -330,7 +330,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "logo",
     height: "37",
     style: {
-      "margin": "14px 0  0 16px"
+      "margin": "14px 0 0 16px"
     },
     viewBox: "0 0 37 37",
     fill: "none",
@@ -348,7 +348,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onClick: _cache[2] || (_cache[2] = function () {
       return $setup.neworder && $setup.neworder.apply($setup, arguments);
     })
-  }, "New Order")])]);
+  }, " New Order ")])]);
 }
 
 /***/ }),
@@ -477,7 +477,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.main-logo[data-v-25110ce0]{\r\n    background-color:$gray-900!de;\r\n    position: fixed;\r\n    width: 100%;\r\n    z-index: 10;\n}\n.btn-white[data-v-25110ce0]{\r\n        background: #F8F8F8;\r\n        margin-right:34px;\r\n        margin-top: 9px;\r\n        float: right;\r\n        font-size: 16px;\r\n        font-weight: 500;\r\n        width: 178px;\n}\n.col-12[data-v-25110ce0]{\r\n    flex-direction: row;\r\n    display: flex;\r\n    justify-content: space-between;\r\n    align-items: flex-start;\n}\n.barcodebtn[data-v-25110ce0]{\r\n    cursor:pointer;\r\n    white-space: nowrap;\r\n    height: var(--mainlogoheight);\r\n    margin-right: 110px;\n}\n.barcodebtn svg[data-v-25110ce0]{\r\n    display: inline-block;\r\n    line-height: var(--mainlogoheight);\r\n    vertical-align: middle;\r\n    margin-right: 6px;\n}\n.barcodebtn span[data-v-25110ce0]{\r\n        text-decoration: underline;\r\n        color:#FFF;\r\n        line-height: var(--mainlogoheight);\r\n        vertical-align: middle;\n}\n.logo[data-v-25110ce0]{\r\n        cursor: pointer;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.main-logo[data-v-25110ce0] {\r\n    /* background-color:$gray-900!de; */\r\n    position: fixed;\r\n    width: 100%;\r\n    z-index: 10;\n}\n.btn-white[data-v-25110ce0] {\r\n    background: #f8f8f8;\r\n    margin-right: 34px;\r\n    margin-top: 9px;\r\n    float: right;\r\n    font-size: 16px;\r\n    font-weight: 500;\r\n    width: 178px;\n}\n.col-12[data-v-25110ce0] {\r\n    flex-direction: row;\r\n    display: flex;\r\n    justify-content: space-between;\r\n    align-items: flex-start;\n}\n.barcodebtn[data-v-25110ce0] {\r\n    cursor: pointer;\r\n    white-space: nowrap;\r\n    height: var(--mainlogoheight);\r\n    margin-right: 110px;\n}\n.barcodebtn svg[data-v-25110ce0] {\r\n    display: inline-block;\r\n    line-height: var(--mainlogoheight);\r\n    vertical-align: middle;\r\n    margin-right: 6px;\n}\n.barcodebtn span[data-v-25110ce0] {\r\n    text-decoration: underline;\r\n    color: #fff;\r\n    line-height: var(--mainlogoheight);\r\n    vertical-align: middle;\n}\n.logo[data-v-25110ce0] {\r\n    cursor: pointer;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

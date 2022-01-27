@@ -1,4 +1,5 @@
 <template>
+    <!-- Il faut passer des ID# pour checkboxes_options -->
     <Filter
         :checkboxes_options="[
             {
@@ -11,20 +12,20 @@
             },
             {
                 name: 'Champs 2',
-                options: [{ id: 1, name: 'Vue 3', check: false }],
+                options: [{ id: 4, name: 'Vue 3', check: false }],
             },
             {
                 name: 'Champs 3',
                 options: [
-                    { id: 1, name: 'Vue 3', check: false },
-                    { id: 2, name: 'VUEX', check: false },
+                    { id: 5, name: 'Vue 3', check: false },
+                    { id: 6, name: 'VUEX', check: false },
                 ],
             },
             {
                 name: 'Champs 4',
                 options: [
-                    { id: 1, name: 'Vue 3', check: false },
-                    { id: 2, name: 'VUEX', check: false },
+                    { id: 7, name: 'Vue 3', check: false },
+                    { id: 8, name: 'VUEX', check: false },
                 ],
             },
         ]"

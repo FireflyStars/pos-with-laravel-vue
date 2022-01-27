@@ -42,10 +42,12 @@ __webpack_require__.r(__webpack_exports__);
       "default": 0
     }
   },
-  setup: function setup() {
+  setup: function setup(props) {
     var store = (0,vuex__WEBPACK_IMPORTED_MODULE_3__.useStore)();
     var sel1 = (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_4__.ref)(1);
     var open = (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_4__.ref)(false);
+    var checkboxes = props.checkboxes_options;
+    store.dispatch(_store_types_types__WEBPACK_IMPORTED_MODULE_0__.SET_ITEMS, props.checkboxes_options);
 
     var resetFilter = function resetFilter() {
       console.log("reset");
@@ -53,12 +55,16 @@ __webpack_require__.r(__webpack_exports__);
     };
 
     return {
+      checkboxes: checkboxes,
       sel1: sel1,
       open: open,
       resetFilter: resetFilter,
       updateSelectedList: function updateSelectedList(event) {
         return store.dispatch(_store_types_types__WEBPACK_IMPORTED_MODULE_0__.SET_SELECTED_BOXES, event);
-      }
+      },
+      selected_items: (0,_vue_reactivity__WEBPACK_IMPORTED_MODULE_4__.computed)(function () {
+        return store.getters[_store_types_types__WEBPACK_IMPORTED_MODULE_0__.GET_SELECTED_BOXES];
+      })
     };
   }
 });
@@ -332,7 +338,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["items", {
       selectHide: !$setup.open
     }])
-  }, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.checkboxes_options, function (checkboxes, index) {
+  }, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.checkboxes, function (checkboxes, index) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
       "class": "checkboxes",
       key: index
@@ -344,7 +350,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         key: option.id
       }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_check_box, {
         id: option.id,
-        checked_checkbox: option.name,
+        checked_checkbox: option.check,
         name: option.name,
         onCheckboxClicked: $setup.updateSelectedList
       }, {
@@ -537,7 +543,7 @@ __webpack_require__.r(__webpack_exports__);
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Filter = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Filter");
 
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Filter, {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Il faut passer des ID# pour checkboxes_options "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Filter, {
     checkboxes_options: [{
       name: 'Champs',
       options: [{
@@ -556,29 +562,29 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }, {
       name: 'Champs 2',
       options: [{
-        id: 1,
+        id: 4,
         name: 'Vue 3',
         check: false
       }]
     }, {
       name: 'Champs 3',
       options: [{
-        id: 1,
+        id: 5,
         name: 'Vue 3',
         check: false
       }, {
-        id: 2,
+        id: 6,
         name: 'VUEX',
         check: false
       }]
     }, {
       name: 'Champs 4',
       options: [{
-        id: 1,
+        id: 7,
         name: 'Vue 3',
         check: false
       }, {
-        id: 2,
+        id: 8,
         name: 'VUEX',
         check: false
       }]
@@ -626,7 +632,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         display: 'MKG'
       }]
     }]
-  });
+  })], 2112
+  /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+  );
 }
 
 /***/ }),
@@ -693,7 +701,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nspan.chkbox[data-v-4ec14a62] {\r\n    width: 20px;\r\n    height: 20px;\r\n    display: inline-block;\r\n    position: relative;\n}\nspan.chkbox.checked[data-v-4ec14a62] {\r\n    background: #47454b;\r\n    border: none;\n}\nspan.chkbox[data-v-4ec14a62]:after {\r\n    opacity: 0;\r\n    position: absolute;\r\n    content: \" \";\r\n    left: 6px;\r\n    top: 2px;\r\n    width: 8px;\r\n    height: 13px;\r\n    border: solid white;\r\n    border-width: 0 3px 3px 0;\r\n    transform: rotate(45deg);\n}\nspan.chkbox.checked[data-v-4ec14a62]:after {\r\n    opacity: 1;\r\n    transition: opacity 0.3s ease-out;\r\n    -webkit-transition: opacity 0.3s ease-out;\r\n    -moz-transition: opacity 0.3s ease-out;\n}\n.filters span.chkbox[data-v-4ec14a62],\r\nthead span.chkbox[data-v-4ec14a62],\r\nheader span.chkbox[data-v-4ec14a62] {\r\n    border: #868686 2px solid;\n}\n.filters span.chkbox.checked[data-v-4ec14a62],\r\nheader span.chkbox.checked[data-v-4ec14a62] {\r\n    background: #47454b;\r\n    border: none;\n}\n.chkbox_wrap[data-v-4ec14a62] {\r\n    cursor: pointer;\n}\n.filters span.chkbox[data-v-4ec14a62] {\r\n    margin: 14px 22px 14px 22px;\n}\n.filters .chkbox_wrap[data-v-4ec14a62] {\r\n    display: flex;\n}\n.filters .chkbox_wrap label[data-v-4ec14a62] {\r\n    margin: 14px 22px 14px 0;\r\n    font-weight: lighter;\n}\n.label-margin[data-v-4ec14a62] {\r\n    margin: 0px 0px 0px 10px;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nspan.chkbox[data-v-4ec14a62] {\r\n    width: 20px;\r\n    height: 20px;\r\n    display: inline-block;\r\n    position: relative;\r\n    border: #868686 2px solid;\n}\nspan.chkbox.checked[data-v-4ec14a62] {\r\n    background: #47454b;\r\n    border: none;\n}\nspan.chkbox[data-v-4ec14a62]:after {\r\n    opacity: 0;\r\n    position: absolute;\r\n    content: \" \";\r\n    left: 6px;\r\n    top: 2px;\r\n    width: 8px;\r\n    height: 13px;\r\n    border: solid white;\r\n    border-width: 0 3px 3px 0;\r\n    transform: rotate(45deg);\n}\nspan.chkbox.checked[data-v-4ec14a62]:after {\r\n    opacity: 1;\r\n    transition: opacity 0.3s ease-out;\r\n    -webkit-transition: opacity 0.3s ease-out;\r\n    -moz-transition: opacity 0.3s ease-out;\n}\n.filters span.chkbox[data-v-4ec14a62],\r\nthead span.chkbox[data-v-4ec14a62],\r\nheader span.chkbox[data-v-4ec14a62] {\r\n    border: #868686 2px solid;\n}\n.filters span.chkbox.checked[data-v-4ec14a62],\r\nheader span.chkbox.checked[data-v-4ec14a62] {\r\n    background: #47454b;\r\n    border: none;\n}\n.chkbox_wrap[data-v-4ec14a62] {\r\n    display: flex;\r\n    cursor: pointer;\r\n    margin: 5px 0px;\n}\n.filters span.chkbox[data-v-4ec14a62] {\r\n    margin: 14px 22px 14px 22px;\n}\n.filters .chkbox_wrap[data-v-4ec14a62] {\r\n    display: flex;\n}\n.filters .chkbox_wrap label[data-v-4ec14a62] {\r\n    margin: 14px 22px 14px 0;\r\n    font-weight: lighter;\n}\n.label-margin[data-v-4ec14a62] {\r\n    margin: 0px 0px 0px 10px;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
