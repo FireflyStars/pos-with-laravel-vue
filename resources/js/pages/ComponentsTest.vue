@@ -1,4 +1,5 @@
 <template>
+ <CheckBoxMain></CheckBoxMain>
     <Filter
         :checkboxes_options="[
             {
@@ -57,14 +58,16 @@
             },
         ]"
     />
+
 </template>
 
 <script>
 import { ref } from "vue";
 import Filter from "../components/Filter.vue";
+import CheckBoxMain from './../components/miscellaneous/CheckBoxMain.vue';
 export default {
     components: {
-        Filter,
+        Filter,CheckBoxMain
     },
     setup() {
         return {};
