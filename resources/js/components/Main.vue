@@ -5,12 +5,16 @@
             enter-active-class="animate__animated animate__fadeIn"
     >
         <div class="container-fluid h-100 bg-color" v-if="showcontainer">
-            <main-header></main-header>
+            <main-header>
+
+
+            </main-header>
             <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100" >
             <side-bar></side-bar>
-                <div class="col main-view p-0">
-              <h1>Welcome to lcdt. vuejs 3 installed.</h1>
 
+                <div class="col main-view p-0">
+
+              <!-- <h1>Welcome to lcdt. vuejs 3 installed.</h1> -->
 
 
                         <transition   enter-active-class="animate__animated animate__fadeIn"
@@ -29,10 +33,11 @@
 <script>
 import MainHeader from './layout/MainHeader.vue';
 import SideBar from './layout/SideBar.vue';
+import CheckBoxMain from './miscellaneous/CheckBoxMain';
     import {ref,onMounted,computed,nextTick} from 'vue';
 export default {
   name: "Test",
-  components:{MainHeader,SideBar},
+  components:{MainHeader,SideBar,CheckBoxMain},
   setup(){
 const  showcontainer=ref(false);
     onMounted(()=>{
@@ -48,4 +53,8 @@ const  showcontainer=ref(false);
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.lcdt-logo{
+padding-left: 0;
+}
+</style>
