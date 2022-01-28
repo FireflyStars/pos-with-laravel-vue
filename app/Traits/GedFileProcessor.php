@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Models\GedDetail;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
@@ -14,7 +15,7 @@ trait GedFileProcessor
 
 
 {
-    private $allowedFileExts=['png','jpeg','jpg','tiff','gif'];
+    private $allowedImageFileExts=['png','jpeg','jpg','tiff','gif'];
 
     //creates and return the directory path for file to be stored ;
     private function getDirectoryNameByGedDetailId($id){
@@ -49,7 +50,7 @@ trait GedFileProcessor
                 $data=explode('/',$data);
                 if(isset($data[1])){
 
-                    if(in_array(strtolower($data[1]),$this->allowedFileExts)){
+                    if(in_array(strtolower($data[1]),$this->allowedImageFileExts)){
                             $file_extension=$data[1];
                             if($data[1]=='jpeg'){
                                 $file_extension='jpg';
@@ -66,7 +67,7 @@ trait GedFileProcessor
         $base64_string=explode(',',$data[1]);
         $base64_string=$base64_string[1];
         $uuid_filename='';
-        if(in_array($file_extension,$this->allowedFileExts)){
+        if(in_array($file_extension,$this->allowedImageFileExts)){
             $uuid_filename= $this->generateImageMinatures($base64_string,$path,$file_extension);
         }else{
             $uuid_filename = DB::select('select UUID() AS uuid')[0]->uuid;
@@ -107,8 +108,19 @@ trait GedFileProcessor
         return $uuid_filename;
             
     }
-//TODO: get urls for files given ged_detail_id
-    public function getFileUrls($gedDetail_id){
+//TODO: get urls for files given ged_detail
+    public function getFileUrls($gedDetail){
+          
+
+            if(in_array($gedDetail->type,$this->allowedImageFileExts)){
+                return array(
+                    'original'=>getenv('APP_URL').Storage::url( $gedDetail->storage_path.'/'.$gedDetail->file.($gedDetail->type!=''?'.'.$gedDetail->type:'')),
+                    'medium'=>getenv('APP_URL').Storage::url( $gedDetail->storage_path.'/'.$gedDetail->file.'_medium'.($gedDetail->type!=''?'.'.$gedDetail->type:'')),
+                    'small'=>getenv('APP_URL').Storage::url( $gedDetail->storage_path.'/'.$gedDetail->file.'_small'.($gedDetail->type!=''?'.'.$gedDetail->type:'')),
+                );
+            }else{
+                return array('original'=>getenv('APP_URL').Storage::url( $gedDetail->storage_path.'/'.$gedDetail->file.($gedDetail->type!=''?'.'.$gedDetail->type:'')));
+            }
 
     }
 }

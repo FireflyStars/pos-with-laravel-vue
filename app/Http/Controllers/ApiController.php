@@ -488,7 +488,16 @@ public function GetDevis(Request $request){
         if($event==null)
         return $this->response(0,null,'Event not found.');
         $order=$event->order()->first();
-           
+        $order->makeHidden(['created_at','updated_at','deleted_at']);
+        $order->orderZones;   
+        foreach($order->orderZones as &$order_zone){
+            $order_zone->makeHidden(['created_at','updated_at','deleted_at']);
+            $order_zone->gedDetails->makeHidden(['created_at','updated_at','deleted_at','storage_path','file']);
+            foreach($order_zone->gedDetails as &$ged_detail){
+                if($ged_detail->type!='description')
+                $ged_detail->urls=$this->getFileUrls($ged_detail);
+            }
+        }
         return $this->response(1, $order);
     }else{
         return $isLoggedIn;
@@ -841,7 +850,7 @@ public function GetZones(Request $request){
             return $this->response(0,null,'Order not found.');
         }
            
-        return $this->response(1, $order->zones);
+        return $this->response(1, $order->orderZones);
     }else{
         return $isLoggedIn;
     }

@@ -20,7 +20,7 @@ class Order extends Model
         return $this->belongsToMany(Event::class);
     }
 
-    public function zones(){
+    public function orderZones(){
         return $this->hasMany(OrderZone::class);
     }
 

@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class OrderZone extends Model
 {
     use HasFactory;
+
+    public function gedDetails()
+    {
+       return $this->hasMany(GedDetail::class);
+    }
+
 }
