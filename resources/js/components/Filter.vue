@@ -1,18 +1,14 @@
 <template>
-    <div
-        class="custom-filter-dropdown"
-        :tabindex="tabindex"
-        @blur="open = false"
-    >
-        <div
-            class="selected text-end"
-            :class="{ open: open }"
-            @click="open = !open"
-        >
+    <div class="custom-filter-dropdown" :tabindex="tabindex">
+        <div class="selected text-end">
             <button class="filter-reset" @click.prevent="resetFilter">
                 <div class="text-filter">Reinitialisation</div>
             </button>
-            <button class="button-filter">
+            <button
+                class="button-filter"
+                :class="[isColored]"
+                @click.prevent="open = !open"
+            >
                 <div class="text-filter">Filtre</div>
                 <!-- 
                 <div class="rectangle"></div>
@@ -36,10 +32,10 @@
                     <check-box
                         :id="option.id"
                         :checked_checkbox="option.check"
-                        :name="option.name"
+                        :name="option.value"
                         @checkbox-clicked="updateSelectedList"
                     >
-                        {{ option.name }}
+                        {{ option.value }}
                     </check-box>
                 </div>
             </div>
@@ -55,7 +51,11 @@
                 :label="select.label"
             ></select-options>
 
-            <button class="validate-button text-title" type="submit">
+            <button
+                class="validate-button text-title"
+                type="submit"
+                @click.prevent="validate"
+            >
                 Valider
             </button>
         </div>
@@ -94,27 +94,42 @@ export default {
             default: 0,
         },
     },
-    setup(props) {
+    setup(props, context) {
         const store = useStore();
 
         let sel1 = ref(1);
         let open = ref(false);
 
         const checkboxes = props.checkboxes_options;
-        store.dispatch(SET_ITEMS, props.checkboxes_options);
+        store.dispatch(`${FILTER_MODULE}/${SET_ITEMS}`, checkboxes);
         const resetFilter = () => {
             console.log("reset");
-            store.dispatch(RESET_FILTER);
+            store.dispatch(`${FILTER_MODULE}/${RESET_FILTER}`);
+            context.emit("update:modelValue", []);
+        };
+        const validate = () => {
+            context.emit(
+                "update:modelValue",
+                store.state[FILTER_MODULE].selected_items
+            );
         };
 
         return {
             checkboxes,
             sel1,
             open,
+            isColored: computed(() => {
+                if (store.state[FILTER_MODULE].selected_items.length > 0) {
+                    return "colored";
+                }
+            }),
             resetFilter,
             updateSelectedList: (event) =>
-                store.dispatch(SET_SELECTED_BOXES, event),
-            selected_items: computed(() => store.getters[GET_SELECTED_BOXES]),
+                store.dispatch(`${FILTER_MODULE}/${SET_SELECTED_BOXES}`, event),
+            selected_items: computed(
+                () => store.state[FILTER_MODULE].selected_items
+            ),
+            validate,
         };
     },
 };
@@ -227,6 +242,9 @@ export default {
     border: 1px solid #47454b;
     box-sizing: border-box;
     border-radius: 5px;
+}
+.colored {
+    background-color: lawngreen;
 }
 .rectangle {
     height: 2.410329818725586px;

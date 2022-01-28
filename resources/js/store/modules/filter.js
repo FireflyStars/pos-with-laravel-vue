@@ -19,7 +19,7 @@ export const filter = {
 
             const index = state.selected_items.findIndex(object => object.id === payload.id);
             console.log(index);
-            if (index === -1) {
+            if (index === -1 && payload.value !== '') {
                 state.selected_items.push(payload);
 
             } else {

@@ -20088,7 +20088,7 @@ var filter = {
     });
     console.log(index);
 
-    if (index === -1) {
+    if (index === -1 && payload.value !== '') {
       state.selected_items.push(payload);
     } else {
       state.selected_items.splice(index, 1); // console.log(state.items[index]);

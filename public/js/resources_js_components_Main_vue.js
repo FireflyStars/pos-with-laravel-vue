@@ -253,13 +253,34 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm-bundler.js");
+/* harmony import */ var _store_types_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../store/types/types */ "./resources/js/store/types/types.js");
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+
+
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "CheckBox",
   props: ["id", "checked_checkbox", "name"],
   setup: function setup(props, _ref) {
     var emit = _ref.emit;
-    var check = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(false);
+    var store = (0,vuex__WEBPACK_IMPORTED_MODULE_2__.useStore)();
+    var check = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(false); // let selected_items = ref([]);
+    // selected_items.value = computed(
+    //     () => store.state[FILTER_MODULE].selected_items
+    // );
+
     check.value = props.checked_checkbox;
 
     function togglechkbox() {
@@ -275,6 +296,15 @@ __webpack_require__.r(__webpack_exports__);
       return props.checked_checkbox;
     }, function (current_val, previous_val) {
       check.value = current_val;
+    });
+    (0,vue__WEBPACK_IMPORTED_MODULE_0__.watch)(function () {
+      return _toConsumableArray(store.state[_store_types_types__WEBPACK_IMPORTED_MODULE_1__.FILTER_MODULE].selected_items);
+    }, function (current_val, previous_val) {
+      console.log(current_val.length);
+
+      if (current_val.length == 0) {
+        check.value = false;
+      }
     });
     (0,vue__WEBPACK_IMPORTED_MODULE_0__.watch)(function () {
       return check.value;

@@ -6,12 +6,20 @@
 </template>
 
 <script>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
+import { useStore } from "vuex";
+import { FILTER_MODULE } from "../../store/types/types";
 export default {
     name: "CheckBox",
     props: ["id", "checked_checkbox", "name"],
     setup(props, { emit }) {
+        const store = useStore();
+
         const check = ref(false);
+        // let selected_items = ref([]);
+        // selected_items.value = computed(
+        //     () => store.state[FILTER_MODULE].selected_items
+        // );
 
         check.value = props.checked_checkbox;
 
@@ -27,6 +35,15 @@ export default {
             () => props.checked_checkbox,
             (current_val, previous_val) => {
                 check.value = current_val;
+            }
+        );
+        watch(
+            () => [...store.state[FILTER_MODULE].selected_items],
+            (current_val, previous_val) => {
+                console.log(current_val.length);
+                if (current_val.length == 0) {
+                    check.value = false;
+                }
             }
         );
         watch(

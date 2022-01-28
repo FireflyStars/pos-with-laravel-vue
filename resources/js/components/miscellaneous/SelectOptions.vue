@@ -41,6 +41,8 @@ import {
     GET_CURRENT_SELECT,
     SELECT_MODULE,
     SET_CURRENT_SELECT,
+    SET_SELECTED_BOXES,
+    FILTER_MODULE,
 } from "../../store/types/types";
 export default {
     name: "SelectOptions",
@@ -85,6 +87,10 @@ export default {
             context.emit("update:modelValue", props.options[index].value);
 
             store.commit(`${SELECT_MODULE}${SET_CURRENT_SELECT}`, "");
+            store.commit(
+                `${FILTER_MODULE}/${SET_SELECTED_BOXES}`,
+                props.options[index]
+            );
         };
 
         let currentoption = props.options.filter((option) => {
@@ -146,6 +152,15 @@ export default {
             }
         );
 
+        watch(
+            () => [...store.state[FILTER_MODULE].selected_items],
+            (current_val, previous_val) => {
+                console.log(current_val.length);
+                if (current_val.length == 0) {
+                    current_display.value = "";
+                }
+            }
+        );
         return {
             selectclick,
 
