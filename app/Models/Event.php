@@ -62,4 +62,8 @@ class Event extends Model
      public function eventType(){
          return $this->belongsTo(EventType::class);
      }
+
+     public function eventOrigin(){
+         return $this->belongsTo(EventOrigin::class);
+    }
 }
