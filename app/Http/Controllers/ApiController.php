@@ -10,6 +10,7 @@ use App\Models\OrderZone;
 use App\Models\Customer;
 use App\Models\EventStatus;
 use App\Models\EventType;
+use App\Models\EventOrigin;
 use App\Models\GedCategory;
 use App\Models\GedDetail;
 use App\Models\lcdtapp\Api;
@@ -368,6 +369,25 @@ public function GetEventStatuses(Request $request){
     return $this->response(1,EventStatus::all()->makeHidden(['created_at','updated_at','deleted_at']));
 
 } 
+public function GetEventOrigins(Request $request){
+    $token_SessionID=$request->post('SessionID');
+    $AccountKey=$request->post('AccountKey');
+    
+
+    if($token_SessionID==null){
+        return $this->response(0,null,'Missing SessionID parameter.');
+    }
+    if($AccountKey==null){
+        return $this->response(0,null,'Missing AccountKey parameter.');
+    }
+
+    //verify sessionid
+    if($this->isExpired($token_SessionID,$AccountKey)){
+        return $this->response(0,null,'Unable to verify account','Invalid or expired session.',null,401);
+    }
+    return $this->response(1,EventOrigin::all()->makeHidden(['created_at','updated_at','deleted_at']));
+
+} 
 public function GetOrderStates(Request $request){
     $token_SessionID=$request->post('SessionID');
     $AccountKey=$request->post('AccountKey');
@@ -440,7 +460,7 @@ public function GetGedDetailCategory(Request $request){
                 $event->customer->makeHidden(['created_at','updated_at','deleted_at']);
                 $event->address->makeHidden(['created_at','updated_at','deleted_at']);
                 $event->eventType->makeHidden(['created_at','updated_at','deleted_at']);
-                
+                $event->eventOrigin->makeHidden(['created_at','updated_at','deleted_at']);
             return $this->response(1,$event);
         }else{
             return $isLoggedIn;
@@ -467,8 +487,9 @@ public function GetDevis(Request $request){
         $event=$lcdtapp_api_instance->user->affiliate->events->where('id','=',$Parameters['event_id'])->first();
         if($event==null)
         return $this->response(0,null,'Event not found.');
+        $order=$event->order()->first();
            
-        return $this->response(1, $event->order);
+        return $this->response(1, $order);
     }else{
         return $isLoggedIn;
     }
@@ -631,7 +652,7 @@ public function SaveDevis(Request $request){
         $event=Event::find($Parameters['event_id']);
         $order=null;
         if(isset($Parameters['order_id'])&&$Parameters['order_id']!=null){
-            $order=Order::find($Parameters['order_id'])->where('affiliate_id','=',$lcdtapp_api_instance->user->affiliate->id);
+            $order=Order::where('id','=',$Parameters['order_id'])->where('affiliate_id','=',$lcdtapp_api_instance->user->affiliate->id)->first();
             if($order==null)
                 return $this->response(0,null,'Order not found.');
     
@@ -705,12 +726,14 @@ if(isset($params['order_zones'])&&is_array($params['order_zones'])){
                 $order=new Order();
                 $order->generateReference();
                 $order->affiliate_id=$lcdtapp_api_instance->user->affiliate->id;
-                $order->event_id=$event->id;
+
                 $order->lang_id=$Parameters['lang_id'];
                 $order->customer_id=$event->customer_id;
          
             }
                 $order->save();
+            
+                $event->order()->associate($order->fresh())->save();
                 //update state if necessary
                 if($Parameters['order_state_id']==null){
                     $order->updateState(1,$lcdtapp_api_instance->user_id);//update order to status affaire
