@@ -20069,7 +20069,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "filter": () => (/* binding */ filter)
 /* harmony export */ });
 /* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../types/types */ "./resources/js/store/types/types.js");
-var _mutations;
+var _mutations, _getters;
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -20077,22 +20077,29 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var filter = {
   namespaced: true,
   state: {
-    selected_items: []
+    selected_items: [],
+    items: []
   },
-  mutations: (_mutations = {}, _defineProperty(_mutations, _types_types__WEBPACK_IMPORTED_MODULE_0__.SET_SELECTED_BOXES, function (state, payload) {
+  mutations: (_mutations = {}, _defineProperty(_mutations, _types_types__WEBPACK_IMPORTED_MODULE_0__.SET_ITEMS, function (state, payload) {
+    return state.items = payload;
+  }), _defineProperty(_mutations, _types_types__WEBPACK_IMPORTED_MODULE_0__.SET_SELECTED_BOXES, function (state, payload) {
     var index = state.selected_items.findIndex(function (object) {
       return object.id === payload.id;
     });
+    console.log(index);
 
     if (index === -1) {
       state.selected_items.push(payload);
     } else {
-      state.selected_items.splice(index, 1);
+      state.selected_items.splice(index, 1); // console.log(state.items[index]);
     }
   }), _defineProperty(_mutations, _types_types__WEBPACK_IMPORTED_MODULE_0__.RESET_FILTER, function (state) {
     return state.selected_items = [];
   }), _mutations),
   actions: {
+    SET_ITEMS: function SET_ITEMS(context, payload) {
+      return context.commit(_types_types__WEBPACK_IMPORTED_MODULE_0__.SET_ITEMS, payload);
+    },
     SET_SELECTED_BOXES: function SET_SELECTED_BOXES(context, payload) {
       return context.commit(_types_types__WEBPACK_IMPORTED_MODULE_0__.SET_SELECTED_BOXES, payload);
     },
@@ -20100,9 +20107,11 @@ var filter = {
       return context.commit(_types_types__WEBPACK_IMPORTED_MODULE_0__.RESET_FILTER);
     }
   },
-  getters: _defineProperty({}, _types_types__WEBPACK_IMPORTED_MODULE_0__.GET_SELECTED_BOXES, function (state) {
+  getters: (_getters = {}, _defineProperty(_getters, _types_types__WEBPACK_IMPORTED_MODULE_0__.GET_ITEMS, function (state) {
+    return state.items;
+  }), _defineProperty(_getters, _types_types__WEBPACK_IMPORTED_MODULE_0__.GET_SELECTED_BOXES, function (state) {
     return state.selected_items;
-  })
+  }), _getters)
 };
 
 /***/ }),
@@ -20382,11 +20391,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "SIDEBAR_SET_SLIDEIN": () => (/* binding */ SIDEBAR_SET_SLIDEIN),
 /* harmony export */   "SIDEBAR_GET_SLIDEIN": () => (/* binding */ SIDEBAR_GET_SLIDEIN),
 /* harmony export */   "SELECT_MODULE": () => (/* binding */ SELECT_MODULE),
-/* harmony export */   "SET_CURRENT_SELECT": () => (/* binding */ SET_CURRENT_SELECT),
+/* harmony export */   "SET_CURRENT_SsELECT": () => (/* binding */ SET_CURRENT_SsELECT),
 /* harmony export */   "GET_CURRENT_SELECT": () => (/* binding */ GET_CURRENT_SELECT),
+/* harmony export */   "FILTER_MODULE": () => (/* binding */ FILTER_MODULE),
+/* harmony export */   "SET_ITEMS": () => (/* binding */ SET_ITEMS),
 /* harmony export */   "SET_SELECTED_BOXES": () => (/* binding */ SET_SELECTED_BOXES),
-/* harmony export */   "GET_SELECTED_BOXES": () => (/* binding */ GET_SELECTED_BOXES),
-/* harmony export */   "RESET_FILTER": () => (/* binding */ RESET_FILTER)
+/* harmony export */   "RESET_FILTER": () => (/* binding */ RESET_FILTER),
+/* harmony export */   "GET_ITEMS": () => (/* binding */ GET_ITEMS),
+/* harmony export */   "GET_SELECTED_BOXES": () => (/* binding */ GET_SELECTED_BOXES)
 /* harmony export */ });
 var LOADER_MODULE = 'LOADER_MODULE/'; //namespace
 
@@ -20420,15 +20432,21 @@ var SIDEBAR_GET_SLIDEIN = 'SIDEBAR_GET_SLIDEIN'; //gettes
 
 var SELECT_MODULE = 'SELECT_MODULE/'; //namespace
 
-var SET_CURRENT_SELECT = 'SET_CURRENT_SELECT'; //mutations
+var SET_CURRENT_SsELECT = 'SET_CURRENT_SELECT'; //mutations
 
 var GET_CURRENT_SELECT = 'GET_CURRENT_SELECT'; //getters
 
-var SET_SELECTED_BOXES = 'FILTER_MODULE/SET_SELECTED_BOXES'; //namespace
+var FILTER_MODULE = 'FILTER_MODULE'; //namespace
 
-var GET_SELECTED_BOXES = 'FILTER_MODULE/GET_SELECTED_BOXES'; //getters
+var SET_ITEMS = 'SET_ITEMS'; //action
 
-var RESET_FILTER = 'FILTER_MODULE/RESET_FILTER'; //getters
+var SET_SELECTED_BOXES = 'SET_SELECTED_BOXES'; //action
+
+var RESET_FILTER = 'RESET_FILTER'; //action
+
+var GET_ITEMS = 'GET_ITEMS'; //getters
+
+var GET_SELECTED_BOXES = 'GET_SELECTED_BOXES'; //getters
 
 /***/ }),
 

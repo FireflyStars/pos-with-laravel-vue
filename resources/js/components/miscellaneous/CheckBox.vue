@@ -49,6 +49,7 @@ span.chkbox {
     height: 20px;
     display: inline-block;
     position: relative;
+    border: #868686 2px solid;
 }
 span.chkbox.checked {
     background: #47454b;
@@ -85,7 +86,9 @@ header span.chkbox.checked {
     border: none;
 }
 .chkbox_wrap {
+    display: flex;
     cursor: pointer;
+    margin: 5px 0px;
 }
 .filters span.chkbox {
     margin: 14px 22px 14px 22px;

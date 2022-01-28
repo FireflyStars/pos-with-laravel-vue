@@ -24,7 +24,7 @@
         <div class="items" :class="{ selectHide: !open }">
             <div
                 class="checkboxes"
-                v-for="(checkboxes, index) of checkboxes_options"
+                v-for="(checkboxes, index) of checkboxes"
                 :key="index"
             >
                 <div class="text-title">{{ checkboxes.name }} :</div>
@@ -35,7 +35,7 @@
                 >
                     <check-box
                         :id="option.id"
-                        :checked_checkbox="option.name"
+                        :checked_checkbox="option.check"
                         :name="option.name"
                         @checkbox-clicked="updateSelectedList"
                     >
@@ -70,6 +70,9 @@ import {
     GET_SELECTED_BOXES,
     SET_SELECTED_BOXES,
     RESET_FILTER,
+    SET_ITEMS,
+    GET_ITEMS,
+    FILTER_MODULE,
 } from "../store/types/types";
 
 import CheckBox from "./miscellaneous/CheckBox.vue";
@@ -91,22 +94,27 @@ export default {
             default: 0,
         },
     },
-    setup() {
+    setup(props) {
         const store = useStore();
 
         let sel1 = ref(1);
         let open = ref(false);
+
+        const checkboxes = props.checkboxes_options;
+        store.dispatch(SET_ITEMS, props.checkboxes_options);
         const resetFilter = () => {
             console.log("reset");
             store.dispatch(RESET_FILTER);
         };
 
         return {
+            checkboxes,
             sel1,
             open,
             resetFilter,
             updateSelectedList: (event) =>
                 store.dispatch(SET_SELECTED_BOXES, event),
+            selected_items: computed(() => store.getters[GET_SELECTED_BOXES]),
         };
     },
 };
