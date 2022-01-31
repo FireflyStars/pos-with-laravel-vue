@@ -20391,7 +20391,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "SIDEBAR_SET_SLIDEIN": () => (/* binding */ SIDEBAR_SET_SLIDEIN),
 /* harmony export */   "SIDEBAR_GET_SLIDEIN": () => (/* binding */ SIDEBAR_GET_SLIDEIN),
 /* harmony export */   "SELECT_MODULE": () => (/* binding */ SELECT_MODULE),
-/* harmony export */   "SET_CURRENT_SsELECT": () => (/* binding */ SET_CURRENT_SsELECT),
+/* harmony export */   "SET_CURRENT_SELECT": () => (/* binding */ SET_CURRENT_SELECT),
 /* harmony export */   "GET_CURRENT_SELECT": () => (/* binding */ GET_CURRENT_SELECT),
 /* harmony export */   "FILTER_MODULE": () => (/* binding */ FILTER_MODULE),
 /* harmony export */   "SET_ITEMS": () => (/* binding */ SET_ITEMS),
@@ -20432,7 +20432,7 @@ var SIDEBAR_GET_SLIDEIN = 'SIDEBAR_GET_SLIDEIN'; //gettes
 
 var SELECT_MODULE = 'SELECT_MODULE/'; //namespace
 
-var SET_CURRENT_SsELECT = 'SET_CURRENT_SELECT'; //mutations
+var SET_CURRENT_SELECT = 'SET_CURRENT_SELECT'; //mutations
 
 var GET_CURRENT_SELECT = 'GET_CURRENT_SELECT'; //getters
 

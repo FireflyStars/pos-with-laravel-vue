@@ -23,7 +23,7 @@ export const SIDEBAR_GET_SLIDEIN = 'SIDEBAR_GET_SLIDEIN' //gettes
 
 
 export const SELECT_MODULE = 'SELECT_MODULE/'; //namespace
-export const SET_CURRENT_SsELECT = 'SET_CURRENT_SELECT'; //mutations
+export const SET_CURRENT_SELECT = 'SET_CURRENT_SELECT'; //mutations
 export const GET_CURRENT_SELECT = 'GET_CURRENT_SELECT'; //getters
 
 
