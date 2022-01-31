@@ -30,7 +30,16 @@ export const filter = {
 
 
         },
-        [RESET_FILTER]: (state) => state.selected_items = [],
+        [RESET_FILTER]: (state) => {
+            state.selected_items = []
+            state.items.forEach(element => {
+                element.options.forEach(option => {
+                    option.check = false;
+
+                });
+
+            });
+        },
     },
     actions: {
         SET_ITEMS: (context, payload) => context.commit(SET_ITEMS, payload),

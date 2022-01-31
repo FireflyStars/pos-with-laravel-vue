@@ -31,7 +31,7 @@
                 >
                     <check-box
                         :id="option.id"
-                        :checked_checkbox="option.check"
+                        v-model:checked_checkbox.sync="option.check"
                         :name="option.value"
                         @checkbox-clicked="updateSelectedList"
                     >
@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { ref, computed } from "@vue/reactivity";
+import { ref, watch, computed } from "vue";
 import { useStore } from "vuex";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import {
@@ -100,12 +100,14 @@ export default {
         let sel1 = ref(1);
         let open = ref(false);
 
-        const checkboxes = props.checkboxes_options;
+        let checkboxes = ref([]);
+        checkboxes = props.checkboxes_options;
         store.dispatch(`${FILTER_MODULE}/${SET_ITEMS}`, checkboxes);
         const resetFilter = () => {
             console.log("reset");
             store.dispatch(`${FILTER_MODULE}/${RESET_FILTER}`);
             context.emit("update:modelValue", []);
+            // checkboxes.value = props.checkboxes_options;
         };
         const validate = () => {
             context.emit(
@@ -113,6 +115,15 @@ export default {
                 store.state[FILTER_MODULE].selected_items
             );
         };
+        watch(
+            () => [...store.state[FILTER_MODULE].selected_items],
+            (current_val, previous_val) => {
+                console.log("current_val.length");
+                if (current_val.length == 0) {
+                    checkboxes.value = store.state[FILTER_MODULE].items;
+                }
+            }
+        );
 
         return {
             checkboxes,
