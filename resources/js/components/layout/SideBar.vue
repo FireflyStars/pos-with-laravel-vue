@@ -2,41 +2,51 @@
     <div class="col-lg-6 col-sm-3 side-bar-wrap d-flex flex-column align-items-center" :class="{slidein:slidesidebar}">
 <div class="d-flex flex-column side-bar align-items-center position-fixed">
 
-                    <!-- <Icon imageurl="../../images/star-icon.png"/>
-                    <Icon imageurl="../../images/user-icon.png"/>
-                    <Icon imageurl="../../images/user-profile.png"/>
-
-
-                    <Icon imageurl="../../images/panier-icon.png"/>
-                    <Icon imageurl="../../images/folder-icon.png"/>
-                    <Icon imageurl="../../images/edit-icon.png"/>
-                    <Icon imageurl="../../images/message-icon.png"/> -->
-
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="side-icons">
+<!-- :class="{active:route_name=='/'}" -->
+<!-- :class="{isActive :route_name=='LandingPage'}" -->
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="side-icons"  @click="router.push({name:'ComponentsTest'})">
+ <rect width="26" height="26" rx="8" :class="route_name =='LandingPage' ? 'filled' :'notfilled'"/>
 <path d="M12 0.5L16.226 6.683L23.413 8.792L18.838 14.722L19.053 22.208L12 19.69L4.94698 22.208L5.16198 14.722L0.586975 8.792L7.77398 6.683L12 0.5ZM9.99998 12H7.99998C7.99996 13.0436 8.40776 14.0458 9.13638 14.7929C9.86499 15.54 10.8567 15.9727 11.8999 15.9988C12.9432 16.0249 13.9553 15.6423 14.7203 14.9326C15.4854 14.2228 15.9428 13.2422 15.995 12.2L16 12H14C14.0023 12.519 13.8028 13.0185 13.4436 13.3932C13.0844 13.7678 12.5937 13.9881 12.075 14.0075C11.5564 14.027 11.0505 13.8441 10.6643 13.4975C10.278 13.1509 10.0416 12.6677 10.005 12.15L9.99998 12Z" fill="black"/>
-</svg>
+    </svg>
 
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="side-icons">
+ <rect width="26" height="26" rx="8" :class="route_name =='ComponentsTest' ? 'filled' :'notfilled'"/>
 <path d="M8 13V15C6.4087 15 4.88258 15.6321 3.75736 16.7574C2.63214 17.8826 2 19.4087 2 21H0C0 18.8783 0.842855 16.8434 2.34315 15.3431C3.84344 13.8429 5.87827 13 8 13ZM8 12C4.685 12 2 9.315 2 6C2 2.685 4.685 0 8 0C11.315 0 14 2.685 14 6C14 9.315 11.315 12 8 12ZM8 10C10.21 10 12 8.21 12 6C12 3.79 10.21 2 8 2C5.79 2 4 3.79 4 6C4 8.21 5.79 10 8 10ZM14 20.5L11.061 22.045L11.622 18.773L9.245 16.455L12.531 15.977L14 13L15.47 15.977L18.755 16.455L16.378 18.773L16.938 22.045L14 20.5Z" fill="black"/>
 </svg>
 
 <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" class="side-icons">
+ <rect width="26" height="26" rx="8" :class="route_name =='ComponentsTest' ? 'filled' :'notfilled'"/>
 <path d="M7 13.062V19H9V13.062C12.946 13.554 16 16.92 16 21H0C3.30739e-05 19.0514 0.711187 17.1698 2 15.7083C3.28882 14.2467 5.0667 13.3058 7 13.062ZM8 12C4.685 12 2 9.315 2 6C2 2.685 4.685 0 8 0C11.315 0 14 2.685 14 6C14 9.315 11.315 12 8 12Z" fill="black"/>
 </svg>
 
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"  class="side-icons">
+ <rect width="26" height="26" rx="8" :class="route_name =='ComponentsTest' ? 'filled' :'notfilled'"/>
 <path d="M13.366 0.437988L16.577 5.99999H20V7.99999H18.833L18.076 17.083C18.0552 17.3329 17.9413 17.5658 17.7568 17.7357C17.5723 17.9055 17.3308 17.9999 17.08 18H2.92C2.66925 17.9999 2.4277 17.9055 2.24322 17.7357C2.05875 17.5658 1.94481 17.3329 1.924 17.083L1.166 7.99999H0V5.99999H3.422L6.634 0.437988L8.366 1.43799L5.732 5.99999H14.267L11.634 1.43799L13.366 0.437988ZM11 9.99999H9V14H11V9.99999ZM7 9.99999H5V14H7V9.99999ZM15 9.99999H13V14H15V9.99999Z" fill="black"/>
 </svg>
-<svg width="21" height="18" viewBox="0 0 21 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="side-icons">
+
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="side-icons">
+ <rect width="26" height="26" rx="8" :class="route_name =='ComponentsTest' ? 'filled' :'notfilled'"/>
 <path d="M1 18C0.734784 18 0.48043 17.8946 0.292893 17.7071C0.105357 17.5196 0 17.2652 0 17V1C0 0.734784 0.105357 0.48043 0.292893 0.292893C0.48043 0.105357 0.734784 0 1 0H8.414L10.414 2H18C18.2652 2 18.5196 2.10536 18.7071 2.29289C18.8946 2.48043 19 2.73478 19 3V6H17V4H9.586L7.586 2H2V13.998L3.5 8H20.5L18.19 17.243C18.1358 17.4592 18.011 17.6512 17.8352 17.7883C17.6595 17.9255 17.4429 18 17.22 18H1ZM17.938 10H5.062L3.562 16H16.438L17.938 10Z" fill="black"/>
 </svg>
-<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="side-icons">
+
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="side-icons">
+ <rect width="26" height="26" rx="8" :class="route_name =='ComponentsTest' ? 'filled' :'notfilled'"/>
 <path d="M5.05002 12.1209L2.93002 14.2429L5.75802 17.0709L17.071 5.75695L14.243 2.92995L12.12 5.04995L13.535 6.46395L12.12 7.87995L10.706 6.46495L9.29202 7.87995L10.706 9.29395L9.29202 10.7079L7.87802 9.29395L6.46302 10.7079L7.87802 12.1219L6.46302 13.5369L5.05002 12.1199V12.1209ZM14.95 0.807947L19.192 5.04995C19.3795 5.23747 19.4848 5.49178 19.4848 5.75695C19.4848 6.02211 19.3795 6.27642 19.192 6.46395L6.46402 19.1919C6.27649 19.3794 6.02218 19.4847 5.75702 19.4847C5.49186 19.4847 5.23755 19.3794 5.05002 19.1919L0.80802 14.9499C0.620549 14.7624 0.515233 14.5081 0.515233 14.2429C0.515233 13.9778 0.620549 13.7235 0.80802 13.5359L13.536 0.807947C13.7235 0.620476 13.9779 0.51516 14.243 0.51516C14.5082 0.51516 14.7625 0.620476 14.95 0.807947ZM12.12 16.3629L13.535 14.9489L15.777 17.1919H17.191V15.7779L14.949 13.5349L16.363 12.1209L19 14.7569V18.9999H14.758L12.121 16.3629H12.12ZM3.63602 7.87795L0.807019 5.04995C0.714043 4.95707 0.640284 4.84679 0.58996 4.72539C0.539636 4.60399 0.513733 4.47386 0.513733 4.34245C0.513733 4.21103 0.539636 4.0809 0.58996 3.95951C0.640284 3.83811 0.714043 3.72782 0.807019 3.63495L3.63602 0.806947C3.82355 0.619475 4.07786 0.51416 4.34302 0.51416C4.60818 0.51416 4.86249 0.619475 5.05002 0.806947L7.88002 3.63495L6.46402 5.04995L4.34302 2.92795L2.92902 4.34295L5.05002 6.46295L3.63602 7.87795Z" fill="black"/>
 </svg>
-<svg width="22" height="18" viewBox="0 0 22 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="side-icons">
+
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="side-icons">
+ <rect width="26" height="26" rx="8" :class="route_name =='ComponentsTest' ? 'filled' :'notfilled'"/>
 <path d="M2 2.5V0.993C2.00183 0.730378 2.1069 0.479017 2.29251 0.293218C2.47813 0.107418 2.72938 0.00209465 2.992 0H21.008C21.556 0 22 0.445 22 0.993V17.007C21.9982 17.2696 21.8931 17.521 21.7075 17.7068C21.5219 17.8926 21.2706 17.9979 21.008 18H2.992C2.72881 17.9997 2.4765 17.895 2.29049 17.7088C2.10448 17.5226 2 17.2702 2 17.007V16H20V4.3L12 11.5L2 2.5ZM0 7H5V9H0V7ZM0 12H8V14H0V12Z" fill="black"/>
 </svg>
 
+<!-- -            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="side-icons" :class="{active:route_name=='LandingPage'||route_name=='OrderDetails'}" @click="router.push({name:'LandingPage'})">
+-            <rect width="32" height="32" rx="8" fill="#42A71E"/>
+-            <path fill-rule="evenodd" clip-rule="evenodd" d="M8.71045 11H23.1138C23.731 11 24.2009 11.5537 24.1005 12.1627L23.0843 18.3254C22.9251 19.2913 22.09 20 21.111 20H11.8917C10.9127 20 10.0776 19.2913 9.9183 18.3254L8.71045 11Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+-            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 25C12.5523 25 13 24.5523 13 24C13 23.4477 12.5523 23 12 23C11.4477 23 11 23.4477 11 24C11 24.5523 11.4477 25 12 25Z" stroke="white"/>
+-            <path fill-rule="evenodd" clip-rule="evenodd" d="M21 25C21.5523 25 22 24.5523 22 24C22 23.4477 21.5523 23 21 23C20.4477 23 20 23.4477 20 24C20 24.5523 20.4477 25 21 25Z" stroke="white"/>
+-            <path fill-rule="evenodd" clip-rule="evenodd" d="M10 11H6H10Z" fill="white"/>
+-            <path d="M10 11H6" stroke="white" stroke-linecap="round"/>
+-        </svg> -->
 
 <!--
      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="side-icons">
@@ -118,6 +128,7 @@
              let colorIconClicked=ref("#FFA500");
              let colorIcon=ref("#FFA500");
              const isClicked=ref('false');
+             let isActive=ref('false');
             const uname=ref(window.sessionStorage.getItem('name'));
             const initials= ref((uname.value!=null?uname.value.substr(0,2):''));
             const router = useRouter();
@@ -126,6 +137,7 @@
             const route_name=ref(route.name);
             watch(() =>route.name, (current_val, previous_val) => {
                 route_name.value=current_val;
+                 console.log(route_name.value);
                 // emit('checkbox-clicked', current_val,props.id,props.name)
             });
             function logout(){
@@ -153,9 +165,8 @@
             }
             function selectedIcon(){
                 console.log('item selected');
-                console.log(isClicked.value);
-                isClicked.value!=isClicked.value;
-                console.log(isClicked.value);
+                console.log(route_name.value);;
+                console.log(isActive.value);
 
             }
             function showmenu() {
@@ -183,6 +194,7 @@
                 gotoPermissions,
                 route_name,
                 router,
+                isActive,
 
                 selectedIcon,colorIcon,colorIconClicked,isClicked,colorIconDefault
 
@@ -229,7 +241,7 @@
     z-index: 1;
 }
 .side-icons:first-child{
-    margin-top:114px;
+     margin-top:114px;
 
 }
 .side-icons{
@@ -278,5 +290,12 @@
     }
     .usermenu-leave-active{
         transition: all ease 0.2s;
+    }
+    .filled{
+     fill:#FFA500;
+    }
+     .notfilled{
+         fill: white;
+
     }
 </style>

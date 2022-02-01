@@ -99,7 +99,7 @@ export default {
     /* grid-template-columns: 1fr 1fr 1fr; */
      grid-template-columns:repeat(3, 1fr);
     grid-template-rows:repeat(1, 1fr);
-     background: #B35151;
+     background: #000000;
      padding: 0;
      justify-items: stretch;
 
