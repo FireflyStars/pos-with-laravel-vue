@@ -1,5 +1,5 @@
 <template>
-    <!-- Il faut passer des ID# pour checkboxes_options -->
+    <!-- Il faut passer des #value pour options -->
     <CheckBoxMain></CheckBoxMain>
     <Filter
         v-model="allSelectedItems"
@@ -7,20 +7,20 @@
             {
                 name: 'Champs',
                 options: [
-                    { id: 1, value: 'LARAVEL', check: false },
-                    { id: 2, value: 'Sail', check: false },
-                    { id: 3, value: 'Eloquent', check: false },
+                    { value: 'LARAVEL', check: false },
+                    { value: 'Sail', check: false },
+                    { value: 'Eloquent', check: false },
                 ],
             },
             {
                 name: 'Champs 2',
-                options: [{ id: 4, value: 'Vue 3', check: false }],
+                options: [{ value: 'Vue 3', check: false }],
             },
             {
                 name: 'Champs 3',
                 options: [
-                    { id: 5, value: 'Vue 3', check: false },
-                    { id: 6, value: 'VUEX', check: false },
+                    { value: 'Vue 2', check: false },
+                    { value: 'VUEX', check: false },
                 ],
             },
         ]"
@@ -28,17 +28,17 @@
             {
                 label: 'Select',
                 options: [
-                    { id: 9, value: '', display: '' },
-                    { id: 10, value: 1, display: 'One' },
-                    { id: 11, value: 2, display: 'Two' },
+                    { value: '', display: '' },
+                    { value: 1, display: 'One' },
+                    { value: 2, display: 'Two' },
                 ],
             },
             {
                 label: 'Select 2',
                 options: [
-                    { id: 12, value: '', display: '' },
-                    { id: 13, value: 'b', display: 'A' },
-                    { id: 14, value: 'c', display: 'B' },
+                    { value: '', display: '' },
+                    { value: 'b', display: 'A' },
+                    { value: 'c', display: 'B' },
                 ],
             },
         ]"

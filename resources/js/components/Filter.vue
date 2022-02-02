@@ -43,7 +43,7 @@
             <select-options
                 v-for="(select, index) of select_options"
                 :key="index"
-                v-model="sel1"
+                v-model="sel[index].value"
                 placeholder="Choose a number"
                 :options="select.options"
                 :name="select.label"
@@ -74,6 +74,7 @@ import {
     GET_ITEMS,
     FILTER_MODULE,
 } from "../store/types/types";
+import _ from "lodash";
 
 import CheckBox from "./miscellaneous/CheckBox.vue";
 import SelectOptions from "./miscellaneous/SelectOptions.vue";
@@ -97,7 +98,13 @@ export default {
     setup(props, context) {
         const store = useStore();
 
-        let sel1 = ref(1);
+        let sel = ref([]);
+        for (let index = 0; index < props.select_options.length; index++) {
+            sel.value[index] = {
+                value: "",
+                label: props.select_options[index].label,
+            };
+        }
         let open = ref(false);
 
         let checkboxes = ref([]);
@@ -107,7 +114,12 @@ export default {
             console.log("reset");
             store.dispatch(`${FILTER_MODULE}/${RESET_FILTER}`);
             context.emit("update:modelValue", []);
-            // checkboxes.value = props.checkboxes_options;
+            for (let index = 0; index < props.select_options.length; index++) {
+                sel.value[index] = {
+                    value: "",
+                    label: props.select_options[index].label,
+                };
+            }
         };
         const validate = () => {
             context.emit(
@@ -118,16 +130,24 @@ export default {
         watch(
             () => [...store.state[FILTER_MODULE].selected_items],
             (current_val, previous_val) => {
-                console.log("current_val.length");
                 if (current_val.length == 0) {
                     checkboxes.value = store.state[FILTER_MODULE].items;
                 }
             }
         );
+        watch(
+            () => _.cloneDeep(sel.value),
+            (current_val, previous_val) => {
+                store.commit(
+                    `${FILTER_MODULE}/${SET_SELECTED_BOXES}`,
+                    current_val
+                );
+            }
+        );
 
         return {
             checkboxes,
-            sel1,
+            sel,
             open,
             isColored: computed(() => {
                 if (store.state[FILTER_MODULE].selected_items.length > 0) {
@@ -136,7 +156,13 @@ export default {
             }),
             resetFilter,
             updateSelectedList: (event) =>
-                store.dispatch(`${FILTER_MODULE}/${SET_SELECTED_BOXES}`, event),
+                store.dispatch(`${FILTER_MODULE}/${SET_SELECTED_BOXES}`, [
+                    {
+                        id: event.id,
+                        value: event.name,
+                        check: event.check,
+                    },
+                ]),
             selected_items: computed(
                 () => store.state[FILTER_MODULE].selected_items
             ),
