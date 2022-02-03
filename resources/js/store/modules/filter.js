@@ -17,18 +17,33 @@ export const filter = {
 
         [SET_SELECTED_BOXES]: (state, payload) => {
 
-            const index = state.selected_items.findIndex(object => object.id === payload.id);
-            console.log(index);
-            if (index === -1 && payload.value !== '') {
-                state.selected_items.push(payload);
+            payload.forEach(element => {
 
-            } else {
-                state.selected_items.splice(index, 1);
-                // console.log(state.items[index]);
+                const index = state.selected_items.findIndex(object => object.value === element.value);
+                const indexLabel = state.selected_items.findIndex(object => object.label === element.label);
 
-            }
+                // SELECT ELEMENTS
+                if (element.label) {
+                    // NEW VALUE
+                    if (index === -1) {
+                        // NEW LABEL
+                        if (indexLabel === -1) {
+                            if (element.value !== '') state.selected_items.push(element);
+                        }
+                        // UPDATE
+                        else if (element.value !== '') state.selected_items[indexLabel] = element;
 
-
+                        // NULL:REMOVE ITEM
+                        else state.selected_items.splice(indexLabel, 1);
+                    }
+                }
+                // BOXES ELEMENTS
+                else {
+                    if (index === -1)
+                        state.selected_items.push(element);
+                    else state.selected_items.splice(index, 1);
+                }
+            });
         },
         [RESET_FILTER]: (state) => {
             state.selected_items = []
