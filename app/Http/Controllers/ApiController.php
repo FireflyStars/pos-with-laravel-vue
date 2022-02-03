@@ -553,7 +553,12 @@ public function SaveEvent(Request $request){
 
         if(!isset($Parameters['address_id'])||$Parameters['address_id']==null){
                 $address=Address::where('customer_id','=',$Parameters['customer_id'])->first();
-                $Parameters['address_id']=$address->id;
+                if($address!=null){
+                    $Parameters['address_id']=$address->id;
+                }else{
+                    return $this->response(0,null,'Invalid user address id','Address does not exist or does not belong to customer.');
+                }
+               
         }else{
             $address=Address::where('id','=',$Parameters['address_id'])->first();
             if($address==null||$address->customer_id!=$Parameters['customer_id']){
