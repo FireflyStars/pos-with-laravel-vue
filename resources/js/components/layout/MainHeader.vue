@@ -1,13 +1,37 @@
 <template>
-<div class="navbar">
 
 
-    <div class="main-logo">
-        <img
-            src="./../../images/lcdt-logo.png"
-            alt="Lcdt logo"
-            class="lcdt-logo"
-        />
+<NavBar/>
+
+<!--
+
+<div class="nav">
+  <input type="checkbox" id="nav-check">
+  <div class="nav-header">
+    <div class="nav-title">
+      JoGeek
+    </div>
+  </div>
+  <div class="nav-btn">
+    <label for="nav-check">
+      <span></span>
+      <span></span>
+      <span></span>
+    </label>
+  </div>
+
+  <div class="nav-links">
+    <a href="//github.io/jo_geek" target="_blank">Github</a>
+    <a href="http://stackoverflow.com/users/4084003/" target="_blank">Stackoverflow</a>
+    <a href="https://in.linkedin.com/in/jonesvinothjoseph" target="_blank">LinkedIn</a>
+    <a href="https://codepen.io/jo_Geek/" target="_blank">Codepen</a>
+    <a href="https://jsfiddle.net/user/jo_Geek/" target="_blank">JsFiddle</a>
+  </div>
+</div> -->
+
+
+<!-- <div class="navbar"> -->
+
         <!---
         <div class="col-12 p-0">
 
@@ -38,11 +62,16 @@
         </div>
     </div>
         </div> -->
-    </div>
+
+
+
+
+
+    <!-- </div>
     <div nav-items>
     </div>
 
-    </div>
+    </div> -->
 </template>
 
 <script>
@@ -56,9 +85,10 @@ import {
 } from "../../store/types/types";
 
 import { useRouter } from "vue-router";
+import NavBar from "../NavBar.vue";
 export default {
     name: "MainHeader",
-    components: {},
+    components: { NavBar },
     setup(props, context) {
         const store = useStore();
         const router = useRouter();
@@ -94,16 +124,7 @@ export default {
 </script>
 
 <style scoped>
-.navbar{
-     display: grid;
-    /* grid-template-columns: 1fr 1fr 1fr; */
-     grid-template-columns:repeat(3, 1fr);
-    grid-template-rows:repeat(1, 1fr);
-     background: #000000;
-     padding: 0;
-     justify-items: stretch;
 
-}
 /* .lcdt-logo {
     max-width: 20%;
     height: 60px;
@@ -114,6 +135,9 @@ export default {
     /* position: fixed; */
     /* grid-column: 1/2;
     grid-row: auto; */
+}
+.div-logo{
+  min-height: fit-content;
 }
 .btn-white {
     background: #f8f8f8;
@@ -154,4 +178,15 @@ export default {
 .logo {
     cursor: pointer;
 }
+
+.devis-input{
+    justify-items: end;
+}
+/* .form-group{
+max-width: 300px;
+}
+.has-search .form-control {
+    padding-left: 2.375rem;
+} */
+
 </style>
