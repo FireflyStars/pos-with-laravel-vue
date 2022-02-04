@@ -1,6 +1,11 @@
 <template>
     <!-- Il faut passer des #value pour options -->
-    <CheckBoxMain></CheckBoxMain>
+    <NavBar/>
+    <SideBar/>
+<div class="main-layout">
+ <CheckBoxMain></CheckBoxMain>
+</div>
+
     <Filter
         v-model="allSelectedItems"
         :checkboxes_options="[
@@ -48,12 +53,16 @@
 <script>
 import { ref } from "vue";
 import Filter from "../components/Filter.vue";
+import SideBar from "../components/layout/SideBar.vue"
 import CheckBoxMain from "./../components/miscellaneous/CheckBoxMain.vue";
+import NavBar from "../components/NavBar.vue";
 export default {
     components: {
-        Filter,
-        CheckBoxMain,
-    },
+    Filter,
+    CheckBoxMain,
+    SideBar,
+    NavBar
+},
     setup() {
         const allSelectedItems = ref([]);
         return { allSelectedItems };
@@ -61,4 +70,8 @@ export default {
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.main-layout{
+padding-left: 10%;
+}
+</style>

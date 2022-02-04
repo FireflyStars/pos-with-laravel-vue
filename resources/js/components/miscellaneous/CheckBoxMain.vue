@@ -1,47 +1,47 @@
 <template>
 <div class="main">
+    <input type="text" class="select-item" :placeholder="selectedValue" v-model="selectedValue">
  <div  v-for="items in myobj" :key="items.id" class="div-for">
-
      <check-box
                     :id="items.id"
-                    checked_checkbox="true"
+                     v-model:checked_checkbox.sync="items.check"
                     :name="items.value"
+                    @click="getSelectedValue(items)"
                     >
-
-                     <!-- <label class="check-val"> -->
                         {{items.value}}
                         </check-box>
-                         <!-- </label> -->
 
-
-
-
-<!--
-     @checkbox-clicked="updateSelectedList"
-!-->
   </div>
   </div>
 </template>
 
 <script>
 import { ref } from "@vue/reactivity";
-//import { useStore } from "vuex";
-//import { GET_SELECTED_BOXES, SET_SELECTED_BOXES } from "../../store/types/types";
 import CheckBox from './CheckBox.vue'
 export default {
 name: "CheckBoxMain",
+
   components:{CheckBox},
    setup(){
-        // const store = useStore();
+        let selectedValue=ref('');
       const myobj = ref([
-         { id:1 ,value:'Perdu'},
-             { id:2,value:'Gagne'},
-                 { id:3,value:'Abondonne'},
-                     { id:4,value:'AttenteClient'}
+         { id:1 ,value:'Perdu',check:false},
+             { id:2,value:'Gagne',check:false},
+                 { id:3,value:'Abondonne',check:false},
+                     { id:4,value:'AttenteClient',check:false}
       ]);
+
+        const getSelectedValue = (item) => {
+            if(item.check==true){
+                // adding with delimeter
+            selectedValue.value+=item.value+',';
+            console.log(selectedValue.value);
+            }
+            // removing values
+
+        };
           return {
-                 myobj,
-                 //updateSelectedList: (event) =>store.dispatch(SET_SELECTED_BOXES, event)
+                 myobj, getSelectedValue,selectedValue
         };
     }
 }
@@ -63,6 +63,10 @@ background: #C4CFD7;
 .check-val {
 padding: 0px 0px 5px 2px !important;
 font-weight: lighter;
+display: inline-flex;
+flex-direction: row;
+}
+.select-item{
 display: inline-flex;
 flex-direction: row;
 }
