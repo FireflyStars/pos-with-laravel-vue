@@ -1,6 +1,6 @@
 <template>
-    <div class="custom-filter-dropdown" :tabindex="tabindex">
-        <div class="selected text-end">
+    <div class="custom-filter-dropdown almarai_bold_normal" :tabindex="tabindex">
+        <div class="selected text-end ">
             <button class="filter-reset" @click.prevent="resetFilter">
                 <div class="text-filter">Reinitialisation</div>
             </button>
@@ -23,7 +23,7 @@
                 v-for="(checkboxes, index) of checkboxes"
                 :key="index"
             >
-                <div class="text-title">{{ checkboxes.name }} :</div>
+                <div class="text-title ">{{ checkboxes.name }} :</div>
                 <div
                     class="checkbox-items"
                     v-for="option of checkboxes.options"
@@ -47,7 +47,7 @@
                 placeholder="Choose a number"
                 :options="select.options"
                 :name="select.label"
-                :valid="true"
+                
                 :label="select.label"
             ></select-options>
 
@@ -173,24 +173,38 @@ export default {
 </script>
 
 <style scoped>
+.almarai_bold_normal{
+    font-family: 'Almarai Bold';
+   /* font-weight:700; */
+   font-style:normal;
+}  
+.almarai_extrabold_normal{
+    font-family: 'Almarai ExtraBold';
+   /* font-weight:800; */
+   font-style:normal;
+}  
+.almarai_light_normal{
+    font-family: 'Almarai Light';
+   /* font-weight:300; */
+   font-style:normal;
+}  
+.almarai_regular_normal{
+    font-family: 'Almarai regular';
+   /* font-weight:400; */
+   font-style:normal;
+}  
 .custom-filter-dropdown {
     position: relative;
-
     text-align: left;
     outline: none;
     width: 307px;
-
     max-height: 1000px;
     line-height: 47px;
     float: right;
 }
 .custom-filter-dropdown .items {
-    font-family: Almarai;
     color: #47454b;
-    font-style: normal !important;
-    font-weight: bold !important;
     font-size: 16px !important;
-
     border-radius: 0px 0px 6px 6px;
     position: relative;
     background: #eeeeee;
@@ -198,27 +212,18 @@ export default {
     right: 0;
     z-index: 1;
     padding: 5% 12%;
-    overflow: auto;
+    overflow: visible;
     min-height: 500px;
     height: auto !important;
 }
-
 .custom-filter-dropdown .items .checkboxes {
-    font-family: Almarai;
-    font-style: normal;
-    font-weight: bold;
     font-size: 14px;
     line-height: 140%;
-    /* or 20px */
-
-    /* Medium grey */
-
     color: #868686;
     display: flex;
     flex-direction: column;
     margin-bottom: 10px;
 }
-
 .custom-filter-dropdown .items .checkbox-items:hover {
     background-color: #e0dede;
 }
@@ -228,30 +233,20 @@ export default {
 }
 .text-title {
     margin-bottom: 16px;
-    font-style: normal !important;
-    font-weight: bold !important;
     font-size: 16px !important;
     line-height: 140% !important;
-    /* or 22px */
-
-    /* dark grey */
-
     color: #47454b !important;
 }
 .validate-button {
-    /* Auto layout */
     margin: 10% 25% 0% 25%;
     display: block;
     position: relative;
-
     bottom: 0;
     width: 96px;
     height: 40px;
-
     border: 1px solid #47454b;
     box-sizing: border-box;
     border-radius: 4px;
-    /* margin-top: 25px; */
 }
 </style>
 <style scoped>
@@ -261,24 +256,21 @@ export default {
     left: 0px;
     top: 0px;
     margin: 1% 3% 0% 0%;
-    /* dark gre */
-
     border: 1px solid #47454b;
     box-sizing: border-box;
     border-radius: 5px;
+    line-height: 140%;
 }
 .button-filter {
-    /* Rectangle 423 */
     height: 40px;
     width: 116px;
     left: 0px;
     top: 0px;
     margin: 1% 0% 0% 0%;
-    /* dark gre */
-
     border: 1px solid #47454b;
     box-sizing: border-box;
     border-radius: 5px;
+    line-height: 140%;
 }
 .colored {
     background-color: lawngreen;
@@ -286,23 +278,16 @@ export default {
 .rectangle {
     height: 2.410329818725586px;
     width: 21px;
-
-    /* Rectangle 420 */
-
     position: relative;
     left: 68.1%;
     right: 13.79%;
     bottom: 35%;
-
-    /* dark grey */
-
     background: #47454b;
     border-radius: 5px;
 }
 .rectangle2 {
     height: 2.4103260040283203px;
     width: 13.674415588378906px;
-
     border-radius: 5px;
 
     /* Rectangle 420 */
@@ -339,12 +324,8 @@ export default {
     left: 12px;
     top: 14px;
 
-    font-family: Almarai;
-    font-style: normal;
-    font-weight: bold;
     font-size: 14px;
     line-height: 140%;
-    /* or 20px */
 
     display: flex;
     align-items: center;

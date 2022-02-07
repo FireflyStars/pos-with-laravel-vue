@@ -213,7 +213,7 @@ export default {
     box-shadow: inset 0px 0px 4px rgba(37, 40, 43, 0.12);
     max-height: 168px;
     z-index: 1;
-    overflow-y: auto;
+    overflow-y: visible;
     transform-origin: top center;
 }
 .select:after,

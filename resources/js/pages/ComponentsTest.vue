@@ -1,5 +1,7 @@
 <template>
-    <!-- Il faut passer des #value pour options -->
+
+    <select-options v-model="sel1" placeholder="Choose a number" :options="[{value:'',display:''},{value:'1',display: 'One'},{value:'2',display:'Two'}]" name="select2" hint="nice." :valid="true" label="Positive"></select-options>
+
     <CheckBoxMain></CheckBoxMain>
     <Filter
         v-model="allSelectedItems"
@@ -23,6 +25,13 @@
                     { value: 'VUEX', check: false },
                 ],
             },
+            {
+                name: 'Champs 4',
+                options: [
+                    { value: 'new', check: false },
+                    { value: 'text', check: false },
+                ],
+            },
         ]"
         :select_options="[
             {
@@ -41,6 +50,15 @@
                     { value: 'c', display: 'B' },
                 ],
             },
+            {
+                label: 'Select 3',
+                options: [
+                    { value: '', display: '' },
+                    { value: 'x', display: 'X' },
+                    { value: 'y', display: 'Y' },
+                ],
+            },
+           
         ]"
     />
 </template>
@@ -49,14 +67,17 @@
 import { ref } from "vue";
 import Filter from "../components/Filter.vue";
 import CheckBoxMain from "./../components/miscellaneous/CheckBoxMain.vue";
+import SelectOptions from "../components/miscellaneous/SelectOptions.vue";
 export default {
     components: {
         Filter,
         CheckBoxMain,
+        SelectOptions,
     },
     setup() {
         const allSelectedItems = ref([]);
-        return { allSelectedItems };
+        const sel1 = ref([]);
+        return { sel1,allSelectedItems };
     },
 };
 </script>

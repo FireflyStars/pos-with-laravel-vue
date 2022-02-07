@@ -1,3 +1,38 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Almarai');
+
+@font-face {
+  font-family: 'Almarai Bold';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Almarai Book'), url('../fonts/Almarai-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Almarai ExtraBold';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Almarai ExtraBold'), url('../fonts/Almarai-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Almarai Light';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Almarai Light'), url('../fonts/Almarai-Light.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Almarai Regular';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Almarai Regular'), url('../fonts/Almarai-Regular.ttf') format('truetype');
+}
+
+
+
+
+
 @import "~bootstrap/scss/bootstrap";
 @import "~bootstrap-icons/font/bootstrap-icons.css";
 @import '~animate.css/animate.css';

@@ -349,17 +349,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 /* harmony import */ var _components_Filter_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../components/Filter.vue */ "./resources/js/components/Filter.vue");
 /* harmony import */ var _components_miscellaneous_CheckBoxMain_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../components/miscellaneous/CheckBoxMain.vue */ "./resources/js/components/miscellaneous/CheckBoxMain.vue");
+/* harmony import */ var _components_miscellaneous_SelectOptions_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/miscellaneous/SelectOptions.vue */ "./resources/js/components/miscellaneous/SelectOptions.vue");
+
 
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
     Filter: _components_Filter_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
-    CheckBoxMain: _components_miscellaneous_CheckBoxMain_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+    CheckBoxMain: _components_miscellaneous_CheckBoxMain_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    SelectOptions: _components_miscellaneous_SelectOptions_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
   setup: function setup() {
     var allSelectedItems = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)([]);
+    var sel1 = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)([]);
     return {
+      sel1: sel1,
       allSelectedItems: allSelectedItems
     };
   }
@@ -416,7 +421,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_select_options = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("select-options");
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
-    "class": "custom-filter-dropdown",
+    "class": "custom-filter-dropdown almarai_bold_normal",
     tabindex: $props.tabindex
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     "class": "filter-reset",
@@ -482,7 +487,6 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       placeholder: "Choose a number",
       options: select.options,
       name: select.label,
-      valid: true,
       label: select.label
     }, null, 8
     /* PROPS */
@@ -694,13 +698,37 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _component_select_options = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("select-options");
+
   var _component_CheckBoxMain = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("CheckBoxMain");
 
   var _component_Filter = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Filter");
 
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Il faut passer des #value pour options "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_CheckBoxMain), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Filter, {
-    modelValue: $setup.allSelectedItems,
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_select_options, {
+    modelValue: $setup.sel1,
     "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
+      return $setup.sel1 = $event;
+    }),
+    placeholder: "Choose a number",
+    options: [{
+      value: '',
+      display: ''
+    }, {
+      value: '1',
+      display: 'One'
+    }, {
+      value: '2',
+      display: 'Two'
+    }],
+    name: "select2",
+    hint: "nice.",
+    valid: true,
+    label: "Positive"
+  }, null, 8
+  /* PROPS */
+  , ["modelValue"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_CheckBoxMain), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Filter, {
+    modelValue: $setup.allSelectedItems,
+    "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
       return $setup.allSelectedItems = $event;
     }),
     checkboxes_options: [{
@@ -730,6 +758,15 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         value: 'VUEX',
         check: false
       }]
+    }, {
+      name: 'Champs 4',
+      options: [{
+        value: 'new',
+        check: false
+      }, {
+        value: 'text',
+        check: false
+      }]
     }],
     select_options: [{
       label: 'Select',
@@ -754,6 +791,18 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       }, {
         value: 'c',
         display: 'B'
+      }]
+    }, {
+      label: 'Select 3',
+      options: [{
+        value: '',
+        display: ''
+      }, {
+        value: 'x',
+        display: 'X'
+      }, {
+        value: 'y',
+        display: 'Y'
       }]
     }]
   }, null, 8
@@ -781,7 +830,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.custom-filter-dropdown[data-v-1dedfda3] {\r\n    position: relative;\r\n\r\n    text-align: left;\r\n    outline: none;\r\n    width: 307px;\r\n\r\n    max-height: 1000px;\r\n    line-height: 47px;\r\n    float: right;\n}\n.custom-filter-dropdown .items[data-v-1dedfda3] {\r\n    font-family: Almarai;\r\n    color: #47454b;\r\n    font-style: normal !important;\r\n    font-weight: bold !important;\r\n    font-size: 16px !important;\r\n\r\n    border-radius: 0px 0px 6px 6px;\r\n    position: relative;\r\n    background: #eeeeee;\r\n    left: 0;\r\n    right: 0;\r\n    z-index: 1;\r\n    padding: 5% 12%;\r\n    overflow: auto;\r\n    min-height: 500px;\r\n    height: auto !important;\n}\n.custom-filter-dropdown .items .checkboxes[data-v-1dedfda3] {\r\n    font-family: Almarai;\r\n    font-style: normal;\r\n    font-weight: bold;\r\n    font-size: 14px;\r\n    line-height: 140%;\r\n    /* or 20px */\r\n\r\n    /* Medium grey */\r\n\r\n    color: #868686;\r\n    display: flex;\r\n    flex-direction: column;\r\n    margin-bottom: 10px;\n}\n.custom-filter-dropdown .items .checkbox-items[data-v-1dedfda3]:hover {\r\n    background-color: #e0dede;\n}\n.selectHide[data-v-1dedfda3] {\r\n    display: none;\n}\n.text-title[data-v-1dedfda3] {\r\n    margin-bottom: 16px;\r\n    font-style: normal !important;\r\n    font-weight: bold !important;\r\n    font-size: 16px !important;\r\n    line-height: 140% !important;\r\n    /* or 22px */\r\n\r\n    /* dark grey */\r\n\r\n    color: #47454b !important;\n}\n.validate-button[data-v-1dedfda3] {\r\n    /* Auto layout */\r\n    margin: 10% 25% 0% 25%;\r\n    display: block;\r\n    position: relative;\r\n\r\n    bottom: 0;\r\n    width: 96px;\r\n    height: 40px;\r\n\r\n    border: 1px solid #47454b;\r\n    box-sizing: border-box;\r\n    border-radius: 4px;\r\n    /* margin-top: 25px; */\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.almarai_bold_normal[data-v-1dedfda3]{\r\n    font-family: 'Almarai Bold';\r\n   /* font-weight:700; */\r\n   font-style:normal;\n}\n.almarai_extrabold_normal[data-v-1dedfda3]{\r\n    font-family: 'Almarai ExtraBold';\r\n   /* font-weight:800; */\r\n   font-style:normal;\n}\n.almarai_light_normal[data-v-1dedfda3]{\r\n    font-family: 'Almarai Light';\r\n   /* font-weight:300; */\r\n   font-style:normal;\n}\n.almarai_regular_normal[data-v-1dedfda3]{\r\n    font-family: 'Almarai regular';\r\n   /* font-weight:400; */\r\n   font-style:normal;\n}\n.custom-filter-dropdown[data-v-1dedfda3] {\r\n    position: relative;\r\n    text-align: left;\r\n    outline: none;\r\n    width: 307px;\r\n    max-height: 1000px;\r\n    line-height: 47px;\r\n    float: right;\n}\n.custom-filter-dropdown .items[data-v-1dedfda3] {\r\n    color: #47454b;\r\n    font-size: 16px !important;\r\n    border-radius: 0px 0px 6px 6px;\r\n    position: relative;\r\n    background: #eeeeee;\r\n    left: 0;\r\n    right: 0;\r\n    z-index: 1;\r\n    padding: 5% 12%;\r\n    overflow: visible;\r\n    min-height: 500px;\r\n    height: auto !important;\n}\n.custom-filter-dropdown .items .checkboxes[data-v-1dedfda3] {\r\n    font-size: 14px;\r\n    line-height: 140%;\r\n    color: #868686;\r\n    display: flex;\r\n    flex-direction: column;\r\n    margin-bottom: 10px;\n}\n.custom-filter-dropdown .items .checkbox-items[data-v-1dedfda3]:hover {\r\n    background-color: #e0dede;\n}\n.selectHide[data-v-1dedfda3] {\r\n    display: none;\n}\n.text-title[data-v-1dedfda3] {\r\n    margin-bottom: 16px;\r\n    font-size: 16px !important;\r\n    line-height: 140% !important;\r\n    color: #47454b !important;\n}\n.validate-button[data-v-1dedfda3] {\r\n    margin: 10% 25% 0% 25%;\r\n    display: block;\r\n    position: relative;\r\n    bottom: 0;\r\n    width: 96px;\r\n    height: 40px;\r\n    border: 1px solid #47454b;\r\n    box-sizing: border-box;\r\n    border-radius: 4px;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -804,7 +853,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.filter-reset[data-v-1dedfda3] {\r\n    height: 40px;\r\n    width: 116px;\r\n    left: 0px;\r\n    top: 0px;\r\n    margin: 1% 3% 0% 0%;\r\n    /* dark gre */\r\n\r\n    border: 1px solid #47454b;\r\n    box-sizing: border-box;\r\n    border-radius: 5px;\n}\n.button-filter[data-v-1dedfda3] {\r\n    /* Rectangle 423 */\r\n    height: 40px;\r\n    width: 116px;\r\n    left: 0px;\r\n    top: 0px;\r\n    margin: 1% 0% 0% 0%;\r\n    /* dark gre */\r\n\r\n    border: 1px solid #47454b;\r\n    box-sizing: border-box;\r\n    border-radius: 5px;\n}\n.colored[data-v-1dedfda3] {\r\n    background-color: lawngreen;\n}\n.rectangle[data-v-1dedfda3] {\r\n    height: 2.410329818725586px;\r\n    width: 21px;\r\n\r\n    /* Rectangle 420 */\r\n\r\n    position: relative;\r\n    left: 68.1%;\r\n    right: 13.79%;\r\n    bottom: 35%;\r\n\r\n    /* dark grey */\r\n\r\n    background: #47454b;\r\n    border-radius: 5px;\n}\n.rectangle2[data-v-1dedfda3] {\r\n    height: 2.4103260040283203px;\r\n    width: 13.674415588378906px;\r\n\r\n    border-radius: 5px;\r\n\r\n    /* Rectangle 420 */\r\n\r\n    position: relative;\r\n    left: 71.26%;\r\n    right: 16.95%;\r\n    bottom: 25%;\r\n\r\n    /* dark grey */\r\n\r\n    background: #47454b;\r\n    border-radius: 5px;\n}\n.rectangle3[data-v-1dedfda3] {\r\n    height: 2.4103336334228516px;\r\n    width: 6.3488311767578125px;\r\n\r\n    /* Rectangle 422 */\r\n\r\n    position: relative;\r\n    left: 74.42%;\r\n    right: 20.11%;\r\n    bottom: 15%;\r\n\r\n    /* dark grey */\r\n\r\n    background: #47454b;\r\n    border-radius: 5px;\n}\n.text-filter[data-v-1dedfda3] {\r\n    height: 12px;\r\n    width: 69px;\r\n    left: 12px;\r\n    top: 14px;\r\n\r\n    font-family: Almarai;\r\n    font-style: normal;\r\n    font-weight: bold;\r\n    font-size: 14px;\r\n    line-height: 140%;\r\n    /* or 20px */\r\n\r\n    display: flex;\r\n    align-items: center;\r\n\r\n    /* dark grey */\r\n\r\n    color: #47454b;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.filter-reset[data-v-1dedfda3] {\r\n    height: 40px;\r\n    width: 116px;\r\n    left: 0px;\r\n    top: 0px;\r\n    margin: 1% 3% 0% 0%;\r\n    border: 1px solid #47454b;\r\n    box-sizing: border-box;\r\n    border-radius: 5px;\r\n    line-height: 140%;\n}\n.button-filter[data-v-1dedfda3] {\r\n    height: 40px;\r\n    width: 116px;\r\n    left: 0px;\r\n    top: 0px;\r\n    margin: 1% 0% 0% 0%;\r\n    border: 1px solid #47454b;\r\n    box-sizing: border-box;\r\n    border-radius: 5px;\r\n    line-height: 140%;\n}\n.colored[data-v-1dedfda3] {\r\n    background-color: lawngreen;\n}\n.rectangle[data-v-1dedfda3] {\r\n    height: 2.410329818725586px;\r\n    width: 21px;\r\n    position: relative;\r\n    left: 68.1%;\r\n    right: 13.79%;\r\n    bottom: 35%;\r\n    background: #47454b;\r\n    border-radius: 5px;\n}\n.rectangle2[data-v-1dedfda3] {\r\n    height: 2.4103260040283203px;\r\n    width: 13.674415588378906px;\r\n    border-radius: 5px;\r\n\r\n    /* Rectangle 420 */\r\n\r\n    position: relative;\r\n    left: 71.26%;\r\n    right: 16.95%;\r\n    bottom: 25%;\r\n\r\n    /* dark grey */\r\n\r\n    background: #47454b;\r\n    border-radius: 5px;\n}\n.rectangle3[data-v-1dedfda3] {\r\n    height: 2.4103336334228516px;\r\n    width: 6.3488311767578125px;\r\n\r\n    /* Rectangle 422 */\r\n\r\n    position: relative;\r\n    left: 74.42%;\r\n    right: 20.11%;\r\n    bottom: 15%;\r\n\r\n    /* dark grey */\r\n\r\n    background: #47454b;\r\n    border-radius: 5px;\n}\n.text-filter[data-v-1dedfda3] {\r\n    height: 12px;\r\n    width: 69px;\r\n    left: 12px;\r\n    top: 14px;\r\n\r\n    font-size: 14px;\r\n    line-height: 140%;\r\n\r\n    display: flex;\r\n    align-items: center;\r\n\r\n    /* dark grey */\r\n\r\n    color: #47454b;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -873,7 +922,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.trans-select-enter-from[data-v-31289606] {\r\n    opacity: 0;\r\n    transform: scale(0.6);\n}\n.trans-select-enter-to[data-v-31289606] {\r\n    opacity: 1;\r\n    transform: scale(1);\n}\n.trans-select-enter-active[data-v-31289606] {\r\n    transition: all ease 0.2s;\n}\n.trans-select-leave-from[data-v-31289606] {\r\n    opacity: 1;\r\n    transform: scale(1);\n}\n.trans-select-leave-to[data-v-31289606] {\r\n    opacity: 0;\r\n    transform: scale(0.6);\n}\n.trans-select-leave-active[data-v-31289606] {\r\n    transition: all ease 0.2s;\n}\n.select[data-v-31289606] {\r\n    background: #ffffff;\r\n    border: 0.5px solid #e0e0e0;\r\n    box-sizing: border-box;\r\n    border-radius: 5px;\r\n    padding: 0 36px 0 16px;\r\n    height: 40px;\r\n    font-size: 14px;\r\n    display: flex;\r\n    cursor: pointer;\r\n    align-items: center;\r\n    position: relative;\n}\n.select.active[data-v-31289606] {\r\n    background: #eeeeee;\r\n    border: 1px solid #eeeeee;\r\n    outline: 2px #000000 solid;\n}\n.select.active .disp[data-v-31289606] {\r\n    font-weight: 600;\n}\n.select-options[data-v-31289606] {\r\n    position: absolute;\r\n    width: 100%;\r\n    left: 0;\r\n    top: 44px;\r\n    background: #fff;\r\n    box-shadow: inset 0px 0px 4px rgba(37, 40, 43, 0.12);\r\n    max-height: 168px;\r\n    z-index: 1;\r\n    overflow-y: auto;\r\n    transform-origin: top center;\n}\n.select[data-v-31289606]:after,\r\n.select[data-v-31289606]:before {\r\n    content: \" \";\r\n    height: 3px;\r\n    display: block;\r\n    width: 13px;\r\n    background: #868686;\r\n    border-radius: 10px;\r\n    transform: rotate(40deg);\r\n    right: 22px;\r\n    position: absolute;\n}\n.select.active[data-v-31289606]:after,\r\n.select.active[data-v-31289606]:before {\r\n    background: #000000;\n}\n.select[data-v-31289606]:after {\r\n    transform: rotate(-40deg);\r\n    right: 13px;\n}\n.opts[data-v-31289606] {\r\n    height: 56px;\r\n    padding: 17px 0 17px 16px;\r\n    font-size: 16px;\n}\n.opts[data-v-31289606]:hover {\r\n    background: #eeeeee;\n}\n.hint ~ .select[data-v-31289606] {\r\n    margin-bottom: 20px;\n}\n.hint[data-v-31289606] {\r\n    margin-bottom: 20px;\r\n    font-size: 16px;\r\n    color: #757575;\r\n    font-weight: 300;\n}\n.select:not(.active) .placeholder[data-v-31289606] {\r\n    color: #868686;\n}\n.select.selected[data-v-31289606] {\r\n    background: #f8f8f8;\r\n    font-size: 16px;\n}\n.select[data-v-31289606]:active {\r\n    background-color: #e0e0e0;\r\n    border-color: #e0e0e0;\n}\n.disabled[data-v-31289606] {\r\n    pointer-events: none;\n}\n.select-label.disabled[data-v-31289606] {\r\n    color: #c3c3c3;\n}\n.select.valid[data-v-31289606] {\r\n    background-color: #f7fbf6;\n}\n.select.valid .disp[data-v-31289606] {\r\n    color: #42a71e;\n}\n.select.valid[data-v-31289606]:before,\r\n.select.valid[data-v-31289606]:after {\r\n    background-color: #42a71e;\n}\n.select.invalid[data-v-31289606] {\r\n    background-color: #ffefed;\n}\n.select.invalid .disp[data-v-31289606] {\r\n    color: #eb5757;\n}\n.select.invalid[data-v-31289606]:before,\r\n.select.invalid[data-v-31289606]:after {\r\n    background-color: #eb5757;\n}\n.select.disabled[data-v-31289606] {\r\n    background-color: #f8f8f8;\n}\n.select.disabled .disp[data-v-31289606] {\r\n    color: #c3c3c3;\n}\n.select.disabled[data-v-31289606]:before,\r\n.select.disabled[data-v-31289606]:after {\r\n    background-color: #c3c3c3;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.trans-select-enter-from[data-v-31289606] {\r\n    opacity: 0;\r\n    transform: scale(0.6);\n}\n.trans-select-enter-to[data-v-31289606] {\r\n    opacity: 1;\r\n    transform: scale(1);\n}\n.trans-select-enter-active[data-v-31289606] {\r\n    transition: all ease 0.2s;\n}\n.trans-select-leave-from[data-v-31289606] {\r\n    opacity: 1;\r\n    transform: scale(1);\n}\n.trans-select-leave-to[data-v-31289606] {\r\n    opacity: 0;\r\n    transform: scale(0.6);\n}\n.trans-select-leave-active[data-v-31289606] {\r\n    transition: all ease 0.2s;\n}\n.select[data-v-31289606] {\r\n    background: #ffffff;\r\n    border: 0.5px solid #e0e0e0;\r\n    box-sizing: border-box;\r\n    border-radius: 5px;\r\n    padding: 0 36px 0 16px;\r\n    height: 40px;\r\n    font-size: 14px;\r\n    display: flex;\r\n    cursor: pointer;\r\n    align-items: center;\r\n    position: relative;\n}\n.select.active[data-v-31289606] {\r\n    background: #eeeeee;\r\n    border: 1px solid #eeeeee;\r\n    outline: 2px #000000 solid;\n}\n.select.active .disp[data-v-31289606] {\r\n    font-weight: 600;\n}\n.select-options[data-v-31289606] {\r\n    position: absolute;\r\n    width: 100%;\r\n    left: 0;\r\n    top: 44px;\r\n    background: #fff;\r\n    box-shadow: inset 0px 0px 4px rgba(37, 40, 43, 0.12);\r\n    max-height: 168px;\r\n    z-index: 1;\r\n    overflow-y: visible;\r\n    transform-origin: top center;\n}\n.select[data-v-31289606]:after,\r\n.select[data-v-31289606]:before {\r\n    content: \" \";\r\n    height: 3px;\r\n    display: block;\r\n    width: 13px;\r\n    background: #868686;\r\n    border-radius: 10px;\r\n    transform: rotate(40deg);\r\n    right: 22px;\r\n    position: absolute;\n}\n.select.active[data-v-31289606]:after,\r\n.select.active[data-v-31289606]:before {\r\n    background: #000000;\n}\n.select[data-v-31289606]:after {\r\n    transform: rotate(-40deg);\r\n    right: 13px;\n}\n.opts[data-v-31289606] {\r\n    height: 56px;\r\n    padding: 17px 0 17px 16px;\r\n    font-size: 16px;\n}\n.opts[data-v-31289606]:hover {\r\n    background: #eeeeee;\n}\n.hint ~ .select[data-v-31289606] {\r\n    margin-bottom: 20px;\n}\n.hint[data-v-31289606] {\r\n    margin-bottom: 20px;\r\n    font-size: 16px;\r\n    color: #757575;\r\n    font-weight: 300;\n}\n.select:not(.active) .placeholder[data-v-31289606] {\r\n    color: #868686;\n}\n.select.selected[data-v-31289606] {\r\n    background: #f8f8f8;\r\n    font-size: 16px;\n}\n.select[data-v-31289606]:active {\r\n    background-color: #e0e0e0;\r\n    border-color: #e0e0e0;\n}\n.disabled[data-v-31289606] {\r\n    pointer-events: none;\n}\n.select-label.disabled[data-v-31289606] {\r\n    color: #c3c3c3;\n}\n.select.valid[data-v-31289606] {\r\n    background-color: #f7fbf6;\n}\n.select.valid .disp[data-v-31289606] {\r\n    color: #42a71e;\n}\n.select.valid[data-v-31289606]:before,\r\n.select.valid[data-v-31289606]:after {\r\n    background-color: #42a71e;\n}\n.select.invalid[data-v-31289606] {\r\n    background-color: #ffefed;\n}\n.select.invalid .disp[data-v-31289606] {\r\n    color: #eb5757;\n}\n.select.invalid[data-v-31289606]:before,\r\n.select.invalid[data-v-31289606]:after {\r\n    background-color: #eb5757;\n}\n.select.disabled[data-v-31289606] {\r\n    background-color: #f8f8f8;\n}\n.select.disabled .disp[data-v-31289606] {\r\n    color: #c3c3c3;\n}\n.select.disabled[data-v-31289606]:before,\r\n.select.disabled[data-v-31289606]:after {\r\n    background-color: #c3c3c3;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
