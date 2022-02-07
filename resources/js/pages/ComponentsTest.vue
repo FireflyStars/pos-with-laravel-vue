@@ -1,7 +1,5 @@
 <template>
-
     <select-options v-model="sel1" placeholder="Choose a number" :options="[{value:'',display:''},{value:'1',display: 'One'},{value:'2',display:'Two'}]" name="select2" hint="nice." :valid="true" label="Positive"></select-options>
-
     <CheckBoxMain></CheckBoxMain>
     <Filter
         v-model="allSelectedItems"
