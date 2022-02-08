@@ -13,22 +13,29 @@
 
 
 <div class="searchBar">
-    <input id="searchQueryInput" type="text" name="searchQueryInput" placeholder="Search" value="" />
+    <input id="searchQueryInput" type="text" name="searchQueryInput" placeholder="Recherche ..." value="" />
     <button id="searchQuerySubmit" type="submit" name="searchQuerySubmit">
       <svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#666666" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" />
       </svg>
     </button>
   </div>
 
+<div class="test">
+
+</div>
+
 <div class="rendez-vous-btn">
 
-<button type="button" class="btn btn-orange">
+<button type="button" class="btn btn-orange2">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M11 14.062V20H13V14.062C16.946 14.554 20 17.92 20 22H4C4.00003 20.0514 4.71119 18.1698 6 16.7083C7.28882 15.2467 9.0667 14.3058 11 14.062ZM12 13C8.685 13 6 10.315 6 7C6 3.685 8.685 1 12 1C15.315 1 18 3.685 18 7C18 10.315 15.315 13 12 13Z" fill="white"/>
 </svg>
 
 Nouveau Rendez Vous
 </button>
+</div>
+<div class="test">
+
 </div>
 <div class="devis-btn">
 <button type="button" class="btn btn-orange">
@@ -68,15 +75,25 @@ export default {
     max-height: 38px;
     overflow: hidden;
     text-overflow: ellipsis
+}
+.btn-orange2{
+    background-color:#E8581BB2;
+    font-family: Open sans-serif;
+    max-height: 38px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
 }
+
+
 .rendez-vous-btn{
+    padding-top: 2rem;
 /* padding-top: 10px;
 height: fit-content; */
 }
 .transparent-search{
     background: transparent;
-    border: #fff;
+    border: #FFFFFF;
     border-radius: 25px;
 }
 
@@ -85,19 +102,24 @@ height: fit-content; */
   display: flex;
   flex-direction: row;
   align-items: center;
-   background: transparent;
-    border: #fff;
+  background: transparent;
+  border: #FFFFFF;
+  padding-left: 50px;
 }
 
 #searchQueryInput {
   width: 100%;
-  height: 30px;
+  height: 25px;
   background: none;
   outline: none;
-  border: #fff;
-  border-radius: 0.25rem;
-  padding: 0 3.5rem 0 1.5rem;
+  border: 0.5px solid #FFFFFF;
+  /* border: #fff; */
+  border-radius: 0.75rem;
+  padding: 0 0 0 1rem;
   font-size: 1rem;
+  color: #fff;
+   overflow: hidden;
+  text-overflow: ellipsis
 }
 
 #searchQuerySubmit {
@@ -120,7 +142,7 @@ height: fit-content; */
 }
 .navbar{
      display: grid;
-     grid-template-columns: 20% 40% 10% 15% 12% 0.5%;
+     grid-template-columns: 20% 40% 12% 1% 14% 0.5% 12% 0.5%;
      grid-template-rows: max-content;
 
      background: #070113;
