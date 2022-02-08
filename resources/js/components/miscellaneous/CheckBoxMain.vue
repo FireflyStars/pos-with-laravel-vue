@@ -16,7 +16,8 @@
 </template>
 
 <script>
-import { ref } from "@vue/reactivity";
+import { ref} from "@vue/reactivity";
+
 import CheckBox from './CheckBox.vue'
 export default {
 name: "CheckBoxMain",
@@ -31,19 +32,26 @@ name: "CheckBoxMain",
                      { id:4,value:'AttenteClient',check:false}
       ]);
 
-        const getSelectedValue = (item) => {
-            if(item.check==true){
-                // adding with delimeter
-            selectedValue.value+=item.value+',';
-            console.log(selectedValue.value);
-            }
-            // removing values
 
-        };
+        const getSelectedValue = (item) => {
+         selectedValue.value="";
+         myobj.value.forEach((element) => {
+
+             if(element.check==true){
+            // console.log(element.check);
+            selectedValue.value+=element.value+',';
+
+             }
+
+
+        });
+        //  console.log(selectedValue.value);
+        }
           return {
                  myobj, getSelectedValue,selectedValue
         };
     }
+
 }
 
 </script>
