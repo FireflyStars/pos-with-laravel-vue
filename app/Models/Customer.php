@@ -18,4 +18,8 @@ class Customer extends Model
     public function addresses(){
         return $this->hasMany(Address::class);
     }
+
+    public function contacts(){
+        return $this->hasMany(Contact::class);
+    }
 }

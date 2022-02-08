@@ -8,6 +8,7 @@ use App\Models\Ged;
 use App\Models\Order;
 use App\Models\OrderZone;
 use App\Models\Customer;
+use App\Models\Contact;
 use App\Models\EventStatus;
 use App\Models\EventType;
 use App\Models\EventOrigin;
@@ -20,6 +21,7 @@ use App\Models\Status;
 use App\Models\User;
 use App\Traits\LcdtLog;
 use App\Traits\GedFileProcessor;
+use App\Traits\Tools;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -32,6 +34,7 @@ class ApiController extends Controller
 
     use LcdtLog;
     use GedFileProcessor;
+    use Tools;
 
     public function index(Request $request){
 
@@ -256,6 +259,41 @@ class ApiController extends Controller
             return $isLoggedIn;
         }
     }
+    public function DeleteGedDetail(Request $request){
+        $Parameters=$request->post('Parameters');
+        $SessionID=$request->post('SessionID');
+        $AccountKey=$request->post('AccountKey');
+
+        $valid=$this->isValidAccountKeySessionID($request);
+        if($valid!==true)return $valid;
+        $isLoggedIn=$this->checkLogin($request);
+
+
+
+        if($isLoggedIn===true){
+            $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
+            $affiliate=$lcdtapp_api_instance->user->affiliate;
+            if($affiliate==null)
+                return $this->response(0,null,'Unable to delete ged detail.','User not associated to an affiliate');
+
+            if(!isset($Parameters['ged_detail_id'])||$this->isBlank($Parameters['ged_detail_id'])){
+                return $this->response(0,null,'ged_detail_id is required.');   
+            }
+            $gedDetail=GedDetail::where('id','=',$Parameters['ged_detail_id'])->first();
+            if($gedDetail==null)
+                return $this->response(0,null,'No ged detail found.');
+            $order=$gedDetail->ged->order;     
+
+            if($order->affiliate_id!=$affiliate->id){
+                    return $this->response(0,null,'Ged detail is not linked to current affiliate.');   
+            }
+            $gedDetail->delete();
+            return $this->response();
+         
+        }else{
+            return $isLoggedIn;
+        }
+    }
     public function GetCustomer(Request $request){
         $Parameters=$request->post('Parameters');
         $SessionID=$request->post('SessionID');
@@ -284,6 +322,40 @@ class ApiController extends Controller
                 return $this->response(0,null,'Customer does not belong to user\'s affiliate.'); 
                 $customer->makeHidden(['created_at','updated_at','deleted_at']);
             return $this->response(1,$customer);
+        }else{
+            return $isLoggedIn;
+        }
+    }
+    public function GetCustomerContacts(Request $request){
+        $Parameters=$request->post('Parameters');
+        $SessionID=$request->post('SessionID');
+        $AccountKey=$request->post('AccountKey');
+
+        $valid=$this->isValidAccountKeySessionID($request);
+        if($valid!==true)return $valid;
+        $isLoggedIn=$this->checkLogin($request);
+
+
+
+        if($isLoggedIn===true){
+            $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
+            $affiliate=$lcdtapp_api_instance->user->affiliate;
+            if($affiliate==null)
+                return $this->response(0,null,'Unable to fetch customer.','User not associated to an affiliate');
+
+            if(!isset($Parameters['customeruuid'])||$this->isBlank($Parameters['customeruuid'])){
+                return $this->response(0,null,'Customer UUID is required.');   
+            }
+            $customer=Customer::where('customeruuid','=',$Parameters['customeruuid'])->first();
+            if($customer==null)
+                return $this->response(0,null,'No customer found.'); 
+          
+            if($customer->affiliate_id!=$affiliate->id)
+                return $this->response(0,null,'Customer does not belong to user\'s affiliate.'); 
+           
+            $customerContacts=$customer->contacts();
+
+            return $this->response(1,$customerContacts);
         }else{
             return $isLoggedIn;
         }
@@ -535,7 +607,21 @@ public function SaveEvent(Request $request){
         return $this->response(0,null,'Event origin id is required.');
     }
 
-
+    if($this->isBlank($Parameters['contact_id'])){
+        if(!isset($Parameters['contact_phone'])||$this->isBlank($Parameters['contact_phone'])){
+            return $this->response(0,null,'Contact phone is required.');
+        }
+        if(!isset($Parameters['contact_email'])||$this->isBlank($Parameters['contact_email'])){
+            return $this->response(0,null,'Contact email is required.');
+        }
+        if(!$this->validateEmail($Parameters['contact_email'])){
+            return $this->response(0,null,'Contact email is invalid.');
+        }
+    }else{
+        $contact=Contact::find($Parameters['contact_id']);
+        if($contact->customer_id!=$Parameters['customer_id'])
+        return $this->response(0,null,'Contact does not belong to customer.');
+    }
     if($isLoggedIn===true){
   
         $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);

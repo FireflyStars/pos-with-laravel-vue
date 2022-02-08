@@ -46,7 +46,7 @@
     cursor: pointer;
  }
     .toaster.danger{
-        background:var(--lcdtOrange);
+        background:var(--lcdtRed);
     }
     .toaster.success{
         background:rgba(66, 167, 30, 0.95);

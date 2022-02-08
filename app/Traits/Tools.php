@@ -133,4 +133,8 @@ trait Tools
 
         return substr($result, 0, $length);
     }
+
+    function validateEmail($str) {
+        return (!preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $str)) ? FALSE : TRUE;
+    }
 }
