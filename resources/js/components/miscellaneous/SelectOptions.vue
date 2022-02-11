@@ -9,7 +9,7 @@
         <span
             class="disp"
             :class="{
-                placeholder: current_display == '',
+                _placeholder: current_display == '',
                 disabled: disabled == true,
             }"
             @click.self="selectclick"

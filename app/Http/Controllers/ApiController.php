@@ -352,10 +352,10 @@ class ApiController extends Controller
           
             if($customer->affiliate_id!=$affiliate->id)
                 return $this->response(0,null,'Customer does not belong to user\'s affiliate.'); 
-           
+         
             $customerContacts=$customer->contacts();
 
-            return $this->response(1,$customerContacts);
+            return $this->response(1,$customerContacts->get()->makeHidden(['created_at','updated_at','deleted_at']));
         }else{
             return $isLoggedIn;
         }
@@ -632,7 +632,7 @@ public function SaveEvent(Request $request){
             return $this->response(0,null,'Event not found.');
     
             if($event->user_id!=$lcdtapp_api_instance->user_id){
-                return $this->response(0,null,'Unable to save, event not affected to current user.');
+                return $this->response(0,null,'Unable to save', 'event not affected to current user.');
             }
            
         }
@@ -656,8 +656,22 @@ public function SaveEvent(Request $request){
         $event=new Event();
 
         $this->l('API SAVE EVENT',json_encode($Parameters),$lcdtapp_api_instance->user->id);
+        $contact=new Contact();
+        if(!isset($Parameters['contact_id'])||$this->isBlank($Parameters['contact_id'])){
+            $contact->email=$Parameters['contact_email'];
+            $contact->mobile=$Parameters['contact_phone'];
+            $contact->telephone=$Parameters['contact_phone'];
+            $contact->customer_id=$Parameters['customer_id'];
+            $contact->address_id=$Parameters['address_id'];
+            $customer=Customer::find($Parameters['customer_id']);
+            $contact->name=$customer->firstname.' '.$customer->name;
+            $contact->type='API';
+            $contact->comment='created from api';
+            $contact->save();
+        }
 
         $event->customer_id=$Parameters['customer_id'];
+        $event->contact_id=isset($Parameters['contact_id'])?$Parameters['contact_id']:$contact->id;
         $event->event_type_id=$Parameters['event_type_id'];
         $event->affiliate_id=$lcdtapp_api_instance->user->affiliate->id;
         $event->name=$Parameters['name'];
@@ -695,9 +709,6 @@ public function SaveDevis(Request $request){
     if(!isset($Parameters['event_id'])||$this->isBlank($Parameters['event_id'])){
         return $this->response(0,null,'Missing event_id.');
     }
-    if(!isset($Parameters['lang_id'])||$this->isBlank($Parameters['lang_id'])){
-        return $this->response(0,null,'Missing lang_id.');
-    }
 
     if(isset($Parameters['order_zones'])&&is_array($Parameters['order_zones'])){
        if(!empty($Parameters['order_zones'])){
@@ -727,13 +738,13 @@ public function SaveDevis(Request $request){
 
                         if(isset($ged_detail['data'])&&!$this->isBlank($ged_detail['data']))
                             if(!isset($ged_detail['human_readable_filename'])||$this->isBlank($ged_detail['human_readable_filename'])){
-                                return $this->response(0,null,'Ged file name is required.');
+                                return $this->response(0,null,'Ged detail file name is required.');
                             }
                         if(!isset($ged_detail['latitude'])||$this->isBlank($ged_detail['latitude'])){
-                            return $this->response(0,null,'Ged latitude is required.');
+                            return $this->response(0,null,'Ged detail latitude is required.');
                         }
                         if(!isset($ged_detail['longitude'])||$this->isBlank($ged_detail['longitude'])){
-                            return $this->response(0,null,'Ged longitude is required.');
+                            return $this->response(0,null,'Ged detail longitude is required.');
                         }
     
                     }
@@ -756,8 +767,8 @@ public function SaveDevis(Request $request){
             if($order==null)
                 return $this->response(0,null,'Order not found.');
     
-            if($event->user_id!=$lcdtapp_api_instance->user_id){
-                return $this->response(0,null,'Unable to save, event not affected to current user.');
+            if($event->affiliate_id!=$lcdtapp_api_instance->user->affiliate->id){
+                return $this->response(0,null,'Unable to save', 'event not affected to current user\'s franchise.');
             }
            
         }
@@ -789,11 +800,11 @@ if(isset($params['order_zones'])&&is_array($params['order_zones'])){
                     }else{
                         $orderZone=OrderZone::find($order_zone['id']);
                         if($orderZone==null){
-                            return $this->response(0,null,'Unable to save', 'Order zone id'.$order_zone['id'].' not found.');
+                            return $this->response(0,null,'Unable to save', 'Order zone id '.$order_zone['id'].' not found.');
                         }
 
                         if($order!=null&&$order->id>0 && $orderZone->order_id!=$order->id){
-                            return $this->response(0,null,'Unable to save', 'Order zone id'.$orderZone->id.' not linked to order '.$order->id.'.');
+                            return $this->response(0,null,'Unable to save', 'Order zone id '.$orderZone->id.' not linked to order '.$order->id.'.');
                         }
                     }
         
@@ -806,10 +817,15 @@ if(isset($params['order_zones'])&&is_array($params['order_zones'])){
                             if($ged_detail['id']>0){
                                     $gedDetails=GedDetail::find($ged_detail['id']);
                                     if($gedDetails==null)
-                                        return $this->response(0,null,'Unable to save', 'ged detail with id'.$ged_detail['id'].' not found.');
+                                        return $this->response(0,null,'Unable to save', 'Ged detail with id '.$ged_detail['id'].' not found.');
                                     $ged=Ged::find($gedDetails->ged_id);
                                     if($order!=null&&$order->id>0 && $ged->order_id!=$order->id)
-                                        return $this->response(0,null,'Unable to save', 'ged detail with id'.$ged_detail['id'].' not linked to order '.$order->id.'.');
+                                        return $this->response(0,null,'Unable to save', 'Ged detail with id'.$ged_detail['id'].' not linked to order '.$order->id.'.');
+                            }
+
+                            if(isset($ged_detail['order_ouvrage_id'])&&!$this->isBlank($ged_detail['order_ouvrage_id'])){
+                                if(!isset($ged_detail['timeline'])||!in_array($ged_detail['timeline'],['AVANT','APRES']))
+                                return $this->response(0,null,'Unable to save', 'Please specify a valid timeline for order ouvrage id '.$ged_detail['order_ouvrage_id'].'.');
                             }
                         }
 
@@ -817,6 +833,8 @@ if(isset($params['order_zones'])&&is_array($params['order_zones'])){
                 }
             }
         }
+
+       
             //end validation
             //if validation successful, save
 
@@ -827,7 +845,7 @@ if(isset($params['order_zones'])&&is_array($params['order_zones'])){
                 $order->generateReference();
                 $order->affiliate_id=$lcdtapp_api_instance->user->affiliate->id;
 
-                $order->lang_id=$Parameters['lang_id'];
+                $order->lang_id=!isset($Parameters['lang_id'])?1:$Parameters['lang_id'];
                 $order->customer_id=$event->customer_id;
          
             }
@@ -882,6 +900,7 @@ if(isset($params['order_zones'])&&is_array($params['order_zones'])){
                                     $gedDetail=GedDetail::find($ged_detail['id']);   
                                 }
                                 $gedDetail->order_ouvrage_id=isset($ged_detail['order_ouvrage_id'])?$ged_detail['order_ouvrage_id']:0;
+                                $gedDetail->timeline=isset($ged_detail['order_ouvrage_id'])?$ged_detail['timeline']:null;
                                 $gedDetail->ged_category_id=isset($ged_detail['ged_category_id'])?$ged_detail['ged_category_id']:0;
                                 $gedDetail->order_zone_id=$orderZone->id;
                                 $gedDetail->description=isset($ged_detail['description'])?$ged_detail['description']:'';

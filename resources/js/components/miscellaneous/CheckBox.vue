@@ -37,6 +37,7 @@
         height: 20px;
         display: inline-block;
         position: relative;
+        border: #868686 2px solid;
     }
     span.chkbox.checked{
         background: #47454B;

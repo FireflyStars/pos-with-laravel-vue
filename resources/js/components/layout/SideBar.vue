@@ -108,7 +108,7 @@
 
     import {ref,computed,watch} from 'vue';
     import { useRouter, useRoute } from 'vue-router'
-    import Icon from './../Icon.vue';
+
     import axios from 'axios';
     import {useStore} from 'vuex';
     import {
@@ -121,14 +121,9 @@
 
     export default {
         name: "SideBar",
-        components:{Icon},
+        components:{},
         setup(){
             const store=useStore();
-            let colorIconDefault=ref("#FFFFFF");
-             let colorIconClicked=ref("#FFA500");
-             let colorIcon=ref("#FFA500");
-             const isClicked=ref('false');
-             let isActive=ref('false');
             const uname=ref(window.sessionStorage.getItem('name'));
             const initials= ref((uname.value!=null?uname.value.substr(0,2):''));
             const router = useRouter();
@@ -137,7 +132,6 @@
             const route_name=ref(route.name);
             watch(() =>route.name, (current_val, previous_val) => {
                 route_name.value=current_val;
-                 console.log(route_name.value);
                 // emit('checkbox-clicked', current_val,props.id,props.name)
             });
             function logout(){
@@ -163,12 +157,6 @@
                     store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
                 });
             }
-            function selectedIcon(){
-                console.log('item selected');
-                console.log(route_name.value);;
-                console.log(isActive.value);
-
-            }
             function showmenu() {
                 dispmenu.value=!dispmenu.value;
             }
@@ -176,13 +164,7 @@
                 return store.getters[`${SIDEBAR_MODULE}${SIDEBAR_GET_SLIDEIN}`];
             });
 
-            function gotoPermissions(){
-                router.push({
-                    name:'Permissions',
-                    params: {
 
-                    },});
-            }
             return {
                 uname,
                 initials,
@@ -191,16 +173,8 @@
                 dispmenu,
                 slidesidebar,
 
-                gotoPermissions,
                 route_name,
-                router,
-                isActive,
-
-                selectedIcon,colorIcon,colorIconClicked,isClicked,colorIconDefault
-
-
-
-
+                router
             }
         }
     }
