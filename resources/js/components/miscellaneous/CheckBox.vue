@@ -38,6 +38,9 @@ export default {
 </script>
 
 <style scoped>
+    .checkbox-items {
+        cursor: pointer;
+    }
     span.chkbox{
         width: 20px;
         height: 20px;
@@ -78,7 +81,6 @@ export default {
         border:none;
     }
     .chkbox_wrap {
-        cursor: pointer;
         display: flex;
         align-items: center;
         gap: 0.5rem;

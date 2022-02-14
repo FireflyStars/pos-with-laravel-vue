@@ -24,5 +24,6 @@
         justify-items: center;
         align-items: center;
         gap: 3px;
+        box-sizing: border-box;
     }
 </style>

@@ -14,7 +14,7 @@
                 :class="[isColored]"
                 textClass="text-filter"
                 title="Filtre"
-                @click.prevent="toggleActiveItem"
+                @click.prevent="toggleActiveItem(id)"
                 :style="{
                     background: customActiveColor
                 }"
@@ -23,56 +23,61 @@
             </BaseButton>
         </div>
 
-        <div class="items" :class="{ 'selectHide': !open('filter') }">
 
-            <div
-                class="checkboxes"
-                v-for="(checkbox, index) of checkboxOptions"
-                :key="index"
-            >
-                <div class="text-title">{{ checkbox.name }} :</div>
+        <Dropdown :id="id">
+            <div class="items">
+
                 <div
-                    class="checkbox-items"
-                    v-for="option of checkbox.options"
-                    :key="option.id"
+                    class="checkboxes"
+                    v-for="(checkbox, index) of checkboxOptions"
+                    :key="index"
                 >
-                    <CheckBox
-                        :id="option.id"
-                        :checked="option.check"
-                        :name="option.value"
-                        :title="option.value"
-                        @changed="updateSelectedCheckboxes($event, checkbox.id)"
-                    />
+                    <div class="text-title">{{ checkbox.name }} :</div>
+                    <div
+                        class="checkbox-items"
+                        v-for="option of checkbox.options"
+                        :key="option.id"
+                    >
+                        <CheckBox
+                            :id="option.id"
+                            :checked="option.check"
+                            :name="option.value"
+                            :title="option.value"
+                            @changed="updateSelectedCheckboxes($event, checkbox.id)"
+                        />
 
+                    </div>
                 </div>
+
+                <SelectBox
+                    v-for="(select, index) of selectOptions"
+                    :key="index"
+                    :placeholder="select.label"
+                    :options="select.options"
+                    :name="select.label"
+                    :label="select.label"
+                    v-model="selectedOptionItems[index]"
+                />
+
+                <BaseButton
+                    class="validate-button text-title"
+                    type="submit"
+                    title="Valider"
+                    @click.prevent="validate"
+                />
+
             </div>
+        </Dropdown>
 
-            <SelectBox
-                v-for="(select, index) of selectOptions"
-                :key="index"
-                :placeholder="select.label"
-                :options="select.options"
-                :name="select.label"
-                :label="select.label"
-                v-model="selectedOptionItems[index]"
-            />
 
-            <BaseButton
-                class="validate-button text-title"
-                type="submit"
-                title="Valider"
-                @click.prevent="validate"
-            />
 
-        </div>
     </div>
 </template>
 
 <script>
 
 import { ref, computed } from "vue"
-import { useStore } from 'vuex'
-import { ACTIVE_ITEM, SET_TOGGLER_ITEM, TOGGLER_MODULE } from '../store/types/types'
+import useToggler from '../composables/useToggler'
 
 export default {
 
@@ -105,17 +110,16 @@ export default {
 
     setup(props, { emit, attrs }) {
 
-        const store = useStore()
+        const { toggleActiveItem } = useToggler()
 
         const isActive = ref(false)
         const defaultColor = 'lawgreen'
 
-        const activeItem = computed(() => store.getters[`${[TOGGLER_MODULE]}/${[ACTIVE_ITEM]}`])
-
-
         const customActiveColor = computed(() => {
             return isActive.value ? `${attrs.activeColor} !important` || defaultColor : ''
         })
+
+        const id = computed(() => attrs.id || 'filtersMain')
 
         const selectedOptionItems = computed(() => props.selectedOptions)
 
@@ -131,16 +135,6 @@ export default {
             isActive.value = false
             return ''
         })
-
-        const open = (id = '') => {
-            return id == activeItem.value.id && activeItem.value.status
-        }
-
-        const toggleActiveItem = () => {
-            const status = !activeItem.value.status
-            store.dispatch(`${[TOGGLER_MODULE]}/${[SET_TOGGLER_ITEM]}`, { id: 'filter', status })
-        }
-
 
         const resetFilter = () => {
             const checkboxOptions = [ ...props.checkboxOptions ]
@@ -181,7 +175,7 @@ export default {
        
 
         return {
-            open,
+            id,
             validate,
             isColored,
             resetFilter,
@@ -236,7 +230,6 @@ export default {
     font-size: 16px !important;
     border-radius: 0px 0px 6px 6px;
     position: relative;
-    background: #eeeeee;
     left: 0;
     right: 0;
     z-index: 1;
@@ -254,13 +247,7 @@ export default {
     margin-bottom: 10px;
     text-transform: uppercase;
 }
-/* .custom-filter-dropdown .items .checkbox-items:hover {
-    background-color: #e0dede;
-} */
 
-.selectHide {
-    display: none;
-}
 .text-title {
     margin-bottom: 16px;
     font-size: 16px !important;

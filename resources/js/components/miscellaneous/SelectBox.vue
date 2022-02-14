@@ -7,20 +7,19 @@
             {{ label }}
         </label
     >
-    <div class="select noselect" :class="cname" @click.self="selectclick">
-        <span
+    <div class="select noselect" :class="classNames" @click.self="toggle"><span
             class="disp"
             :class="{
                 _placeholder: current_display == '',
                 disabled: disabled == true,
             }"
-            @click.self="selectclick"
-            >
+            @click.self="toggle"
+   >
             <template v-if="current_display == ''">{{ placeholder }}</template>
             <template v-else>{{ current_display }}</template>
         </span>
         <transition name="trans-select">
-            <div class="select-options" v-if="sel === name">
+            <div class="select-options" v-if="open">
                 <slot>
                     <div
                         class="opts"
@@ -41,6 +40,7 @@
 
 import { ref, watch, computed, nextTick, onMounted } from "vue"
 import { useStore } from "vuex"
+
 
 import {
     GET_CURRENT_SELECT,
@@ -72,7 +72,7 @@ export default {
     setup(props, context) {
 
         const store = useStore()
-
+        const open = ref(false)
         const current = ref("")
         const current_display = ref("")
 
@@ -98,6 +98,7 @@ export default {
             context.emit("update:modelValue", props.options[index].value);
 
             store.commit(`${SELECT_MODULE}${SET_CURRENT_SELECT}`, "");
+            toggle()
         }
 
         const setCurrentDisplay = () => {
@@ -125,49 +126,32 @@ export default {
         )
 
 
-        const cname = ref("")
-
-        const classNames = () =>
-            `${
-                typeof props.classnames != "undefined" ? props.classnames : ""
-            } ${sel.value === props.name ? "active" : ""} ${
-                current_display.value != "" ? "selected" : ""
-            } ${props.disabled == true ? "disabled" : ""} ${
-                props.valid === true
-                    ? "valid"
+        const classNames = computed(() => {
+            let classes = ''
+            classes += typeof props.classnames != " undefined " ? props.classnames : ""
+            classes += open.value ? " active " : ""
+            classes +=  current_display.value != "" ? " selected " : ""
+            classes += props.disabled == true ? " disabled " : ""
+            classes += props.valid === true
+                    ? " valid "
                     : props.valid === false
-                    ? "invalid"
+                    ? " invalid "
                     : ""
-            }`
+            return classes        
+        })
 
-        cname.value = classNames();
-        watch(
-            () => sel.value,
-            () => {
-                cname.value = classNames();
-            }
-        );
-
-        watch(
-            () => current_display.value,
-            (l) => {
-                cname.value = classNames();
-            }
-        );
-        watch(
-            () => props.disabled,
-            () => {
-                cname.value = classNames();
-                store.commit(`${SELECT_MODULE}${SET_CURRENT_SELECT}`, "");
-            }
-        );
+        const toggle = () => {
+            open.value = !open.value
+        }
 
         return {
+            toggle,
+            open,
+            classNames,
             selectclick,
             select,
             current,
             current_display,
-            cname,
             sel,
         };
     },

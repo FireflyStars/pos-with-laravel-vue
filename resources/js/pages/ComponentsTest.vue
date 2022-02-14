@@ -21,11 +21,12 @@
                 width="250px"
                 search
                 v-model:options="options"
+                id="checkBoxMain"
             />
         </div>
         
         <div class="col m-2">
-            <h4>App Filters</h4>
+            <h4 class="text-center">App Filters</h4>
             <Filter 
                 v-model:checkboxOptions="filterCheckboxOptions"
                 v-model:selectOptions="filterSelectOptions"
@@ -34,7 +35,34 @@
             />
         </div>
 
+    </div>
 
+    <div class="row m-0">
+        <div class="col">
+            <h4>Dropdown Item</h4>
+            <div class="position-relative">
+                <BaseButton 
+                    class="mt-1"
+                    title="Dropdown Trigger"
+                    @click="toggleActiveItem('demoDropdown')"
+                />
+                <Dropdown 
+                    id="demoDropdown"
+                    height="200px"
+                    background="transparent"
+                >
+                    <ul class="list-group w-100">
+                        <li class="list-group-item list-group-item-action">Item 1</li>
+                        <li class="list-group-item list-group-item-action">Item 2</li>
+                        <li class="list-group-item list-group-item-action">Item 3</li>
+                        <li class="list-group-item list-group-item-action">Item 4</li>
+                    </ul>
+                </Dropdown>
+            </div>
+        </div>
+        <div class="col">
+        </div>
+        <div class="col"></div>
     </div>
 
     
@@ -45,15 +73,20 @@
 import { ref, reactive } from "vue";
 import Filter from "../components/Filter.vue"
 import CheckBoxMain from "./../components/miscellaneous/CheckBoxMain.vue"
+import CheckBoxMainOld from "./../components/miscellaneous/CheckBoxMainOld.vue"
+import useToggler from '../composables/useToggler'
 
 export default {
 
     components: {
         Filter,
         CheckBoxMain,
+        CheckBoxMainOld,
     },
 
     setup() {
+        
+        const { open, toggleActiveItem } = useToggler()
 
         const select1 = ref(0)
         const selectBoxOptions = reactive([
@@ -121,6 +154,8 @@ export default {
         }
 
         return { 
+            open,
+            toggleActiveItem,
             select1,
             options,
             validateFilters, 
