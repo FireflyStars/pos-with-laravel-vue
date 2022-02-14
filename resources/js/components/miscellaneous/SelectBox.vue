@@ -3,7 +3,9 @@
         class="select-label body_medium"
         :class="{ disabled: disabled == true }"
         v-if="label"
-        >{{ label }}</label
+        >
+            {{ label }}
+        </label
     >
     <div class="select noselect" :class="cname" @click.self="selectclick">
         <span
@@ -13,9 +15,10 @@
                 disabled: disabled == true,
             }"
             @click.self="selectclick"
-            ><template v-if="current_display == ''">{{ placeholder }}</template
-            ><template v-else>{{ current_display }}</template></span
-        >
+            >
+            <template v-if="current_display == ''">{{ placeholder }}</template>
+            <template v-else>{{ current_display }}</template>
+        </span>
         <transition name="trans-select">
             <div class="select-options" v-if="sel === name">
                 <slot>
@@ -35,15 +38,20 @@
 </template>
 
 <script>
-import { ref, watch, computed, nextTick } from "vue";
-import { useStore } from "vuex";
+
+import { ref, watch, computed, nextTick, onMounted } from "vue"
+import { useStore } from "vuex"
+
 import {
     GET_CURRENT_SELECT,
     SELECT_MODULE,
     SET_CURRENT_SELECT,
 } from "../../store/types/types";
+
 export default {
+
     name: "SelectOptions",
+
     props: {
         hint: String,
         placeholder: String,
@@ -58,14 +66,19 @@ export default {
         disabled: Boolean,
         valid: Boolean | null,
     },
-    setup(props, context) {
-        const store = useStore();
 
-        const current = ref("");
-        const current_display = ref("");
+    emits: ['update:modelValue'],
+
+    setup(props, context) {
+
+        const store = useStore()
+
+        const current = ref("")
+        const current_display = ref("")
+
         let sel = computed(
             () => store.getters[`${SELECT_MODULE}${GET_CURRENT_SELECT}`]
-        );
+        )
 
         const selectclick = () => {
             nextTick(() => {
@@ -78,40 +91,42 @@ export default {
                     () => store.getters[`${SELECT_MODULE}${GET_CURRENT_SELECT}`]
                 );
             });
-        };
+        }
 
         const select = (index) => {
             current.value = index;
             context.emit("update:modelValue", props.options[index].value);
 
             store.commit(`${SELECT_MODULE}${SET_CURRENT_SELECT}`, "");
-        };
-
-        let currentoption = props.options.filter((option) => {
-            return option.value.toString() == props.modelValue.toString();
-        });
-        currentoption = _.cloneDeep(currentoption);
-
-        if (typeof currentoption[0] != "undefined") {
-            current_display.value = currentoption[0].display;
         }
+
+        const setCurrentDisplay = () => {
+            let currentoption = props.options.filter((option) => {
+                return option.value.toString() == props.modelValue.toString();
+            });
+            currentoption = _.cloneDeep(currentoption);
+
+            if (typeof currentoption[0] != "undefined") {
+                current_display.value = currentoption[0].display;
+            }
+        }
+
+        onMounted(() => {
+            setCurrentDisplay()
+        })
+
+        
         watch(
             () => props.modelValue,
-            (current_val, previous_val) => {
+            (current_val) => {
                 if (current_val == "") current_display.value = "";
-                let currentoption = props.options.filter((option) => {
-                    return (
-                        option.value.toString() == props.modelValue.toString()
-                    );
-                });
-
-                currentoption = _.cloneDeep(currentoption);
-                if (typeof currentoption[0] != "undefined") {
-                    current_display.value = currentoption[0].display;
-                }
+                setCurrentDisplay()
             }
-        );
-        const cname = ref("");
+        )
+
+
+        const cname = ref("")
+
         const classNames = () =>
             `${
                 typeof props.classnames != "undefined" ? props.classnames : ""
@@ -123,24 +138,25 @@ export default {
                     : props.valid === false
                     ? "invalid"
                     : ""
-            }`;
+            }`
+
         cname.value = classNames();
         watch(
             () => sel.value,
-            (current_val, previous_val) => {
+            () => {
                 cname.value = classNames();
             }
         );
 
         watch(
             () => current_display.value,
-            (current_val, previous_val) => {
+            (l) => {
                 cname.value = classNames();
             }
         );
         watch(
             () => props.disabled,
-            (current_val, previous_val) => {
+            () => {
                 cname.value = classNames();
                 store.commit(`${SELECT_MODULE}${SET_CURRENT_SELECT}`, "");
             }
@@ -148,7 +164,6 @@ export default {
 
         return {
             selectclick,
-
             select,
             current,
             current_display,
@@ -210,14 +225,14 @@ export default {
     left: 0;
     top: 44px;
     background: #fff;
-    box-shadow: inset 0px 0px 4px rgba(37, 40, 43, 0.12);
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, .4);
     max-height: 168px;
     z-index: 1;
     overflow-y: visible;
     transform-origin: top center;
 }
-.select:after,
-.select:before {
+.select::after,
+.select::before {
     content: " ";
     height: 3px;
     display: block;
@@ -228,17 +243,17 @@ export default {
     right: 22px;
     position: absolute;
 }
-.select.active:after,
-.select.active:before {
+.select.active::after,
+.select.active::before {
     background: #000000;
 }
-.select:after {
+.select::after {
     transform: rotate(-40deg);
     right: 13px;
 }
 .opts {
-    height: 56px;
-    padding: 17px 0 17px 16px;
+    height: 50px;
+    padding: 13px 0 13px 16px;
     font-size: 16px;
 }
 .opts:hover {
@@ -261,7 +276,7 @@ export default {
     background: #f8f8f8;
     font-size: 16px;
 }
-.select:active {
+.select::active {
     background-color: #e0e0e0;
     border-color: #e0e0e0;
 }
@@ -277,8 +292,8 @@ export default {
 .select.valid .disp {
     color: #42a71e;
 }
-.select.valid:before,
-.select.valid:after {
+.select.valid::before,
+.select.valid::after {
     background-color: #42a71e;
 }
 .select.invalid {
@@ -287,8 +302,8 @@ export default {
 .select.invalid .disp {
     color: #eb5757;
 }
-.select.invalid:before,
-.select.invalid:after {
+.select.invalid::before,
+.select.invalid::after {
     background-color: #eb5757;
 }
 .select.disabled {
@@ -297,8 +312,8 @@ export default {
 .select.disabled .disp {
     color: #c3c3c3;
 }
-.select.disabled:before,
-.select.disabled:after {
+.select.disabled::before,
+.select.disabled::after {
     background-color: #c3c3c3;
 }
 </style>

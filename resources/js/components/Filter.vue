@@ -1,93 +1,93 @@
 <template>
     <div class="custom-filter-dropdown almarai_bold_normal" :tabindex="tabindex">
-        <div class="selected text-end ">
-            <button class="filter-reset" @click.prevent="resetFilter">
-                <div class="text-filter">Reinitialisation</div>
-            </button>
-            <button
+        
+        <div class="selected text-end filter-buttons">
+            <BaseButton 
+                class="filter-reset" 
+                title="Reinitialisation"
+                @click.prevent="resetFilter"
+                textClass="text-filter" 
+            />
+
+            <BaseButton
                 class="button-filter"
                 :class="[isColored]"
-                @click.prevent="open = !open"
+                textClass="text-filter"
+                title="Filtre"
+                @click.prevent="toggleActiveItem"
+                :style="{
+                    background: customActiveColor
+                }"
             >
-                <div class="text-filter">Filtre</div>
-                <!-- 
-                <div class="rectangle"></div>
-                <div class="rectangle2"></div>
-                <div class="rectangle3"></div> -->
-            </button>
+                <Icon name="filter" />
+            </BaseButton>
         </div>
 
-        <div class="items" :class="{ selectHide: !open }">
+        <div class="items" :class="{ 'selectHide': !open('filter') }">
+
             <div
                 class="checkboxes"
-                v-for="(checkboxes, index) of checkboxes"
+                v-for="(checkbox, index) of checkboxOptions"
                 :key="index"
             >
-                <div class="text-title ">{{ checkboxes.name }} :</div>
+                <div class="text-title">{{ checkbox.name }} :</div>
                 <div
                     class="checkbox-items"
-                    v-for="option of checkboxes.options"
+                    v-for="option of checkbox.options"
                     :key="option.id"
                 >
-                    <check-box
+                    <CheckBox
                         :id="option.id"
-                        v-model:checked_checkbox.sync="option.check"
+                        :checked="option.check"
                         :name="option.value"
-                        @checkbox-clicked="updateSelectedList"
-                    >
-                        {{ option.value }}
-                    </check-box>
+                        :title="option.value"
+                        @changed="updateSelectedCheckboxes($event, checkbox.id)"
+                    />
+
                 </div>
             </div>
 
-            <select-options
-                v-for="(select, index) of select_options"
+            <SelectBox
+                v-for="(select, index) of selectOptions"
                 :key="index"
-                v-model="sel[index].value"
-                placeholder="Choose a number"
+                :placeholder="select.label"
                 :options="select.options"
                 :name="select.label"
-                
                 :label="select.label"
-            ></select-options>
+                v-model="selectedOptionItems[index]"
+            />
 
-            <button
+            <BaseButton
                 class="validate-button text-title"
                 type="submit"
+                title="Valider"
                 @click.prevent="validate"
-            >
-                Valider
-            </button>
+            />
+
         </div>
     </div>
 </template>
 
 <script>
-import { ref, watch, computed } from "vue";
-import { useStore } from "vuex";
-import { mapGetters, mapMutations, mapActions } from "vuex";
-import {
-    GET_SELECTED_BOXES,
-    SET_SELECTED_BOXES,
-    RESET_FILTER,
-    SET_ITEMS,
-    GET_ITEMS,
-    FILTER_MODULE,
-} from "../store/types/types";
-import _ from "lodash";
 
-import CheckBox from "./miscellaneous/CheckBox.vue";
-import SelectOptions from "./miscellaneous/SelectOptions.vue";
+import { ref, computed } from "vue"
+import { useStore } from 'vuex'
+import { ACTIVE_ITEM, SET_TOGGLER_ITEM, TOGGLER_MODULE } from '../store/types/types'
+
 export default {
-    components: { CheckBox, SelectOptions },
+
     props: {
-        checkboxes_options: {
+        checkboxOptions: {
             type: Array,
             required: false,
         },
-        select_options: {
+        selectOptions: {
             type: Array,
             required: false,
+        },
+        selectedOptions: {
+            type: [Object, Array],
+            required: false
         },
         tabindex: {
             type: Number,
@@ -95,84 +95,113 @@ export default {
             default: 0,
         },
     },
-    setup(props, context) {
-        const store = useStore();
 
-        let sel = ref([]);
-        for (let index = 0; index < props.select_options.length; index++) {
-            sel.value[index] = {
-                value: "",
-                label: props.select_options[index].label,
-            };
-        }
-        let open = ref(false);
+    emits: [
+        'update:checkboxOptions',
+        'update:selectOptions',
+        'update:selectedOptions',
+        'validate'
+    ],
 
-        let checkboxes = ref([]);
-        checkboxes = props.checkboxes_options;
-        store.dispatch(`${FILTER_MODULE}/${SET_ITEMS}`, checkboxes);
-        const resetFilter = () => {
-            console.log("reset");
-            store.dispatch(`${FILTER_MODULE}/${RESET_FILTER}`);
-            context.emit("update:modelValue", []);
-            for (let index = 0; index < props.select_options.length; index++) {
-                sel.value[index] = {
-                    value: "",
-                    label: props.select_options[index].label,
-                };
+    setup(props, { emit, attrs }) {
+
+        const store = useStore()
+
+        const isActive = ref(false)
+        const defaultColor = 'lawgreen'
+
+        const activeItem = computed(() => store.getters[`${[TOGGLER_MODULE]}/${[ACTIVE_ITEM]}`])
+
+
+        const customActiveColor = computed(() => {
+            return isActive.value ? `${attrs.activeColor} !important` || defaultColor : ''
+        })
+
+        const selectedOptionItems = computed(() => props.selectedOptions)
+
+        const isColored = computed(() => {
+            const hasSelectedItems = Object.values(selectedOptionItems.value).some(option => option != '')
+            const hasSelectedCheckboxes = props.checkboxOptions.some(checkbox => {
+                return checkbox.options.some(option => option.check)
+            })
+            if(hasSelectedItems || hasSelectedCheckboxes) {
+                isActive.value = true
+                return 'colored'
             }
-        };
-        const validate = () => {
-            context.emit(
-                "update:modelValue",
-                store.state[FILTER_MODULE].selected_items
-            );
-        };
-        watch(
-            () => [...store.state[FILTER_MODULE].selected_items],
-            (current_val, previous_val) => {
-                if (current_val.length == 0) {
-                    checkboxes.value = store.state[FILTER_MODULE].items;
+            isActive.value = false
+            return ''
+        })
+
+        const open = (id = '') => {
+            return id == activeItem.value.id && activeItem.value.status
+        }
+
+        const toggleActiveItem = () => {
+            const status = !activeItem.value.status
+            store.dispatch(`${[TOGGLER_MODULE]}/${[SET_TOGGLER_ITEM]}`, { id: 'filter', status })
+        }
+
+
+        const resetFilter = () => {
+            const checkboxOptions = [ ...props.checkboxOptions ]
+            const selectedOptions = { ...props.selectedOptions }
+
+            checkboxOptions.forEach((checkbox, index) => {
+                checkbox.options.forEach((option, optionIndex) => {
+                    checkboxOptions[index].options[optionIndex].check = false
+                })
+            })
+
+            Object.entries(selectedOptions).forEach((item, index) => {
+                selectedOptions[index] = ''
+            })
+
+            emit('update:checkboxOptions', checkboxOptions)
+            emit('update:selectedOptions', selectedOptions)
+
+        }
+
+        const updateSelectedCheckboxes = ({ id, value }, parentId) => {
+            const checkboxOptions = [ ...props.checkboxOptions ]
+            let checkboxIndex = checkboxOptions.findIndex(checkbox => checkbox.id == parentId)
+
+            if(checkboxIndex != -1) {
+                let optionIndex = checkboxOptions[checkboxIndex].options.findIndex(option => option.id == id)
+                if(optionIndex != -1) {
+                    checkboxOptions[checkboxIndex].options[optionIndex].check = value
+                    emit('update:checkboxOptions', checkboxOptions)
                 }
             }
-        );
-        watch(
-            () => _.cloneDeep(sel.value),
-            (current_val, previous_val) => {
-                store.commit(
-                    `${FILTER_MODULE}/${SET_SELECTED_BOXES}`,
-                    current_val
-                );
-            }
-        );
+        }
+
+        
+        const validate = () => {
+            emit('validate')
+        }
+       
 
         return {
-            checkboxes,
-            sel,
             open,
-            isColored: computed(() => {
-                if (store.state[FILTER_MODULE].selected_items.length > 0) {
-                    return "colored";
-                }
-            }),
-            resetFilter,
-            updateSelectedList: (event) =>
-                store.dispatch(`${FILTER_MODULE}/${SET_SELECTED_BOXES}`, [
-                    {
-                        id: event.id,
-                        value: event.name,
-                        check: event.check,
-                    },
-                ]),
-            selected_items: computed(
-                () => store.state[FILTER_MODULE].selected_items
-            ),
             validate,
+            isColored,
+            resetFilter,
+            toggleActiveItem,
+            customActiveColor,
+            selectedOptionItems,
+            updateSelectedCheckboxes
         };
     },
 };
 </script>
 
 <style scoped>
+
+.filter-buttons {
+    display: flex;
+    justify-items: flex-start;
+    align-items: center;
+}
+
 .almarai_bold_normal{
     font-family: 'Almarai Bold';
    /* font-weight:700; */
@@ -223,10 +252,11 @@ export default {
     display: flex;
     flex-direction: column;
     margin-bottom: 10px;
+    text-transform: uppercase;
 }
-.custom-filter-dropdown .items .checkbox-items:hover {
+/* .custom-filter-dropdown .items .checkbox-items:hover {
     background-color: #e0dede;
-}
+} */
 
 .selectHide {
     display: none;
@@ -251,8 +281,7 @@ export default {
 </style>
 <style scoped>
 .filter-reset {
-    height: 40px;
-    width: 116px;
+    max-height: 40px;
     left: 0px;
     top: 0px;
     margin: 1% 3% 0% 0%;
@@ -260,17 +289,23 @@ export default {
     box-sizing: border-box;
     border-radius: 5px;
     line-height: 140%;
+    padding: .5rem .2rem;
+    background: #E5E5E5;
+    color: #47454B;
+    min-width: 116px;
 }
 .button-filter {
-    height: 40px;
-    width: 116px;
-    left: 0px;
-    top: 0px;
+    max-height: 40px;
     margin: 1% 0% 0% 0%;
-    border: 1px solid #47454b;
+    border: 1px solid #47454B;
     box-sizing: border-box;
     border-radius: 5px;
     line-height: 140%;
+    padding: .5rem .2rem;
+    background: #E5E5E5;
+    color: #47454B;
+    display: flex;
+    min-width: 116px;
 }
 .colored {
     background-color: lawngreen;

@@ -1,34 +1,40 @@
 <template>
-    <div @click.stop="togglechkbox" class="chkbox_wrap"><span class="chkbox" :class="{checked:check}" ></span><label class="noselect body_regular"><slot></slot></label></div>
+    <div 
+    @click.prevent="togglechkbox"
+     class="chkbox_wrap">
+        <span class="chkbox" :class="{ 'checked': checked }"></span>
+        <label class="noselect body_regular">{{ title }}</label>
+     </div>
 </template>
 
 <script>
-    import {ref,watch} from 'vue';
-    export default {
-        name: "CheckBox",
-        props:['id','checked_checkbox','name'],
-        setup(props,{ emit }){
-            const check=ref(false);
 
-            check.value=props.checked_checkbox;
+export default {
+    
+    name: "CheckBox",
 
-            function togglechkbox(){
-                check.value=!check.value;
-                emit('checkbox-clicked', check.value,props.id,props.name)
-            }
-            watch(() => props.checked_checkbox, (current_val, previous_val) => {
-                check.value=current_val;
-            });
-            watch(() =>check.value, (current_val, previous_val) => {
+    props: {
+        id: [String, Number],
+        checked: Boolean,
+        name: String,
+        title: String
+    },
 
-               // emit('checkbox-clicked', current_val,props.id,props.name)
-            })
-            return {
-                check,
-                togglechkbox
-            }
+    emits: ['changed'],
+
+    setup(props, { emit }) { 
+
+        const togglechkbox = () => {
+            const check = !props.checked
+            emit('changed', { value: check, id: props.id, name: props.name })
+        }
+        
+        return {
+            togglechkbox
         }
     }
+}
+
 </script>
 
 <style scoped>
@@ -71,8 +77,12 @@
         background: #47454B;
         border:none;
     }
-    .chkbox_wrap{
-        cursor: pointer
+    .chkbox_wrap {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: .3rem 0;
     }
     .filters span.chkbox{
         margin: 14px 22px 14px 22px;

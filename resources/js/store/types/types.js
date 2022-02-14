@@ -33,3 +33,7 @@ export const SET_SELECTED_BOXES = 'SET_SELECTED_BOXES'; //action
 export const RESET_FILTER = 'RESET_FILTER'; //action
 export const GET_ITEMS = 'GET_ITEMS'; //getters
 export const GET_SELECTED_BOXES = 'GET_SELECTED_BOXES'; //getters
+
+export const TOGGLER_MODULE = 'TOGGLER_MODULE'
+export const ACTIVE_ITEM = 'ACTIVE_ITEM' //getters
+export const SET_TOGGLER_ITEM = 'SET_TOGGLER_ITEM' //mutations

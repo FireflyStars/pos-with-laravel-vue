@@ -1,6 +1,11 @@
 import {
     createStore
 } from "vuex";
+
+
+// import { LOADER_MODULE, TOASTER_MODULE, SIDEBAR_MODULE, SELECT_MODULE, FILTER_MODULE, TOGGLER_MODULE } from "./types/types";
+
+
 import {
     loader as LOADER_MODULE
 } from './modules/loader'
@@ -16,6 +21,10 @@ import {
 import {
     filter as FILTER_MODULE
 } from "./modules/filter";
+
+import { toggler as TOGGLER_MODULE } from "./modules/toggler"
+
+
 export default createStore({
     modules: {
         LOADER_MODULE,
@@ -23,5 +32,6 @@ export default createStore({
         SIDEBAR_MODULE,
         SELECT_MODULE,
         FILTER_MODULE,
+        TOGGLER_MODULE
     }
 });

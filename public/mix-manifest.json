@@ -1,14 +1,4 @@
 {
-    "/js/app.js": "/js/app.js?id=b67773aa01730835ec9a",
-    "/images/edit-icon.png": "/images/edit-icon.png?id=d220d712b985efb73df0",
-    "/images/folder-icon.png": "/images/folder-icon.png?id=d575d803783dc005dc75",
-    "/images/lcdt-logo.png": "/images/lcdt-logo.png?id=4fd99d64fc10d2b67f6c",
-    "/images/login.jpg": "/images/login.jpg?id=08bda15ec775567ff04a",
-    "/images/logolcdt.png": "/images/logolcdt.png?id=9b143f70ce657fbd72b7",
-    "/images/message-icon.png": "/images/message-icon.png?id=6173cb316fd181b35da7",
-    "/images/panier-icon.png": "/images/panier-icon.png?id=8cc2bc4e5ecb64bd2dfc",
-    "/images/star-icon.png": "/images/star-icon.png?id=995d684e95290bfa9ff6",
-    "/images/user-icon.png": "/images/user-icon.png?id=663fe143d25b8863380b",
-    "/images/user-profile.png": "/images/user-profile.png?id=02e621358a6f8ce4b41a",
-    "/css/app.css": "/css/app.css?id=bc4201796a8f02a94e8c"
+    "/js/app.js": "/js/app.js",
+    "/css/app.css": "/css/app.css"
 }
