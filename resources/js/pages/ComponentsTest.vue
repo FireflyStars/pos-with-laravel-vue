@@ -17,11 +17,17 @@
 
         <div class="col m-2">
             <CheckBoxMain 
+                id="checkBoxMain"
+                search
                 title="Statut"
                 width="250px"
-                search
+                tagBackground="orange"
+                tagColor="white"
+                classes=""
+                :styles="{}" 
+                dropdownClasses=""
+                :dropdownStyles="{ color: 'blue !important' }"
                 v-model:options="options"
-                id="checkBoxMain"
             />
         </div>
         
@@ -31,6 +37,12 @@
                 v-model:checkboxOptions="filterCheckboxOptions"
                 v-model:selectOptions="filterSelectOptions"
                 v-model:selectedOptions="filterSelectedOptions"
+                activeBackground="orange"
+                activeColor="white"
+                dropdownClasses=""
+                :dropdownStyles="{}"
+                classes=""
+                :styles="{}"
                 @validate="validateFilters"
             />
         </div>
@@ -99,11 +111,6 @@ export default {
             { id: 2, value: 'Gagne', check: false},
             { id: 3, value: 'Abondonne', check: false},
             { id: 4, value: 'Laravel', check: false},
-            { id: 5, value: 'Vue', check: false},
-            { id: 6, value: 'Wordpress', check: false},
-            { id: 7, value: 'Js', check: false},
-            { id: 8, value: 'NodeJs', check: false},
-            { id: 9, value: 'GraphQl', check: false},
         ]);
 
         const filterSelectedOptions = reactive({
@@ -124,19 +131,6 @@ export default {
                     { id: 7, value: 'status', check: false },
                 ],
             },
-            {
-                id: 2,
-                name: 'Champs 2',
-                options: [
-                    { id: 1, value: 'no devis', check: false },
-                    { id: 2, value: 'client', check: false },
-                    { id: 3, value: 'contact', check: false },
-                    { id: 4, value: 'chantier', check: false },
-                    { id: 5, value: 'date creation', check: false },
-                    { id: 6, value: 'responsable', check: false },
-                    { id: 7, value: 'status', check: false },
-                ],
-            }
         ])
 
         const filterSelectOptions = reactive([

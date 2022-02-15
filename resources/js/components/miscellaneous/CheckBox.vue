@@ -4,7 +4,7 @@
      class="chkbox_wrap">
         <span class="chkbox" :class="{ 'checked': checked }"></span>
         <label class="noselect body_regular">{{ title }}</label>
-     </div>
+    </div>
 </template>
 
 <script>

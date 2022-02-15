@@ -1,11 +1,12 @@
 <template>
     <div :style="{
-        width: `${$attrs.width} !important` || 'auto',
+        width: $attrs.width ? `${$attrs.width} !important` : 'auto',
         padding: $attrs.padding || 0,
-        margin: $attrs.margin || 0
+        margin: $attrs.margin || 0,
+        ...styles
     }"
     class="box-container"
-    :class="{ 'dark': dark }"
+    :class="[{ 'dark': dark }, ...classes.split(',')]"
     >
 
         <label for="" class="label">{{ title }}</label>
@@ -13,16 +14,25 @@
         <div class="select-box">
 
             <div class="selected" @click.prevent="toggleActiveItem($attrs.id || 'checkboxMain')">
-                <div class="item" v-for="item in selectedValues" :key="item.id">
+                <div class="item" 
+                v-for="item in selectedValues" 
+                :key="item.id"
+                :style="{
+                    background: $attrs.tagBackground || '#fff',
+                    color: $attrs.tagColor || '#000'
+                }"
+                >
                     {{ item.value }}
                 </div>
             </div>
 
             <Dropdown 
-            :open="open($attrs.id || 'checkboxMain')" 
             class="options-container"
-            height="250px"
+            height="auto"
             :id="$attrs.id || 'checkboxMain'"
+            :dark="dark"
+            :classes="$attrs.dropdownClasses"
+            :styles="$attrs.dropdownStyles"
             >
                 <div class="search-box" v-if="search">
                     <input type="search" name="" id="" placeholder="Search..." v-model="searchValue">
@@ -34,6 +44,7 @@
                 :key="item.id"
                 >
                     <CheckBox 
+                        class="checkbox-custom-class"
                         :id="item.id"
                         :checked="item.check"
                         :name="item.value"
@@ -67,7 +78,12 @@ export default {
             required: true,
             type: [Object, Array]
         },
-        dark: Boolean
+        dark: Boolean,
+        classes: String,
+        styles: {
+            type: Object,
+            default: () => {}
+        }
     },
 
     emits: ['update:options'],
@@ -108,7 +124,6 @@ export default {
             selectedValues,
             filteredOptions,
             updateSelectOptions,
-
         }
 
 
@@ -123,6 +138,7 @@ export default {
 
 .box-container {
     position: relative;
+    font-family: Almarai;
 }
 
 .select-box {
@@ -138,7 +154,6 @@ export default {
     .selected {
         background: #EEEEEE;
         border-radius: 4px;
-        margin-bottom: 4px;
         color: #000000;
         position: relative;
         order: 0;
@@ -171,7 +186,8 @@ export default {
         input {
             width: 100%;
             padding: 6px 12px;
-            font-family: Almarai;
+            // font-family: Almarai;
+            font-family: inherit;
             font-size: 16px;
             position: absolute;
             border-radius: 8px 8px 0 0;
@@ -191,7 +207,8 @@ export default {
 
 .label {
     color: #868686;
-    font-family: Almarai;
+    // font-family: Almarai;
+    font-family: inherit;
     font-style: normal;
     font-weight: bold;
     font-size: 14px;
@@ -203,6 +220,10 @@ export default {
 .select-box .option, .selected {
     padding: 12px;
     cursor: pointer;
+}
+
+.select-box .option {
+    padding: 8px 12px;
 }
 
 .select-box .options-container.active .search-box input {

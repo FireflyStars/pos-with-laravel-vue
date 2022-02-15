@@ -1,5 +1,9 @@
 <template>
-    <div class="custom-filter-dropdown almarai_bold_normal" :tabindex="tabindex">
+    <div 
+    class="custom-filter-dropdown almarai_bold_normal"
+    :class="classes"
+    :styles="{ ...styles }"
+    :tabindex="tabindex">
         
         <div class="selected text-end filter-buttons">
             <BaseButton 
@@ -16,15 +20,20 @@
                 title="Filtre"
                 @click.prevent="toggleActiveItem(id)"
                 :style="{
-                    background: customActiveColor
+                    background: customActiveBgColor,
+                    color: customActiveColor
                 }"
             >
-                <Icon name="filter" />
+                <Icon name="filter" :color="customActiveColor" />
             </BaseButton>
         </div>
 
 
-        <Dropdown :id="id">
+        <Dropdown 
+        :id="id"
+        :classes="$attrs.dropdownClasses"
+        :styles="$attrs.dropdownStyles"
+        >
             <div class="items">
 
                 <div
@@ -99,6 +108,11 @@ export default {
             required: false,
             default: 0,
         },
+        classes: String,
+        styles: {
+            type: Object,
+            default: () => {}
+        }
     },
 
     emits: [
@@ -113,10 +127,14 @@ export default {
         const { toggleActiveItem } = useToggler()
 
         const isActive = ref(false)
-        const defaultColor = 'lawgreen'
+        const defaultBackground = 'lawgreen'
+        const defaultColor = '#47454b'
 
         const customActiveColor = computed(() => {
-            return isActive.value ? `${attrs.activeColor} !important` || defaultColor : ''
+            return isActive.value ? attrs.activeColor || defaultColor : ''
+        })
+        const customActiveBgColor = computed(() => {
+            return isActive.value ? attrs.activeBackground || defaultBackground : ''
         })
 
         const id = computed(() => attrs.id || 'filtersMain')
@@ -181,6 +199,7 @@ export default {
             resetFilter,
             toggleActiveItem,
             customActiveColor,
+            customActiveBgColor,
             selectedOptionItems,
             updateSelectedCheckboxes
         };
@@ -235,7 +254,6 @@ export default {
     z-index: 1;
     padding: 5% 12%;
     overflow: visible;
-    min-height: 500px;
     height: auto !important;
 }
 .custom-filter-dropdown .items .checkboxes {

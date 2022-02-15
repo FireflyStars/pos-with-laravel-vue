@@ -1,6 +1,6 @@
 <template>
     <button>
-        <div :class="textClass">{{ title }}</div>
+        <div :class="textClass" style="">{{ title }}</div>
         <slot></slot>
     </button>
 </template>
@@ -26,4 +26,5 @@
         gap: 3px;
         box-sizing: border-box;
     }
+    
 </style>

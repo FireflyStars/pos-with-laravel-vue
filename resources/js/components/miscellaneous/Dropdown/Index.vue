@@ -1,32 +1,22 @@
 <template>
+
+    <transition name="dropdown-select">
+        <div 
+        v-if="open(id)"
+        class="dropdown-container"
+        :class="classSet"
+        :style="styleSet"
+        v-bind="$attrs"
+        >
+            <slot></slot>
+        </div>
+    </transition>
     
-    <div 
-    class="dropdown-container"
-    :class="[{ 
-        'active': open(id),
-        'dark': dark,
-    }]"
-    :style="{
-        width: `${$attrs.width} !important` || 'auto',
-        padding: $attrs.padding || '',
-        margin: $attrs.margin || 0,
-        top: $attrs.top || '100%',
-        right: $attrs.right || '',
-        left: $attrs.left || '0',
-        bottom: $attrs.bottom || '',
-        height: $attrs.height || 'auto',
-        background: $attrs.background || '#EEEEEE'
-    }"
-    v-bind="$attrs"
-    >
-
-        <slot></slot>
-
-    </div>
 
 </template>
 
 <script>
+import { computed } from 'vue'
 import useToggler from '../../../composables/useToggler'
 
 export default {
@@ -40,15 +30,52 @@ export default {
         id: {
             required: true,
             type: String
+        },
+        classes: {
+            type: String,
+            required: false,
+            default: ''
+        },
+        styles: {
+            type: Object,
+            required: false,
+            default: () => {}
         }
     },
 
-    setup() {
+    setup(props, { attrs }) {
 
-        const { open } = useToggler()
+        const { open, toggleActiveItem } = useToggler()
+
+        const classSet = computed(() => {
+            return [{ 
+                'active': open(props.id),
+                'dark': props.dark,
+                },
+                ...props.classes.split(',')
+            ]
+        })
+
+        const styleSet = computed(() => {
+            return {
+                width: attrs.width ? `${attrs.width} !important` : '100%',
+                padding: attrs.padding ? `${attrs.padding} !important` : '',
+                margin: attrs.margin ? `${attrs.margin} !important` : 0,
+                top: attrs.top ? `${attrs.top} !important` : '100%',
+                right: attrs.right ? `${attrs.right} !important` : '',
+                left: attrs.left ? `${attrs.left} !important` : '0',
+                bottom: attrs.bottom ? `${attrs.bottom} !important` : '',
+                height: attrs.height ? `${attrs.height} !important` : 'auto',
+                background: attrs.background ? `${attrs.background} !important` : '#EEEEEE',
+                ...props.styles
+            }
+        })
 
         return {
             open,
+            classSet,
+            styleSet,
+            toggleActiveItem
         }
 
     }
@@ -60,13 +87,33 @@ export default {
 
 <style lang="scss" scoped>
 
+.dropdown-select-enter-from {
+    opacity: 0;
+    transform: scale(0.6);
+}
+.dropdown-select-enter-to {
+    opacity: 1;
+    transform: scale(1);
+}
+.dropdown-select-enter-active {
+    transition: all ease 0.2s;
+}
+.dropdown-select-leave-from {
+    opacity: 1;
+    transform: scale(1);
+}
+.dropdown-select-leave-to {
+    opacity: 0;
+    transform: scale(0.6);
+}
+.dropdown-select-leave-active {
+    transition: all ease 0.2s;
+}
+
 .dropdown-container {
     background: #EEEEEE;
     color: #000000;
     width: 100%;
-    transition: all .2s;
-    height: 0;
-    opacity: 0;
     overflow: hidden;
     order: 1;
     font-family: Almarai;
@@ -93,15 +140,14 @@ export default {
 }
 
 .active {
-    opacity: 1;
     transition: all .2s;
     overflow-y: auto;
 }
 
     
 .dropdown-container.dark {
-    background: #494c50;
-    color: #F0F0F0;
+    background: #494c50 !important;
+    color: #F0F0F0 !important;
     &::-webkit-scrollbar {
         background: #525861;
     }
