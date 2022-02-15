@@ -7,7 +7,7 @@
             {{ label }}
         </label
     >
-    <div class="select noselect" :class="classNames" @click.self="toggle"><span
+    <div class="select noselect" :class="classNameSet" @click.self="toggle"><span
             class="disp"
             :class="{
                 _placeholder: current_display == '',
@@ -126,9 +126,9 @@ export default {
         )
 
 
-        const classNames = computed(() => {
+        const classNameSet = computed(() => {
             let classes = ''
-            classes += typeof props.classnames != " undefined " ? props.classnames : ""
+            classes += typeof props.classnames != "undefined" ? props.classnames : ""
             classes += open.value ? " active " : ""
             classes +=  current_display.value != "" ? " selected " : ""
             classes += props.disabled == true ? " disabled " : ""
@@ -147,7 +147,7 @@ export default {
         return {
             toggle,
             open,
-            classNames,
+            classNameSet,
             selectclick,
             select,
             current,

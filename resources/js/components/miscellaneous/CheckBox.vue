@@ -2,13 +2,18 @@
     <div 
     @click.prevent="togglechkbox"
      class="chkbox_wrap">
-        <span class="chkbox" :class="{ 'checked': checked }"></span>
+        <span 
+        class="chkbox" 
+        :class="classSet"
+        :style="styles"
+        >
+        </span>
         <label class="noselect body_regular">{{ title }}</label>
     </div>
 </template>
 
 <script>
-
+import { computed } from 'vue'
 export default {
     
     name: "CheckBox",
@@ -17,19 +22,37 @@ export default {
         id: [String, Number],
         checked: Boolean,
         name: String,
-        title: String
+        title: String,
+        classes: {
+            required: false,
+            type: String,
+            default: ''
+        }
     },
 
     emits: ['changed'],
 
-    setup(props, { emit }) { 
+    setup(props, { emit, attrs }) { 
 
         const togglechkbox = () => {
             const check = !props.checked
             emit('changed', { value: check, id: props.id, name: props.name })
         }
+
+        const styles = computed(() => {
+            return {
+                background: attrs.background && props.checked ? `${attrs.background} !important`: '',
+                color: attrs.color && props.color ? `${attrs.color} !important`: '',
+                fontFamily: attrs.fontFamily ? `${attrs.fontFamily} !important`: '',
+                border: attrs.border ? `${attrs.border} !important`: '',
+            }
+        })
+
+        const classSet = computed(() => [{ 'checked': props.checked }, ...props.classes.split(',')])
         
         return {
+            styles,
+            classSet,
             togglechkbox
         }
     }
@@ -48,7 +71,7 @@ export default {
         position: relative;
         border: #868686 2px solid;
     }
-    span.chkbox.checked{
+    span.chkbox.checked {
         background: #47454B;
         border:none;
     }
@@ -67,7 +90,6 @@ export default {
         transform: rotate(45deg);
     }
     span.chkbox.checked:after{
-
         opacity: 1;
         transition: opacity 0.3s ease-out;
         -webkit-transition: opacity 0.3s ease-out;

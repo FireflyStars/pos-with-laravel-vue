@@ -7,21 +7,20 @@
         
         <div class="selected text-end filter-buttons">
             <BaseButton 
-                class="filter-reset" 
                 title="Reinitialisation"
                 @click.prevent="resetFilter"
-                textClass="text-filter" 
             />
 
             <BaseButton
-                class="button-filter"
                 :class="[isColored]"
-                textClass="text-filter"
                 title="Filtre"
                 @click.prevent="toggleActiveItem(id)"
                 :style="{
                     background: customActiveBgColor,
-                    color: customActiveColor
+                    color: customActiveColor,
+                }"
+                :textStyle="{
+                    paddingRight: '1rem'
                 }"
             >
                 <Icon name="filter" :color="customActiveColor" />
@@ -64,8 +63,9 @@
                     :placeholder="select.label"
                     :options="select.options"
                     :name="select.label"
-                    :label="select.label"
+                    :label="`${select.label}:`"
                     v-model="selectedOptionItems[index]"
+                    classnames="mt-4"
                 />
 
                 <BaseButton
@@ -213,6 +213,7 @@ export default {
     display: flex;
     justify-items: flex-start;
     align-items: center;
+    gap: 1rem;
 }
 
 .almarai_bold_normal{
@@ -257,12 +258,14 @@ export default {
     height: auto !important;
 }
 .custom-filter-dropdown .items .checkboxes {
+    font-family: inherit;
     font-size: 14px;
+    font-weight: bold;
     line-height: 140%;
     color: #868686;
     display: flex;
     flex-direction: column;
-    margin-bottom: 10px;
+    margin-bottom: 16px;
     text-transform: uppercase;
 }
 
@@ -270,8 +273,18 @@ export default {
     margin-bottom: 16px;
     font-size: 16px !important;
     line-height: 140% !important;
-    color: #47454b !important;
+    color: #47454B !important;
+    font-family: inherit;
+    font-weight: bold;
+    line-height: 140%;
+    text-transform: capitalize;
 }
+
+.select {
+    display: none;
+}
+
+
 .validate-button {
     margin: 10% 25% 0% 25%;
     display: block;
@@ -282,6 +295,8 @@ export default {
     border: 1px solid #47454b;
     box-sizing: border-box;
     border-radius: 4px;
+    font-family: inherit;
+    font-weight: bold;
 }
 </style>
 <style scoped>
@@ -290,7 +305,7 @@ export default {
     left: 0px;
     top: 0px;
     margin: 1% 3% 0% 0%;
-    border: 1px solid #47454b;
+    border: 1px solid #47454B;
     box-sizing: border-box;
     border-radius: 5px;
     line-height: 140%;

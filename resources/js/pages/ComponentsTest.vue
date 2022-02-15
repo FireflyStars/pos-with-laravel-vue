@@ -18,15 +18,14 @@
         <div class="col m-2">
             <CheckBoxMain 
                 id="checkBoxMain"
-                search
                 title="Statut"
-                width="250px"
+                width="200px"
                 tagBackground="orange"
                 tagColor="white"
                 classes=""
                 :styles="{}" 
                 dropdownClasses=""
-                :dropdownStyles="{ color: 'blue !important' }"
+                :dropdownStyles="{}"
                 v-model:options="options"
             />
         </div>
@@ -73,8 +72,56 @@
             </div>
         </div>
         <div class="col">
+            <h4>Checkbox</h4>
+            <CheckBox 
+                title="Custom attributes checkbox"
+                name="customCheckbox"
+                background="blue"
+                color="orange"
+                :checked="customCheckbox"
+                @changed="customCheckbox = $event.value"
+            />
         </div>
-        <div class="col"></div>
+        
+    </div>
+
+    <div class="row m-0 mt-5">
+        <div class="col">
+            
+            <h4>Buttons</h4>
+            
+            <div class="d-flex align-items-center justify-content-between">
+                <BaseButton title="Danger" htmlTitle="kind danger" kind="danger" class="text-capitalize" />
+                <BaseButton title="Primary" htmlTitle="kind primary" kind="primary" class="text-capitalize" />
+                <BaseButton title="success" htmlTitle="kind success" kind="success" class="text-capitalize" />
+                <BaseButton title="Green" htmlTitle="kind green" kind="green" class="text-capitalize" />
+                <BaseButton title="Light Green" htmlTitle="kind light-green" kind="light-green" class="text-capitalize" />
+                <BaseButton title="Warning" htmlTitle="kind warning" kind="warning" class="text-capitalize" />
+                <BaseButton title="Light warning" htmlTitle="kind light-warning" kind="light-warning" class="text-capitalize" />
+
+                <BaseButton 
+                    title="Light warning Icon"
+                    htmlTitle="kind light-warning"
+                    kind="light-warning"
+                    class="text-capitalize"
+                    prepend
+                   >
+                    <Icon name="user" />
+                </BaseButton>
+
+                <BaseButton 
+                    title="Warning Icon"
+                    htmlTitle="kind warning"
+                    kind="warning"
+                    class="text-capitalize"
+                   >
+                    <Icon name="clipboard" />
+                </BaseButton>
+
+            </div>
+
+
+        </div>
     </div>
 
     
@@ -101,6 +148,8 @@ export default {
         const { open, toggleActiveItem } = useToggler()
 
         const select1 = ref(0)
+        const customCheckbox = ref(false)
+
         const selectBoxOptions = reactive([
             { value:'1', display: 'One' },
             { value:'2', display:'Two' }
@@ -149,10 +198,11 @@ export default {
 
         return { 
             open,
-            toggleActiveItem,
             select1,
             options,
+            customCheckbox,
             validateFilters, 
+            toggleActiveItem,
             selectBoxOptions,
             filterSelectOptions,
             filterCheckboxOptions,

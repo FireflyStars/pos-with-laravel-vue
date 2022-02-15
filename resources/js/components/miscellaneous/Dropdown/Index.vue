@@ -59,7 +59,7 @@ export default {
         const styleSet = computed(() => {
             return {
                 width: attrs.width ? `${attrs.width} !important` : '100%',
-                padding: attrs.padding ? `${attrs.padding} !important` : '',
+                padding: attrs.padding ? `${attrs.padding} !important` : '1rem',
                 margin: attrs.margin ? `${attrs.margin} !important` : 0,
                 top: attrs.top ? `${attrs.top} !important` : '100%',
                 right: attrs.right ? `${attrs.right} !important` : '',
@@ -125,6 +125,7 @@ export default {
     top: 0;
     z-index: 10;
     width: 100%;
+    padding: 1rem;
 
     &::-webkit-scrollbar {
         width: 8px;
@@ -141,7 +142,8 @@ export default {
 
 .active {
     transition: all .2s;
-    overflow-y: auto;
+    // overflow-y: auto;
+    overflow: visible;
 }
 
     

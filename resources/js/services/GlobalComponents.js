@@ -1,6 +1,6 @@
 import Icon from '../components/miscellaneous/Icon'
 import CheckBox from '../components/miscellaneous/CheckBox'
-import BaseButton from '../components/miscellaneous/BaseButton'
+import BaseButton from '../components/miscellaneous/BaseButton/Index'
 import SelectBox from '../components/miscellaneous/SelectBox'
 import Dropdown from '../components/miscellaneous/Dropdown/Index'
 import Modal from '../components/miscellaneous/Modal'
