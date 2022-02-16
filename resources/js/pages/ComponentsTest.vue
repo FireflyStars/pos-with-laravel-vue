@@ -18,8 +18,8 @@
             </div>
 
             <div class="col m-2">
-                <CheckBoxMain 
-                    id="checkBoxMain"
+                <MultiSelect 
+                    id="multiSelect"
                     title="Statut"
                     width="116px"
                     tagBackground="orange"
@@ -30,6 +30,7 @@
                     dropdownClasses=""
                     :dropdownStyles="{ width: '167px' }"
                     v-model:options="options"
+                    transformOrigin="top center"
                 />
             </div>
             
@@ -41,6 +42,7 @@
                     v-model:selectedOptions="filterSelectedOptions"
                     activeBackground="orange"
                     activeColor="white"
+                    transformOrigin="top"
                     dropdownClasses=""
                     :dropdownStyles="{}"
                     classes=""
@@ -64,6 +66,7 @@
                         id="demoDropdown"
                         height="200px"
                         background="transparent"
+                        transformOrigin="bottom"
                     >
                         <ul class="list-group w-100">
                             <li class="list-group-item list-group-item-action">Item 1</li>
@@ -135,16 +138,14 @@
 
 import { ref, reactive } from "vue";
 import Filter from "../components/Filter.vue"
-import CheckBoxMain from "./../components/miscellaneous/CheckBoxMain.vue"
-import CheckBoxMainOld from "./../components/miscellaneous/CheckBoxMainOld.vue"
+import MultiSelect from "../components/miscellaneous/MultiSelect.vue"
 import useToggler from '../composables/useToggler'
 
 export default {
 
     components: {
         Filter,
-        CheckBoxMain,
-        CheckBoxMainOld,
+        MultiSelect,
     },
 
     setup() {

@@ -1,28 +1,54 @@
 <template>
     <div :style="{
-        width: `${$attrs.width} !important` || 'auto',
+        width: $attrs.width ? `${$attrs.width} !important` : 'auto',
         padding: $attrs.padding || 0,
-        margin: $attrs.margin || 0
+        margin: $attrs.margin || 0,
+        ...styles
     }"
     class="box-container"
-    :class="{ 'dark': dark }"
+    :class="[{ 'dark': dark }, ...classes.split(',')]"
     >
 
         <label for="" class="label">{{ title }}</label>
 
         <div class="select-box">
-
-            <div class="selected" @click.prevent="toggleActiveItem('checkboxMain')">
-                <div class="item" v-for="item in selectedValues" :key="item.id">
-                    {{ item.value }}
+            <div class="selected" @click.self="toggleActiveItem($attrs.id || 'multiSelect')">
+                <div class="item" 
+                v-for="item in controlledSelectedValues" 
+                :key="item.id"
+                :style="{
+                    background: $attrs.tagBackground || '#fff',
+                    color: $attrs.tagColor || '#000'
+                }"
+                >
+                    <span class="text">{{ item.value }}</span>
+                    <span 
+                    class="close" 
+                    title="Remove" 
+                    @click="updateSelectOptions({ value: false, id: item.id })">
+                        &times;
+                    </span>
+                </div>
+                <div 
+                v-if="tagCountLimitExceeded"
+                class="item"
+                :style="{ 
+                    color: $attrs.tagBackground || '#000',
+                    background: 'transparent' 
+                }">
+                    <span class="d-inline-block">+ {{ remainingTagCount }}</span>
                 </div>
             </div>
 
-            <div 
+            <Dropdown 
             class="options-container"
-            :class="{ 'active': open('checkboxMain') }"
+            height="auto"
+            :id="$attrs.id || 'multiSelect'"
+            :dark="dark"
+            :classes="$attrs.dropdownClasses"
+            :styles="$attrs.dropdownStyles"
+            :transformOrigin="$attrs.transformOrigin"
             >
-
                 <div class="search-box" v-if="search">
                     <input type="search" name="" id="" placeholder="Search..." v-model="searchValue">
                 </div>
@@ -33,6 +59,7 @@
                 :key="item.id"
                 >
                     <CheckBox 
+                        class="checkbox-custom-class"
                         :id="item.id"
                         :checked="item.check"
                         :name="item.value"
@@ -40,8 +67,7 @@
                         @changed="updateSelectOptions"
                     />
                 </div>
-
-            </div>
+            </Dropdown>
 
         </div>
 
@@ -54,7 +80,7 @@ import useToggler from '../../composables/useToggler'
 
 export default {
     
-    name: "CheckBoxMain",
+    name: "MultiSelect",
     inheritAttrs: false,
 
     props: {
@@ -67,7 +93,17 @@ export default {
             required: true,
             type: [Object, Array]
         },
-        dark: Boolean
+        dark: Boolean,
+        classes: String,
+        styles: {
+            type: Object,
+            default: () => {}
+        },
+        numtag: {
+            type: Number,
+            required: false,
+            default: 0
+        }
     },
 
     emits: ['update:options'],
@@ -78,9 +114,20 @@ export default {
         const { open, toggleActiveItem } = useToggler()
 
         const searchValue = ref('')
+        const selectedValues = ref([])
 
-        const selectedValues = computed(() => {
-            return props.options.filter(option => option.check)
+        const controlledSelectedValues = computed(() => {
+            return props.numtag && props.numtag > 0 ? [...selectedValues.value].slice(0, props.numtag) : 0
+        })
+
+        const remainingTagCount = computed(() => {
+            const limitedValues = controlledSelectedValues.value
+            const remaining = ['array', 'object'].includes(typeof limitedValues) ? limitedValues.length : limitedValues
+            return selectedValues.value.length - remaining
+        })
+
+        const tagCountLimitExceeded = computed(() => {
+            return selectedValues.value.length > props.numtag && props.numtag > 0
         })
 
         const filteredOptions = computed(() => {
@@ -99,16 +146,31 @@ export default {
             const filteredOptions = [ ...props.options ]
             filteredOptions[optionIndex].check = value
             emit('update:options', filteredOptions)
+            udpateSelectedValues({ filteredOptions, value, id, optionIndex })
+        }
+
+        const udpateSelectedValues = ({ filteredOptions, value, id, optionIndex }) => {
+            if(value) {
+                console.log(value, "pushed")
+                selectedValues.value.push(filteredOptions[optionIndex])
+            }
+            else {
+                optionIndex = selectedValues.value.findIndex(option => option.id == id)
+                console.log(value, "pull", optionIndex)
+                selectedValues.value.splice(optionIndex, 1)
+            }
         }
 
         return {
             open, 
-            toggleActiveItem,
             searchValue,
             selectedValues,
             filteredOptions,
+            toggleActiveItem,
+            remainingTagCount,
             updateSelectOptions,
-
+            tagCountLimitExceeded,
+            controlledSelectedValues,
         }
 
 
@@ -123,6 +185,7 @@ export default {
 
 .box-container {
     position: relative;
+    font-family: Almarai;
 }
 
 .select-box {
@@ -135,83 +198,56 @@ export default {
     box-sizing: border-box;
 
     .options-container {
-        background: #EEEEEE;
-        color: #000000;
-        width: 100%;
-        transition: all .2s;
-        max-height: 0;
-        opacity: 0;
-        overflow: hidden;
-        order: 1;
-        font-family: Almarai;
-        font-style: normal;
-        font-weight: bold;
-        font-size: 14px;
-        line-height: 140%;
-        position: absolute;
-        top: 50px;
-
-        &::-webkit-scrollbar {
-            width: 8px;
-            background: #EEEEEE;
-            border-radius: 0 8px 8px 0;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background: #525861;
-            border-radius: 0 8px 8px 0;
-        }
-
+        padding: 2.215rem 1.75rem 2.25rem 1.75rem;
         .option {
-            .chkbox_wrap {
-                display: flex;
-                align-items: center;
-                gap: .2rem .4rem;
-                font-weight: bold;
-                label: {
-                    cursor: pointer;
-                }
-                
+            font-family: inherit;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 140%;
+            display: flex;
+            align-items: center;
+            color: #000000;
+            &:not(:last-of-type) {
+                margin-bottom: 1rem;
             }
         }
-
-    }
-
-    .active {
-        max-height: 240px;
-        opacity: 1;
-        overflow-y: scroll;
     }
 
     .selected {
         background: #EEEEEE;
         border-radius: 4px;
-        margin-bottom: 8px;
         color: #000000;
         position: relative;
         order: 0;
         padding: .4rem;
         display: flex;
         justify-items: center;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         gap: .3rem;
-        height: 40px;
-        overflow: auto;
+        min-height: 40px;
+        height: auto;
+        overflow: hidden;
+        font-family: inherit;
         .item {
             background: #fff;
             padding: 2px 4px;
             font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-items: flex-start;
+            border-radius: 5px;
+            .close {
+               margin: 0 4px;
+               font-size: 16px;
+               margin-top: 1px;
+               &:hover {
+                    opacity: .8;
+                    transform: scale(108%);
+               }             
+            }
         }
-        &::-webkit-scrollbar {
-            width: 8px;
-            background: #EEEEEE;
-            border-radius: 0 8px 8px 0;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background: #525861;
-            border-radius: 0 8px 8px 0;
-        }
+        
     }
 
     .search-box {
@@ -219,7 +255,8 @@ export default {
         input {
             width: 100%;
             padding: 6px 12px;
-            font-family: Almarai;
+            // font-family: Almarai;
+            font-family: inherit;
             font-size: 16px;
             position: absolute;
             border-radius: 8px 8px 0 0;
@@ -236,9 +273,11 @@ export default {
 
 }
 
+
 .label {
     color: #868686;
-    font-family: Almarai;
+    // font-family: Almarai;
+    font-family: inherit;
     font-style: normal;
     font-weight: bold;
     font-size: 14px;
@@ -247,7 +286,7 @@ export default {
     margin-top: 8px;
 }
 
-.select-box .option, .selected {
+.selected {
     padding: 12px;
     cursor: pointer;
 }

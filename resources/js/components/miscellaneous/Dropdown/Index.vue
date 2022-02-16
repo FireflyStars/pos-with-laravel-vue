@@ -72,6 +72,7 @@ export default {
                 bottom: attrs.bottom ? `${attrs.bottom} !important` : '',
                 height: attrs.height ? `${attrs.height} !important` : 'auto',
                 background: attrs.background ? `${attrs.background} !important` : '#EEEEEE',
+                transformOrigin: attrs.transformOrigin ? `${attrs.transformOrigin} !important` : 'bottom',
                 ...props.styles
             }
         })

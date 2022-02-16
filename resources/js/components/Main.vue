@@ -13,10 +13,7 @@
 
                     <div class="col main-view container">
 
-                        <!-- <transition  enter-active-class="animate__animated animate__fadeIn"
-                            leave-active-class="animate__animated animate__fadeOut"> -->
-                            <component :is="Component" />
-                        <!-- </transition> -->
+                        <component :is="Component" />
 
                     </div>
 
@@ -30,7 +27,6 @@
 
 import MainHeader from './layout/MainHeader.vue';
 import SideBar from './layout/SideBar.vue';
-import CheckBoxMain from './miscellaneous/CheckBoxMain';
 import { ref, onMounted, nextTick } from 'vue';
 
 export default {
@@ -40,7 +36,6 @@ export default {
     components: {
       MainHeader,
       SideBar,
-      CheckBoxMain
     },
 
     setup() {

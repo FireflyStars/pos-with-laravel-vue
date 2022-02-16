@@ -52,6 +52,7 @@
                             :name="option.value"
                             :title="option.value"
                             @changed="updateSelectedCheckboxes($event, checkbox.id)"
+                            :transformOrigin="$attrs.transformOrigin"
                         />
 
                     </div>
