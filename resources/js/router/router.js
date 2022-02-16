@@ -11,7 +11,7 @@ const router = createRouter({
         {
             path:'',
             name:'LandingPage',
-            component:()=> import('../components/Main'),
+            component:()=> import('../Pages/Index'),
             meta:{
                 authenticated:true
             },

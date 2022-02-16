@@ -124,7 +124,7 @@ export default {
 
     setup(props, { emit, attrs }) {
 
-        const { toggleActiveItem } = useToggler()
+        const { open, toggleActiveItem } = useToggler()
 
         const isActive = ref(false)
         const defaultBackground = 'lawgreen'
@@ -158,6 +158,8 @@ export default {
             emit('update:selectedOptions', selectedOptions)
             
             isActive.value = false
+
+            if(open(id.value)) toggleActiveItem(id.value)
 
         }
 

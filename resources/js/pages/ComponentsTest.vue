@@ -1,129 +1,133 @@
 <template>
 
-    <div class="row m-0">
-        
-        <div class="col m-2">
+    <div class="">
 
-            <SelectBox
-                v-model="select1" 
-                placeholder="Choose a number" 
-                :options="selectBoxOptions" 
-                name="select2" 
-                :valid="true"
-                label="Positive" 
-            />
+        <div class="row m-0">
+            
+            <div class="col m-2">
 
-        </div>
-
-        <div class="col m-2">
-            <CheckBoxMain 
-                id="checkBoxMain"
-                title="Statut"
-                width="116px"
-                tagBackground="orange"
-                tagColor="white"
-                classes=""
-                :styles="{}" 
-                dropdownClasses=""
-                :dropdownStyles="{ width: '167px' }"
-                v-model:options="options"
-            />
-        </div>
-        
-        <div class="col m-2">
-            <h4 class="text-center">App Filters</h4>
-            <Filter 
-                v-model:checkboxOptions="filterCheckboxOptions"
-                v-model:selectOptions="filterSelectOptions"
-                v-model:selectedOptions="filterSelectedOptions"
-                activeBackground="orange"
-                activeColor="white"
-                dropdownClasses=""
-                :dropdownStyles="{}"
-                classes=""
-                :styles="{}"
-                @validate="validateFilters"
-            />
-        </div>
-
-    </div>
-
-    <div class="row m-0 my-5">
-        <div class="col">
-            <h4>Dropdown Item</h4>
-            <div class="position-relative">
-                <BaseButton 
-                    class="mt-1"
-                    title="Dropdown Trigger"
-                    @click="toggleActiveItem('demoDropdown')"
+                <SelectBox
+                    v-model="select1" 
+                    placeholder="Choose a number" 
+                    :options="selectBoxOptions" 
+                    name="select2" 
+                    :valid="true"
+                    label="Positive" 
                 />
-                <Dropdown 
-                    id="demoDropdown"
-                    height="200px"
-                    background="transparent"
-                >
-                    <ul class="list-group w-100">
-                        <li class="list-group-item list-group-item-action">Item 1</li>
-                        <li class="list-group-item list-group-item-action">Item 2</li>
-                        <li class="list-group-item list-group-item-action">Item 3</li>
-                        <li class="list-group-item list-group-item-action">Item 4</li>
-                    </ul>
-                </Dropdown>
-            </div>
-        </div>
-        <div class="col">
-            <h4>Checkbox</h4>
-            <CheckBox 
-                title="Custom attributes checkbox"
-                name="customCheckbox"
-                background="blue"
-                color="orange"
-                :checked="customCheckbox"
-                @changed="customCheckbox = $event.value"
-            />
-        </div>
-        
-    </div>
-
-    <div class="row m-0 mt-5">
-        <div class="col">
-            
-            <h4>Buttons</h4>
-            
-            <div class="d-flex align-items-center justify-content-between">
-                <BaseButton title="Danger" htmlTitle="kind danger" kind="danger" class="text-capitalize" />
-                <BaseButton title="Primary" htmlTitle="kind primary" kind="primary" class="text-capitalize" />
-                <BaseButton title="success" htmlTitle="kind success" kind="success" class="text-capitalize" />
-                <BaseButton title="Green" htmlTitle="kind green" kind="green" class="text-capitalize" />
-                <BaseButton title="Light Green" htmlTitle="kind light-green" kind="light-green" class="text-capitalize" />
-                <BaseButton title="Warning" htmlTitle="kind warning" kind="warning" class="text-capitalize" />
-                <BaseButton title="Light warning" htmlTitle="kind light-warning" kind="light-warning" class="text-capitalize" />
-
-                <BaseButton 
-                    title="Light warning Icon"
-                    htmlTitle="kind light-warning"
-                    kind="light-warning"
-                    class="text-capitalize"
-                    prepend
-                   >
-                    <Icon name="user" />
-                </BaseButton>
-
-                <BaseButton 
-                    title="Warning Icon"
-                    htmlTitle="kind warning"
-                    kind="warning"
-                    class="text-capitalize"
-                   >
-                    <Icon name="clipboard" />
-                </BaseButton>
 
             </div>
 
+            <div class="col m-2">
+                <CheckBoxMain 
+                    id="checkBoxMain"
+                    title="Statut"
+                    width="116px"
+                    tagBackground="orange"
+                    tagColor="white"
+                    :numtag="1"
+                    classes=""
+                    :styles="{}" 
+                    dropdownClasses=""
+                    :dropdownStyles="{ width: '167px' }"
+                    v-model:options="options"
+                />
+            </div>
+            
+            <div class="col m-2">
+                <h4 class="text-center">App Filters</h4>
+                <Filter 
+                    v-model:checkboxOptions="filterCheckboxOptions"
+                    v-model:selectOptions="filterSelectOptions"
+                    v-model:selectedOptions="filterSelectedOptions"
+                    activeBackground="orange"
+                    activeColor="white"
+                    dropdownClasses=""
+                    :dropdownStyles="{}"
+                    classes=""
+                    :styles="{}"
+                    @validate="validateFilters"
+                />
+            </div>
 
         </div>
-    </div>
 
+        <div class="row m-0 my-5">
+            <div class="col">
+                <h4>Dropdown Item</h4>
+                <div class="position-relative">
+                    <BaseButton 
+                        class="mt-1"
+                        title="Dropdown Trigger"
+                        @click="toggleActiveItem('demoDropdown')"
+                    />
+                    <Dropdown 
+                        id="demoDropdown"
+                        height="200px"
+                        background="transparent"
+                    >
+                        <ul class="list-group w-100">
+                            <li class="list-group-item list-group-item-action">Item 1</li>
+                            <li class="list-group-item list-group-item-action">Item 2</li>
+                            <li class="list-group-item list-group-item-action">Item 3</li>
+                            <li class="list-group-item list-group-item-action">Item 4</li>
+                        </ul>
+                    </Dropdown>
+                </div>
+            </div>
+            <div class="col">
+                <h4>Checkbox</h4>
+                <CheckBox 
+                    title="Custom attributes checkbox"
+                    name="customCheckbox"
+                    background="blue"
+                    color="orange"
+                    :checked="customCheckbox"
+                    @changed="customCheckbox = $event.value"
+                />
+            </div>
+            
+        </div>
+
+        <div class="row m-0 mt-5">
+            <div class="col">
+                
+                <h4>Buttons</h4>
+                
+                <div class="d-flex align-items-center justify-content-between">
+                    <BaseButton title="Danger" htmlTitle="kind danger" kind="danger" class="text-capitalize" />
+                    <BaseButton title="Primary" htmlTitle="kind primary" kind="primary" class="text-capitalize" />
+                    <BaseButton title="success" htmlTitle="kind success" kind="success" class="text-capitalize" />
+                    <BaseButton title="Green" htmlTitle="kind green" kind="green" class="text-capitalize" />
+                    <BaseButton title="Light Green" htmlTitle="kind light-green" kind="light-green" class="text-capitalize" />
+                    <BaseButton title="Warning" htmlTitle="kind warning" kind="warning" class="text-capitalize" />
+                    <BaseButton title="Light warning" htmlTitle="kind light-warning" kind="light-warning" class="text-capitalize" />
+
+                    <BaseButton 
+                        title="Light warning Icon"
+                        htmlTitle="kind light-warning"
+                        kind="light-warning"
+                        class="text-capitalize"
+                        prepend
+                    >
+                        <Icon name="user" />
+                    </BaseButton>
+
+                    <BaseButton 
+                        title="Warning Icon"
+                        htmlTitle="kind warning"
+                        kind="warning"
+                        class="text-capitalize"
+                    >
+                        <Icon name="clipboard" />
+                    </BaseButton>
+
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
     
 </template>
 

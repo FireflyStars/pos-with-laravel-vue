@@ -12,10 +12,9 @@
         <label for="" class="label">{{ title }}</label>
 
         <div class="select-box">
-
             <div class="selected" @click.self="toggleActiveItem($attrs.id || 'checkboxMain')">
                 <div class="item" 
-                v-for="item in selectedValues" 
+                v-for="item in controlledSelectedValues" 
                 :key="item.id"
                 :style="{
                     background: $attrs.tagBackground || '#fff',
@@ -29,6 +28,15 @@
                     @click="updateSelectOptions({ value: false, id: item.id })">
                         &times;
                     </span>
+                </div>
+                <div 
+                v-if="tagCountLimitExceeded"
+                class="item"
+                :style="{ 
+                    color: '#000',
+                    background: 'transparent' 
+                }">
+                    <span class="d-inline-block">+ {{ remainingTagCount }}</span>
                 </div>
             </div>
 
@@ -89,6 +97,11 @@ export default {
         styles: {
             type: Object,
             default: () => {}
+        },
+        numtag: {
+            type: Number,
+            required: false,
+            default: 0
         }
     },
 
@@ -100,9 +113,20 @@ export default {
         const { open, toggleActiveItem } = useToggler()
 
         const searchValue = ref('')
+        const selectedValues = ref([])
 
-        const selectedValues = computed(() => {
-            return props.options.filter(option => option.check)
+        const controlledSelectedValues = computed(() => {
+            return props.numtag && props.numtag > 0 ? [...selectedValues.value].slice(0, props.numtag) : 0
+        })
+
+        const remainingTagCount = computed(() => {
+            const limitedValues = controlledSelectedValues.value
+            const remaining = ['array', 'object'].includes(typeof limitedValues) ? limitedValues.length : limitedValues
+            return selectedValues.value.length - remaining
+        })
+
+        const tagCountLimitExceeded = computed(() => {
+            return selectedValues.value.length > props.numtag && props.numtag > 0
         })
 
         const filteredOptions = computed(() => {
@@ -121,15 +145,31 @@ export default {
             const filteredOptions = [ ...props.options ]
             filteredOptions[optionIndex].check = value
             emit('update:options', filteredOptions)
+            udpateSelectedValues({ filteredOptions, value, id, optionIndex })
+        }
+
+        const udpateSelectedValues = ({ filteredOptions, value, id, optionIndex }) => {
+            if(value) {
+                console.log(value, "pushed")
+                selectedValues.value.push(filteredOptions[optionIndex])
+            }
+            else {
+                optionIndex = selectedValues.value.findIndex(option => option.id == id)
+                console.log(value, "pull", optionIndex)
+                selectedValues.value.splice(optionIndex, 1)
+            }
         }
 
         return {
             open, 
-            toggleActiveItem,
             searchValue,
             selectedValues,
             filteredOptions,
+            toggleActiveItem,
+            remainingTagCount,
             updateSelectOptions,
+            tagCountLimitExceeded,
+            controlledSelectedValues,
         }
 
 

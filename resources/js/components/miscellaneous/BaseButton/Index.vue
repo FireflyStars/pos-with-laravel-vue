@@ -1,6 +1,6 @@
 <template>
     <button 
-        :class="kind"
+        :class="[kind, ...classes.split(',')]"
         :title="$attrs.htmlTitle"
     >
         <div 
@@ -45,6 +45,10 @@
             iconStyle: {
                 type: Object,
                 default: () => {}
+            },
+            classes: {
+                type: String,
+                default: ''
             }
         }
     }

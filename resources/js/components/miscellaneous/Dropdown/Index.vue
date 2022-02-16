@@ -7,6 +7,7 @@
         :class="classSet"
         :style="styleSet"
         v-bind="$attrs"
+        v-click-away="close"
         >
             <slot></slot>
         </div>
@@ -47,6 +48,10 @@ export default {
 
         const { open, toggleActiveItem } = useToggler()
 
+        const close = () => {
+            toggleActiveItem(props.id)
+        }
+
         const classSet = computed(() => {
             return [{ 
                 'active': open(props.id),
@@ -73,6 +78,7 @@ export default {
 
         return {
             open,
+            close,
             classSet,
             styleSet,
             toggleActiveItem

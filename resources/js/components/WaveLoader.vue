@@ -17,7 +17,7 @@
     import BarLoader from './BarLoader';
     export default {
         name: "WaveLoader",
-        components: {BarLoader},
+        components: { BarLoader },
         props:{
             show_loader:{
                 type:Boolean
