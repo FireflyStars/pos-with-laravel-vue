@@ -213,6 +213,7 @@ class ApiController extends Controller
     public function GetEventList(Request $request){
             $SessionID=$request->post('SessionID');
             $AccountKey=$request->post('AccountKey');
+            $Parameters=$request->post('Parameters');
 
             $valid=$this->isValidAccountKeySessionID($request);
             if($valid!==true)return $valid;
@@ -222,7 +223,16 @@ class ApiController extends Controller
 
             if($isLoggedIn===true){
                 $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
-                $events=Event::where('user_id','=',$lcdtapp_api_instance->user_id)->get();
+                $events=Event::where('user_id','=',$lcdtapp_api_instance->user_id);
+                if(isset($Parameters['fromdate'])&&!$this->isBlank($Parameters['fromdate'])&&isset($Parameters['todate'])&&!$this->isBlank($Parameters['todate'])){
+                    $events->whereBetween('datedebut',[$Parameters['fromdate'],$Parameters['todate']]);
+                }else if(isset($Parameters['fromdate'])&&!$this->isBlank($Parameters['fromdate'])){
+                    $events->where('datedebut','>=',$Parameters['fromdate']);
+                }else if(isset($Parameters['todate'])&&!$this->isBlank($Parameters['todate'])){
+                    $events->where('datedebut','<=',$Parameters['todate']);
+                }
+                
+                $events=$events->get();
                 foreach($events as &$event){
                     $event->makeHidden(['created_at','updated_at','deleted_at']);
                     $event->user->roles=$event->user->getRoles();
@@ -560,6 +570,8 @@ public function GetDevis(Request $request){
         if($event==null)
         return $this->response(0,null,'Event not found.');
         $order=$event->order()->first();
+        if($order==null)  
+          return $this->response(0,null,'No quotation(devis) found for this event.');
         $order->makeHidden(['created_at','updated_at','deleted_at']);
         $order->orderZones;   
         foreach($order->orderZones as &$order_zone){
