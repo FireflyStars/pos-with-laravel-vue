@@ -188,6 +188,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+/* harmony import */ var _composables_useToggler__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../composables/useToggler */ "./resources/js/composables/useToggler.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -199,6 +200,7 @@ function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symb
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -214,18 +216,22 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       required: true,
       type: [Object, Array]
     },
-    dark: Boolean
+    dark: Boolean,
+    classes: String,
+    styles: {
+      type: Object,
+      "default": function _default() {}
+    }
   },
   emits: ['update:options'],
   setup: function setup(props, _ref) {
     var emit = _ref.emit;
-    var active = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(false);
+
+    var _useToggler = (0,_composables_useToggler__WEBPACK_IMPORTED_MODULE_1__["default"])(),
+        open = _useToggler.open,
+        toggleActiveItem = _useToggler.toggleActiveItem;
+
     var searchValue = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)('');
-
-    var toggleActive = function toggleActive() {
-      active.value = !active.value;
-    };
-
     var selectedValues = (0,vue__WEBPACK_IMPORTED_MODULE_0__.computed)(function () {
       return props.options.filter(function (option) {
         return option.check;
@@ -257,9 +263,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     };
 
     return {
-      active: active,
+      open: open,
+      toggleActiveItem: toggleActiveItem,
       searchValue: searchValue,
-      toggleActive: toggleActive,
       selectedValues: selectedValues,
       filteredOptions: filteredOptions,
       updateSelectOptions: updateSelectOptions
@@ -549,6 +555,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "render": () => (/* binding */ render)
 /* harmony export */ });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 var _withScopeId = function _withScopeId(n) {
@@ -563,69 +587,103 @@ var _hoisted_2 = {
   "class": "select-box"
 };
 var _hoisted_3 = {
+  "class": "text"
+};
+var _hoisted_4 = ["onClick"];
+var _hoisted_5 = {
   key: 0,
   "class": "search-box"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_CheckBox = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("CheckBox");
 
+  var _component_Dropdown = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Dropdown");
+
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
-    style: (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeStyle)({
-      width: "".concat(_ctx.$attrs.width, " !importtant") || 0,
+    style: (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeStyle)(_objectSpread({
+      width: _ctx.$attrs.width ? "".concat(_ctx.$attrs.width, " !important") : 'auto',
       padding: _ctx.$attrs.padding || 0,
       margin: _ctx.$attrs.margin || 0
-    }),
-    "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["box-container", {
+    }, $props.styles)),
+    "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["box-container", [{
       'dark': $props.dark
-    }])
+    }].concat(_toConsumableArray($props.classes.split(',')))])
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.title), 1
   /* TEXT */
   ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "selected",
-    onClick: _cache[0] || (_cache[0] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
-      return $setup.toggleActive && $setup.toggleActive.apply($setup, arguments);
-    }, ["prevent"]))
+    onClick: _cache[0] || (_cache[0] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
+      return $setup.toggleActiveItem(_ctx.$attrs.id || 'checkboxMain');
+    }, ["self"]))
   }, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.selectedValues, function (item) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
       "class": "item",
-      key: item.id
-    }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.value), 1
+      key: item.id,
+      style: (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeStyle)({
+        background: _ctx.$attrs.tagBackground || '#fff',
+        color: _ctx.$attrs.tagColor || '#000'
+      })
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.value), 1
     /* TEXT */
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+      "class": "close",
+      title: "Remove",
+      onClick: function onClick($event) {
+        return $setup.updateSelectOptions({
+          value: false,
+          id: item.id
+        });
+      }
+    }, " × ", 8
+    /* PROPS */
+    , _hoisted_4)], 4
+    /* STYLE */
     );
   }), 128
   /* KEYED_FRAGMENT */
-  ))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["options-container", {
-      'active': $setup.active
-    }])
-  }, [$props.search ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
-    type: "search",
-    name: "",
-    id: "",
-    placeholder: "Search...",
-    "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
-      return $setup.searchValue = $event;
-    })
-  }, null, 512
-  /* NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.searchValue]])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.filteredOptions, function (item) {
-    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
-      "class": "option",
-      key: item.id
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_CheckBox, {
-      id: item.id,
-      checked: item.check,
-      name: item.value,
-      title: item.value,
-      onChanged: $setup.updateSelectOptions
-    }, null, 8
-    /* PROPS */
-    , ["id", "checked", "name", "title", "onChanged"])]);
-  }), 128
-  /* KEYED_FRAGMENT */
-  ))], 2
-  /* CLASS */
-  )])], 6
+  ))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Dropdown, {
+    "class": "options-container",
+    height: "auto",
+    id: _ctx.$attrs.id || 'checkboxMain',
+    dark: $props.dark,
+    classes: _ctx.$attrs.dropdownClasses,
+    styles: _ctx.$attrs.dropdownStyles
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [$props.search ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+        type: "search",
+        name: "",
+        id: "",
+        placeholder: "Search...",
+        "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
+          return $setup.searchValue = $event;
+        })
+      }, null, 512
+      /* NEED_PATCH */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.searchValue]])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.filteredOptions, function (item) {
+        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
+          "class": "option",
+          key: item.id
+        }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_CheckBox, {
+          "class": "checkbox-custom-class",
+          id: item.id,
+          checked: item.check,
+          name: item.value,
+          title: item.value,
+          onChanged: $setup.updateSelectOptions
+        }, null, 8
+        /* PROPS */
+        , ["id", "checked", "name", "title", "onChanged"])]);
+      }), 128
+      /* KEYED_FRAGMENT */
+      ))];
+    }),
+    _: 1
+    /* STABLE */
+
+  }, 8
+  /* PROPS */
+  , ["id", "dark", "classes", "styles"])])], 6
   /* CLASS, STYLE */
   );
 }
@@ -722,7 +780,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".box-container[data-v-cb7766b0] {\n  position: relative;\n}\n.select-box[data-v-cb7766b0] {\n  position: relative;\n  display: flex;\n  flex-direction: column;\n  justify-items: center;\n  width: 100%;\n  box-sizing: border-box;\n}\n.select-box .options-container[data-v-cb7766b0] {\n  background: #EEEEEE;\n  color: #000000;\n  width: 100%;\n  transition: all 0.2s;\n  max-height: 0;\n  opacity: 0;\n  overflow: hidden;\n  order: 1;\n  font-family: Almarai;\n  font-style: normal;\n  font-weight: bold;\n  font-size: 14px;\n  line-height: 140%;\n  position: absolute;\n  top: 50px;\n}\n.select-box .options-container[data-v-cb7766b0]::-webkit-scrollbar {\n  width: 8px;\n  background: #EEEEEE;\n  border-radius: 0 8px 8px 0;\n}\n.select-box .options-container[data-v-cb7766b0]::-webkit-scrollbar-thumb {\n  background: #525861;\n  border-radius: 0 8px 8px 0;\n}\n.select-box .options-container .option .chkbox_wrap[data-v-cb7766b0] {\n  display: flex;\n  align-items: center;\n  gap: 0.2rem 0.4rem;\n  font-weight: bold;\n  label-cursor: pointer;\n}\n.select-box .active[data-v-cb7766b0] {\n  max-height: 240px;\n  opacity: 1;\n  overflow-y: scroll;\n}\n.select-box .selected[data-v-cb7766b0] {\n  background: #EEEEEE;\n  border-radius: 4px;\n  margin-bottom: 8px;\n  color: #000000;\n  position: relative;\n  order: 0;\n  padding: 0.4rem;\n  display: flex;\n  justify-items: center;\n  flex-wrap: wrap;\n  gap: 0.3rem;\n  height: 40px;\n  overflow: auto;\n}\n.select-box .selected .item[data-v-cb7766b0] {\n  background: #fff;\n  padding: 2px 4px;\n  font-size: 13px;\n}\n.select-box .selected[data-v-cb7766b0]::-webkit-scrollbar {\n  width: 8px;\n  background: #EEEEEE;\n  border-radius: 0 8px 8px 0;\n}\n.select-box .selected[data-v-cb7766b0]::-webkit-scrollbar-thumb {\n  background: #525861;\n  border-radius: 0 8px 8px 0;\n}\n.select-box .search-box[data-v-cb7766b0] {\n  padding-bottom: 3rem;\n}\n.select-box .search-box input[data-v-cb7766b0] {\n  width: 100%;\n  padding: 6px 12px;\n  font-family: Almarai;\n  font-size: 16px;\n  position: absolute;\n  border-radius: 8px 8px 0 0;\n  z-index: 100;\n  border: 8px solid #EEEEEE;\n  opacity: 0;\n  pointer-events: none;\n  transition: all 0.2s;\n}\n.select-box .search-box input[data-v-cb7766b0]:focus {\n  outline: none;\n}\n.label[data-v-cb7766b0] {\n  color: #868686;\n  font-family: Almarai;\n  font-style: normal;\n  font-weight: bold;\n  font-size: 14px;\n  line-height: 140%;\n  text-transform: uppercase;\n  margin-top: 8px;\n}\n.select-box .option[data-v-cb7766b0], .selected[data-v-cb7766b0] {\n  padding: 12px;\n  cursor: pointer;\n}\n.select-box .options-container.active .search-box input[data-v-cb7766b0] {\n  opacity: 1;\n  pointer-events: auto;\n}\n.dark .selected[data-v-cb7766b0] {\n  background: #494c50;\n}\n.dark .selected[data-v-cb7766b0]::-webkit-scrollbar {\n  background: #525861;\n}\n.dark .selected[data-v-cb7766b0]::-webkit-scrollbar-thumb {\n  background: #494c50;\n}\n.dark .selected .item[data-v-cb7766b0] {\n  background: #525861;\n  color: #F0F0F0;\n}\n.dark .options-container[data-v-cb7766b0] {\n  background: #494c50;\n  color: #F0F0F0;\n}\n.dark .options-container[data-v-cb7766b0]::-webkit-scrollbar {\n  background: #525861;\n}\n.dark .options-container[data-v-cb7766b0]::-webkit-scrollbar-thumb {\n  background: #494c50;\n}\n.dark .search-box input[data-v-cb7766b0] {\n  border: 8px solid #494c50;\n  background: #525861;\n  color: #F0F0F0;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".box-container[data-v-cb7766b0] {\n  position: relative;\n  font-family: Almarai;\n}\n.select-box[data-v-cb7766b0] {\n  position: relative;\n  display: flex;\n  flex-direction: column;\n  justify-items: center;\n  width: 100%;\n  box-sizing: border-box;\n}\n.select-box .options-container[data-v-cb7766b0] {\n  padding: 2.215rem 1.75rem 2.25rem 1.75rem;\n}\n.select-box .options-container .option[data-v-cb7766b0] {\n  font-family: inherit;\n  font-style: normal;\n  font-weight: bold;\n  font-size: 14px;\n  line-height: 140%;\n  display: flex;\n  align-items: center;\n  color: #000000;\n}\n.select-box .options-container .option[data-v-cb7766b0]:not(:last-of-type) {\n  margin-bottom: 1rem;\n}\n.select-box .selected[data-v-cb7766b0] {\n  background: #EEEEEE;\n  border-radius: 4px;\n  color: #000000;\n  position: relative;\n  order: 0;\n  padding: 0.4rem;\n  display: flex;\n  justify-items: center;\n  flex-wrap: nowrap;\n  gap: 0.3rem;\n  min-height: 40px;\n  height: auto;\n  overflow: hidden;\n  font-family: inherit;\n}\n.select-box .selected .item[data-v-cb7766b0] {\n  background: #fff;\n  padding: 2px 4px;\n  font-size: 13px;\n  display: flex;\n  align-items: center;\n  justify-items: flex-start;\n  border-radius: 5px;\n}\n.select-box .selected .item .close[data-v-cb7766b0] {\n  margin: 0 4px;\n  font-size: 16px;\n  margin-top: 1px;\n}\n.select-box .selected .item .close[data-v-cb7766b0]:hover {\n  opacity: 0.8;\n  transform: scale(108%);\n}\n.select-box .search-box[data-v-cb7766b0] {\n  padding-bottom: 3rem;\n}\n.select-box .search-box input[data-v-cb7766b0] {\n  width: 100%;\n  padding: 6px 12px;\n  font-family: inherit;\n  font-size: 16px;\n  position: absolute;\n  border-radius: 8px 8px 0 0;\n  z-index: 100;\n  border: 8px solid #EEEEEE;\n  opacity: 0;\n  pointer-events: none;\n  transition: all 0.2s;\n}\n.select-box .search-box input[data-v-cb7766b0]:focus {\n  outline: none;\n}\n.label[data-v-cb7766b0] {\n  color: #868686;\n  font-family: inherit;\n  font-style: normal;\n  font-weight: bold;\n  font-size: 14px;\n  line-height: 140%;\n  text-transform: uppercase;\n  margin-top: 8px;\n}\n.selected[data-v-cb7766b0] {\n  padding: 12px;\n  cursor: pointer;\n}\n.select-box .options-container.active .search-box input[data-v-cb7766b0] {\n  opacity: 1;\n  pointer-events: auto;\n}\n.dark .selected[data-v-cb7766b0] {\n  background: #494c50;\n}\n.dark .selected[data-v-cb7766b0]::-webkit-scrollbar {\n  background: #525861;\n}\n.dark .selected[data-v-cb7766b0]::-webkit-scrollbar-thumb {\n  background: #494c50;\n}\n.dark .selected .item[data-v-cb7766b0] {\n  background: #525861;\n  color: #F0F0F0;\n}\n.dark .options-container[data-v-cb7766b0] {\n  background: #494c50;\n  color: #F0F0F0;\n}\n.dark .options-container[data-v-cb7766b0]::-webkit-scrollbar {\n  background: #525861;\n}\n.dark .options-container[data-v-cb7766b0]::-webkit-scrollbar-thumb {\n  background: #494c50;\n}\n.dark .search-box input[data-v-cb7766b0] {\n  border: 8px solid #494c50;\n  background: #525861;\n  color: #F0F0F0;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

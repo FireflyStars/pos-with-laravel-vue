@@ -19,13 +19,13 @@
             <CheckBoxMain 
                 id="checkBoxMain"
                 title="Statut"
-                width="200px"
+                width="116px"
                 tagBackground="orange"
                 tagColor="white"
                 classes=""
                 :styles="{}" 
                 dropdownClasses=""
-                :dropdownStyles="{}"
+                :dropdownStyles="{ width: '167px' }"
                 v-model:options="options"
             />
         </div>
@@ -48,7 +48,7 @@
 
     </div>
 
-    <div class="row m-0">
+    <div class="row m-0 my-5">
         <div class="col">
             <h4>Dropdown Item</h4>
             <div class="position-relative">

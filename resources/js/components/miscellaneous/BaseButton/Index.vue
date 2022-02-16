@@ -95,24 +95,15 @@
         color: white;
     }
     button.light-warning, button.lightWarning {
-        background: #E8581B;
+        background: rgba(232, 88, 27, 0.7);;
         color: white;
     }
     button.warning {
-        background: rgba(232, 88, 27, 0.7);
+        background: #E8581B;
         color: white;
     }
     .order-1 {
         order: 1 !important;
     }
-    // .text {
-    //     float: left;
-    // }
-    // .icon {
-    //     float: right;
-    // }
-    // .text::after, .icon::after {
-    //     float: none;
-    //     clear: both;
-    // }
+    
 </style>

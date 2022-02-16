@@ -12,7 +12,7 @@
             />
 
             <BaseButton
-                :class="[isColored]"
+                :class="[{ 'colored': isActive }]"
                 title="Filtre"
                 @click.prevent="toggleActiveItem(id)"
                 :style="{
@@ -65,7 +65,7 @@
                     :name="select.label"
                     :label="`${select.label}:`"
                     v-model="selectedOptionItems[index]"
-                    classnames="mt-4"
+                    :styles="{ width: '196px !important', marginTop: '1.125rem', marginLeft: 0, heigth: '1.132rem' }"
                 />
 
                 <BaseButton
@@ -138,21 +138,7 @@ export default {
         })
 
         const id = computed(() => attrs.id || 'filtersMain')
-
         const selectedOptionItems = computed(() => props.selectedOptions)
-
-        const isColored = computed(() => {
-            const hasSelectedItems = Object.values(selectedOptionItems.value).some(option => option != '')
-            const hasSelectedCheckboxes = props.checkboxOptions.some(checkbox => {
-                return checkbox.options.some(option => option.check)
-            })
-            if(hasSelectedItems || hasSelectedCheckboxes) {
-                isActive.value = true
-                return 'colored'
-            }
-            isActive.value = false
-            return ''
-        })
 
         const resetFilter = () => {
             const checkboxOptions = [ ...props.checkboxOptions ]
@@ -170,6 +156,8 @@ export default {
 
             emit('update:checkboxOptions', checkboxOptions)
             emit('update:selectedOptions', selectedOptions)
+            
+            isActive.value = false
 
         }
 
@@ -188,14 +176,16 @@ export default {
 
         
         const validate = () => {
+            isActive.value = true
             emit('validate')
+            toggleActiveItem(id.value)
         }
        
 
         return {
             id,
             validate,
-            isColored,
+            isActive,
             resetFilter,
             toggleActiveItem,
             customActiveColor,
@@ -208,6 +198,7 @@ export default {
 </script>
 
 <style scoped>
+
 
 .filter-buttons {
     display: flex;
@@ -253,7 +244,7 @@ export default {
     left: 0;
     right: 0;
     z-index: 1;
-    padding: 5% 12%;
+    padding: 1.312rem 0 0 3.875rem;
     overflow: visible;
     height: auto !important;
 }
@@ -265,12 +256,12 @@ export default {
     color: #868686;
     display: flex;
     flex-direction: column;
-    margin-bottom: 16px;
+    margin-bottom: 28px;
     text-transform: uppercase;
 }
 
 .text-title {
-    margin-bottom: 16px;
+    margin-bottom: 0.861rem;
     font-size: 16px !important;
     line-height: 140% !important;
     color: #47454B !important;
@@ -278,6 +269,7 @@ export default {
     font-weight: bold;
     line-height: 140%;
     text-transform: capitalize;
+    line-height: 22.4px;
 }
 
 .select {
@@ -286,7 +278,7 @@ export default {
 
 
 .validate-button {
-    margin: 10% 25% 0% 25%;
+    margin: 1.62rem 0 1.062rem 3.25rem;
     display: block;
     position: relative;
     bottom: 0;
@@ -297,6 +289,7 @@ export default {
     border-radius: 4px;
     font-family: inherit;
     font-weight: bold;
+    color: #000;
 }
 </style>
 <style scoped>

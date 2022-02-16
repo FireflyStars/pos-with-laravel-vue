@@ -7,12 +7,21 @@
             {{ label }}
         </label
     >
-    <div class="select noselect" :class="classNameSet" @click.self="toggle"><span
+    <div 
+    class="select noselect"
+    :class="classNameSet"
+    @click.self="toggle"
+    :style="{
+        ...styles
+    }"
+    >
+    <span
             class="disp"
             :class="{
-                _placeholder: current_display == '',
-                disabled: disabled == true,
+                '_placeholder': current_display == '',
+                'disabled': disabled == true,
             }"
+            
             @click.self="toggle"
    >
             <template v-if="current_display == ''">{{ placeholder }}</template>
@@ -65,6 +74,11 @@ export default {
         label: String,
         disabled: Boolean,
         valid: Boolean | null,
+        styles: {
+            required: false,
+            type: Object,
+            default: () => {}
+        }
     },
 
     emits: ['update:modelValue'],
