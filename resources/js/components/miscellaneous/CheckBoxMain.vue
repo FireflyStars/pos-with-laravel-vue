@@ -13,7 +13,7 @@
 
         <div class="select-box">
 
-            <div class="selected" @click.prevent="toggleActiveItem($attrs.id || 'checkboxMain')">
+            <div class="selected" @click.self="toggleActiveItem($attrs.id || 'checkboxMain')">
                 <div class="item" 
                 v-for="item in selectedValues" 
                 :key="item.id"
@@ -22,7 +22,13 @@
                     color: $attrs.tagColor || '#000'
                 }"
                 >
-                    {{ item.value }}
+                    <span class="text">{{ item.value }}</span>
+                    <span 
+                    class="close" 
+                    title="Remove" 
+                    @click="updateSelectOptions({ value: false, id: item.id })">
+                        &times;
+                    </span>
                 </div>
             </div>
 
@@ -150,6 +156,22 @@ export default {
     width: 100%;
     box-sizing: border-box;
 
+    .options-container {
+        padding: 2.215rem 1.75rem 2.25rem 1.75rem;
+        .option {
+            font-family: inherit;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 140%;
+            display: flex;
+            align-items: center;
+            color: #000000;
+            &:not(:last-of-type) {
+                margin-bottom: 1rem;
+            }
+        }
+    }
 
     .selected {
         background: #EEEEEE;
@@ -160,25 +182,31 @@ export default {
         padding: .4rem;
         display: flex;
         justify-items: center;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         gap: .3rem;
-        height: 40px;
-        overflow: auto;
+        min-height: 40px;
+        height: auto;
+        overflow: hidden;
+        font-family: inherit;
         .item {
             background: #fff;
             padding: 2px 4px;
             font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-items: flex-start;
+            border-radius: 5px;
+            .close {
+               margin: 0 4px;
+               font-size: 16px;
+               margin-top: 1px;
+               &:hover {
+                    opacity: .8;
+                    transform: scale(108%);
+               }             
+            }
         }
-        &::-webkit-scrollbar {
-            width: 8px;
-            background: #EEEEEE;
-            border-radius: 0 8px 8px 0;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background: #525861;
-            border-radius: 0 8px 8px 0;
-        }
+        
     }
 
     .search-box {
@@ -217,13 +245,9 @@ export default {
     margin-top: 8px;
 }
 
-.select-box .option, .selected {
+.selected {
     padding: 12px;
     cursor: pointer;
-}
-
-.select-box .option {
-    padding: 8px 12px;
 }
 
 .select-box .options-container.active .search-box input {
