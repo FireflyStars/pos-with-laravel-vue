@@ -12,7 +12,7 @@
         <label for="" class="label">{{ title }}</label>
 
         <div class="select-box">
-            <div class="selected" @click.self="toggleActiveItem($attrs.id || 'multiSelect')">
+            <div class="selected" @click="toggleActiveItem($attrs.id || 'multiSelect')">
                 <div class="item" 
                 v-for="item in controlledSelectedValues" 
                 :key="item.id"
@@ -21,11 +21,11 @@
                     color: $attrs.tagColor || '#000'
                 }"
                 >
-                    <span class="text">{{ item.value }}</span>
+                    <span class="text">{{ slice(item.value) }}</span>
                     <span 
                     class="close" 
                     title="Remove" 
-                    @click="updateSelectOptions({ value: false, id: item.id })">
+                    @click.self="updateSelectOptions({ value: false, id: item.id })">
                         &times;
                     </span>
                 </div>
@@ -49,6 +49,7 @@
             :styles="$attrs.dropdownStyles"
             :transformOrigin="$attrs.transformOrigin"
             >
+            
                 <div class="search-box" v-if="search">
                     <input type="search" name="" id="" placeholder="Search..." v-model="searchValue">
                 </div>
@@ -77,6 +78,7 @@
 <script>
 import { ref, computed } from "vue"
 import useToggler from '../../composables/useToggler'
+import useHelpers from '../../composables/useHelpers'
 
 export default {
     
@@ -112,6 +114,7 @@ export default {
     setup(props, { emit }) {
 
         const { open, toggleActiveItem } = useToggler()
+        const { slice } = useHelpers()
 
         const searchValue = ref('')
         const selectedValues = ref([])
@@ -151,18 +154,17 @@ export default {
 
         const udpateSelectedValues = ({ filteredOptions, value, id, optionIndex }) => {
             if(value) {
-                console.log(value, "pushed")
                 selectedValues.value.push(filteredOptions[optionIndex])
             }
             else {
                 optionIndex = selectedValues.value.findIndex(option => option.id == id)
-                console.log(value, "pull", optionIndex)
                 selectedValues.value.splice(optionIndex, 1)
             }
         }
 
         return {
             open, 
+            slice,
             searchValue,
             selectedValues,
             filteredOptions,
@@ -225,8 +227,8 @@ export default {
         justify-items: center;
         flex-wrap: nowrap;
         gap: .3rem;
-        min-height: 40px;
-        height: auto;
+        max-height: 40px;
+        height: 40px;
         overflow: hidden;
         font-family: inherit;
         .item {
@@ -252,6 +254,7 @@ export default {
 
     .search-box {
         padding-bottom: 3rem;
+        margin-left: -1.75rem;
         input {
             width: 100%;
             padding: 6px 12px;
