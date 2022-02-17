@@ -732,9 +732,7 @@ public function SaveDevis(Request $request){
             if(!isset($order_zone['longitude'])||$this->isBlank($order_zone['longitude'])){
                 return $this->response(0,null,'Zone longitude is required.');
             }
-            if(!isset($order_zone['description'])||$this->isBlank($order_zone['description'])){
-                return $this->response(0,null,'Zone description is required.');
-            }
+       
             if(!isset($order_zone['name'])||$this->isBlank($order_zone['name'])){
                 return $this->response(0,null,'Zone name is required.');
             }
@@ -884,7 +882,7 @@ if(isset($params['order_zones'])&&is_array($params['order_zones'])){
      
                 
                         $orderZone->name=$order_zone['name'];
-                        $orderZone->description=$order_zone['description'];
+                        $orderZone->description=isset($order_zone['description'])?$order_zone['description']:'';
                         $orderZone->hauteur=$order_zone['hauteur'];
                         $orderZone->moyenacces=$order_zone['moyenacces'];
                         $orderZone->latitude= $order_zone['latitude'];
