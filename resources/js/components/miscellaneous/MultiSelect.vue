@@ -25,7 +25,7 @@
                     <span 
                     class="close" 
                     title="Remove" 
-                    @click.self="updateSelectOptions({ value: false, id: item.id })">
+                    @click.stop="updateSelectOptions({ value: false, id: item.id })">
                         &times;
                     </span>
                 </div>

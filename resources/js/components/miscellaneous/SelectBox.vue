@@ -14,6 +14,7 @@
     :style="{
         ...styles
     }"
+    v-click-away="close"
     >
     <span
             class="disp"
@@ -49,7 +50,6 @@
 
 import { ref, watch, computed, nextTick, onMounted } from "vue"
 import { useStore } from "vuex"
-
 
 import {
     GET_CURRENT_SELECT,
@@ -93,6 +93,8 @@ export default {
         let sel = computed(
             () => store.getters[`${SELECT_MODULE}${GET_CURRENT_SELECT}`]
         )
+
+        const close = () => open.value = false
 
         const selectclick = () => {
             nextTick(() => {
@@ -161,6 +163,7 @@ export default {
         return {
             toggle,
             open,
+            close,
             classNameSet,
             selectclick,
             select,
