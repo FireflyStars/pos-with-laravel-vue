@@ -66,4 +66,9 @@ class Event extends Model
      public function eventOrigin(){
          return $this->belongsTo(EventOrigin::class);
     }
+
+    
+    public function eventComments(){
+        return $this->hasMany(EventComment::class);
+   }
 }

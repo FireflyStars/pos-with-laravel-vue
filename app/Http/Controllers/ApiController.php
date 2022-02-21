@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\OrderZone;
 use App\Models\Customer;
 use App\Models\Contact;
+use App\Models\EventComment;
 use App\Models\EventStatus;
 use App\Models\EventType;
 use App\Models\EventOrigin;
@@ -297,7 +298,144 @@ class ApiController extends Controller
             if($order->affiliate_id!=$affiliate->id){
                     return $this->response(0,null,'Ged detail is not linked to current affiliate.');   
             }
+            $this->l("DEL","API GED DETAIL DELETED",$lcdtapp_api_instance->user->id);
             $gedDetail->delete();
+            return $this->response();
+         
+        }else{
+            return $isLoggedIn;
+        }
+    }
+
+    public function DeleteOrderZone(Request $request){
+        $Parameters=$request->post('Parameters');
+        $SessionID=$request->post('SessionID');
+        $AccountKey=$request->post('AccountKey');
+
+        $valid=$this->isValidAccountKeySessionID($request);
+        if($valid!==true)return $valid;
+        $isLoggedIn=$this->checkLogin($request);
+
+
+
+        if($isLoggedIn===true){
+            $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
+            $affiliate=$lcdtapp_api_instance->user->affiliate;
+            if($affiliate==null)
+                return $this->response(0,null,'Unable to delete order zone.','User not associated to an affiliate');
+
+            if(!isset($Parameters['order_zone_id'])||$this->isBlank($Parameters['order_zone_id'])){
+                return $this->response(0,null,'order_zone_id is required.');   
+            }
+            $orderZone=OrderZone::find($Parameters['order_zone_id']);
+
+            if($orderZone==null)
+                return $this->response(0,null,'No Order Zone found.');
+            $order=$orderZone->order;     
+
+            if($order==null)
+            return $this->response(0,null,'Related order not found.');
+
+            if($order->affiliate_id!=$affiliate->id){
+                    return $this->response(0,null,'Order Zone is not linked to current affiliate.');   
+            }
+            $this->l("DEL","API ORDER ZONE DELETED",$lcdtapp_api_instance->user->id);
+            $orderZone->delete();
+            return $this->response();
+         
+        }else{
+            return $isLoggedIn;
+        }
+    }
+
+    public function SaveEventComment(Request $request){
+        $Parameters=$request->post('Parameters');
+        $SessionID=$request->post('SessionID');
+        $AccountKey=$request->post('AccountKey');
+
+        $valid=$this->isValidAccountKeySessionID($request);
+        if($valid!==true)return $valid;
+        $isLoggedIn=$this->checkLogin($request);
+
+
+
+        if($isLoggedIn===true){
+            $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
+            $affiliate=$lcdtapp_api_instance->user->affiliate;
+            if($affiliate==null)
+                return $this->response(0,null,'Unable to save event comment.','User not associated to an affiliate');
+
+            if(!isset($Parameters['event_id'])||$this->isBlank($Parameters['event_id'])){
+                return $this->response(0,null,'event_id is required.');   
+            }
+
+            if(!isset($Parameters['comment'])||$this->isBlank($Parameters['comment'])){
+                return $this->response(0,null,'comment is required.');   
+            }
+            $event=Event::find($Parameters['event_id']);
+            if($event==null)
+            return $this->response(0,null,'Event not found.'); 
+            
+            if($event->affiliate_id!=$affiliate->id)
+            return $this->response(0,null,'Event is not linked to current affiliate.'); 
+
+            $comment=new EventComment();
+       
+            if(isset($Parameters['id'])||!$this->isBlank($Parameters['id'])){
+                $comment=EventComment::find($Parameters['id']);
+                if($comment==null)
+                return $this->response(0,null,'Existing comment not found.','event_comment_id '.$Parameters['id']); 
+
+                if($comment->event_id!=$event->id)
+                return $this->response(0,null,'Existing comment not related to specified event','event_id '.$Parameters['event_id'].' | Comment event id '.$comment->event_id ); 
+                //only the user can edit his own comment else create new comment
+                if($comment->user_id!=$affiliate=$lcdtapp_api_instance->user->id)
+                $comment=new EventComment();
+            }
+            $comment->user_id= $affiliate=$lcdtapp_api_instance->user->id;
+
+           $comment->comment=$Parameters['comment'];
+
+           $event->eventComments()->save($comment);
+
+           
+            return $this->response();
+         
+        }else{
+            return $isLoggedIn;
+        }
+    }
+
+    public function DeleteEventComment(Request $request){
+        $Parameters=$request->post('Parameters');
+        $SessionID=$request->post('SessionID');
+        $AccountKey=$request->post('AccountKey');
+
+        $valid=$this->isValidAccountKeySessionID($request);
+        if($valid!==true)return $valid;
+        $isLoggedIn=$this->checkLogin($request);
+
+
+
+        if($isLoggedIn===true){
+            $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
+            $affiliate=$lcdtapp_api_instance->user->affiliate;
+            if($affiliate==null)
+                return $this->response(0,null,'Unable to delete event comment.','User not associated to an affiliate');
+
+            if(!isset($Parameters['event_comment_id'])||$this->isBlank($Parameters['event_comment_id'])){
+                return $this->response(0,null,'event_comment_id is required.');   
+            }
+
+            $eventComment=EventComment::find($Parameters['event_comment_id']);
+            if($eventComment==null)
+            return $this->response(0,null,'Event comment not found.'); 
+            $event=$eventComment->event;
+            if($event->affiliate_id!=$affiliate->id)
+            return $this->response(0,null,'Event comment is not linked to current affiliate.'); 
+            $eventComment->delete();
+            $this->l("DEL","API EVENT COMMENT DELETED",$lcdtapp_api_instance->user->id);
+           
             return $this->response();
          
         }else{
@@ -543,6 +681,11 @@ public function GetGedDetailCategory(Request $request){
                 $event->address->makeHidden(['created_at','updated_at','deleted_at']);
                 $event->eventType->makeHidden(['created_at','updated_at','deleted_at']);
                 $event->eventOrigin->makeHidden(['created_at','updated_at','deleted_at']);
+                $event->eventComments->makeHidden(['updated_at','deleted_at','user_id','event_id']);
+     
+            foreach($event->eventComments as &$eventComment){
+                $eventComment->user;
+            }
             return $this->response(1,$event);
         }else{
             return $isLoggedIn;

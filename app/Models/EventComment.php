@@ -6,18 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class OrderZone extends Model
+class EventComment extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
-    public function gedDetails()
-    {
-       return $this->hasMany(GedDetail::class);
+
+    public function user(){
+       return $this->belongsTo(User::class);
     }
 
-    public function order(){
-        return $this->belongsTo(Order::class);
+    public function event(){
+        return $this->belongsTo(Event::class); 
     }
-
 }
