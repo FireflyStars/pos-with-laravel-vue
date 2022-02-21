@@ -12,10 +12,19 @@
             border:thin solid #000;
         }
 
-        #textpos{
-            background: #fff;
+        .textpos{
             font-size:14pt;
-            padding:5px;
+            position: absolute;
+            top:0;
+            left:0;
+        }
+
+        .textpos.active-text{
+            background:rgba(255,255,255,0.5);
+        }
+
+        .textpos:hover{
+            cursor: move;
         }
 
         .remove-img-pos{
@@ -133,23 +142,47 @@
 <!--Modal positiioning -->
 
 <div id="modal_pos" class="modal fade">
-    <div class="modal-dialog" role="document" style="width:90%;">
-        <div class="modal-content">
+    <div class="modal-dialog" role="document" style="width:auto !important;">
+        <div class="modal-content" style="display:table; margin:auto;">
             <div class="modal-header">
-                <h5 class="modal-title float-left">Add and position text on image</h5>
-                <button type="button" class="btn btn-secondary float-right" data-dismiss="modal">Close</button>
+                <h5 class="modal-title float-left">Positionner text sur image</h5>
+                <button type="button" class="btn btn-secondary float-right" data-dismiss="modal">Fermer</button>
             </div>
-            <div class="modal-body">
-            <div class="modalPosDiv" id="div_modal_{{ $dataTypeContent->getKey() }}" style="background-size:auto 100%; width:800px;">
+            <div class="modal-body" style="display:table; width:1100px;">
+                <div class="modalPosDiv float-left" id="div_modal_{{ $dataTypeContent->getKey() }}" style="background-size:auto 100%; width:800px;">
 
-                <div id="modalDraggable" style="width:800px; height:500px; background:rgba(0,0,0,0.5);">
-                    <span id="textpos">Text</span>
+                    <div id="modalDraggable" style="width:800px; height:500px; background:rgba(0,0,0,0.5); position: relative;">
+                        <span id="textpos_1" class="textpos">Nom agence</span>
+                        <span id="textpos_2" class="textpos">Email agence</span>
+                        <span id="textpos_3" class="textpos">Telephone agence</span>
+                    </div>
                 </div>
-            </div>
-            <div style="margin:20px 0;">
-                <span style="display:table; float:left; width:300px;">Position X: <span id="positionx"></span></span>
-                Position Y: <span id="positiony"></span>
-            </div>
+                <div class="float-left" style="width:250px; padding-left:15px;">
+
+                    <div style="margin-bottom:20px;">
+                        <h5>Nom Agence: </h5>
+                        Position X: <span id="textpos_1_x" class="pos_coords"></span><br/>
+                        Position Y: <span id="textpos_1_y" class="pos_coords"></span>
+                    </div>
+
+                    <div style="margin-bottom:20px;">
+                        <h5>Email Agence: </h5>
+                        Position X: <span id="textpos_2_x" class="pos_coords"></span><br/>
+                        Position Y: <span id="textpos_2_y" class="pos_coords"></span>
+                    </div>
+
+                    <div style="margin-bottom:20px;">
+                        <h5>Telephone agence </h5>
+                        Position X: <span id="textpos_3_x" class="pos_coords"></span><br/>
+                        Position Y: <span id="textpos_3_y" class="pos_coords"></span>
+                    </div>
+
+                    <a href="javascript:void(0);" class="btn btn-default" onclick="updateTextCoords({{ $dataTypeContent->getKey() }})">Sauvegarder</a>
+                </div>
+
+                <div style="margin:20px 0;">
+
+                </div>
             </div>
         </div>
     </div>
@@ -177,6 +210,7 @@
             </div>
         </div>
     </div>
+    <input type="hidden" id="cur_id" value="{{ $dataTypeContent->getKey() }}"/>
     <!-- End Delete File Modal -->
 @stop
 
@@ -187,6 +221,9 @@
     <script>
         var params = {};
         var $file;
+
+        let cur_id = $('#cur_id').val();
+
 
         function deleteHandler(tag, isMulti) {
           return function() {
@@ -259,30 +296,153 @@
             });
             $('[data-toggle="tooltip"]').tooltip();
 
-            $('#textpos').draggable({
+            $('.textpos').draggable({
                 containment: "#modalDraggable",
                 scroll: false,
                 stop: function(ev, ui){
                    let el = $(ev.target);
-                   //console.log(el);
+                   let id = el.attr('id');
+                    //console.log(id);
 
                     var position = ui.position;
                     var originalPosition = ui.originalPosition;
                    //console.log(position);
-                    $('#positionx').html(position.left);
-                    $('#positiony').html(position.top);
+                    $('#'+id+'_x').html(parseFloat(position.left));
+                    $('#'+id+'_y').html(parseFloat(position.top));
 
                   }
             });
 
+            $('.textpos').click(function(){
+                let el = $(this);
+
+                $('.textpos').not(this).removeClass('active-text');
+                el.toggleClass('active-text');
+            });
+
+
+            $(document).bind('keydown', function(e) {
+                let activetexts = $('.active-text');
+
+                //console.log(e);
+                //console.log(activetexts);
+
+                if(activetexts.length > 0){
+
+                    var position,
+                        draggable = $('.active-text'),
+                        container = $('#div_modal_'+cur_id),
+                        distance = 1; // Distance in pixels the draggable should be moved
+
+                    position = draggable.position();
+
+                    // Reposition if one of the directional keys is pressed
+                    switch (e.keyCode) {
+                        case 37: position.left -= distance; break; // Left
+                        case 38: position.top  -= distance; break; // Up
+                        case 39: position.left += distance; break; // Right
+                        case 40: position.top  += distance; break; // Down
+                        default: return true; // Exit and bubble
+                    }
+
+                    // Keep draggable within container
+                    if (position.left >= 0 && position.top >= 0 &&
+                        position.left + draggable.width() <= container.width() &&
+                        position.top + draggable.height() <= container.height()) {
+                        draggable.css(position);
+                    }
+
+                    let id = draggable.attr('id');
+
+                    $('#'+id+'_x').html([position.left]);
+                    $('#'+id+'_y').html([position.top]);
+
+
+                    // Don't scroll page
+                    e.preventDefault();
+                }
+            });
+
+
+
         });
 
 
+
         function loadPosModal(id,imageUrl){
-            $('#div_modal_'+id).css('background-image', 'url(' + imageUrl + ')');
-            $('#modal_pos').modal('show');
+            let params = {};
+            params['id'] = id;
+
+            let color1 = $('input[name=color1]').val();
+            let color2 = $('input[name=color2]').val();
+            let color3 = $('input[name=color3]').val();
+
+            $('#textpos_1').css('color',(color1!=''?color1:'#000'));
+            $('#textpos_2').css('color',(color2!=''?color2:'#000'));
+            $('#textpos_3').css('color',(color3!=''?color3:'#000'));
+
+
+            $.post('/admin/get-text-pos', params, function (response) {
+                if(response.cc){
+                    let cc = response.cc;
+
+                    $('#textpos_1').css('left',cc.xfield1+'px');
+                    $('#textpos_1_x').html(cc.xfield1);
+                    $('#textpos_1').css('top',cc.yfield1+'px');
+                    $('#textpos_1_y').html(cc.yfield1);
+
+                    $('#textpos_2').css('left',cc.xfield2+'px');
+                    $('#textpos_2_x').html(cc.xfield2);
+                    $('#textpos_2').css('top',cc.yfield2+'px');
+                    $('#textpos_2_y').html(cc.yfield2);
+
+                    $('#textpos_3').css('left',cc.xfield3+'px');
+                    $('#textpos_3_x').html(cc.xfield3);
+                    $('#textpos_3').css('top',cc.yfield3+'px');
+                    $('#textpos_3_y').html(cc.xfield3);
+
+
+                }
+            }).done(function() {
+                //alert( "second success" );
+            })
+            .fail(function() {
+                //alert( "error" );
+            })
+            .always(function() {
+                //alert( "finished" );
+                $('#div_modal_'+id).css('background-image', 'url(' + imageUrl + ')');
+                $('#modal_pos').modal('show');
+            });
         }
 
+
+        function updateTextCoords(id){
+            let params = {};
+            params['id_cc'] = id;
+
+            $('.textpos').removeClass('active-text');
+
+            $('body').find('.pos_coords').each(function(i,v){
+                let el = $(v);
+                let  id = el.attr('id');
+                params[id] = el.html();
+            });
+
+            $.post('/admin/update-text-pos', params, function (response) {
+                    console.log(response);
+                    if ( response.updated) {
+
+                        toastr.success('Position sauvegardé');
+
+
+                    } else {
+                        //toastr.error("Error removing file.");
+                    }
+                });
+
+
+        }
 
 
     </script>

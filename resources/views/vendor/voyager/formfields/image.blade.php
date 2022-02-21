@@ -7,7 +7,9 @@
     </div>
 
     @if( !filter_var($dataTypeContent->{$row->field}, FILTER_VALIDATE_URL))
-        <a href="javascript:void(0);" class="btn btn-default loadPosModal" id="btn_modal_{{ $dataTypeContent->getKey() }}" onclick="loadPosModal({{ $dataTypeContent->getKey() }},'@php echo  Voyager::image( $dataTypeContent->{$row->field} ); @endphp')">Position text</a>
+        @if(in_array($dataType->name.".".$row->field,['campagne_category.imagetemplate']))
+            <a href="javascript:void(0);" class="btn btn-default loadPosModal" id="btn_modal_{{ $dataTypeContent->getKey() }}" onclick="loadPosModal({{ $dataTypeContent->getKey() }},'@php echo  Voyager::image( $dataTypeContent->{$row->field} ); @endphp')">Position text</a>
+        @endif
     @endif
 @endif
 <input @if($row->required == 1 && !isset($dataTypeContent->{$row->field})) required @endif type="file" name="{{ $row->field }}" accept="image/*">

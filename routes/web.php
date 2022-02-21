@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\CompagneController;
 use TCG\Voyager\Facades\Voyager;
+use App\Http\Controllers\LcdtAdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +20,8 @@ use TCG\Voyager\Facades\Voyager;
 */
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
+    Route::post('/update-text-pos',[LcdtAdminController::class,'updateTextPos'])->name('update-text-pos');
+    Route::post('/get-text-pos',[LcdtAdminController::class,'getTextPos'])->name('get-text-pos');
 });
 
 Route::post('/api',[ApiController::class,'index'])->middleware('cors')->name('api');
