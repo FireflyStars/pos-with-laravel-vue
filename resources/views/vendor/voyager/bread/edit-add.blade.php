@@ -148,16 +148,16 @@
                 <h5 class="modal-title float-left">Positionner text sur image</h5>
                 <button type="button" class="btn btn-secondary float-right" data-dismiss="modal">Fermer</button>
             </div>
-            <div class="modal-body" style="display:table; width:1100px;">
-                <div class="modalPosDiv float-left" id="div_modal_{{ $dataTypeContent->getKey() }}" style="background-size:auto 100%; width:800px;">
+            <div class="modal-body" style="display:table; width:1000px;">
+                <div class="modalPosDiv float-left" id="div_modal_{{ $dataTypeContent->getKey() }}" style="background-size:auto 100%;">
 
-                    <div id="modalDraggable" style="width:800px; height:500px; background:rgba(0,0,0,0.5); position: relative;">
+                    <div id="modalDraggable" style="background:rgba(0,0,0,0.5); position: relative;">
                         <span id="textpos_1" class="textpos">Nom agence</span>
                         <span id="textpos_2" class="textpos">Email agence</span>
                         <span id="textpos_3" class="textpos">Telephone agence</span>
                     </div>
                 </div>
-                <div class="float-left" style="width:250px; padding-left:15px;">
+                <div class="float-left" style="width:300px; padding-left:30px;">
 
                     <div style="margin-bottom:20px;">
                         <h5>Nom Agence: </h5>
@@ -295,6 +295,20 @@
                 $('#confirm_delete_modal').modal('hide');
             });
             $('[data-toggle="tooltip"]').tooltip();
+
+
+            let img1 = $('#campagne_category_imagetemplate');
+
+            if(img1.length > 0){
+                let nwidth = img1.prop('naturalWidth');
+                let nheight = img1.prop('naturalHeight');
+
+                $('.modalPosDiv').width(nwidth);
+                $('#modalDraggable').width(nwidth);
+                $('#modalDraggable').height(nheight);
+
+            }
+
 
             $('.textpos').draggable({
                 containment: "#modalDraggable",
