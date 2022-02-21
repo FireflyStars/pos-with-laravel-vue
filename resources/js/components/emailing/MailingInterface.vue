@@ -1,15 +1,11 @@
 <template>
-   <!-- <side-bar></side-bar>
-    <Main></Main>-->
+    <side-bar></side-bar>
+    <Main></Main>
     <transition
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
     >
-        <form
-            class="space-y-6"
-            v-on:submit.prevent="saveCompany"
-            v-if="show === 'lettre'"
-        >
+        <form class="space-y-6" v-if="show === 'lettre'">
             <div class="container">
                 <div class="ajustement">
                     <svg
@@ -318,17 +314,22 @@ export default {
 
         const { type, router, errors, company, contentform } = useCompanies();
         const route = useRoute();
-        console.log(route.params.show);
         let show = route.params.show;
-        const saveCompany = async () => {
-            // await contentform(props.id);
-            console.log("read");
-        };
+
+        onMounted(() => {
+            const id = localStorage.getItem("id_category");
+
+            axios
+                .get("/lettredata/" + localStorage.getItem("id_category"))
+                .then((res) => {
+                    input_content.value = res.data.content;
+                });
+        });
 
         const state = reactive({
             curTheme: "snow",
             showEditor: true,
-            content: " ",
+            content: input_content.value,
             editorOption: {
                 placeholder: "Insérer le contenu ici...",
                 modules: {
@@ -418,7 +419,6 @@ export default {
                         fileName: filename,
                     })
                     .then((response) => {
-                        console.log(response);
                         axios
                             .get("/exportCsv/" + company_Id)
                             .then((response) => {
@@ -453,7 +453,7 @@ export default {
         return {
             errors,
             company,
-            saveCompany,
+
             type,
             show,
             submit,
@@ -466,6 +466,7 @@ export default {
             input_email,
             input_content,
             state,
+
             exportToPDF,
             input_flyer_contact,
             input_flyer_contact2,
@@ -485,7 +486,6 @@ export default {
                     }
                 )
                 .then((response) => {
-                    console.log("Success", response);
                     const blob = new Blob([response.data]);
                     const objectUrl = URL.createObjectURL(blob);
                     this.pdfsrc = objectUrl;
@@ -496,7 +496,17 @@ export default {
             this.getPDFPath();
         },
 
-        validate() {},
+        validate() {
+            const route = useRoute();
+            this.$router.push({
+                name: "envoi",
+                params: {
+                    cible_id: `${route.params.cible_id}`,
+                    type: route.params.type,
+                },
+            });
+            return this.$router;
+        },
 
         goToHome() {
             this.$router.push("/emailing");

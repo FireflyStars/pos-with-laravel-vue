@@ -64,12 +64,12 @@ Route::group([
     Route::get('/getOldCompagne',[CompagneController::class, 'getOldCompagne'])->name('getOldCompagne');
     Route::put('deleteOldCompagne/', [CompagneController::class, 'deleteOldCompagne'])->name('deleteOldCompagne');
 
-    Route::get('/exportCsv/{id}',[CompagneController::class, 'exportCsv'])->name('exportCsv');
+    Route::get('/exportCsv/{id}',[CompagneController::class, 'exportCsv'])->name('exportCsv'); 
     Route::post('/downloadPdf',[CompagneController::class, 'downloadPdf'])->name('downloadPdf');
 
     Route::get('/index',[CompagneController::class, 'index'])->name('index');
-    Route::post('/insertdestinataire',[CompagneController::class, 'insertdestinataire'])->name('insertdestinataire');
-    Route::get('/envoi/{id}',[CompagneController::class, 'envoi'])->name('envoi');
+    Route::post('/insertdestinataire/{id}',[CompagneController::class, 'insertdestinataire'])->name('insertdestinataire');
+    // Route::get('/envoi/{id}',[CompagneController::class, 'envoi'])->name('envoi');
     Route::post('/envoiprogramme/{id}',[CompagneController::class, 'envoiprogramme'])->name('envoiprogramme');
     Route::get('/getCount_cible/{id}',[CompagneController::class, 'getCount_cible'])->name('getCount_cible');
     Route::get('/envoi_lettre/{data}/{data_csv}',[CompagneController::class, 'envoi_lettre'])->name('envoi_lettre');
@@ -77,14 +77,12 @@ Route::group([
     Route::get('/getTempname/{id}',[CompagneController::class, 'getTempname'])->name('getTempname');
     Route::get('/getContentImage/{id}',[CompagneController::class, 'getContentImage'])->name('getContentImage');
     Route::get('/imagefield/{id}',[CompagneController::class, 'imagefield'])->name('imagefield');
+    Route::get('/lettredata/{id}',[CompagneController::class, 'lettredata'])->name('lettredata');
 
 });
-
-
 
 Route::get('{any}', function () {
     return view('welcome');
 })->where('any','.*');
-
 
 

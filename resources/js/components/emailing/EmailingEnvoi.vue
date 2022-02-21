@@ -1,6 +1,6 @@
 <template>
-   <!-- <SideBar />
-    <Main />-->
+    <SideBar />
+    <Main />
 
     <div class="container">
         <div class="ajustement">
@@ -322,8 +322,6 @@ export default {
         },
 
         selectValue(event) {
-            console.log(event.target.name);
-            //virtuel list
             let form = {
                 email: event.target.name,
                 phone: "12121212",
@@ -363,7 +361,11 @@ export default {
                 data: element,
             };
             axios
-                .post("/insertdestinataire", form)
+                .post(
+                    "/insertdestinataire/" +
+                        localStorage.getItem("id_category"),
+                    form
+                )
                 .then((response) => {
                     this.singleData = response.data;
                 })
@@ -374,29 +376,28 @@ export default {
                     this.store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
                 });
         },
-        sendImmediat() {
-            this.store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [
-                true,
-                "Chargement en cours..",
-            ]);
-            axios
-                .get("/envoi/" + this.$route.params.cible_id)
-                .then((response) => {
-                    this.singleData = response.data;
-                })
-                .catch(function (error) {
-                    console.log(error);
-                })
-                .finally(() => {
-                    this.store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
-                });
-        },
+        // sendImmediat() {
+        //     this.store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [
+        //         true,
+        //         "Chargement en cours..",
+        //     ]);
+        //     axios
+        //         .get("/envoi/" + localStorage.getItem("id_category"))
+        //         .then((response) => {
+        //             this.singleData = response.data;
+        //         })
+        //         .catch(function (error) {
+        //             console.log(error);
+        //         })
+        //         .finally(() => {
+        //             this.store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
+        //         });
+        // },
 
         concatFunction: function () {
             var v = this;
             v.fulldata = v.date.concat("T" + v.time + ":43.280Z");
             this.time_full = v.fulldata;
-            console.log(v.fulldata);
         },
         sendImme() {
             this.store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [
@@ -412,6 +413,7 @@ export default {
                 emailReplyTo: localStorage.getItem("emailReplyTo"),
                 emailFrom: localStorage.getItem("emailFrom"),
                 subject: localStorage.getItem("subject"),
+                id_category: localStorage.getItem("id_category"),
             };
             axios
                 .post("/envoiprogramme/" + this.$route.params.cible_id, form)
@@ -431,9 +433,7 @@ export default {
                 true,
                 "Chargement en cours..",
             ]);
-            console.log(localStorage.getItem("storedName"));
-            console.log(localStorage.getItem("storedEmail"));
-            console.log(localStorage.getItem("storedPhone"));
+
             var formrequest = {
                 input_agence: localStorage.getItem("storedName"),
                 input_email: localStorage.getItem("storedEmail"),
@@ -441,11 +441,11 @@ export default {
                 emailReplyTo: localStorage.getItem("emailReplyTo"),
                 emailFrom: localStorage.getItem("emailFrom"),
                 subject: localStorage.getItem("subject"),
+                id_category: localStorage.getItem("id_category"),
             };
             axios
                 .post("/createdata/" + this.$route.params.cible_id, formrequest)
                 .then((response) => {
-                    console.log(response);
                     this.$router.push("/emailing");
                 })
                 .catch(function (error) {
@@ -467,7 +467,6 @@ export default {
                 axios
                     .get("/envoi_lettre/" + filename + "/" + file)
                     .then(() => {
-                        console.log("email sent");
                         this.$router.push("/emailing");
                     })
                     .catch(function (error) {

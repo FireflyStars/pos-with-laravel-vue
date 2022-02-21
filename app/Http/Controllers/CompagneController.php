@@ -829,7 +829,7 @@ class CompagneController extends Controller
             "file"                => $csv_filename,
         );
 
-        $columns = array('Email', 'Company', 'Firstname', 'Name', 'Address2' , 'Address1', 'Postcode', 'City', 'Industrie', 'Phone'	);
+        $columns = array('Email', 'Company', 'Firstname', 'Name', 'Address2' , 'Address1', 'Postcode', 'City', 'Industrie', 'Phone' );
         $callback = function() use($data_id, $columns, $csv_filename ) {  
         $file = fopen('../public/uploads/'.$csv_filename, 'w');
 
@@ -841,13 +841,13 @@ class CompagneController extends Controller
                 $row['Company']    = $data->company;
                 $row['Firstname']    = $data->firstname;
                 $row['Name']  = $data->name;
-                $row['Address2']  = $data->address2	;
+                $row['Address2']  = $data->address2 ;
                 
                 $row['Address1']  = $data->address1;
                 $row['Postcode']    = $data->postcode;
                 $row['City']    = $data->city;
                 $row['Industrie']  = $data->industrie;
-                $row['Phone']  = $data->phone	;
+                $row['Phone']  = $data->phone   ;
 
                 $data_file = array($row['Email'], $row['Company'], $row['Firstname'], $row['Name'], $row['Address2'] , $row['Address1'], $row['Postcode'], $row['City'], $row['Industrie'], $row['Phone']) ;
 
@@ -986,7 +986,7 @@ class CompagneController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function insertdestinataire(Request $request){
+    public function insertdestinataire(Request $request , $id){
         $user = auth()->user();
         $number = date("Y-m-d H:i:s"); 
         $name =  'Campagne_Test'. '_' .$number;
@@ -1062,6 +1062,11 @@ class CompagneController extends Controller
         ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/contacts', 
                 $array_cible
         );
+
+        $template = DB::table('campagne_category')->where('id',"=", $id)->get(); 
+        foreach ($template as $key => $code) {
+            $array_temp =$code->idapi;
+        };
             //    return $data_added;
         if($send){
             //ajout du model
@@ -1071,7 +1076,7 @@ class CompagneController extends Controller
             'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'])
             ->post('https://sarbacaneapis.com/v1/campaigns/'.$id.'/content', [ 
                 
-                    "templateId"=> '7oBz0gs_S1mTvxXVspXheg'
+                    "templateId"=> $array_temp
             
             ]);
             $contact_list = Http::withHeaders([
@@ -1130,83 +1135,83 @@ class CompagneController extends Controller
      * @param string $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function envoi($id)
-    {
-        $user = auth()->user();
-        //get cible
-        $cible = DB::table('campagne_cible')->where('campagne_id',"=", $id)
-                                            ->where('delete_at',"=", NULL)
-                                            ->get(); 
-        // return $cible;
-        foreach ($cible as $key => $code) {
-            $array_cible[] =['email' => $code->email];
-        } ;
+    // public function envoi($id)
+    // {
+    //     $user = auth()->user();
+    //     //get cible
+    //     $cible = DB::table('campagne_cible')->where('campagne_id',"=", $id)
+    //                                         ->where('delete_at',"=", NULL)
+    //                                         ->get(); 
+    //     // return $cible;
+    //     foreach ($cible as $key => $code) {
+    //         $array_cible[] =['email' => $code->email];
+    //     } ;
 
-        $template = DB::table('campagnes')->where('id',"=", $id)->get(); 
-        foreach ($template as $key => $code) {
-            $array_temp =$code->email_template_id;
-        } ;
+    //     $template = DB::table('campagne_category')->where('id',"=", $id)->get(); 
+    //     foreach ($template as $key => $code) {
+    //         $array_temp =$code->idapi;
+    //     };
 
-        foreach ($template as $key => $code) {
-            $array_name =$code->name.'-immédiat';
-        } ;
+    //     foreach ($template as $key => $code) {
+    //         $array_name =$code->name.'-immédiat-'.$number;
+    //     } ;
 
-        // $data_template = DB::table('email_template')->where('id',"=", $array_temp)->get();
-        // foreach ($data_template as $key => $code) {
-        //     $temp =$code->idapi;
-        // } ;
+    //     // $data_template = DB::table('email_template')->where('id',"=", $array_temp)->get();
+    //     // foreach ($data_template as $key => $code) {
+    //     //     $temp =$code->idapi;
+    //     // } ;
 
-        $formatedDate = date("Y-m-d H:i:s"); 
-        //creation d'une compagne
-        $send = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/campaigns/email', [ 
+    //     $formatedDate = date("Y-m-d H:i:s"); 
+    //     //creation d'une compagne
+    //     $send = Http::withHeaders([
+    //         'accountId'=> '61a62892e924e35ea3f5469e',
+    //         'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
+    //     ])->post('https://sarbacaneapis.com/v1/campaigns/email', [ 
                 
-                "name"=> $array_name,
-                "emailFrom"=>$request->emailFrom,
-                "aliasFrom"=> $request->emailFrom,
-                "emailReplyTo"=>$request->emailFrom,
-                "aliasReplyTo"=> $request->emailFrom,
-                "subject"=> $request->subject,
-                "preheader"=> "Preheader",
-        ]);
+    //             "name"=> $array_name,
+    //             "emailFrom"=>$request->emailFrom,
+    //             "aliasFrom"=> $request->emailFrom,
+    //             "emailReplyTo"=>$request->emailFrom,
+    //             "aliasReplyTo"=> $request->emailFrom,
+    //             "subject"=> $request->subject,
+    //             "preheader"=> "Preheader",
+    //     ]);
 
-        if($send){
-            //ajout du model
-            $camp_id= $send['id'] ;
-            $template_data = Http::withHeaders([
-                'accountId'=> '61a62892e924e35ea3f5469e',
-                'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'])
-            ->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/content', [ 
+    //     if($send){
+    //         //ajout du model
+    //         $camp_id= $send['id'] ;
+    //         $template_data = Http::withHeaders([
+    //             'accountId'=> '61a62892e924e35ea3f5469e',
+    //             'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'])
+    //         ->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/content', [ 
                 
-                    "templateId"=> $array_temp
+    //                 "templateId"=> $array_temp
             
-            ]);
-        }
-            //ajout destinataires                
-        $camp_id= $send['id'] ;
-        $response = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/recipients', 
-            $array_cible
-        );
+    //         ]);
+    //     }
+    //         //ajout destinataires                
+    //     $camp_id= $send['id'] ;
+    //     $response = Http::withHeaders([
+    //         'accountId'=> '61a62892e924e35ea3f5469e',
+    //         'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
+    //     ])->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/recipients', 
+    //         $array_cible
+    //     );
     
-        if ($response) {
-        $camp_id= $send['id'] ;
-        $daysent = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-            ])->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/send', [ 
-                    [
-                        "requestedSendDate"=> $formatedDate
-                ] 
-            ]);
-        }
+    //     if ($response) {
+    //     $camp_id= $send['id'] ;
+    //     $daysent = Http::withHeaders([
+    //         'accountId'=> '61a62892e924e35ea3f5469e',
+    //         'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
+    //         ])->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/send', [ 
+    //                 [
+    //                     "requestedSendDate"=> $formatedDate
+    //             ] 
+    //         ]);
+    //     }
 
-        return 'data added imme';
-    }
+    //     return 'data added imme';
+    // }
     /**
      * send compagne deffirer
      * @param string $id
@@ -1226,7 +1231,7 @@ class CompagneController extends Controller
             "name"=>$name
         ]);
         $id_list = $data['id'];
-        $cible = DB::table('campagne_cible')->where('campagne_id',"=", $id)->get(); 
+        $cible = DB::table('campagne_cible')->where('campagne_cible.campagne_id',"=", $id)->where('campagne_cible.delete_at',"=", NULL)->get();
      
         foreach ($cible as $key => $code) {
             $array_cible[] =[
@@ -1273,12 +1278,12 @@ class CompagneController extends Controller
         );
         }
         
-        $template = DB::table('campagnes')->where('id',"=", $id)->get(); 
+        $template = DB::table('campagne_category')->where('id',"=", $request->id_category)->get(); 
         foreach ($template as $key => $code) {
-            $array_temp =$code->email_template_id;
+            $array_temp =$code->idapi;
         };
         foreach ($template as $key => $code) {
-            $array_name =$code->name.'-programmé';
+            $array_name =$code->name.'-programmé-'.$number;
         };
         // $data_template = DB::table('email_template')->where('id',"=", $array_temp)->get();
         // foreach ($data_template as $key => $code) {
@@ -1329,7 +1334,7 @@ class CompagneController extends Controller
                 ] 
             ]);
         }
-        return 'data';
+        return  $request->formatedDate;
                 
     }
 
@@ -1373,8 +1378,8 @@ class CompagneController extends Controller
             "name"=>$name
         ]);
         $id_list = $data['id'];
-        $cible = DB::table('campagne_cible')->where('campagne_id',"=", $id)->get(); 
-     
+        $cible = DB::table('campagne_cible')->where('campagne_cible.campagne_id',"=", $id)->where('campagne_cible.delete_at',"=", NULL)->get();
+        
         foreach ($cible as $key => $code) {
             $array_cible[] =[
                 "email" => $code->email,
@@ -1411,21 +1416,22 @@ class CompagneController extends Controller
                 "caption" => 'E-mail agence'
             
         ]);
-        for($i=0; $i<count($array_cible); $i++) {
-        $data_added = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/contacts', 
-                $array_cible[$i]
-        );
+
+        for( $i=0; $i<count($array_cible); $i++ ) {
+            $data_added = Http::withHeaders([
+                'accountId'=> '61a62892e924e35ea3f5469e',
+                'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
+            ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/contacts', 
+                    $array_cible[$i]
+            );
         }
         
-        $template = DB::table('campagnes')->where('id',"=", $id)->get(); 
+        $template = DB::table('campagne_category')->where('id',"=", $request->id_category)->get(); 
         foreach ($template as $key => $code) {
-            $array_temp =$code->email_template_id;
+            $array_temp =$code->idapi;
         };
         foreach ($template as $key => $code) {
-            $array_name =$code->name;
+            $array_name =$code->name.'-immédiat-'.$number;
         };
         // $data_template = DB::table('email_template')->where('id',"=", $array_temp)->get();
         // foreach ($data_template as $key => $code) {
@@ -1510,12 +1516,24 @@ class CompagneController extends Controller
                 "color3" => $code->color3,
                 ] ;
         }
-                return response()->json([
+        return response()->json([
                     'data1' => $array_data1,
                     'data2' => $array_data2,
                     'data3' => $array_data3
-                ] 
-                );
+                ]);
+    }
+     /**
+     * Get lettredata
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function lettredata($id){
+        
+        $lettre = DB::table('campagne_category')->select(['lettreaccompagnement'])->where('id',"=", $id)->get(); 
+        return response()->json([
+                'content' =>$lettre[0]->lettreaccompagnement,
+            ]);
+       
     }
 
 }
