@@ -1,5 +1,5 @@
 <template>
-    <div class="row main-logo">
+    <div class="row main-logo" v-if="$route.name!='Login'">
         <div class="col-12 p-0">
             <img  @click="slideinMenu"
                 src="./../../images/lcdt-logo.png"
@@ -8,9 +8,9 @@
             />
             <div>
 
-                <Search /> 
+                <Search />
 
-                <BaseButton 
+                <BaseButton
                     prepend
                     @click="featureunavailable('Nouveau Rendez vous')"
                     class="btn btn-newrdv body_medium"
@@ -20,7 +20,7 @@
                     <Icon name="user" />
                 </BaseButton>
 
-                <BaseButton 
+                <BaseButton
                     prepend
                     @click="featureunavailable('Nouveau Devis')"
                     class="btn btn-newrdv body_medium"
@@ -44,7 +44,7 @@
     import { useRouter } from 'vue-router'
     export default {
         name: "MainHeader",
-        components: { Search }, 
+        components: { Search },
         setup() {
 
             const store=useStore();
