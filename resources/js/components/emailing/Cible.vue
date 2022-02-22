@@ -30,7 +30,7 @@
                             fill="black"
                         />
                     </svg>
-                    <h3 class="link" style="margin-top:35px;">
+                    <h3 class="" style="margin-top:35px;">
                         <a @click="goToHome()">Emailing</a>
                     </h3>
                 </div>

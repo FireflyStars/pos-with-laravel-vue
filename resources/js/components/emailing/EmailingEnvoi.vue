@@ -27,10 +27,10 @@
                     fill="black"
                 />
             </svg>
-            <h3 class="margin link"><a @click="goToHome()">Emailing</a></h3>
+            <h3 style="margin-top:35px;"><a @click="goToHome()">Emailing</a></h3>
         </div>
         <div class="col-lg-12">
-            <h3 class="margin-align">
+            <h3 class="margin">
                 <a @click="goToHome()" class="link">Emailing</a> >
                 <a @click="goToPrestation()" class="link">{{ my_name }}</a> >
                 Cible > <a @click="goToContent()" class="link"> Contenu</a> >
@@ -661,6 +661,8 @@ export default {
 .margin {
     margin-bottom: 40px;
     margin-top: 35px;
+      font-size: 17px;
+    font-weight: bold;
 }
 
 input[type="checkbox"] {
@@ -790,6 +792,7 @@ input[type="checkbox"] {
 .link {
     cursor: pointer;
     text-decoration: none;
+    color:orange;
 }
 .link:hover {
     color: orangered;

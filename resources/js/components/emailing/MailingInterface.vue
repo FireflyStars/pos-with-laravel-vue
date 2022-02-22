@@ -4,7 +4,7 @@
                 <main-header />
 
                 <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100" >
-                    
+
                     <side-bar />
 
                     <div class="col main-view container">
@@ -257,7 +257,7 @@
                     </div>
                 </div>
                 </div>
-   
+
 </template>
 
 <script>
@@ -663,6 +663,7 @@ hr {
 .link {
     cursor: pointer;
     text-decoration: none;
+    color:orange;
 }
 .link:hover {
     color: orangered;
