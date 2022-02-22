@@ -146,7 +146,7 @@
                         </div>
                     </div>
                     <div
-                        class="col-lg-5 apercu"
+                        class="col-lg-5 apercu d-table"
                         style="margin-top: 50px"
                     >
                         <h6>APERÇU</h6>

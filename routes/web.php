@@ -81,7 +81,7 @@ Route::group([
     Route::get('/lettredata/{id}',[CompagneController::class, 'lettredata'])->name('lettredata');
 
     Route::post('/get-affiliate-detail',[LcdtFrontController::class,'getAffiliateDetail'])->name('get-affiliate-detail');
-
+    Route::post('/get-campagne-details',[LcdtFrontController::class, 'getCampagneCategory'])->name('get-campagne-details');
 });
 
 Route::get('{any}', function () {

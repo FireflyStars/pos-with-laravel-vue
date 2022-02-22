@@ -1,10 +1,10 @@
 <template>
-   
+
        <div class="container-fluid h-100 bg-color" >
                 <main-header />
 
                 <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100" >
-                    
+
                     <side-bar />
 
                     <div class="col main-view container">
@@ -13,8 +13,8 @@
             leave-active-class="animate__animated animate__fadeOut"
         >
     <form class="space-y-6" @submit.prevent="saveCible" v-if="showcontainer">
-  
-   
+
+
             <div class="container">
                 <div class="ajustement">
                     <svg
@@ -56,7 +56,7 @@
                                     <th class="px-5"></th>
                                     <template   v-if="status">
                                     <th
-                                      
+
                                         class="vertical-name"
                                         v-for="item in status"
                                         :key="item.id"
@@ -186,7 +186,7 @@
                                     >
                                 </p>
                                 <p class="color">
-                                    <strong class="font">7,50</strong>
+                                    <strong class="font">{{formatPrice(total_price)}}</strong>
                                     <span class="emphasized size-mail">
                                         euros HT</span
                                     >
@@ -203,13 +203,13 @@
                     </div>
                 </div>
             </div>
-             
+
                 </form>
                   </transition>
                         </div>
                     </div>
                 </div>
-      
+
 </template>
 
 <script>
@@ -258,6 +258,10 @@ export default {
     },
     setup(props) {
         const img_up =ref({});
+        const total_price = ref(0);
+        const campagne_rate = ref(0);
+        const distinct_email_count = ref(0);
+
         onMounted(() => {
             const id = route.params.categ_id;
             console.log("eeeeeeeee0", id);
@@ -270,6 +274,18 @@ export default {
 
                     localStorage.setItem("category", my_name.value);
                 });
+
+                axios.post('/get-campagne-details',{id:id})
+                    .then((res)=>{
+                        if(res.data.campagne){
+                            campagne_rate.value = res.data.campagne.price;
+                        }
+                    }).catch((err)=>{
+
+                    }).finally(()=>{
+
+                    });
+
             } else {
                 my_name.value = localStorage.getItem("category");
             }
@@ -324,13 +340,15 @@ export default {
             //total_cible
 
             if (route.params.cible_id) {
+
                 //window.top.location.reload();
-             
+
                 let form_send;
                 let count;
                 axios
                     .get("/getCompgneCibleSelected/" + route.params.cible_id)
                     .then(function (response) {
+
                         response.data.cibles.forEach(function (index) {
                             //hneee
                             form_send = {
@@ -340,6 +358,7 @@ export default {
                             axios
                                 .post("/ciblesum", form_send)
                                 .then(function (response) {
+
                                     document
                                         .querySelector(
                                             '.matrice input[name="' +
@@ -526,6 +545,11 @@ export default {
             total += checked_inputs[index].count;
         }
 
+        function formatPrice(val){
+            let n = parseFloat(val).toFixed(2);
+            return n.toString().replace(".",",");
+        }
+
         return {
             img_up,
             showcontainer,
@@ -540,6 +564,9 @@ export default {
             history_compagne,
             title,
             my_name,
+            total_price,
+            campagne_rate,
+            formatPrice,
         };
     },
 
@@ -558,6 +585,7 @@ export default {
             var cibleSum = axios
                 .post("/ciblesum", form)
                 .then(function (response) {
+
                     event.target.setAttribute("count", response.data.count);
                     count = response.data.count;
                     let elemt_total_mails =
@@ -583,6 +611,11 @@ export default {
                         document.querySelector(".font.total").innerHTML =
                             total_mails - count;
                     }
+
+                    //console.log(sum);
+                    that.total_price = parseFloat(sum) * parseFloat(that.campagne_rate);
+
+
                     chlidren[chlidren.length - 1].innerText = sum;
                     document.querySelector(
                         "#total_mails +span"
@@ -967,7 +1000,7 @@ input[type="checkbox"]:checked:before {
     background-color: orangered;
     color: white;
     border: 2px solid orangered;
-    width: 125px;
+    width: 150px;
     height: 27px;
 }
 .data {
@@ -1070,7 +1103,7 @@ th.cercle {
     text-transform: inherit;
 }
 .bloc_count {
-    width: 125px;
+    width: 150px;
     margin-top: 30px;
     border: 1px solid #ff4500;
     padding: 12px;
