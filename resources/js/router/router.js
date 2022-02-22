@@ -41,7 +41,7 @@ const router = createRouter({
         {
             path:'',
             name:'LandingPage',
-            component:()=> import('../components/emailing/EmailingPage.vue'),//import('../Pages/Index'),
+            component:()=>import('../Pages/Index'),//import('../Pages/Index'),
             meta:{
                 authenticated:true
             },
@@ -93,7 +93,7 @@ const router = createRouter({
                 }
             ]
         },
-     /*   {
+        {
             path: "/emailing/",
             name: "emailing",
             props: true,
@@ -101,7 +101,7 @@ const router = createRouter({
             meta: {
                 authenticated: true,
             },
-        },*/
+        },
 
         {
             path: "/emailing/emailingprestations/:id",
