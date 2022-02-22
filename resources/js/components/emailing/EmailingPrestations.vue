@@ -44,7 +44,7 @@
                 >
                     <div class="img_container" @click="SubCategory(item.id)">
                         <img
-                            :src="`/storage/categories/${item.url}`"
+                            :src="`/storage/${item.url}`"
                             class="card-img-top body linear-gradient"
                         />
                     </div>
