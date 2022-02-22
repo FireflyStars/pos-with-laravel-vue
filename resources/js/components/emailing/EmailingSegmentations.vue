@@ -1,13 +1,20 @@
 import { pushScopeId } from "vue"
 
 <template>
-    <!--<side-bar></side-bar>
-    <Main></Main>-->
-    <transition
+
+    <div class="container-fluid h-100 bg-color" >
+                <main-header />
+
+                <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100" >
+                    
+                    <side-bar />
+
+                    <div class="col main-view container">
+                           <transition
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
-    >
-        <div class="container">
+    > 
+        <div class="container" v-if="showcontainer">
             <h3 class="color margin">CIBLES</h3>
 
             <div>
@@ -111,7 +118,7 @@ import { pushScopeId } from "vue"
                                         :name="item.id"
                                         v-model="isCheck"
                                         :value="item.id"
-                                        v-bind:value="item.id"
+                                    
                                     />
                                 </td>
                                 <td>{{ item.id }}</td>
@@ -148,7 +155,11 @@ import { pushScopeId } from "vue"
                 </div>
             </div>
         </div>
-    </transition>
+         </transition>
+                    </div>
+                    </div>
+                    </div>
+   
 </template>
 
 <script>
@@ -292,8 +303,12 @@ export default {
                 return 0;
             });
         }
-
+        const showcontainer = ref(false);
+   
         onMounted(() => {
+            nextTick(() => {
+                showcontainer.value = true;
+            });
             const id = route.params.cible_id;
             store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [
                 true,
@@ -319,6 +334,7 @@ export default {
                 });
         });
         return {
+            showcontainer,
             getCible_data,
             datacibleCount,
             datacible,

@@ -1,34 +1,34 @@
 <template>
-    <div class="row main-logo" v-if="$route.name!='Login'">
+    <div class="row main-logo">
         <div class="col-12 p-0">
-            <img  @click="slideinMenu"
-                src="./../../images/lcdt-logo.png"
-                alt="Lcdt logo"
-                class="logo img-fluid"
-            />
-            <div>
+    <img  @click="slideinMenu"
+            src="./../../images/lcdt-logo.png"
+            alt="Lcdt logo"
+            class="logo img-fluid"
+        />
+           <div>
+               
+             <search></search>  
 
-                <Search />
-
-                <BaseButton
+                <base-button
                     prepend
                     @click="featureunavailable('Nouveau Rendez vous')"
                     class="btn btn-newrdv body_medium"
                     kind="warning"
                     title="Nouveau Rendez Vous"
                 >
-                    <Icon name="user" />
-                </BaseButton>
+                    <icon name="user" />
+                </base-button>
 
-                <BaseButton
+                <base-button
                     prepend
                     @click="featureunavailable('Nouveau Devis')"
                     class="btn btn-newrdv body_medium"
                     kind="warning"
-                    title="Nouveau Rendez Vous"
+                    title="Nouveau Devis"
                 >
-                    <Icon name="clipboard" />
-                </BaseButton>
+                    <icon name="clipboard" />
+                </base-button>
 
            </div>
         </div>
@@ -65,7 +65,6 @@
                     },
                 })
             }
-
            return {
                neworder,
                slideinMenu,

@@ -87,10 +87,10 @@
 <script>
 
 import { ref, computed } from "vue"
-import useToggler from '../composables/useToggler'
+import useToggler from '../../composables/useToggler'
 
 export default {
-
+    name:'TableFilter',
     props: {
         checkboxOptions: {
             type: Array,

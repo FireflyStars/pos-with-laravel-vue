@@ -6,7 +6,8 @@ export const GET_LOADER_MSG = 'GET_LOADER_MSG'; // getters
 export const DISPLAY_LOADER = 'DISPLAY_LOADER'; //actions
 export const HIDE_LOADER = 'HIDE_LOADER'; //actions
 
-
+//ITEM LIST TABLE
+export const GET_TABLE_DEF='GET_TABLE_DEF'//getters
 
 
 export const TOASTER_MODULE = 'TOASTER_MODULE/'; //namespace

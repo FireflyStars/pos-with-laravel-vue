@@ -1,13 +1,20 @@
-import { then } from "laravel-mix" import { START_LOCATION } from "vue-router"
-
 <template>
-    <!--<side-bar></side-bar>
-    <Main></Main>-->
-    <form class="space-y-6" @submit.prevent="saveCible">
-        <transition
+   
+       <div class="container-fluid h-100 bg-color" >
+                <main-header />
+
+                <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100" >
+                    
+                    <side-bar />
+
+                    <div class="col main-view container">
+                           <transition
             enter-active-class="animate__animated animate__fadeIn"
             leave-active-class="animate__animated animate__fadeOut"
         >
+    <form class="space-y-6" @submit.prevent="saveCible" v-if="showcontainer">
+  
+   
             <div class="container">
                 <div class="ajustement">
                     <svg
@@ -47,8 +54,9 @@ import { then } from "laravel-mix" import { START_LOCATION } from "vue-router"
                             <thead>
                                 <tr>
                                     <th class="px-5"></th>
+                                    <template   v-if="status">
                                     <th
-                                        v-if="status"
+                                      
                                         class="vertical-name"
                                         v-for="item in status"
                                         :key="item.id"
@@ -57,6 +65,7 @@ import { then } from "laravel-mix" import { START_LOCATION } from "vue-router"
                                             item
                                         }}</span>
                                     </th>
+                                    </template>
                                     <th class="center">
                                         <span
                                             class="text-xs grey size emphasized vertical-name"
@@ -104,7 +113,7 @@ import { then } from "laravel-mix" import { START_LOCATION } from "vue-router"
                                         <label>
                                             <span id="total_mails">0</span>
                                             <span>
-                                                <img
+                                                <img :style="img_up"
                                                     id="img_update"
                                                     src="../../images/circle-arrow-icon-png-clipart.png"
                                                 />
@@ -138,10 +147,7 @@ import { then } from "laravel-mix" import { START_LOCATION } from "vue-router"
                                 CHARGER UN PRÉCÉDENT CIBLAGE
                             </h2>
                             <table style="width: 100%">
-                                <tr
-                                    class="history_ligne"
-                                    v-for="item in history_compagne"
-                                >
+                                <tr class="history_ligne" v-for="item in history_compagne" >
                                     <th class="size">
                                         <span
                                             class="close x-btn"
@@ -197,8 +203,13 @@ import { then } from "laravel-mix" import { START_LOCATION } from "vue-router"
                     </div>
                 </div>
             </div>
-        </transition>
-    </form>
+             
+                </form>
+                  </transition>
+                        </div>
+                    </div>
+                </div>
+      
 </template>
 
 <script>
@@ -246,6 +257,7 @@ export default {
         };
     },
     setup(props) {
+        const img_up =ref({});
         onMounted(() => {
             const id = route.params.categ_id;
             console.log("eeeeeeeee0", id);
@@ -292,6 +304,13 @@ export default {
         } = useCompanies();
 
         onMounted(getCible);
+
+         const showcontainer = ref(false);
+        onMounted(() => {
+            nextTick(() => {
+                showcontainer.value = true;
+            });
+        });
         //onMounted(getCompgneCible(props.cible_id));
         const route = useRoute();
 
@@ -306,6 +325,7 @@ export default {
 
             if (route.params.cible_id) {
                 //window.top.location.reload();
+             
                 let form_send;
                 let count;
                 axios
@@ -412,9 +432,10 @@ export default {
                                         );
                                 });
                             }, 2000);
-                            document.getElementById(
-                                "img_update"
-                            ).style.display = "none";
+                            img_up.value={display:"none"};
+                            //document.getElementById(
+                              //  "img_update"
+                           // ).style.display = "none";
                             //});
 
                             document.querySelector(".font.total").innerText =
@@ -486,8 +507,9 @@ export default {
                         }, 2000);
                     });
                     //;
-                    document.getElementById("img_update").style.display =
-                        "none";
+                         img_up.value={display:"none"};
+                   // document.getElementById("img_update").style.display =
+                   //     "none";
                     store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
                 } else {
                     store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
@@ -505,6 +527,8 @@ export default {
         }
 
         return {
+            img_up,
+            showcontainer,
             form,
             status,
             industries,
@@ -530,6 +554,7 @@ export default {
             };
             let count;
             var cible_id = this.$route.params.cible_id;
+            let that=this;
             var cibleSum = axios
                 .post("/ciblesum", form)
                 .then(function (response) {
@@ -562,8 +587,9 @@ export default {
                     document.querySelector(
                         "#total_mails +span"
                     ).style.marginLeft = "0px";
-                    document.getElementById("img_update").style.display =
-                        "inline-block";
+                         that.img_up={display:"inline-block"};
+                   // document.getElementById("img_update").style.display =
+                     //   "inline-block";
                 });
         },
 

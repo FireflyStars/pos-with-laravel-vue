@@ -1,9 +1,18 @@
 <template>
-  <!--  <SideBar />
-    <Main />
-    -->
+             
+    <div class="container-fluid h-100 bg-color" >
+                <main-header />
 
-    <div class="container">
+                <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100" >
+                    
+                    <side-bar />
+
+                    <div class="col main-view container">
+                          <transition
+        enter-active-class="animate__animated animate__fadeIn"
+        leave-active-class="animate__animated animate__fadeOut"
+    > 
+    <div class="container" v-if="showcontainer">
         <div class="ajustement">
             <svg
                 width="38"
@@ -201,7 +210,12 @@
             </div>
             <div class="col-lg-1" v-if="type == 'COURRIER'"></div>
         </div>
-    </div>
+    </div>     
+    </transition>
+                    </div>
+                    </div>
+                    </div>
+               
 </template>
 
 <script>
@@ -266,7 +280,13 @@ export default {
         const route = useRoute();
         const store = useStore();
         const type = route.params.type;
+           const showcontainer = ref(false);
+
         onMounted(() => {
+               nextTick(() => {
+            
+                showcontainer.value = true;
+            });
             const id = route.params.cible_id;
             store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [
                 true,
@@ -290,6 +310,7 @@ export default {
             getCible_data,
             type,
             my_name,
+            showcontainer
         };
     },
     methods: {

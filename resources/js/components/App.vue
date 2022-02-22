@@ -1,22 +1,20 @@
 <template>
-    
-    <Main />
-    
-    <Toaster />
-    <WaveLoader :show_loader="SHOW_LOADER" :msg="LOADER_MSG" />
-
+    <router-view />
+    <toaster />
+    <wave-loader :show_loader="SHOW_LOADER" :msg="LOADER_MSG" ></wave-loader>
 </template>
 
 <script>
 
-    import Main from './Main' 
+ 
     import WaveLoader from './WaveLoader'
-    import Toaster from './miscellaneous/Toaster'
+    import Toaster from './miscellaneous/Toaster.vue'
 
     import { computed } from 'vue';
     import { useStore } from 'vuex';
 
     import { GET_LOADER_MSG, GET_SHOW_LOADER, LOADER_MODULE } from '../store/types/types'
+
     
     export default {
 
@@ -24,8 +22,7 @@
 
         components: {
             Toaster, 
-            WaveLoader,
-            Main
+            WaveLoader
         },
 
         setup() {

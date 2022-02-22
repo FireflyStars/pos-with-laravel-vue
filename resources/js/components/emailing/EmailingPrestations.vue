@@ -1,11 +1,19 @@
 <template>
-    <!--<side-bar></side-bar>
-    <Main></Main>-->
-    <transition
+
+  
+    <div class="container-fluid h-100 bg-color" >
+                <main-header />
+
+                <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100" >
+                    
+                    <side-bar />
+
+                    <div class="col main-view container">
+                          <transition
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
     >
-        <div class="container">
+        <div class="container" v-if="showcontainer">
             <div class="ajustement">
                 <svg
                     width="38"
@@ -21,6 +29,7 @@
                     />
                 </svg>
                 <h3 class="margin-email">Emailing</h3>
+        
             </div>
 
             <div v-if="myvar == true">
@@ -36,7 +45,7 @@
                 </h3>
             </div>
 
-            <div class="row flex_wrap">
+                    <transition-group tag="div" class="row flex_wrap" name="list" appear>
                 <div
                     class="card shadow-sm mb-4"
                     v-for="item in template"
@@ -57,9 +66,13 @@
                         </h5>
                     </div>
                 </div>
-            </div>
+                </transition-group>
         </div>
-    </transition>
+            </transition>
+                    </div>
+                </div>
+    </div>
+
 </template>
 
 <script>
@@ -89,11 +102,11 @@ export default {
         },
     },
     setup(props, context) {
-        const showimg = ref(false);
+        const showcontainer = ref(false);
         onMounted(() => {
             nextTick(() => {
-                console.log("mounted");
-                showimg.value = true;
+            
+                showcontainer.value = true;
             });
         });
         const {
@@ -113,7 +126,7 @@ export default {
         // onMounted(SubCategory(props.id));
 
         return {
-            showimg,
+            showcontainer,
             template,
             campagnedata,
             SubCategory,

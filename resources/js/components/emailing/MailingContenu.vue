@@ -1,11 +1,19 @@
 <template>
-    <!--<side-bar></side-bar>
-    <Main></Main>-->
-    <transition
+
+   
+     <div class="container-fluid h-100 bg-color">
+                <main-header />
+
+                <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100" >
+                    
+                    <side-bar />
+
+                    <div class="col main-view container">
+                         <transition
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
-    >
-        <div class="container">
+    >   
+        <div class="container"  v-if="showcontainer">
             <div class="ajustement">
                 <svg
                     width="38"
@@ -173,7 +181,11 @@
                 </div>
             </div>
         </div>
-    </transition>
+            </transition>
+                    </div>
+                </div>
+     </div>
+
 </template>
 
 <script>
@@ -209,7 +221,13 @@ export default {
             check_name,
             getCourrier,
         } = useCompanies();
-
+   const showcontainer = ref(false);
+        onMounted(() => {
+            nextTick(() => {
+            
+                showcontainer.value = true;
+            });
+        });
         // onMounted(getCourrier);
         onMounted(() => {
             //     let response = axios.get("/getCourrier").then(function (response) {
@@ -228,6 +246,7 @@ export default {
         });
 
         return {
+            showcontainer,
             check_name,
             courrier,
             courrier_lettre,

@@ -1,11 +1,18 @@
 <template>
-    <!--<side-bar></side-bar>
-    <Main></Main>-->
-    <transition
+     
+    <div class="container-fluid h-100 bg-color" >
+                <main-header />
+
+                <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100" >
+                    
+                    <side-bar />
+
+                    <div class="col main-view container">
+                            <transition
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
-    >
-        <div class="container">
+    >       
+ <div class="container" v-if="showcontainer">
             <div class="ajustement">
                 <svg
                     width="38"
@@ -25,7 +32,8 @@
                 </h3>
             </div>
 
-            <div class="row flex_wrap">
+           
+                     <transition-group tag="div" class="row flex_wrap" name="list" appear>
                 <div
                     class="card shadow-sm mb-4"
                     v-for="item in category"
@@ -56,28 +64,31 @@
                         </div>
                     </router-link>
                 </div>
-            </div>
+                     </transition-group>
+           
         </div>
-    </transition>
+            </transition>
+      </div>
+     </div>
+    </div>
+
 </template>
 
 <script>
 import { ref, onMounted, nextTick } from "vue";
-import SideBar from "../layout/SideBar";
-import Main from "../Main.vue";
+
 import useCompanies from "../../composables/companies";
 
 export default {
     components: {
-        Main,
-        SideBar,
+
     },
 
     setup(props, context) {
-        const showimg = ref(false);
+        const showcontainer = ref(false);
         onMounted(() => {
             nextTick(() => {
-                showimg.value = true;
+                showcontainer.value = true;
             });
         });
         const { my_ids, category, getCategory, getTemplates } = useCompanies();
@@ -85,7 +96,7 @@ export default {
         onMounted(getCategory);
         localStorage.clear();
         return {
-            showimg,
+            showcontainer,
             category,
             my_ids,
             getTemplates,

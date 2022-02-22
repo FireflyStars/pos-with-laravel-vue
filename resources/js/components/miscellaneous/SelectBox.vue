@@ -59,7 +59,7 @@ import {
 
 export default {
 
-    name: "SelectOptions",
+    name: "SelectBox",
 
     props: {
         hint: String,

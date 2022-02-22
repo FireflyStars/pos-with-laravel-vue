@@ -1,12 +1,26 @@
 <template>
+    <router-view >
+        
+ <transition
+            enter-active-class="animate__animated animate__fadeIn"
+        >
+            <div class="container-fluid h-100 bg-color" v-if="showcontainer">
+                <main-header />
 
+                <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100" >
+                    
+                    <side-bar />
+
+                    <div class="col main-view container">
+
+                        
     <div class="">
 
         <div class="row m-0">
             
             <div class="col m-2">
 
-                <SelectBox
+                <select-box
                     v-model="select1" 
                     placeholder="Choose a number" 
                     :options="selectBoxOptions" 
@@ -18,16 +32,16 @@
             </div>
 
             <div class="col m-2">
-                <MultiSelect 
+                <multi-select 
                     id="multiSelect"
                     title="Statut"
                     width="116px"
                     tagBackground="orange"
                     tagColor="white"
                     :numtag="1"
-                    classes=""
+                    classes="almarai_700_normal"
                     :styles="{}" 
-                    dropdownClasses=""
+                    dropdownClasses="almarai_700_normal"
                     :dropdownStyles="{ width: '167px' }"
                     v-model:options="options"
                     transformOrigin="top center"
@@ -36,7 +50,7 @@
             
             <div class="col m-2">
                 <h4 class="text-center">App Filters</h4>
-                <Filter 
+                <table-filter
                     v-model:checkboxOptions="filterCheckboxOptions"
                     v-model:selectOptions="filterSelectOptions"
                     v-model:selectedOptions="filterSelectedOptions"
@@ -57,12 +71,12 @@
             <div class="col">
                 <h4>Dropdown Item</h4>
                 <div class="position-relative">
-                    <BaseButton 
+                    <base-button 
                         class="mt-1"
                         title="Dropdown Trigger"
                         @click="toggleActiveItem('demoDropdown')"
                     />
-                    <Dropdown 
+                    <dropdown 
                         id="demoDropdown"
                         height="200px"
                         background="transparent"
@@ -74,12 +88,12 @@
                             <li class="list-group-item list-group-item-action">Item 3</li>
                             <li class="list-group-item list-group-item-action">Item 4</li>
                         </ul>
-                    </Dropdown>
+                    </dropdown>
                 </div>
             </div>
             <div class="col">
                 <h4>Checkbox</h4>
-                <CheckBox 
+                <check-box 
                     title="Custom attributes checkbox"
                     name="customCheckbox"
                     background="blue"
@@ -97,32 +111,32 @@
                 <h4>Buttons</h4>
                 
                 <div class="d-flex align-items-center justify-content-between">
-                    <BaseButton title="Danger" htmlTitle="kind danger" kind="danger" class="text-capitalize" />
-                    <BaseButton title="Primary" htmlTitle="kind primary" kind="primary" class="text-capitalize" />
-                    <BaseButton title="success" htmlTitle="kind success" kind="success" class="text-capitalize" />
-                    <BaseButton title="Green" htmlTitle="kind green" kind="green" class="text-capitalize" />
-                    <BaseButton title="Light Green" htmlTitle="kind light-green" kind="light-green" class="text-capitalize" />
-                    <BaseButton title="Warning" htmlTitle="kind warning" kind="warning" class="text-capitalize" />
-                    <BaseButton title="Light warning" htmlTitle="kind light-warning" kind="light-warning" class="text-capitalize" />
+                    <base-button title="Danger" htmlTitle="kind danger" kind="danger" class="text-capitalize" />
+                    <base-button title="Primary" htmlTitle="kind primary" kind="primary" class="text-capitalize" />
+                    <base-button title="success" htmlTitle="kind success" kind="success" class="text-capitalize" />
+                    <base-button title="Green" htmlTitle="kind green" kind="green" class="text-capitalize" />
+                    <base-button title="Light Green" htmlTitle="kind light-green" kind="light-green" class="text-capitalize" />
+                    <base-button title="Warning" htmlTitle="kind warning" kind="warning" class="text-capitalize" />
+                    <base-button title="Light warning" htmlTitle="kind light-warning" kind="light-warning" class="text-capitalize" />
 
-                    <BaseButton 
+                    <base-button 
                         title="Light warning Icon"
                         htmlTitle="kind light-warning"
                         kind="light-warning"
                         class="text-capitalize"
                         prepend
                     >
-                        <Icon name="user" />
-                    </BaseButton>
+                        <icon name="user" />
+                    </base-button>
 
-                    <BaseButton 
+                    <base-button 
                         title="Warning Icon"
                         htmlTitle="kind warning"
                         kind="warning"
                         class="text-capitalize"
                     >
-                        <Icon name="clipboard" />
-                    </BaseButton>
+                        <icon name="clipboard" />
+                    </base-button>
 
                 </div>
 
@@ -131,21 +145,28 @@
         </div>
 
     </div>
-    
+                    </div>
+
+                </div>
+            </div>
+        </transition>
+    </router-view>
 </template>
 
 <script>
 
-import { ref, reactive } from "vue";
-import Filter from "../components/Filter.vue"
-import MultiSelect from "../components/miscellaneous/MultiSelect.vue"
+import { ref, reactive,onMounted,nextTick } from "vue";
+import TableFilter from "../components/miscellaneous/TableFilter.vue"
+
 import useToggler from '../composables/useToggler'
+
+
+
 
 export default {
 
     components: {
-        Filter,
-        MultiSelect,
+        TableFilter
     },
 
     setup() {
@@ -154,6 +175,15 @@ export default {
 
         const select1 = ref(0)
         const customCheckbox = ref(false)
+
+        const showcontainer = ref(false)
+
+        onMounted(() => {
+            nextTick(() => {
+                showcontainer.value=true
+            })
+
+        })
 
         const selectBoxOptions = reactive([
             { value:'1', display: 'One' },
@@ -202,6 +232,7 @@ export default {
         }
 
         return { 
+            showcontainer,
             open,
             select1,
             options,

@@ -20,6 +20,7 @@
 
 <script>
     export default {
+        name: "BaseButton",
         props: {
             title: {
                 required: true,

@@ -1,11 +1,18 @@
 <template>
-    <side-bar></side-bar>
-    <Main></Main>
-    <transition
+
+    <div class="container-fluid h-100 bg-color">
+                <main-header />
+
+                <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100" >
+                    
+                    <side-bar />
+
+                    <div class="col main-view container">
+                            <transition
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
     >
-        <form class="space-y-6" v-if="show === 'lettre'">
+        <form class="space-y-6" v-if="show === 'lettre'" >
             <div class="container">
                 <div class="ajustement">
                     <svg
@@ -246,7 +253,11 @@
                 </div>
             </div>
         </form>
-    </transition>
+         </transition>
+                    </div>
+                </div>
+                </div>
+   
 </template>
 
 <script>
@@ -315,7 +326,12 @@ export default {
         const { type, router, errors, company, contentform } = useCompanies();
         const route = useRoute();
         let show = route.params.show;
-
+        const showcontainer = ref(false);
+        onMounted(() => {
+            nextTick(() => {
+                showcontainer.value = true;
+            });
+        });
         onMounted(() => {
             const id = localStorage.getItem("id_category");
 

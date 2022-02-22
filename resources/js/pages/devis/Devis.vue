@@ -12,7 +12,7 @@
                     <side-bar />
 
                     <div class="col main-view container">
-
+                            hello
                         <component :is="Component" />
 
                     </div>
@@ -25,13 +25,13 @@
 
 <script>
 
-import MainHeader from './layout/MainHeader.vue';
-import SideBar from './layout/SideBar.vue';
+import MainHeader from '../../components/layout/MainHeader.vue';
+import SideBar from '../../components/layout/SideBar.vue';
 import { ref, onMounted, nextTick } from 'vue';
 
 export default {
 
-    name: "Main",
+    name: "Devis",
 
     components: {
       MainHeader,

@@ -3,45 +3,18 @@ import {
     createWebHistory,
 } from  'vue-router';
 import NotFound from '../components/NotFound';
-import Table from "../components/Table";
-import Test from "../components/Test";
-import Envoi from "../components/Envoi";
-import Category from "../components/Category";
 import AuthenticationMiddleware from './middleware/authentication';
 
 const router = createRouter({
     history:createWebHistory(),
     routes:[
-        {
-            path: "/category/:id",
-            name: "category",
-            component: Category,
-            props: true,
-        },
-        {
-            path: "/affichage",
-            name: "test",
-            component: Test,
-            props: true,
-        },
 
-        {
-            path: "/cibletable",
-            name: "cibletable",
-            component: Table,
-            props: true,
-        },
-        {
-            path: "/envoi",
-            name: "envoi",
-            component: Envoi,
-            props: true,
-        },
 
         {
             path:'',
             name:'LandingPage',
-            component:()=>import('../Pages/Index'),//import('../Pages/Index'),
+            component:()=> import('../pages/devis/Devis.vue'),//import('../Pages/Index'),
+
             meta:{
                 authenticated:true
             },

@@ -1,18 +1,33 @@
-require('./bootstrap')
+import {TOASTER_MESSAGE, TOASTER_MODULE} from "./store/types/types";
 
-import { createApp } from 'vue'
-import VueClickAway from 'vue3-click-away'
-import App from './components/App.vue'
+require('./bootstrap');
 
-import { GlobalComponents } from './services/Index'
+import axios from 'axios';
+import { createApp } from 'vue';
+import App from './components/App';
+import VueClickAway from 'vue3-click-away';
+import { GlobalComponents } from './services/Index';
 
-import router from './router/router'
-import store from './store/store'
+import router from './router/router';
+import store from './store/store';
 
+axios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response.status !== 401&&error.response.status !== 419) return Promise.reject(error)
+        sessionStorage.clear();
+        store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,{message:'Session expired. Please login again.',ttl:8,type:'danger'});
+        //window.location='/';
+        router.push({
+            name:'Login',
+        })
+    }
+)
+const app=createApp(App)
+    .use(router)
+    .use(store)
+    .use(VueClickAway);
 
-const app = createApp(App)
-app.use(router)
-app.use(store)
-app.use(VueClickAway)
-GlobalComponents(app)
-app.mount('#app')
+    GlobalComponents(app);
+
+    app.mount('#app');

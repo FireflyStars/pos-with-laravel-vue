@@ -4,7 +4,7 @@
 
 <!-- :class="{active:route_name=='/'}" -->
 <!-- :class="{isActive :route_name=='LandingPage'}" -->
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="side-icons"  @click="router.push({name:'ComponentsTest'})" :class="route_name =='LandingPage' ? 'active' :''">
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="side-icons"  @click="router.push({name:'LandingPage'})" :class="route_name =='LandingPage' ? 'active' :''">
  <rect width="32" height="32" rx="8" />
 <path transform="translate(4.585,5.145)" d="M12 0.5L16.226 6.683L23.413 8.792L18.838 14.722L19.053 22.208L12 19.69L4.94698 22.208L5.16198 14.722L0.586975 8.792L7.77398 6.683L12 0.5ZM9.99998 12H7.99998C7.99996 13.0436 8.40776 14.0458 9.13638 14.7929C9.86499 15.54 10.8567 15.9727 11.8999 15.9988C12.9432 16.0249 13.9553 15.6423 14.7203 14.9326C15.4854 14.2228 15.9428 13.2422 15.995 12.2L16 12H14C14.0023 12.519 13.8028 13.0185 13.4436 13.3932C13.0844 13.7678 12.5937 13.9881 12.075 14.0075C11.5564 14.027 11.0505 13.8441 10.6643 13.4975C10.278 13.1509 10.0416 12.6677 10.005 12.15L9.99998 12Z" fill="black"/>
     </svg>
@@ -35,6 +35,7 @@
 </svg>
 
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="side-icons" @click="router.push({name:'emailing'})" :class="route_name =='emailing' || getEmailingParentPath($route.path)=='/emailing' ? 'active' :''">
+
  <rect width="32" height="32" rx="8" />
 <path transform="translate(5,7)"  d="M2 2.5V0.993C2.00183 0.730378 2.1069 0.479017 2.29251 0.293218C2.47813 0.107418 2.72938 0.00209465 2.992 0H21.008C21.556 0 22 0.445 22 0.993V17.007C21.9982 17.2696 21.8931 17.521 21.7075 17.7068C21.5219 17.8926 21.2706 17.9979 21.008 18H2.992C2.72881 17.9997 2.4765 17.895 2.29049 17.7088C2.10448 17.5226 2 17.2702 2 17.007V16H20V4.3L12 11.5L2 2.5ZM0 7H5V9H0V7ZM0 12H8V14H0V12Z" fill="black"/>
 </svg>
@@ -94,7 +95,7 @@
             </div>
         <transition name="usermenu" >
             <div class="usermenu" v-if="dispmenu" >
-
+                <button class="btn mb-3 btn-outline-primary body_medium"  data-bs-toggle="tooltip" data-bs-placement="right" title="Developer Components Library" @click="router.push({name:'ComponentsTest'})">Developer</button>
                 <button class="btn btn-outline-dark body_medium"  data-bs-toggle="tooltip" data-bs-placement="right" title="Logout user" @click="logout">Sign out</button>
 
 

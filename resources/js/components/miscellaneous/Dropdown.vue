@@ -18,7 +18,7 @@
 
 <script>
 import { computed } from 'vue'
-import useToggler from '../../../composables/useToggler'
+import useToggler from '../../composables/useToggler'
 
 export default {
     
@@ -123,7 +123,7 @@ export default {
     width: 100%;
     overflow: hidden;
     order: 1;
-    font-family: Almarai;
+
     font-style: normal;
     font-weight: bold;
     font-size: 14px;
