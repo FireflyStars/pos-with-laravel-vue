@@ -214,7 +214,9 @@ export default {
 .link {
     cursor: pointer;
     text-decoration: none;
+    color:orange;
 }
+
 .link:hover {
     color: orangered;
 }

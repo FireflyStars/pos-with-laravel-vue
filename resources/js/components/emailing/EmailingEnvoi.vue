@@ -1,17 +1,17 @@
 <template>
-             
+
     <div class="container-fluid h-100 bg-color" >
                 <main-header />
 
                 <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100" >
-                    
+
                     <side-bar />
 
                     <div class="col main-view container">
                           <transition
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
-    > 
+    >
     <div class="container" v-if="showcontainer">
         <div class="ajustement">
             <svg
@@ -210,12 +210,12 @@
             </div>
             <div class="col-lg-1" v-if="type == 'COURRIER'"></div>
         </div>
-    </div>     
+    </div>
     </transition>
                     </div>
                     </div>
                     </div>
-               
+
 </template>
 
 <script>
@@ -256,7 +256,7 @@ export default {
 
     data: function () {
         return {
-            todos: [{ text: "test@test.fr" }, { text: "test@test.com" }],
+            //todos: [{ text: "test@test.fr" }, { text: "test@test.com" }],
             users: [],
             date: "",
             time: "",
@@ -269,6 +269,7 @@ export default {
 
     setup(data) {
         const my_name = localStorage.getItem("category");
+        const todos = ref([]);
 
         const {
             datacible,
@@ -284,7 +285,7 @@ export default {
 
         onMounted(() => {
                nextTick(() => {
-            
+
                 showcontainer.value = true;
             });
             const id = route.params.cible_id;
@@ -292,6 +293,21 @@ export default {
                 true,
                 "Chargement en cours..",
             ]);
+
+            axios.post('/get-affiliate-detail',{})
+                .then((res)=>{
+                    if(res.data.affiliate){
+                        let obj = {};
+                        obj.text = res.data.affiliate.email;
+                        todos.value.push(obj);
+
+                    }
+                }).catch((err)=>{
+                    console.log(err)
+                }).finally(()=>{
+
+                });
+
             axios
                 .get("/getCount_cible/" + id)
                 .then(function (response) {
@@ -310,7 +326,8 @@ export default {
             getCible_data,
             type,
             my_name,
-            showcontainer
+            showcontainer,
+            todos,
         };
     },
     methods: {
@@ -331,7 +348,17 @@ export default {
 
         addTodo: function (e) {
             var newTodo = this.todoText.trim();
+            let mail_regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,63})+$/;
+
             if (!newTodo) {
+                return;
+            }else if(!mail_regex.test(newTodo.toLowerCase())){
+                this.store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,
+                       {
+                            message: 'Erreur format email',
+                            ttl: 3,
+                            type: 'danger'
+                        });
                 return;
             }
             this.todos.push({ text: newTodo });
@@ -356,13 +383,25 @@ export default {
             };
         },
         send() {
-            this.store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [
-                true,
-                "Chargement en cours..",
-            ]);
+
             var checked_inputs = document.querySelectorAll(
                 'input[type="checkbox"]:checked'
             );
+
+            if(checked_inputs.length == 0){
+                this.store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,
+                       {
+                            message: 'Pas email selectionné',
+                            ttl: 3,
+                            type: 'danger'
+                        });
+            }else{
+
+                this.store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [
+                    true,
+                    "Chargement en cours..",
+                ]);
+
             let element = [];
             var string, form;
             for (let index = 0; index < checked_inputs.length; index++) {
@@ -397,6 +436,7 @@ export default {
                 .finally(() => {
                     this.store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
                 });
+            }
         },
         // sendImmediat() {
         //     this.store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [

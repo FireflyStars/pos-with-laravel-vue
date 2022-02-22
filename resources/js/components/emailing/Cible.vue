@@ -30,12 +30,12 @@
                             fill="black"
                         />
                     </svg>
-                    <h3 class="margin link">
+                    <h3 class="link" style="margin-top:35px;">
                         <a @click="goToHome()">Emailing</a>
                     </h3>
                 </div>
                 <div>
-                    <h5>
+                    <h3 class="margin">
                         <a @click="goToHome()" class="link">Emailing </a>>
                         <a
                             @click="goToPrestation()"
@@ -45,7 +45,7 @@
                             {{ my_name }} >
                         </a>
                         Cible
-                    </h5>
+                    </h3>
                 </div>
 
                 <div class="row">
@@ -627,6 +627,21 @@ export default {
             var checked_inputs_old = document.querySelectorAll(
                 '.history_ligne input[type="checkbox"]:checked'
             );
+
+            let err = false;
+
+            if(parseInt(checked_inputs.length)+parseInt(checked_inputs_old.length)==0){
+                err = true;
+
+                this.$store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,
+                       {
+                            message: "Pas d'emails selectionné",
+                            ttl: 3,
+                            type: 'danger'
+                        });
+            }
+
+        if(!err){
             let element = [];
             let element_old = [];
             var string, form;
@@ -676,6 +691,8 @@ export default {
                 .catch(function (error) {
                     console.log(error);
                 });
+
+            }
         },
         onValide: function () {
             const route = useRoute();
@@ -685,6 +702,24 @@ export default {
             var checked_inputs_old = document.querySelectorAll(
                 '.history_ligne input[type="checkbox"]:checked'
             );
+
+             let err = false;
+
+            if(parseInt(checked_inputs.length)+parseInt(checked_inputs_old.length)==0){
+                err = true;
+
+                this.$store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,
+                       {
+                            message: "Pas d'emails selectionné",
+                            ttl: 3,
+                            type: 'danger'
+                        });
+            }
+
+        if(!err){
+
+
+
             let element = [];
             let element_old = [];
             var string, form;
@@ -753,6 +788,7 @@ export default {
                         console.log(error);
                     });
             }
+        }
         },
         deleteOldCompagne: function (id) {
             var data_cible = {
@@ -792,7 +828,7 @@ export default {
     font-weight: bold;
 }
 .margin-ajustement {
-    margin-bottom: 75px;
+    /*margin-bottom: 75px;*/
     margin-top: 39px;
 }
 .ajustement {
@@ -808,6 +844,8 @@ export default {
 .margin {
     margin-bottom: 40px;
     margin-top: 35px;
+    font-size: 17px;
+    font-weight: bold;
 }
 .type-click {
     width: fit-content;
@@ -1056,6 +1094,7 @@ th.cercle {
 .link {
     cursor: pointer;
     text-decoration: none;
+    color:orange;
 }
 .link:hover {
     color: orangered;

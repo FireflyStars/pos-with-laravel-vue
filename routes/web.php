@@ -7,6 +7,7 @@ use App\Http\Controllers\TestController;
 use App\Http\Controllers\CompagneController;
 use TCG\Voyager\Facades\Voyager;
 use App\Http\Controllers\LcdtAdminController;
+use App\Http\Controllers\LcdtFrontController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,7 +65,7 @@ Route::group([
     Route::get('/getOldCompagne',[CompagneController::class, 'getOldCompagne'])->name('getOldCompagne');
     Route::put('deleteOldCompagne/', [CompagneController::class, 'deleteOldCompagne'])->name('deleteOldCompagne');
 
-    Route::get('/exportCsv/{id}',[CompagneController::class, 'exportCsv'])->name('exportCsv'); 
+    Route::get('/exportCsv/{id}',[CompagneController::class, 'exportCsv'])->name('exportCsv');
     Route::post('/downloadPdf',[CompagneController::class, 'downloadPdf'])->name('downloadPdf');
 
     Route::get('/index',[CompagneController::class, 'index'])->name('index');
@@ -78,6 +79,8 @@ Route::group([
     Route::get('/getContentImage/{id}',[CompagneController::class, 'getContentImage'])->name('getContentImage');
     Route::get('/imagefield/{id}',[CompagneController::class, 'imagefield'])->name('imagefield');
     Route::get('/lettredata/{id}',[CompagneController::class, 'lettredata'])->name('lettredata');
+
+    Route::post('/get-affiliate-detail',[LcdtFrontController::class,'getAffiliateDetail'])->name('get-affiliate-detail');
 
 });
 

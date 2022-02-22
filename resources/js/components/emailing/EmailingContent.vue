@@ -1,11 +1,11 @@
 <template>
 
-  
+
         <div class="container-fluid h-100 bg-color" >
                 <main-header />
 
                 <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100" >
-                    
+
                     <side-bar />
 
                     <div class="col main-view container">
@@ -31,11 +31,11 @@
                                     fill="black"
                                 />
                             </svg>
-                            <h3 class="margin link">
+                            <h3 class="link" style="margin-top:35px;">
                                 <a @click="goToHome()">Emailing</a>
                             </h3>
                         </div>
-                        <h3 class="margin-align">
+                        <h3 class="margin">
                             <a @click="goToHome()" class="link">Emailing</a> >
                             <a @click="goToPrestation()" class="link">{{
                                 my_name
@@ -147,21 +147,19 @@
                     </div>
                     <div
                         class="col-lg-5 apercu"
-                        style="margin-top: 50px; position: relative"
+                        style="margin-top: 50px"
                     >
                         <h6>APERÇU</h6>
-
+                        <div style="position: relative;">
                         <img
-                            :src="`/storage/COMPAGNE/${vaal}`"
-                            style="width: 100%"
-                        />
+                            :src="`/storage/${vaal}`" />
 
                         <span
                             class="position"
                             :style="
-                                'top: ' +
+                                'left: ' +
                                 dataimage1.xfield1 +
-                                'px; left: ' +
+                                'px; top: ' +
                                 dataimage1.yfield1 +
                                 'px; color: ' +
                                 dataimage1.color1 +
@@ -174,33 +172,34 @@
                         <span
                             class="position"
                             :style="
-                                'top: ' +
+                                'left: ' +
                                 dataimage2.xfield2 +
-                                'px; left: ' +
+                                'px; top: ' +
                                 dataimage2.yfield2 +
                                 'px; color: ' +
                                 dataimage2.color2 +
-                                ';'
-                            "
-                            id="input_phone"
-                        >
-                            {{ input_phone }}
-                        </span>
-                        <span
-                            class="position"
-                            :style="
-                                'top: ' +
-                                dataimage3.xfield3 +
-                                'px; left: ' +
-                                dataimage3.yfield3 +
-                                'px; color: ' +
-                                dataimage3.color3 +
                                 ';'
                             "
                             id="input_email"
                         >
                             {{ input_email }}
                         </span>
+                        <span
+                            class="position"
+                            :style="
+                                'left: ' +
+                                dataimage3.xfield3 +
+                                'px; top: ' +
+                                dataimage3.yfield3 +
+                                'px; color: ' +
+                                dataimage3.color3 +
+                                ';'
+                            "
+                            id="input_phone"
+                        >
+                            {{ input_phone }}
+                        </span>
+                        </div>
                     </div>
                 </div>
                 <div class="row rigth">
@@ -218,7 +217,7 @@
                     </div>
                 </div>
         </div>
- 
+
 </template>
 
 <script>
@@ -402,7 +401,7 @@ export default {
 <style scoped>
 .position {
     position: absolute;
-    font-size: x-small;
+    font-size: 14px;
     font-weight: 600;
 }
 
@@ -471,6 +470,8 @@ label.fix_width_column {
 .margin {
     margin-bottom: 40px;
     margin-top: 35px;
+    font-size: 17px;
+    font-weight: bold;
 }
 .card-title {
     text-align: center;
