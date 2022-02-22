@@ -1,6 +1,7 @@
 <template>
-    <SideBar />
+  <!--  <SideBar />
     <Main />
+    -->
 
     <div class="container">
         <div class="ajustement">
