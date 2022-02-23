@@ -1,26 +1,26 @@
 <template>
 
-   
+
      <div class="container-fluid h-100 bg-color">
                 <main-header />
 
                 <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100" >
-                    
+
                     <side-bar />
 
                     <div class="col main-view container">
                          <transition
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
-    >   
+    >
         <div class="container"  v-if="showcontainer">
-            <div class="ajustement">
+            <div class="ajustement pt-5">
                 <svg
                     width="38"
                     height="32"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
-                    class="margin-ajustement"
+                    class="main-header-icon"
                 >
                     <path
                         transform="translate(5,7)"
@@ -29,7 +29,7 @@
                     />
                 </svg>
                 <div>
-                    <h3 class="margin link">
+                    <h3 class="main-title">
                         <a @click="goToHome()">Emailing</a>
                     </h3>
                 </div>
@@ -224,7 +224,7 @@ export default {
    const showcontainer = ref(false);
         onMounted(() => {
             nextTick(() => {
-            
+
                 showcontainer.value = true;
             });
         });
@@ -390,6 +390,7 @@ export default {
 .link {
     cursor: pointer;
     text-decoration: none;
+    color:orange;
 }
 .link:hover {
     color: orangered;

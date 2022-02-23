@@ -13,13 +13,13 @@
         leave-active-class="animate__animated animate__fadeOut"
     >
     <div class="container" v-if="showcontainer">
-        <div class="ajustement">
+        <div class="ajustement pt-5">
             <svg
                 width="38"
                 height="32"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                class="margin-ajustement"
+                class="main-header-icon"
             >
                 <path
                     transform="translate(5,7)"
@@ -27,7 +27,7 @@
                     fill="black"
                 />
             </svg>
-            <h3 style="margin-top:35px;"><a @click="goToHome()">Emailing</a></h3>
+            <h3 class="main-header"><a @click="goToHome()">Emailing</a></h3>
         </div>
         <div class="col-lg-12">
             <h3 class="margin">
@@ -38,7 +38,7 @@
             </h3>
         </div>
 
-        <div class="row">
+        <div class="row position-relative pt-4">
             <div class="col-lg-4" v-if="type != 'COURRIER'">
                 <h5 class="color bold">TEST</h5>
                 <p class="">Testez votre campagne avant envoi.</p>
@@ -716,7 +716,7 @@ input[type="checkbox"] {
     border-radius: 15px;
     background-color: #000000;
     margin-left: -25px;
-    top: 200px;
+    top: 0;
 }
 input[type="checkbox"] {
     -moz-appearance: initial;
@@ -729,7 +729,7 @@ input[type="checkbox"] {
     border-radius: 15px;
     background-color: #000000;
     margin-left: 25px;
-    top: 150px;
+    top: 0;
 }
 .border_hr {
     padding-right: 35px;

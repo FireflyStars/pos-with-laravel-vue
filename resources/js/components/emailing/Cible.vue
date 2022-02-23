@@ -16,13 +16,13 @@
 
 
             <div class="container">
-                <div class="ajustement">
+                <div class="ajustement pt-5">
                     <svg
                         width="38"
                         height="32"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
-                        class="margin-ajustement"
+                        class="main-header-icon"
                     >
                         <path
                             transform="translate(5,7)"
@@ -30,7 +30,7 @@
                             fill="black"
                         />
                     </svg>
-                    <h3 class="" style="margin-top:35px;">
+                    <h3 class="main-title">
                         <a @click="goToHome()">Emailing</a>
                     </h3>
                 </div>
