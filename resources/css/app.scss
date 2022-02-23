@@ -15,17 +15,29 @@
   --lcdtOrange:#e86f29;
   --lcdtRed:rgba(232, 88, 27, 0.7);
 }
+html:not(.Login):not(.ForgotPassword):not(.NewPassword):not(.not-found){
+  background-color: #E5E5E5;
+  body{
+    background-color: #E5E5E5;
+  }
+}
 html{
     min-height: 100%;
     body{
+      
       min-height: 100%;
     }
 
-    &.not-found,&.Login,&.ForgotPassword{
+    &.not-found,&.Login,&.ForgotPassword,&.NewPassword{
         height: 100%;
         body{
           height: 100%;
         }
+      }
+
+      .bg-panel{
+        background-color: #FFFFFF;
+        box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
       }
 
   }

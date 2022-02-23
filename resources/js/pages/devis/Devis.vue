@@ -1,25 +1,41 @@
 
 <template>
     <router-view v-slot="{ Component }">
-        <transition
-            enter-active-class="animate__animated animate__fadeIn"
-        >
-            <div class="container-fluid h-100 bg-color" v-if="showcontainer">
+      
+            <div class="container-fluid h-100 bg-color">
                 <main-header />
 
                 <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100" >
                     
                     <side-bar />
+            <transition enter-active-class="animate__animated animate__fadeIn" >
+                    <div class="col main-view container" v-if="showcontainer">
+                            <page-title icon="edit" name="DEVIS" class="almarai_extrabold_normal_normal"/>
 
-                    <div class="col main-view container">
-                            hello
+            <div class="row m-0 ml-5 mr-5">
+                        <div class="col">
+                            <tab-pane :tabs="{first:'First tab',second:'Second tab',third:'Third tab'}" class="almarai_700_normal">
+                                <template v-slot:first>
+                                    1st
+                                </template>
+                                <template v-slot:second>
+                                    2nd
+                                </template>
+                               <template v-slot:third>
+                                    3rd
+                                </template>
+                            </tab-pane>
+                        </div>
+                         
+            </div>
+            
                         <component :is="Component" />
 
                     </div>
-
+            </transition>
                 </div>
             </div>
-        </transition>
+ 
     </router-view>
 </template>
 
@@ -62,7 +78,5 @@ export default {
 .lcdt-logo {
     padding-left: 0
 }
-.main-view {
-    margin: 5rem 0;
-}
+
 </style>

@@ -10,6 +10,7 @@ import { pushScopeId } from "vue"
                     <side-bar />
 
                     <div class="col main-view container">
+                        <page-title icon="emailing" name="EMAILING" class="almarai_extrabold_normal_normal"/>
                            <transition
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
@@ -17,7 +18,7 @@ import { pushScopeId } from "vue"
         <div class="container" v-if="showcontainer">
             <h3 class="color margin">CIBLES</h3>
 
-            <div>
+            <div class="bg-panel p-4">
                 <div class="filtter d-flex">
                     <div class="d-flex colum">
                         <label>Filtrer par Société:</label>

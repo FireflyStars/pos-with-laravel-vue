@@ -8,27 +8,13 @@
                     <side-bar />
 
                     <div class="col main-view container">
+                        <page-title icon="emailing" name="EMAILING" class="almarai_extrabold_normal_normal"/>
                           <transition
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
     >
     <div class="container" v-if="showcontainer">
-        <div class="ajustement pt-5">
-            <svg
-                width="38"
-                height="32"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                class="main-header-icon"
-            >
-                <path
-                    transform="translate(5,7)"
-                    d="M2 2.5V0.993C2.00183 0.730378 2.1069 0.479017 2.29251 0.293218C2.47813 0.107418 2.72938 0.00209465 2.992 0H21.008C21.556 0 22 0.445 22 0.993V17.007C21.9982 17.2696 21.8931 17.521 21.7075 17.7068C21.5219 17.8926 21.2706 17.9979 21.008 18H2.992C2.72881 17.9997 2.4765 17.895 2.29049 17.7088C2.10448 17.5226 2 17.2702 2 17.007V16H20V4.3L12 11.5L2 2.5ZM0 7H5V9H0V7ZM0 12H8V14H0V12Z"
-                    fill="black"
-                />
-            </svg>
-            <h3 class="main-header"><a @click="goToHome()">Emailing</a></h3>
-        </div>
+ 
         <div class="col-lg-12">
             <h3 class="margin">
                 <a @click="goToHome()" class="link">Emailing</a> >
@@ -38,7 +24,7 @@
             </h3>
         </div>
 
-        <div class="row position-relative pt-4">
+        <div class="row position-relative p-4 bg-panel">
             <div class="col-lg-4" v-if="type != 'COURRIER'">
                 <h5 class="color bold">TEST</h5>
                 <p class="">Testez votre campagne avant envoi.</p>
@@ -564,7 +550,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .margin-align {
     margin-bottom: 60px;
     margin-top: -34px;
@@ -711,12 +697,12 @@ input[type="checkbox"] {
 .border_hr:before {
     content: "";
     width: 1px;
-    height: 440px;
+    height: 420px;
     position: absolute;
     border-radius: 15px;
     background-color: #000000;
     margin-left: -25px;
-    top: 0;
+    top: 10px;
 }
 input[type="checkbox"] {
     -moz-appearance: initial;
@@ -796,5 +782,8 @@ input[type="checkbox"] {
 }
 .link:hover {
     color: orangered;
+}
+.bg-panel{
+    min-height: 440px;
 }
 </style>

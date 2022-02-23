@@ -9,6 +9,7 @@
                     <side-bar />
 
                     <div class="col main-view container">
+                        <page-title icon="emailing" name="EMAILING" class="almarai_extrabold_normal_normal"/>
                           <transition
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
@@ -17,24 +18,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-7">
-                        <div class="ajustement pt-5">
-                            <svg
-                                width="38"
-                                height="32"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="main-header-icon"
-                            >
-                                <path
-                                    transform="translate(5,7)"
-                                    d="M2 2.5V0.993C2.00183 0.730378 2.1069 0.479017 2.29251 0.293218C2.47813 0.107418 2.72938 0.00209465 2.992 0H21.008C21.556 0 22 0.445 22 0.993V17.007C21.9982 17.2696 21.8931 17.521 21.7075 17.7068C21.5219 17.8926 21.2706 17.9979 21.008 18H2.992C2.72881 17.9997 2.4765 17.895 2.29049 17.7088C2.10448 17.5226 2 17.2702 2 17.007V16H20V4.3L12 11.5L2 2.5ZM0 7H5V9H0V7ZM0 12H8V14H0V12Z"
-                                    fill="black"
-                                />
-                            </svg>
-                            <h3 class="main-title">
-                                <a @click="goToHome()">Emailing</a>
-                            </h3>
-                        </div>
+             
                         <h3 class="margin">
                             <a @click="goToHome()" class="link">Emailing</a> >
                             <a @click="goToPrestation()" class="link">{{
@@ -43,8 +27,8 @@
                             > Cible > Contenu
                         </h3>
 
-                        <div>
-                            <div class="row">
+                        <div class="bg-panel p-4">
+                            <div class="row ">
                                 <div class="col-lg-12 group_input">
                                     <label class="fix_width" for="expediteur"
                                         >EXPÉDITEUR :
@@ -146,11 +130,11 @@
                         </div>
                     </div>
                     <div
-                        class="col-lg-5 apercu d-table"
+                        class="col-lg-5 apercu d-table "
                         style="margin-top: 50px"
                     >
                         <h6>APERÇU</h6>
-                        <div style="position: relative;">
+                        <div style="position: relative; " class="bg-panel" >
                         <img
                             :src="`/storage/${vaal}`" />
 
@@ -494,7 +478,7 @@ hr {
     margin: 40px 0px;
 }
 .col-lg-7 {
-    border-right: 1px solid;
+
 }
 .apercu h6 {
     font-size: 12px;
