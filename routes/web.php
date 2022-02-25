@@ -82,6 +82,7 @@ Route::group([
 
     Route::post('/get-affiliate-detail',[LcdtFrontController::class,'getAffiliateDetail'])->name('get-affiliate-detail');
     Route::post('/get-campagne-details',[LcdtFrontController::class, 'getCampagneCategory'])->name('get-campagne-details');
+    Route::post('/get-cible-emails',[LcdtFrontController::class,'getCibleEmails'])->name('get-cible-emails');
 });
 
 Route::get('{any}', function () {

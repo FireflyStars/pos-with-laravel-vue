@@ -17,7 +17,7 @@
 
 
             <div class="container">
-             
+
                 <div>
                     <h3 class="margin">
                         <a @click="goToHome()" class="link">Emailing </a>>
@@ -79,7 +79,7 @@
                                                 @click="goToCreate()"
                                                 :name="item + '_' + i"
                                                 @change="onChange($event)"
-                                                class="px-6 padding radio"
+                                                class="px-6 padding radio cur_cible_radio"
                                             />
                                             <span></span>
                                         </span>
@@ -87,9 +87,9 @@
                                     <td
                                         class="px-4 padding butt-class"
                                         style="px-4 padding;"
-                                        :class="item"
                                     >
-                                        0
+                                        <span v-if="count_by_selection[item]">{{count_by_selection[item]}}</span>
+                                        <span v-else>0</span>
                                     </td>
                                 </tr>
                                 <tr class="total">
@@ -142,9 +142,10 @@
                                             type="checkbox"
                                             class="radio history"
                                             @click="goToCreateHis()"
-                                            @change="onclickHis($event)"
+                                            @change="onChange($event)"
                                             :name="item.campagne_old_id"
                                             :value="item.nb"
+                                            :data-campagne-id="item.campagne_id"
                                         />&nbsp; {{ item.name }}
                                     </th>
                                     <td class="px-4 padding size-date">
@@ -534,6 +535,8 @@ export default {
             return n.toString().replace(".",",");
         }
 
+        const count_by_selection = ref({});
+
         return {
             img_up,
             showcontainer,
@@ -551,11 +554,72 @@ export default {
             total_price,
             campagne_rate,
             formatPrice,
+            count_by_selection,
+            distinct_email_count,
         };
     },
 
     methods: {
         onChange(event) {
+            let that = this;
+
+            let old_campagne_ids = [];
+
+            let history = document.querySelectorAll('.history:checked');
+
+            if(history.length > 0){
+                history.forEach(function(v,i){
+                    let campagne_id = v.getAttribute('data-campagne-id');
+                    old_campagne_ids.push(campagne_id);
+                })
+            }
+
+
+            let cur_cibles = document.querySelectorAll('.cur_cible_radio:checked');
+            let cur_cible_to_get = [];
+
+            if(cur_cibles.length > 0){
+                cur_cibles.forEach(function(v,i){
+                    let name = v.getAttribute('name');
+                    cur_cible_to_get.push(name);
+                });
+            }
+
+           let count = 0;
+
+            axios.post('/get-cible-emails',{
+                cibles: JSON.stringify(cur_cible_to_get),
+                old_campagne_ids:JSON.stringify(old_campagne_ids),
+            }).then((res)=>{
+                count = res.data.count;
+
+                that.total_price = parseFloat(count) * parseFloat(that.campagne_rate);
+
+                document.querySelector(".font.total").innerText = count;
+                document.getElementById('total_mails').innerText = res.data.new_emails.length;
+
+                document.querySelector(
+                        "#total_mails +span"
+                    ).style.marginLeft = "0px";
+                         that.img_up={display:"inline-block"};
+
+
+
+                that.count_by_selection = res.data.grouped_by_selection;
+
+                that.distinct_email_count = count;
+
+
+            }).catch((err)=>{
+                console.log(err);
+            }).finally(()=>{
+
+            });
+
+
+
+
+            /*
             var index = event.target;
             var string = index.name.split("_");
             this.state = string[1] - 1;
@@ -608,6 +672,7 @@ export default {
                    // document.getElementById("img_update").style.display =
                      //   "inline-block";
                 });
+                */
         },
 
         goToCreate: function () {},
@@ -636,27 +701,53 @@ export default {
                     total_mails_f_totl - parseInt(index);
             }
         },
+        validateSelection(){
+            let err = false;
+            let err_txt = "";
 
-        creatCompagne: function () {
-            var checked_inputs = document.querySelectorAll(
+             var checked_inputs = document.querySelectorAll(
                 '.matrice input[type="checkbox"]:checked'
             );
             var checked_inputs_old = document.querySelectorAll(
                 '.history_ligne input[type="checkbox"]:checked'
             );
 
-            let err = false;
-
             if(parseInt(checked_inputs.length)+parseInt(checked_inputs_old.length)==0){
                 err = true;
+                err_txt = "Pas d'emails selectionné";
+            }else{
+                if(this.distinct_email_count==0){
+                    err = true;
+                    err_txt = "Cette selection n'a pas d'email";
+                }
+            }
 
+            //console.log(this.distinct_email_count);
+
+            if(err){
                 this.$store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,
                        {
-                            message: "Pas d'emails selectionné",
+                            message: err_txt,
                             ttl: 3,
                             type: 'danger'
                         });
             }
+
+            return err;
+
+        },
+
+        creatCompagne: function () {
+
+
+             var checked_inputs = document.querySelectorAll(
+                '.matrice input[type="checkbox"]:checked'
+            );
+            var checked_inputs_old = document.querySelectorAll(
+                '.history_ligne input[type="checkbox"]:checked'
+            );
+
+        let err = this.validateSelection();
 
         if(!err){
             let element = [];
@@ -713,25 +804,16 @@ export default {
         },
         onValide: function () {
             const route = useRoute();
-            var checked_inputs = document.querySelectorAll(
+
+
+             var checked_inputs = document.querySelectorAll(
                 '.matrice input[type="checkbox"]:checked'
             );
             var checked_inputs_old = document.querySelectorAll(
                 '.history_ligne input[type="checkbox"]:checked'
             );
 
-             let err = false;
-
-            if(parseInt(checked_inputs.length)+parseInt(checked_inputs_old.length)==0){
-                err = true;
-
-                this.$store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,
-                       {
-                            message: "Pas d'emails selectionné",
-                            ttl: 3,
-                            type: 'danger'
-                        });
-            }
+        let err = this.validateSelection();
 
         if(!err){
 

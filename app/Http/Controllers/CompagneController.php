@@ -26,15 +26,15 @@ class CompagneController extends Controller
 {
      private  $pdf;
     /**
-     * Get campagnes for a specefic compagne 
-     *  
+     * Get campagnes for a specefic compagne
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getCampagnes()
     {
-        
+
         $campagnes = Campagnes::get();
-       
+
         if($campagnes) {
             return response()->json([
                 'campagnes' => $campagnes,
@@ -49,7 +49,7 @@ class CompagneController extends Controller
 
     /**
      * Get compagne cible
-     *  
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getCampagneCible()
@@ -77,7 +77,7 @@ class CompagneController extends Controller
      */
     public function getCustomerStatut()
     {
-        
+
         $statuts = DB::table('customer_statut')->get();
         $codeNaf = DB::table('customer_naf')->get();
         $contacts = DB::table('contacts')->join('customers','customers.id','=','contacts.customer_id')->get(['email','naf','type']);
@@ -90,7 +90,7 @@ class CompagneController extends Controller
             $array_codeNaf[]=$code-> selection;
         }
 
-        if($contacts) { 
+        if($contacts) {
             return response()->json([
                 'customerStatut' => $array_status,
                 'codeNaf'        => $array_codeNaf,
@@ -106,7 +106,7 @@ class CompagneController extends Controller
     }
     /**
      * Get compagne categories
-     *  
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getCampagneCategory()
@@ -137,7 +137,7 @@ class CompagneController extends Controller
     }
     /**
      * Get templates
-     *  
+     *
      * @return \Illuminate\Http\JsonResponse
      */
      public function getTemplates($id)
@@ -145,7 +145,7 @@ class CompagneController extends Controller
         $mydata = DB::table('campagne_category')->select()->where('categorie_parent_id',"!=", '0')->get(); //get all sous-category
         $campagnesCategory = DB::table('campagne_category')->where('id',"=", $id)->get(); //get data by id
         $template = DB::table('campagne_category')->select()->where('categorie_parent_id',"=", $id)->get(); // get sous-category1
-        
+
         // return $campagnesCategory;
         $data_id = DB::table('campagne_category')->select()->get();
         foreach ($data_id as $key => $data) {
@@ -179,12 +179,12 @@ class CompagneController extends Controller
     }
     /**
      * Get getContentImage
-     *  
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getContentImage($id)
     {
-        $data = DB::table('campagne_category')->where('id',"=", $id)->get(); 
+        $data = DB::table('campagne_category')->where('id',"=", $id)->get();
         foreach ($data as $key => $dataname) {
             $ss = $dataname->imagetemplate;
         }
@@ -192,7 +192,7 @@ class CompagneController extends Controller
     }
      /**
      * Get SubCategory
-     *  
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function SubCategory($id)
@@ -281,24 +281,26 @@ class CompagneController extends Controller
                 $data_test ='';
                 break;
         }
-        
-        $contacts = DB::table('contacts')->join('customers','customers.id','=','contacts.customer_id')
+
+        $contacts = DB::table('contacts')->select('contacts.*')
+        ->join('customers','customers.id','=','contacts.customer_id')
                                         ->join('customer_naf','customer_naf.code','=','customers.naf')
                                         ->where('contacts.type' ,"=", $data_test)
                                         ->where('customer_naf.selection' ,"=", $data2)->get();
 
         if($contacts){
-            $count = $contacts->count(); 
-            return response()->json([ 
+            $count = $contacts->count();
+            return response()->json([
+                'contacts'=>$contacts,
                 'count' => $count,
                 'index' => $string,
             ]);
-            
+
         }else {
             return response()->json([
                 'error' => 'error 400 : can\'t get count'
             ], 400);
-        } 
+        }
 
     }
 
@@ -314,14 +316,14 @@ class CompagneController extends Controller
         $contacts = DB::table('contacts')->join('customers','customers.id','=','contacts.customer_id')->get(['email','naf','type']);
         foreach ($codes as $key => $code) {
             $array_codes[]=$code->selection;
-        } 
+        }
         foreach ($types as $key => $type) {
             $array_types[]=$type->name;
         }
         foreach ($contacts as $key => $contact) {
             $array_contacts_type[]=$contact->type;
             $array_contacts_code[]=$contact->naf;
-        
+
         }
         return $contacts;
                  return response()->json([
@@ -331,7 +333,7 @@ class CompagneController extends Controller
                 'type' => $array_contacts_type,
                 'code' => $array_contacts_code
             ]);
-  
+
     }
 
      /**
@@ -349,10 +351,10 @@ class CompagneController extends Controller
             $m->to($user)->subject('Your Reminder!');
         });
     }
-    
+
      /**
      * Get categories compagne
-     *  
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     function getStatusName() {
@@ -363,13 +365,13 @@ class CompagneController extends Controller
         }
         return response()->json([
             'array_status' => $array_status,
-            
+
         ]);
     }
 
      /**
      * Get cibles compagne
-     *  
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getCampagny_Cible()
@@ -386,12 +388,12 @@ class CompagneController extends Controller
 
         foreach ($codes as $key => $code) {
             $array_codes[]=$code->selection;
-        } 
+        }
         foreach ($types as $key => $type) {
             $array_types[]=$type->name;
         }
-        
-        
+
+
         for ($i = 0; $i < count($cibles); $i++) {
             if( (in_array($array_types[$i], $array_cibles_status)) && (in_array($array_codes[$i], $array_cibles_indus)) ) {
                 return 'exist';
@@ -411,7 +413,7 @@ class CompagneController extends Controller
                 'error' => 'error 400 : can\'t get data'
             ], 400);
         }
-        
+
     }
 
      /**
@@ -437,12 +439,12 @@ class CompagneController extends Controller
                                                 'customers.gender',
                                                 'contacts.type',
                                             ]);
-                                    
+
         if($cibles) {
             $cmp = DB::table('campagnes')->where('id', $id)
             ->update([
                 'nb' =>   $cibles->count()
-            ]); 
+            ]);
             return response()->json([
                 'cibles' => $cibles,
                 'count' => $cibles->count(),
@@ -469,11 +471,11 @@ class CompagneController extends Controller
         $template_email_id = DB::table('campagne_category')
                                             ->where('id' ,"=", intval($categ_id))
                                             ->get(['idapi']);
-       
+
         $addCompagne =  DB::table('campagnes')->insertGetId
         ([
             'datefinvalidatiom' => date("Y-m-d"),
-            'datelancement' => date("Y-m-d"), 
+            'datelancement' => date("Y-m-d"),
             'user_id' => $user->id,
             'affiliate_id' => $user->id,
             'email_template_id' => intval($template_email_id[0]->idapi),
@@ -488,11 +490,11 @@ class CompagneController extends Controller
             'created_at' =>date("Y-m-d"),
             'updated_at' =>date("Y-m-d"),
         ]);
-            
+
         $GLOBALS = $addCompagne;
 
-        for ($i=0; $i <count($request->data) ; $i++) { 
-        
+        for ($i=0; $i <count($request->data) ; $i++) {
+
             $type = $request->data[$i]['type'];
             $status = $request->data[$i]['status'];
             switch ($type) {
@@ -525,20 +527,20 @@ class CompagneController extends Controller
                                             ->join('customer_naf','customer_naf.code','=','customers.naf')
                                             ->where('contacts.type' ,"=", $data_test)
                                             ->where('customer_naf.selection' ,"=", $status)->get(
-                                                ['contacts.id', 
+                                                ['contacts.id',
                                                 'contacts.customer_id',
                                                 'customer_naf.selection',
                                                 'contacts.type',
                                                 'contacts.mobile',
                                                 'contacts.email',
-                                                
+
                                             ]);
-                                            
-            
+
+
             if($contacts->count() != 0){
-                
+
                 $contacts->each(function ($item ) {
-                   
+
                     DB::table('campagne_cible')->insert
                     ([
                         'affiliate_id' => 1,
@@ -555,7 +557,7 @@ class CompagneController extends Controller
                         'created_at' => date("Y-m-d"),
                         'updated_at' => date("Y-m-d"),
                     ]);
-                        
+
                 });
 
             }else continue;
@@ -563,14 +565,14 @@ class CompagneController extends Controller
 
         $data_old = $request->data_old;
         $test_exist =[];
-        for ($i=0; $i < count($data_old); $i++) { 
+        for ($i=0; $i < count($data_old); $i++) {
             $contacts_old = DB::table('campagne_cible')->where('campagne_cible.campagne_old_id' ,"=", $data_old[$i])
                                 ->get();
 
             $contacts_old->each(function ($item ) {
                 $user_exist = DB::table('campagne_cible')->where('campagne_cible.campagne_id','=',$GLOBALS)
                                                          ->where('campagne_cible.email','=',$item->email)->get();
-                    $test_exist[] =$user_exist ; 
+                    $test_exist[] =$user_exist ;
                     if (!$user_exist) {
 
                         DB::table('campagne_cible')->insert
@@ -590,7 +592,7 @@ class CompagneController extends Controller
                             'updated_at' => date("Y-m-d"),
                         ]);
                     }
-                
+
                 });
         }
         return response()->json([
@@ -598,7 +600,7 @@ class CompagneController extends Controller
                 'test_exist' => $test_exist,
                 'categ_id'=> $categ_id,
             ]);
-            
+
     }
 
     /**
@@ -617,7 +619,7 @@ class CompagneController extends Controller
                                                 'industrie',
                                                 'statut',
                                             ]);
-     
+
         if($cibles) {
             $array_cible = [];
             $string = '';
@@ -679,11 +681,11 @@ class CompagneController extends Controller
 
         return response()->json([
                 'cibles' => $request,
-                
+
             ]);
-            
+
     }
-    
+
     /**
      * Get compagne cible when returns from segmentations component
      *  @param  \Illuminate\Http\Request  $request
@@ -698,23 +700,23 @@ class CompagneController extends Controller
         ]);
 
         $cible = DB::table('campagne_cible')->where('campagne_id',"=", $request->campagne_id)
-                                                ->where('delete_at',"=", NULL)->get(); 
+                                                ->where('delete_at',"=", NULL)->get();
         $cmp = DB::table('campagnes')->where('id', intval($request->campagne_id))
         ->update([
             'nb' =>   $cible->count()
-        ]);    
+        ]);
 
         return response()->json([
             'cibles' => $cible->count(),
         ]);
-            
+
     }
 
     /**
      * Get compagne cible when returns from segmentations component
      *  @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
-     */  
+     */
     public function insertCompagneCible(Request $request)
     {
         $cmp = DB::table('campagne_cible')->where('id',  $request->id)
@@ -723,7 +725,7 @@ class CompagneController extends Controller
                 'delete_at' =>  NULL,
         ]);
         $cible = DB::table('campagne_cible')->where('campagne_id',"=", $request->campagne_id)
-                                                ->where('delete_at',"=", NULL)->get(); 
+                                                ->where('delete_at',"=", NULL)->get();
         $cmp = DB::table('campagnes')->where('id', intval($request->campagne_id))
         ->update([
             'nb' =>   $cible->count()
@@ -732,45 +734,67 @@ class CompagneController extends Controller
         return response()->json([
             'cibles' => $cible->count(),
         ]);
-       
-            
+
+
     }
-    
+
     /**
      * getCourrier
      * @param  String  $id
      * @return \Illuminate\Http\JsonResponse
-     */  
+     */
     public function getCourrier()
     {
         $Courrier = DB::table('campagnes')->where('type', "=",'COURRIER')->where('name', "=",'Flyer')->get();
         $Courrier_lettre = DB::table('campagnes')->where('type', "=",'COURRIER')->where('name', "=",'lettre accompagnement')->get();
         $Courrier_autre = DB::table('campagnes')->where('type', "=",'COURRIER')->where('name', "!=",'Flyer')->where('name', "!=",'lettre accompagnement')->get();
-        
+
         return response()->json([
             'data' => $Courrier,
             'data1' => $Courrier_lettre,
             'data2' => $Courrier_autre,
         ]);
-            
+
     }
 
     /**
      * getOldCompagne
      * @return \Illuminate\Http\JsonResponse
-     */ 
+     */
     public function getOldCompagne()
     {
-    
+
         $data = DB::table('campagnes')->join('campagne_cible','campagnes.id','=','campagne_cible.campagne_id')
                     ->where('campagne_old_id','!=','0')
                     ->distinct()
-                    ->get(['campagne_old_id','campagnes.name','campagnes.created_at','nb']);
+                    ->get(['campagne_old_id','campagnes.name','campagnes.created_at','nb','campagne_cible.campagne_id']);
+        $cmp_id = [];
+
 
         if( $data ) {
+            $cibles = [];
+            $grouped_cibles = [];
+            $mapped_old_id = [];
+
+            foreach($data as $k=>$v){
+                if(!in_array($v->campagne_id,$cmp_id)){
+                    array_push($cmp_id,$v->campagne_id);
+                }
+                $mapped_old_id[$v->campagne_old_id] = $v->campagne_id;
+            }
+
+
+            $cibles = DB::table('campagne_cible')->whereIn('campagne_id',$cmp_id)->get()->toArray();
+
+
+            foreach($cibles as $k=>$v){
+                $grouped_cibles[$v->campagne_id][] = $v->email;
+            }
 
             return response()->json([
                 'oldCompagne' => $data ,
+                'map_old_id'=>$mapped_old_id,
+                'old_cibles'=>$grouped_cibles,
             ]);
         }else {
             return response()->json([
@@ -783,7 +807,7 @@ class CompagneController extends Controller
      * getOldCompagne
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
-     */ 
+     */
     public function deleteOldCompagne(Request $request)
     {
         $data = DB::table('campagne_cible')->where('campagne_id', $request->id)
@@ -811,15 +835,15 @@ class CompagneController extends Controller
      * Ganarate csv file for compagne cibles
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
-     */ 
+     */
     public function exportCsv($id)
     {
-    
+
         $data_id = DB::table('campagne_cible')->select()->where('campagne_id',$id)->get();
         $filename="LCDT";
         $current_date_time = Carbon::now()->timestamp;
         $csv_filename = $filename."_".date("Y-m-d",time())."_".$current_date_time.".csv";
-    
+
         $headers = array(
             "Content-type"        => "text/csv",
             "Content-Disposition" => "attachment; filename=$csv_filename",
@@ -830,7 +854,7 @@ class CompagneController extends Controller
         );
 
         $columns = array('Email', 'Company', 'Firstname', 'Name', 'Address2' , 'Address1', 'Postcode', 'City', 'Industrie', 'Phone' );
-        $callback = function() use($data_id, $columns, $csv_filename ) {  
+        $callback = function() use($data_id, $columns, $csv_filename ) {
         $file = fopen('../public/uploads/'.$csv_filename, 'w');
 
             fputcsv($file, $columns);
@@ -842,7 +866,7 @@ class CompagneController extends Controller
                 $row['Firstname']    = $data->firstname;
                 $row['Name']  = $data->name;
                 $row['Address2']  = $data->address2 ;
-                
+
                 $row['Address1']  = $data->address1;
                 $row['Postcode']    = $data->postcode;
                 $row['City']    = $data->city;
@@ -865,16 +889,16 @@ class CompagneController extends Controller
      * Ganarate pdf file for lettre d'accopagnement
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
-     */ 
+     */
     public function downloadPdf(Request $request)
     {
-        
+
         $pdf_filename = $request->fileName;
-      
+
         $this->fpdf = new \Mpdf\Mpdf([
              'default_font_size' => 10,
              'default_font' => 'Arial'
-            
+
         ]);
         $this->fpdf->AddPage();
         $this->fpdf->showImageErrors = true;
@@ -883,7 +907,7 @@ class CompagneController extends Controller
         $this->fpdf->Image('../public/images/logolcdt.png' , 15, 15, 100, 20);
         $this->fpdf->Ln(15);
 
-              
+
         $htmlFooter = '<div style= "width: 100%;
         display: flex;
         justify-content: flex-end;
@@ -906,14 +930,14 @@ class CompagneController extends Controller
         </div>
         </div>';
         $this->fpdf->SetHTMLFooter($htmlFooter);
-    
-     
+
+
         $this->fpdf->SetFont('Arial','B',10);
         $this->fpdf->Cell(100,5, $request->expediteur );
         $this->fpdf->SetFont('Arial','',10);
         $this->fpdf->Cell(200,5,"SARL");
         $this->fpdf->Ln(8);
-       
+
         $this->fpdf->SetFont('Arial','',10);
         $this->fpdf->Cell(100,5,$request->expediteur2);
         $this->fpdf->SetFont('Arial','',10);
@@ -940,7 +964,7 @@ class CompagneController extends Controller
         $this->fpdf->SetFont('Arial','',10);
         $this->fpdf->Cell(100,5, $request->email);
         $this->fpdf->SetFont('Arial','',10);
-      
+
         $this->fpdf->Ln(10);
 
 
@@ -978,7 +1002,7 @@ class CompagneController extends Controller
             'fileName' => $pdf_filename
 
         ]);
-  
+
     }
 
     /**
@@ -988,7 +1012,7 @@ class CompagneController extends Controller
      */
     public function insertdestinataire(Request $request , $id){
         $user = auth()->user();
-        $number = date("Y-m-d H:i:s"); 
+        $number = date("Y-m-d H:i:s");
         $name =  'Campagne_Test'. '_' .$number;
         $listname =  'list_test'. '_' .$number;
         $formatedDate = date("Y-m-d H:i:s"); //'2022-01-28T05:07:43.280Z'
@@ -996,55 +1020,55 @@ class CompagneController extends Controller
         //creation d'une compagne
         //return $data;
         $cible = $request->data;
-     
-         
+
+
             $array_cible  =[
                 "email" => $request->email,
                 "Nom agence" => $request->input_agence,
                 "Tel agence" => $request->input_phone,
                 "E-mail agence" => $request->input_email
                 ] ;
-       
+
         $data = Http::withHeaders([
             'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/lists', [ 
-                
+            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+        ])->post('https://sarbacaneapis.com/v1/lists', [
+
             "name"=>$listname
         ]);
         $id_list = $data['id'];
         $data_champ_name = Http::withHeaders([
             'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [ 
-                
+            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [
+
                 "kind" => 'STRING',
                 "caption" => 'Nom agence',
-            
+
         ]);
         $data_champ_tel = Http::withHeaders([
             'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [ 
-             
+            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [
+
                 "kind" => 'STRING',
                 "caption" => 'Tel agence'
-            
+
         ]);
         $data_champ_email = Http::withHeaders([
             'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [ 
-             
+            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [
+
                 "kind" => 'STRING',
                 "caption" => 'E-mail agence'
-            
+
         ]);
         $send = Http::withHeaders([
             'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/campaigns/email', [ 
-                
+            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+        ])->post('https://sarbacaneapis.com/v1/campaigns/email', [
+
                 "name"=> $name,
                 "emailFrom"=>$request->emailFrom,
                 "aliasFrom"=> $request->emailFrom,
@@ -1052,18 +1076,18 @@ class CompagneController extends Controller
                 "aliasReplyTo"=> $request->emailReplyTo,
                 "subject"=> $request->subject,
                 "preheader"=> "Preheader",
-                
+
         ]);
-        
-             
+
+
         $data_added = Http::withHeaders([
             'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/contacts', 
+            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/contacts',
                 $array_cible
         );
 
-        $template = DB::table('campagne_category')->where('id',"=", $id)->get(); 
+        $template = DB::table('campagne_category')->where('id',"=", $id)->get();
         foreach ($template as $key => $code) {
             $array_temp =$code->idapi;
         };
@@ -1074,34 +1098,34 @@ class CompagneController extends Controller
             $template = Http::withHeaders([
                 'accountId'=> '61a62892e924e35ea3f5469e',
             'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'])
-            ->post('https://sarbacaneapis.com/v1/campaigns/'.$id.'/content', [ 
-                
+            ->post('https://sarbacaneapis.com/v1/campaigns/'.$id.'/content', [
+
                     "templateId"=> $array_temp
-            
+
             ]);
             $contact_list = Http::withHeaders([
                 'accountId'=> '61a62892e924e35ea3f5469e',
                 'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'])
-            ->post('https://sarbacaneapis.com/v1/campaigns/'.$id.'/list', [ 
-                
+            ->post('https://sarbacaneapis.com/v1/campaigns/'.$id.'/list', [
+
                     "listId"=> $id_list
-            
+
             ]);
         }
 
         //envoi des compagnes
-            
+
         $daysent = Http::withHeaders([
             'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-            ])->post('https://sarbacaneapis.com/v1/campaigns/'.$id.'/send', [ 
+            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+            ])->post('https://sarbacaneapis.com/v1/campaigns/'.$id.'/send', [
                     [
                         "requestedSendDate"=> $formatedDate
-                ] 
+                ]
             ]);
-           
-        return $array_cible;     
-        
+
+        return $array_cible;
+
     }
 
     /**
@@ -1113,7 +1137,7 @@ class CompagneController extends Controller
     public function envoi_lettre($data, $data_csv){
         $user = auth()->user();
         Mail::to($user->email)->send(new MyDemoMail($data, $data_csv));
-        return "email sent";   
+        return "email sent";
     }
 
     /**
@@ -1141,13 +1165,13 @@ class CompagneController extends Controller
     //     //get cible
     //     $cible = DB::table('campagne_cible')->where('campagne_id',"=", $id)
     //                                         ->where('delete_at',"=", NULL)
-    //                                         ->get(); 
+    //                                         ->get();
     //     // return $cible;
     //     foreach ($cible as $key => $code) {
     //         $array_cible[] =['email' => $code->email];
     //     } ;
 
-    //     $template = DB::table('campagne_category')->where('id',"=", $id)->get(); 
+    //     $template = DB::table('campagne_category')->where('id',"=", $id)->get();
     //     foreach ($template as $key => $code) {
     //         $array_temp =$code->idapi;
     //     };
@@ -1161,13 +1185,13 @@ class CompagneController extends Controller
     //     //     $temp =$code->idapi;
     //     // } ;
 
-    //     $formatedDate = date("Y-m-d H:i:s"); 
+    //     $formatedDate = date("Y-m-d H:i:s");
     //     //creation d'une compagne
     //     $send = Http::withHeaders([
     //         'accountId'=> '61a62892e924e35ea3f5469e',
-    //         'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-    //     ])->post('https://sarbacaneapis.com/v1/campaigns/email', [ 
-                
+    //         'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+    //     ])->post('https://sarbacaneapis.com/v1/campaigns/email', [
+
     //             "name"=> $array_name,
     //             "emailFrom"=>$request->emailFrom,
     //             "aliasFrom"=> $request->emailFrom,
@@ -1183,30 +1207,30 @@ class CompagneController extends Controller
     //         $template_data = Http::withHeaders([
     //             'accountId'=> '61a62892e924e35ea3f5469e',
     //             'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'])
-    //         ->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/content', [ 
-                
+    //         ->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/content', [
+
     //                 "templateId"=> $array_temp
-            
+
     //         ]);
     //     }
-    //         //ajout destinataires                
+    //         //ajout destinataires
     //     $camp_id= $send['id'] ;
     //     $response = Http::withHeaders([
     //         'accountId'=> '61a62892e924e35ea3f5469e',
-    //         'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-    //     ])->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/recipients', 
+    //         'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+    //     ])->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/recipients',
     //         $array_cible
     //     );
-    
+
     //     if ($response) {
     //     $camp_id= $send['id'] ;
     //     $daysent = Http::withHeaders([
     //         'accountId'=> '61a62892e924e35ea3f5469e',
-    //         'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-    //         ])->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/send', [ 
+    //         'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+    //         ])->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/send', [
     //                 [
     //                     "requestedSendDate"=> $formatedDate
-    //             ] 
+    //             ]
     //         ]);
     //     }
 
@@ -1221,18 +1245,18 @@ class CompagneController extends Controller
     public function envoiprogramme(Request $request , $id)
     {
         $user = auth()->user();
-        $number = mt_rand(1000, 9999999); 
+        $number = mt_rand(1000, 9999999);
         $name =  'list_differed'. '_' .$number;
         $data = Http::withHeaders([
             'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/lists', [ 
-                
+            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+        ])->post('https://sarbacaneapis.com/v1/lists', [
+
             "name"=>$name
         ]);
         $id_list = $data['id'];
         $cible = DB::table('campagne_cible')->where('campagne_cible.campagne_id',"=", $id)->where('campagne_cible.delete_at',"=", NULL)->get();
-     
+
         foreach ($cible as $key => $code) {
             $array_cible[] =[
                 "email" => $code->email,
@@ -1241,44 +1265,44 @@ class CompagneController extends Controller
                 "E-mail agence" => $request->input_email
                 ] ;
         }
-     
+
         $data_champ_name = Http::withHeaders([
             'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [ 
-                
+            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [
+
                 "kind" => 'STRING',
                 "caption" => 'Nom agence',
-            
+
         ]);
         $data_champ_tel = Http::withHeaders([
             'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [ 
-             
+            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [
+
                 "kind" => 'STRING',
                 "caption" => 'Tel agence'
-            
+
         ]);
         $data_champ_email = Http::withHeaders([
             'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [ 
-             
+            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [
+
                 "kind" => 'STRING',
                 "caption" => 'E-mail agence'
-            
+
         ]);
         for($i=0; $i<count($array_cible); $i++) {
         $data_added = Http::withHeaders([
             'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/contacts', 
+            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/contacts',
                 $array_cible[$i]
         );
         }
-        
-        $template = DB::table('campagne_category')->where('id',"=", $request->id_category)->get(); 
+
+        $template = DB::table('campagne_category')->where('id',"=", $request->id_category)->get();
         foreach ($template as $key => $code) {
             $array_temp =$code->idapi;
         };
@@ -1291,9 +1315,9 @@ class CompagneController extends Controller
         // };
         $send = Http::withHeaders([
             'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/campaigns/email', [ 
-                
+            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+        ])->post('https://sarbacaneapis.com/v1/campaigns/email', [
+
                 "name"=> $array_name,
                 "emailFrom"=>$request->emailFrom,
                 "aliasFrom"=> $request->emailFrom,
@@ -1309,33 +1333,33 @@ class CompagneController extends Controller
             $template_data = Http::withHeaders([
                 'accountId'=> '61a62892e924e35ea3f5469e',
                 'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'])
-            ->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/content', [ 
-                
+            ->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/content', [
+
                     "templateId"=> $array_temp
-            
+
             ]);
             $contact_list = Http::withHeaders([
                 'accountId'=> '61a62892e924e35ea3f5469e',
                 'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'])
-            ->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/list', [ 
-                
+            ->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/list', [
+
                     "listId"=> $id_list
-            
+
             ]);
         }
         if ($contact_list) {
             $camp_id= $send['id'] ;
             $daysent = Http::withHeaders([
                 'accountId'=> '61a62892e924e35ea3f5469e',
-                'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-            ])->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/send', [ 
+                'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+            ])->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/send', [
                     [
                         "requestedSendDate"=> $request->formatedDate
-                ] 
+                ]
             ]);
         }
         return  $request->formatedDate;
-                
+
     }
 
 
@@ -1368,18 +1392,18 @@ class CompagneController extends Controller
      */
     public function createdata(Request $request, $id){
         $user = auth()->user();
-        $number = mt_rand(1000, 9999999); 
+        $number = mt_rand(1000, 9999999);
         $name =  'list'. '_' .$number;
         $data = Http::withHeaders([
             'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/lists', [ 
-                
+            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+        ])->post('https://sarbacaneapis.com/v1/lists', [
+
             "name"=>$name
         ]);
         $id_list = $data['id'];
         $cible = DB::table('campagne_cible')->where('campagne_cible.campagne_id',"=", $id)->where('campagne_cible.delete_at',"=", NULL)->get();
-        
+
         foreach ($cible as $key => $code) {
             $array_cible[] =[
                 "email" => $code->email,
@@ -1388,45 +1412,45 @@ class CompagneController extends Controller
                 "E-mail agence" => $request->input_email
                 ] ;
         }
-     
+
         $data_champ_name = Http::withHeaders([
             'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [ 
-                
+            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [
+
                 "kind" => 'STRING',
                 "caption" => 'Nom agence',
-            
+
         ]);
         $data_champ_tel = Http::withHeaders([
             'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [ 
-             
+            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [
+
                 "kind" => 'STRING',
                 "caption" => 'Tel agence'
-            
+
         ]);
         $data_champ_email = Http::withHeaders([
             'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [ 
-             
+            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [
+
                 "kind" => 'STRING',
                 "caption" => 'E-mail agence'
-            
+
         ]);
 
         for( $i=0; $i<count($array_cible); $i++ ) {
             $data_added = Http::withHeaders([
                 'accountId'=> '61a62892e924e35ea3f5469e',
-                'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-            ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/contacts', 
+                'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+            ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/contacts',
                     $array_cible[$i]
             );
         }
-        
-        $template = DB::table('campagne_category')->where('id',"=", $request->id_category)->get(); 
+
+        $template = DB::table('campagne_category')->where('id',"=", $request->id_category)->get();
         foreach ($template as $key => $code) {
             $array_temp =$code->idapi;
         };
@@ -1439,9 +1463,9 @@ class CompagneController extends Controller
         // };
         $send = Http::withHeaders([
             'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-        ])->post('https://sarbacaneapis.com/v1/campaigns/email', [ 
-                
+            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+        ])->post('https://sarbacaneapis.com/v1/campaigns/email', [
+
                 "name"=> $array_name,
                 "emailFrom"=>$request->emailFrom,
                 "aliasFrom"=> $request->emailFrom,
@@ -1457,29 +1481,29 @@ class CompagneController extends Controller
             $template_data = Http::withHeaders([
                 'accountId'=> '61a62892e924e35ea3f5469e',
                 'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'])
-            ->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/content', [ 
-                
+            ->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/content', [
+
                     "templateId"=> $array_temp
-            
+
             ]);
             $contact_list = Http::withHeaders([
                 'accountId'=> '61a62892e924e35ea3f5469e',
                 'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'])
-            ->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/list', [ 
-                
+            ->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/list', [
+
                     "listId"=> $id_list
-            
+
             ]);
         }
         if ($contact_list) {
             $camp_id= $send['id'] ;
             $daysent = Http::withHeaders([
                 'accountId'=> '61a62892e924e35ea3f5469e',
-                'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'  
-            ])->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/send', [ 
+                'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
+            ])->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/send', [
                     [
                         "requestedSendDate"=> $request->formatedDate
-                ] 
+                ]
             ]);
         }
         return 'data';
@@ -1491,14 +1515,14 @@ class CompagneController extends Controller
         }
         return $namedata;
     }
-    
+
     /**
      * Get imagefield
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function imagefield($id){
-        $data = DB::table('campagne_category')->select()->where('id',"=", $id)->get(); 
+        $data = DB::table('campagne_category')->select()->where('id',"=", $id)->get();
         foreach ($data as $key => $code) {
             $array_data1 =[
                 "xfield1" => $code->xfield1,
@@ -1528,12 +1552,12 @@ class CompagneController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function lettredata($id){
-        
-        $lettre = DB::table('campagne_category')->select(['lettreaccompagnement'])->where('id',"=", $id)->get(); 
+
+        $lettre = DB::table('campagne_category')->select(['lettreaccompagnement'])->where('id',"=", $id)->get();
         return response()->json([
                 'content' =>$lettre[0]->lettreaccompagnement,
             ]);
-       
+
     }
 
 }

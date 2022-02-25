@@ -48,6 +48,7 @@ export default function useCompanies() {
     const dataimage1 = ref([]);
     const dataimage2 = ref([]);
     const dataimage3 = ref([]);
+    const old_campagne_emails = ref([]);
 
     const getCible = async () => {
         let response = await axios.get("/getCustomerStatut");
@@ -60,6 +61,7 @@ export default function useCompanies() {
 
         let data = await axios.get("/getOldCompagne");
         history_compagne.value = data.data.oldCompagne;
+        old_campagne_emails.value = data.data.old_cibles;
     };
 
     const getCompgneCible = async (id) => {
@@ -281,5 +283,6 @@ export default function useCompanies() {
         dataimage1,
         dataimage2,
         dataimage3,
+        old_campagne_emails,
     };
 }
