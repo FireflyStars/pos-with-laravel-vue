@@ -14,6 +14,9 @@ import store from './store/store';
 axios.interceptors.response.use(
     (response) => response,
     (error) => {
+        if (error.response.status == 509)//509 is unassigned so we use for custom error code reporting
+        store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,{message:error.response.data,ttl:8,type:'danger'});
+
         if (error.response.status !== 401&&error.response.status !== 419) return Promise.reject(error)
         sessionStorage.clear();
         store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,{message:'Session expired. Please login again.',ttl:8,type:'danger'});

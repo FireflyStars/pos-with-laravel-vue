@@ -1,5 +1,5 @@
 <template>
-    <input class="mulish_400_normal" type="search" placeholder="Search...">
+    <input class="mulish_400_normal" type="search" placeholder="Rechercher...">
 </template>
 
 <script>
@@ -8,7 +8,7 @@
         name: "Search",
         props:[],
         setup(){
-           
+
         }
     }
 </script>

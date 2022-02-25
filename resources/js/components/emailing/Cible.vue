@@ -8,6 +8,7 @@
                     <side-bar />
 
                     <div class="col main-view container">
+                        <page-title icon="emailing" name="EMAILING" class="almarai_extrabold_normal_normal"/>
                            <transition
             enter-active-class="animate__animated animate__fadeIn"
             leave-active-class="animate__animated animate__fadeOut"
@@ -16,24 +17,7 @@
 
 
             <div class="container">
-                <div class="ajustement pt-5">
-                    <svg
-                        width="38"
-                        height="32"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="main-header-icon"
-                    >
-                        <path
-                            transform="translate(5,7)"
-                            d="M2 2.5V0.993C2.00183 0.730378 2.1069 0.479017 2.29251 0.293218C2.47813 0.107418 2.72938 0.00209465 2.992 0H21.008C21.556 0 22 0.445 22 0.993V17.007C21.9982 17.2696 21.8931 17.521 21.7075 17.7068C21.5219 17.8926 21.2706 17.9979 21.008 18H2.992C2.72881 17.9997 2.4765 17.895 2.29049 17.7088C2.10448 17.5226 2 17.2702 2 17.007V16H20V4.3L12 11.5L2 2.5ZM0 7H5V9H0V7ZM0 12H8V14H0V12Z"
-                            fill="black"
-                        />
-                    </svg>
-                    <h3 class="main-title">
-                        <a @click="goToHome()">Emailing</a>
-                    </h3>
-                </div>
+
                 <div>
                     <h3 class="margin">
                         <a @click="goToHome()" class="link">Emailing </a>>
@@ -48,7 +32,7 @@
                     </h3>
                 </div>
 
-                <div class="row">
+                <div class="row bg-panel p-4">
                     <div class="col-md-8 border-rigth">
                         <table class="table-borderless">
                             <thead>
@@ -95,7 +79,7 @@
                                                 @click="goToCreate()"
                                                 :name="item + '_' + i"
                                                 @change="onChange($event)"
-                                                class="px-6 padding radio"
+                                                class="px-6 padding radio cur_cible_radio"
                                             />
                                             <span></span>
                                         </span>
@@ -103,9 +87,9 @@
                                     <td
                                         class="px-4 padding butt-class"
                                         style="px-4 padding;"
-                                        :class="item"
                                     >
-                                        0
+                                        <span v-if="count_by_selection[item]">{{count_by_selection[item]}}</span>
+                                        <span v-else>0</span>
                                     </td>
                                 </tr>
                                 <tr class="total">
@@ -158,9 +142,10 @@
                                             type="checkbox"
                                             class="radio history"
                                             @click="goToCreateHis()"
-                                            @change="onclickHis($event)"
+                                            @change="onChange($event)"
                                             :name="item.campagne_old_id"
                                             :value="item.nb"
+                                            :data-campagne-id="item.campagne_id"
                                         />&nbsp; {{ item.name }}
                                     </th>
                                     <td class="px-4 padding size-date">
@@ -550,6 +535,8 @@ export default {
             return n.toString().replace(".",",");
         }
 
+        const count_by_selection = ref({});
+
         return {
             img_up,
             showcontainer,
@@ -567,11 +554,72 @@ export default {
             total_price,
             campagne_rate,
             formatPrice,
+            count_by_selection,
+            distinct_email_count,
         };
     },
 
     methods: {
         onChange(event) {
+            let that = this;
+
+            let old_campagne_ids = [];
+
+            let history = document.querySelectorAll('.history:checked');
+
+            if(history.length > 0){
+                history.forEach(function(v,i){
+                    let campagne_id = v.getAttribute('data-campagne-id');
+                    old_campagne_ids.push(campagne_id);
+                })
+            }
+
+
+            let cur_cibles = document.querySelectorAll('.cur_cible_radio:checked');
+            let cur_cible_to_get = [];
+
+            if(cur_cibles.length > 0){
+                cur_cibles.forEach(function(v,i){
+                    let name = v.getAttribute('name');
+                    cur_cible_to_get.push(name);
+                });
+            }
+
+           let count = 0;
+
+            axios.post('/get-cible-emails',{
+                cibles: JSON.stringify(cur_cible_to_get),
+                old_campagne_ids:JSON.stringify(old_campagne_ids),
+            }).then((res)=>{
+                count = res.data.count;
+
+                that.total_price = parseFloat(count) * parseFloat(that.campagne_rate);
+
+                document.querySelector(".font.total").innerText = count;
+                document.getElementById('total_mails').innerText = res.data.new_emails.length;
+
+                document.querySelector(
+                        "#total_mails +span"
+                    ).style.marginLeft = "0px";
+                         that.img_up={display:"inline-block"};
+
+
+
+                that.count_by_selection = res.data.grouped_by_selection;
+
+                that.distinct_email_count = count;
+
+
+            }).catch((err)=>{
+                console.log(err);
+            }).finally(()=>{
+
+            });
+
+
+
+
+            /*
             var index = event.target;
             var string = index.name.split("_");
             this.state = string[1] - 1;
@@ -624,6 +672,7 @@ export default {
                    // document.getElementById("img_update").style.display =
                      //   "inline-block";
                 });
+                */
         },
 
         goToCreate: function () {},
@@ -652,27 +701,53 @@ export default {
                     total_mails_f_totl - parseInt(index);
             }
         },
+        validateSelection(){
+            let err = false;
+            let err_txt = "";
 
-        creatCompagne: function () {
-            var checked_inputs = document.querySelectorAll(
+             var checked_inputs = document.querySelectorAll(
                 '.matrice input[type="checkbox"]:checked'
             );
             var checked_inputs_old = document.querySelectorAll(
                 '.history_ligne input[type="checkbox"]:checked'
             );
 
-            let err = false;
-
             if(parseInt(checked_inputs.length)+parseInt(checked_inputs_old.length)==0){
                 err = true;
+                err_txt = "Pas d'emails selectionné";
+            }else{
+                if(this.distinct_email_count==0){
+                    err = true;
+                    err_txt = "Cette selection n'a pas d'email";
+                }
+            }
 
+            //console.log(this.distinct_email_count);
+
+            if(err){
                 this.$store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,
                        {
-                            message: "Pas d'emails selectionné",
+                            message: err_txt,
                             ttl: 3,
                             type: 'danger'
                         });
             }
+
+            return err;
+
+        },
+
+        creatCompagne: function () {
+
+
+             var checked_inputs = document.querySelectorAll(
+                '.matrice input[type="checkbox"]:checked'
+            );
+            var checked_inputs_old = document.querySelectorAll(
+                '.history_ligne input[type="checkbox"]:checked'
+            );
+
+        let err = this.validateSelection();
 
         if(!err){
             let element = [];
@@ -729,25 +804,16 @@ export default {
         },
         onValide: function () {
             const route = useRoute();
-            var checked_inputs = document.querySelectorAll(
+
+
+             var checked_inputs = document.querySelectorAll(
                 '.matrice input[type="checkbox"]:checked'
             );
             var checked_inputs_old = document.querySelectorAll(
                 '.history_ligne input[type="checkbox"]:checked'
             );
 
-             let err = false;
-
-            if(parseInt(checked_inputs.length)+parseInt(checked_inputs_old.length)==0){
-                err = true;
-
-                this.$store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,
-                       {
-                            message: "Pas d'emails selectionné",
-                            ttl: 3,
-                            type: 'danger'
-                        });
-            }
+        let err = this.validateSelection();
 
         if(!err){
 

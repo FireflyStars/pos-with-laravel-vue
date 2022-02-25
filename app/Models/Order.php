@@ -24,6 +24,10 @@ class Order extends Model
         return $this->hasMany(OrderZone::class);
     }
 
+    public function orderOuvrages(){
+        return $this->hasMany(OrderOuvrage::class);
+    }
+
     public function state(){
         return $this->belongsTo(OrderState::class);
     }

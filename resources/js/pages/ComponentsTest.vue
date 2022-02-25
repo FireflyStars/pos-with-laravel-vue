@@ -12,6 +12,7 @@
                     <side-bar />
 
                     <div class="col main-view container">
+                        <page-title icon="edit" name="Developer Component Library" class="almarai_extrabold_normal_normal"/>
 
                         <div class="">
                             <div class="row m-0">
@@ -144,9 +145,26 @@
 
                         </div>
 
+                        <div class="row m-0 mt-5">
+                            <div class="col">
+                                <tab-pane :tabs="{first:'First tab',second:'Second tab',third:'Third tab'}" class="almarai_700_normal">
+                                    <template v-slot:first>
+                                        1st
+                                    </template>
+                                    <template v-slot:second>
+                                        2nd
+                                    </template>
+                                <template v-slot:third>
+                                        3rd
+                                    </template>
+                                </tab-pane>
+                            </div>
+
+                        </div>
                     </div>
 
                 </div>
+
             </div>
         </transition>
     </router-view>
@@ -158,6 +176,7 @@ import { ref, reactive,onMounted,nextTick } from "vue";
 import TableFilter from "../components/miscellaneous/TableFilter.vue"
 
 import useToggler from '../composables/useToggler'
+import TabPane from '../components/miscellaneous/TabPane.vue';
 
 
 
@@ -165,7 +184,8 @@ import useToggler from '../composables/useToggler'
 export default {
 
     components: {
-        TableFilter
+        TableFilter,
+        TabPane
     },
 
     setup() {
