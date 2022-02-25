@@ -464,27 +464,31 @@ class CompagneController extends Controller
      */
     public function creatCompagne(Request $request)
     {
-        $user = auth()->user();
+        $user = Auth::user();
+      
         $name = $request->name;
-        $categ_id = $request->for_template;
+        $campagne_category_id = $request->for_template;
 
-        $template_email_id = DB::table('campagne_category')
-                                            ->where('id' ,"=", intval($categ_id))
-                                            ->get(['idapi']);
 
+        $campagne_category = CampagneCategory::find($campagne_category_id);
+                                            
+        if($campagne_category==null)
+        return response('Campagne category id '.$campagne_category_id.' not found',509);
+       
         $addCompagne =  DB::table('campagnes')->insertGetId
         ([
             'datefinvalidatiom' => date("Y-m-d"),
             'datelancement' => date("Y-m-d"),
             'user_id' => $user->id,
-            'affiliate_id' => $user->id,
-            'email_template_id' => intval($template_email_id[0]->idapi),
-            'address' => 'Paris',
-            'expediteur' => 'test',
-            'lettreaccompagnement' => 'test',
+            'affiliate_id' => $user->affiliate->id,
+            'email_template_id' => intval($campagne_category->idapi),
+            'address' => null,
+            'expediteur' => null,
+            'phone' => null,
+            'lettreaccompagnement' => null,
             'type' => 'EMAIL',
             'run' =>  date("Y-m-d"),
-            'montant' => '07.05',
+            'montant' => 0,
             'nb' => $request->count,
             'name' => $name,
             'created_at' =>date("Y-m-d"),
@@ -598,7 +602,7 @@ class CompagneController extends Controller
         return response()->json([
                 'GLOBALS' => $GLOBALS,
                 'test_exist' => $test_exist,
-                'categ_id'=> $categ_id,
+                'categ_id'=> $campagne_category_id,
             ]);
 
     }
@@ -1509,11 +1513,11 @@ class CompagneController extends Controller
         return 'data';
     }
     public function getTempname($id){
-        $campagnesCategory = DB::table('campagne_category')->where('id',"=",$id)->get();
-        foreach ($campagnesCategory as $key => $name) {
-            $namedata=$name-> name;
-        }
-        return $namedata;
+        $campagnesCategory = DB::table('campagne_category')->where('id',"=",$id)->first();
+        if($campagnesCategory!=null)
+        return $campagnesCategory->name;
+
+        return null;
     }
 
     /**

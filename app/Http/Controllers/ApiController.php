@@ -730,6 +730,37 @@ public function GetDevis(Request $request){
         return $isLoggedIn;
     }
 }
+
+public function GetOrderOuvrages(Request $request){
+    $Parameters=$request->post('Parameters');
+    $SessionID=$request->post('SessionID');
+    $AccountKey=$request->post('AccountKey');
+ 
+
+    $valid=$this->isValidAccountKeySessionID($request);
+    if($valid!==true)return $valid;
+    $isLoggedIn=$this->checkLogin($request);
+    if(!isset($Parameters['order_id'])||$this->isBlank($Parameters['order_id'])){
+        return $this->response(0,null,'Missing order_id.');
+    }
+
+
+
+    if($isLoggedIn===true){
+        $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
+        $order=$lcdtapp_api_instance->user->affiliate->orders->where('id','=',$Parameters['order_id'])->first();
+        if($order==null)
+        return $this->response(0,null,'Order not found.');
+        
+        $orderOuvrages=$order->orderOuvrages->makeHidden(['created_at','updated_at','deleted_at']);
+        if($orderOuvrages->count()==0)
+        return $this->response(1,null,'Ouvrage list not available.');
+
+        return $this->response(1, $orderOuvrages);
+    }else{
+        return $isLoggedIn;
+    }
+}
 public function SaveEvent(Request $request){
     $Parameters=$request->post('Parameters');
     $SessionID=$request->post('SessionID');
