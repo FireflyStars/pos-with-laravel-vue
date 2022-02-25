@@ -8,8 +8,6 @@ import AuthenticationMiddleware from './middleware/authentication';
 const router = createRouter({
     history:createWebHistory(),
     routes:[
-
-
         {
             path:'',
             name:'LandingPage',
@@ -29,9 +27,15 @@ const router = createRouter({
             },
 
         },
+        {
+            path:'/reports',
+            name:'reports',
+            component:()=> import('../pages/Reports'),
+            meta:{
+                authenticated:true
+            },
 
-
-
+        },
         {
             path:'/auth/',
             name:'AuthPage',

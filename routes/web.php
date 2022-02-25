@@ -8,6 +8,7 @@ use App\Http\Controllers\CompagneController;
 use TCG\Voyager\Facades\Voyager;
 use App\Http\Controllers\LcdtAdminController;
 use App\Http\Controllers\LcdtFrontController;
+use App\Http\Controllers\PageElementsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,8 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('/update-text-pos',[LcdtAdminController::class,'updateTextPos'])->name('update-text-pos');
     Route::post('/get-text-pos',[LcdtAdminController::class,'getTextPos'])->name('get-text-pos');
 });
+
+Route::post('save-page-elements', [PageElementsController::class, 'store']);
 
 Route::post('/api',[ApiController::class,'index'])->middleware('cors')->name('api');
 

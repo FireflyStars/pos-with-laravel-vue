@@ -5665,6 +5665,12 @@ url(/fonts/vendor/bootstrap-icons/bootstrap-icons.woff?ea6f3dfe4ebb15134576260fe
   font-style: normal;
 }
 
+.almarai_700_normal {
+  font-family: "Almarai Regular";
+  font-weight: 700;
+  font-style: normal;
+}
+
 /*!
  * Bootstrap v5.1.3 (https://getbootstrap.com/)
  * Copyright 2011-2021 The Bootstrap Authors
@@ -16969,4 +16975,49 @@ html.not-found body, html.Login body, html.ForgotPassword body {
 
 .btn-link {
   color: var(--lcdtOrange);
+}
+
+.main-view {
+  margin-top: 64px;
+}
+
+/*list transitions*/
+.list-enter-from {
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+.list-enter-to {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.list-enter-active {
+  transition: all 1s ease;
+}
+
+.list-leave-from {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.list-leave-to {
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+.list-leave-active {
+  transition: all 1s ease;
+  position: absolute;
+  width: 100%;
+}
+
+.list-move {
+  transition: all 0.9s ease;
+}
+
+.main-header-icon {
+  display: inline-block;
+  float: left;
+  margin-top: 3px;
 }

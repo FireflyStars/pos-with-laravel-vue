@@ -38,3 +38,7 @@ export const GET_SELECTED_BOXES = 'GET_SELECTED_BOXES'; //getters
 export const TOGGLER_MODULE = 'TOGGLER_MODULE'
 export const ACTIVE_ITEM = 'ACTIVE_ITEM' //getters
 export const SET_TOGGLER_ITEM = 'SET_TOGGLER_ITEM' //mutations
+
+export const BUILDER_MODULE = 'BUILDER_MODULE'
+export const SAVE_PAGE = 'SAVE_PAGE'
+export const SAVE_PAGE_ELEMENTS = 'SAVE_PAGE_ELEMENTS'

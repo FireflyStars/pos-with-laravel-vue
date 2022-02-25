@@ -1,7 +1,7 @@
 <template>
     <router-view >
         
- <transition
+        <transition
             enter-active-class="animate__animated animate__fadeIn"
         >
             <div class="container-fluid h-100 bg-color" v-if="showcontainer">
@@ -13,138 +13,137 @@
 
                     <div class="col main-view container">
 
-                        
-    <div class="">
+                        <div class="">
+                            <div class="row m-0">
+                                
+                                <div class="col m-2">
 
-        <div class="row m-0">
-            
-            <div class="col m-2">
+                                    <select-box
+                                        v-model="select1" 
+                                        placeholder="Choose a number" 
+                                        :options="selectBoxOptions" 
+                                        name="select2" 
+                                        :valid="true"
+                                        label="Positive" 
+                                    />
 
-                <select-box
-                    v-model="select1" 
-                    placeholder="Choose a number" 
-                    :options="selectBoxOptions" 
-                    name="select2" 
-                    :valid="true"
-                    label="Positive" 
-                />
+                                </div>
 
-            </div>
+                                <div class="col m-2">
+                                    <multi-select 
+                                        id="multiSelect"
+                                        title="Statut"
+                                        width="116px"
+                                        tagBackground="orange"
+                                        tagColor="white"
+                                        :numtag="1"
+                                        classes="almarai_700_normal"
+                                        :styles="{}" 
+                                        dropdownClasses="almarai_700_normal"
+                                        :dropdownStyles="{ width: '167px' }"
+                                        v-model:options="options"
+                                        transformOrigin="top center"
+                                    />
+                                </div>
+                                
+                                <div class="col m-2">
+                                    <h4 class="text-center">App Filters</h4>
+                                    <table-filter
+                                        v-model:checkboxOptions="filterCheckboxOptions"
+                                        v-model:selectOptions="filterSelectOptions"
+                                        v-model:selectedOptions="filterSelectedOptions"
+                                        activeBackground="orange"
+                                        activeColor="white"
+                                        transformOrigin="top"
+                                        dropdownClasses=""
+                                        :dropdownStyles="{}"
+                                        classes=""
+                                        :styles="{}"
+                                        @validate="validateFilters"
+                                    />
+                                </div>
 
-            <div class="col m-2">
-                <multi-select 
-                    id="multiSelect"
-                    title="Statut"
-                    width="116px"
-                    tagBackground="orange"
-                    tagColor="white"
-                    :numtag="1"
-                    classes="almarai_700_normal"
-                    :styles="{}" 
-                    dropdownClasses="almarai_700_normal"
-                    :dropdownStyles="{ width: '167px' }"
-                    v-model:options="options"
-                    transformOrigin="top center"
-                />
-            </div>
-            
-            <div class="col m-2">
-                <h4 class="text-center">App Filters</h4>
-                <table-filter
-                    v-model:checkboxOptions="filterCheckboxOptions"
-                    v-model:selectOptions="filterSelectOptions"
-                    v-model:selectedOptions="filterSelectedOptions"
-                    activeBackground="orange"
-                    activeColor="white"
-                    transformOrigin="top"
-                    dropdownClasses=""
-                    :dropdownStyles="{}"
-                    classes=""
-                    :styles="{}"
-                    @validate="validateFilters"
-                />
-            </div>
+                            </div>
 
-        </div>
+                            <div class="row m-0 my-5">
+                                <div class="col">
+                                    <h4>Dropdown Item</h4>
+                                    <div class="position-relative">
+                                        <base-button 
+                                            class="mt-1"
+                                            title="Dropdown Trigger"
+                                            @click="toggleActiveItem('demoDropdown')"
+                                        />
+                                        <dropdown 
+                                            id="demoDropdown"
+                                            height="200px"
+                                            background="transparent"
+                                            transformOrigin="bottom"
+                                        >
+                                            <ul class="list-group w-100">
+                                                <li class="list-group-item list-group-item-action">Item 1</li>
+                                                <li class="list-group-item list-group-item-action">Item 2</li>
+                                                <li class="list-group-item list-group-item-action">Item 3</li>
+                                                <li class="list-group-item list-group-item-action">Item 4</li>
+                                            </ul>
+                                        </dropdown>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <h4>Checkbox</h4>
+                                    <check-box 
+                                        title="Custom attributes checkbox"
+                                        name="customCheckbox"
+                                        background="blue"
+                                        color="orange"
+                                        :checked="customCheckbox"
+                                        @changed="customCheckbox = $event.value"
+                                    />
+                                </div>
+                                
+                            </div>
 
-        <div class="row m-0 my-5">
-            <div class="col">
-                <h4>Dropdown Item</h4>
-                <div class="position-relative">
-                    <base-button 
-                        class="mt-1"
-                        title="Dropdown Trigger"
-                        @click="toggleActiveItem('demoDropdown')"
-                    />
-                    <dropdown 
-                        id="demoDropdown"
-                        height="200px"
-                        background="transparent"
-                        transformOrigin="bottom"
-                    >
-                        <ul class="list-group w-100">
-                            <li class="list-group-item list-group-item-action">Item 1</li>
-                            <li class="list-group-item list-group-item-action">Item 2</li>
-                            <li class="list-group-item list-group-item-action">Item 3</li>
-                            <li class="list-group-item list-group-item-action">Item 4</li>
-                        </ul>
-                    </dropdown>
-                </div>
-            </div>
-            <div class="col">
-                <h4>Checkbox</h4>
-                <check-box 
-                    title="Custom attributes checkbox"
-                    name="customCheckbox"
-                    background="blue"
-                    color="orange"
-                    :checked="customCheckbox"
-                    @changed="customCheckbox = $event.value"
-                />
-            </div>
-            
-        </div>
+                            <div class="row m-0 mt-5">
+                                <div class="col">
+                                    
+                                    <h4>Buttons</h4>
+                                    
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <base-button title="Danger" htmlTitle="kind danger" kind="danger" class="text-capitalize" />
+                                        <base-button title="Primary" htmlTitle="kind primary" kind="primary" class="text-capitalize" />
+                                        <base-button title="success" htmlTitle="kind success" kind="success" class="text-capitalize" />
+                                        <base-button title="Green" htmlTitle="kind green" kind="green" class="text-capitalize" />
+                                        <base-button title="Light Green" htmlTitle="kind light-green" kind="light-green" class="text-capitalize" />
+                                        <base-button title="Warning" htmlTitle="kind warning" kind="warning" class="text-capitalize" />
+                                        <base-button title="Light warning" htmlTitle="kind light-warning" kind="light-warning" class="text-capitalize" />
 
-        <div class="row m-0 mt-5">
-            <div class="col">
-                
-                <h4>Buttons</h4>
-                
-                <div class="d-flex align-items-center justify-content-between">
-                    <base-button title="Danger" htmlTitle="kind danger" kind="danger" class="text-capitalize" />
-                    <base-button title="Primary" htmlTitle="kind primary" kind="primary" class="text-capitalize" />
-                    <base-button title="success" htmlTitle="kind success" kind="success" class="text-capitalize" />
-                    <base-button title="Green" htmlTitle="kind green" kind="green" class="text-capitalize" />
-                    <base-button title="Light Green" htmlTitle="kind light-green" kind="light-green" class="text-capitalize" />
-                    <base-button title="Warning" htmlTitle="kind warning" kind="warning" class="text-capitalize" />
-                    <base-button title="Light warning" htmlTitle="kind light-warning" kind="light-warning" class="text-capitalize" />
+                                        <base-button 
+                                            title="Light warning Icon"
+                                            htmlTitle="kind light-warning"
+                                            kind="light-warning"
+                                            class="text-capitalize"
+                                            prepend
+                                        >
+                                            <icon name="user" />
+                                        </base-button>
 
-                    <base-button 
-                        title="Light warning Icon"
-                        htmlTitle="kind light-warning"
-                        kind="light-warning"
-                        class="text-capitalize"
-                        prepend
-                    >
-                        <icon name="user" />
-                    </base-button>
+                                        <base-button 
+                                            title="Warning Icon"
+                                            htmlTitle="kind warning"
+                                            kind="warning"
+                                            class="text-capitalize"
+                                        >
+                                            <icon name="clipboard" />
+                                        </base-button>
 
-                    <base-button 
-                        title="Warning Icon"
-                        htmlTitle="kind warning"
-                        kind="warning"
-                        class="text-capitalize"
-                    >
-                        <icon name="clipboard" />
-                    </base-button>
-
-                </div>
+                                    </div>
 
 
-            </div>
-        </div>
+                                </div>
+                            </div>
 
-    </div>
+                        </div>
+
                     </div>
 
                 </div>

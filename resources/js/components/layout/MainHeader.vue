@@ -17,7 +17,7 @@
                     kind="warning"
                     title="Nouveau Rendez Vous"
                 >
-                    <icon name="user" />
+                    <icon name="user" color="white" />
                 </base-button>
 
                 <base-button
