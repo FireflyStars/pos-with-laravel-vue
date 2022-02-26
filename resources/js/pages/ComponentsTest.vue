@@ -172,7 +172,7 @@
 
 <script>
 
-import { ref, reactive,onMounted,nextTick } from "vue";
+import { ref, reactive, onMounted, nextTick } from "vue";
 import TableFilter from "../components/miscellaneous/TableFilter.vue"
 
 import useToggler from '../composables/useToggler'

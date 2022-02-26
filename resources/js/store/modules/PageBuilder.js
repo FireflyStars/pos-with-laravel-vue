@@ -16,38 +16,38 @@ export const PageBuilder = {
         }
     },
     actions: {
-       async [SAVE_PAGE]({ commit }, { elements }) {
+       async [SAVE_PAGE]({ commit }, { page, template }) {
 
-            commit(SAVE_PAGE_ELEMENTS, elements)
-            let formData = new FormData()
+        const { elements } = page
 
-            let fileElements = elements
-                .filter((element) => element.item == 'img')
-                .map(element => {
-                    return {
-                        id: element.attributes.id, 
-                        file: element.dataFile
-                    }
-                })
+        commit(SAVE_PAGE_ELEMENTS, elements)
+        let formData = new FormData()
 
-            fileElements.forEach(element => {
-                formData.append(`Img#${element.id}`, element.file)
-            })    
+        let fileElements = elements
+            .filter((element) => element.item == 'img')
+            .map(element => {
+                return {
+                    id: element.attributes.id, 
+                    file: element.dataFile
+                }
+            })
 
-            formData.append('name', 'Muhammad Imran')
+        fileElements.forEach(element => {
+            formData.append(`Img#${element.id}`, element.file)
+        })    
+        console.log(template.id)
+        formData.append('elements', JSON.stringify({ ...elements }))
+        formData.append('template_id', template.id)
 
-            formData.append('elements', JSON.stringify({ ...elements }))
-
-            try {
-                const { data } = await axios.post('save-page-elements', formData, {  
-                    // headers: { "Content-Type": "multipart/form-data" },
-                    responseType: 'arraybuffer'
-                })
-                return data
-            }
-            catch(e) {
-                throw e
-            }
+        try {
+            const { data } = await axios.post('save-page-elements', formData, {  
+                responseType: 'arraybuffer'
+            })
+            return data
+        }
+        catch(e) {
+            throw e
+        }
 
        }
     }

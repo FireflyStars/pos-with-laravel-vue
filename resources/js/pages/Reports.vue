@@ -36,9 +36,8 @@
 
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="reports-dropdown">
-
                                             <BaseButton 
-                                            title="Template 1" 
+                                            :title="template.name || 'Template'" 
                                             class="reports-dropdown-button"
                                             @click="toggleActiveItem('templatesDropdown')">
                                                 <Icon name="angle-down" />
@@ -51,10 +50,15 @@
                                                 width="100%"
                                             >
                                                 <ul class="list-group w-100">
-                                                    <li class="list-group-item list-group-item-action">Template 1</li>
-                                                    <li class="list-group-item list-group-item-action">Template 2</li>
-                                                    <li class="list-group-item list-group-item-action">Template 3</li>
-                                                    <li class="list-group-item list-group-item-action">Template 4</li>
+                                                    <template v-if="templates.length">
+                                                        <li class="list-group-item list-group-item-action"
+                                                        :class="{ 'active': index == activeTemplate }" 
+                                                        v-for="(template, index) in templates"
+                                                        :key="template.id"
+                                                        @click.prevent="assignTemplate(index)">
+                                                            {{ template.name }}
+                                                        </li>
+                                                    </template>
                                                 </ul>
                                             </Dropdown>
 
@@ -108,43 +112,49 @@
                                     
                                     <div class="shadow-sm builder-container">
 
-                                        <div class="d-flex justify-content-between align-items-center">
+                                        <div class="template-header">
                                             <img 
-                                                src="../images/lcdt-logo.png"
-                                                alt="Lcdt logo"
-                                                class="logo img-fluid"
-                                            />
+                                                v-if="templates.length"
+                                                :src="template.template.header" 
+                                                alt="Template header" 
+                                            >
+                                        </div>
 
-                                            <div>
-                                                <p class="text orange float-end font-weight-bold">Agence GIRONDE SUD</p>
-                                                <span class="float-none"></span>
-                                                <BaseButton 
-                                                    title="rapport de visite"
-                                                    class="transparent-button"
-                                                />    
+
+                                        <div class="template-body">
+
+                                            <div class="title-bar">
+                                                Vue d'ensemble du batiment
+                                            </div>
+
+                                            <div 
+                                            v-for="(element, index) in page.elements" 
+                                            :key="index">
+                                            <!-- Changed event from click to dblclick becasue of a conflict in focus and drag -->
+                                                <component 
+                                                    :is="element.item" 
+                                                    v-bind="element.attributes"
+                                                    @dblclick="activateItem($event)" 
+                                                    @input="updateElementValue({ 
+                                                        value: $event.target.value,
+                                                        index,
+                                                        item: element.item
+                                                    })"
+                                                    :class="{ 
+                                                        'cursor-move': `#${element.attributes.id}` == activeItem 
+                                                    }"
+                                                />
+                                                
                                             </div>
 
                                         </div>
 
-                                        <div class="title-bar">
-                                            Vue d'ensemble du batiment
-                                        </div>
-
-                                        <div class="textarea-zone">
-                                            <textarea name=""></textarea>
-                                        </div>
-                                        <div class="clearfix"></div>
-
-
-                                        <div 
-                                        v-for="(element, index) in page.elements" 
-                                        :key="index">
-                                            <component 
-                                                :is="element.item" 
-                                                v-bind="element.attributes"
-                                                @click="activateItem($event)"
-                                            />
-                                            
+                                        <div class="template-footer">
+                                            <img 
+                                                v-if="templates.length"
+                                                :src="template.template.footer" 
+                                                alt="Template footer" 
+                                            >
                                         </div>
 
                                     </div>
@@ -176,9 +186,9 @@
                                                     <Icon name="file" class="d-inline" />
                                                     <p class="d-inline orange text-base">Ajouter Titre</p>
                                                 </div>
-                                                <div>
+                                                <div @click="generateTextarea" class="pointer">
                                                     <Icon name="file" class="d-inline" />
-                                                    <p class="d-inline orange text-base">Ajouter Titre</p>
+                                                    <p class="d-inline orange text-base">Ajouter Zone texts</p>
                                                 </div>
                                             </div>
 
@@ -205,8 +215,6 @@
 
                                                     <p class="orange text-base">Ajouter Forme</p>
                                                 </div>
-
-
 
                                                 <BaseButton 
                                                     title="Ajouter Image"
@@ -613,12 +621,11 @@
 </template>
 
 <script>
-import { onMounted, reactive, ref, nextTick } from 'vue'
+import { onMounted, reactive, ref, nextTick, computed } from 'vue'
 import { useStore } from 'vuex'
 import { BUILDER_MODULE, SAVE_PAGE } from '../store/types/types'
 import useToggler from '../composables/useToggler'
 import Moveable from "vue3-moveable"
-import Swal from 'sweetalert2'
 
 
 export default {
@@ -634,13 +641,21 @@ export default {
 
         const page = reactive({ elements: [] })
 
-        const activeItem = ref('.draggable')
-
-        let isResizing = ref(false);
-
+        const activeItem = ref(null)
         const showcontainer = ref(false)
+        const templates = ref([])
+        const activeTemplate = ref(0)
 
-        const onDrag = ({ top, left, target, transform }) => {
+        const template = computed(() => {
+            return templates.value.length ? templates.value[activeTemplate.value] : {}
+        })
+
+        const assignTemplate = (index) => {
+            activeTemplate.value = index
+            toggleActiveItem('templatesDropdown')
+        }
+
+        const onDrag = ({ top, left, target }) => {
             // let styles = getStylesOfElement(target)
             // styles['top'] = `${top}`
             // styles['left'] = `${left}`
@@ -651,7 +666,7 @@ export default {
             updateElementStyles(target, { left, top })
         }
 
-        const onScale = ({ target, scale, drag }) => {
+        const onScale = ({ target, drag }) => {
             // let styles = getStylesOfElement(target)
             // styles['scale'] = scale
             // styles['rotate'] = `${styles['rotate'] || []}`
@@ -675,124 +690,13 @@ export default {
             updateElementStyles(target, { transform: drag.transform })
         }
 
-        const initDrag = (e) => {
-           
-            const element = getElementParent(e.target, 'draggable')
-            console.log(element)
-            
-            mousedown(e)
-            
-            function mousedown(e) {
-                window.addEventListener("mousemove", mousemove)
-                window.addEventListener("mouseup", mouseup)
-                
-                let prevX = e.clientX
-                let prevY = e.clientY
-            
-                function mousemove(e) {
-
-                    if (!isResizing.value) {
-                        console.log("I was here")
-                        let newX = prevX - e.clientX
-                        let newY = prevY - e.clientY
-                    
-                        const rect = element.getBoundingClientRect()
-
-                        element.style.left = rect.left - newX + "px"
-                        element.style.top = rect.top - newY + "px"
-                    
-                    
-                        prevX = e.clientX
-                        prevY = e.clientY
-                    }
-                }
-            
-                function mouseup() {
-                    window.removeEventListener("mousemove", mousemove)
-                    window.removeEventListener("mouseup", mouseup)
-                }
-
-            }
-
-        }
-
-        const initRotate = () => {
-            var init, rotate, start, stop,
-                active = false,
-                angle = 0,
-                rotation = 0,
-                startAngle = 0,
-                center = {
-                    x: 0,
-                    y: 0
-                },
-                R2D = 180 / Math.PI,
-                rot = document.querySelector('.rotate');
-
-            init = function() {
-                console.log(rot, !rot)
-                if(!rot) return
-
-                rot.addEventListener("mousedown", start, false)
-                document.addEventListener('mousemove', mouseMove)
-                document.addEventListener('mouseup', mouseUp)
-
-
-                function mouseMove(event) {
-                    if (active === true) {
-                        event.preventDefault();
-                        rotate(event);
-                    }
-                }
-
-                function mouseUp(event) {
-                    event.preventDefault()
-                    stop(event)
-                }
-
-            }
-
-            start = function(e) {
-                e.preventDefault();
-                var bb = this.getBoundingClientRect(),
-                t = bb.top,
-                l = bb.left,
-                h = bb.height,
-                w = bb.width,
-                x, y;
-                center = {
-                    x: l + (w / 2),
-                    y: t + (h / 2)
-                };
-                x = e.clientX - center.x;
-                y = e.clientY - center.y;
-                startAngle = R2D * Math.atan2(y, x);
-                return active = true;
-            };
-
-            rotate = function(e) {
-                e.preventDefault();
-                var x = e.clientX - center.x,
-                y = e.clientY - center.y,
-                d = R2D * Math.atan2(y, x);
-                rotation = d - startAngle;
-                return rot.style.transform = "rotate(" + (angle + rotation) + "deg)";
-            };
-
-            stop = function() {
-                angle += rotation;
-                return active = false;
-            };
-
-            init();
-        }
-
         const activateItem = (e) => {
             let elem = e.target
             const dataName = elem.getAttribute('dataName')
             elem = dataName == 'svg' ? elem : getElementParent(e.target, 'draggable')
             const id = elem.getAttribute('id')
             activeItem.value = `#${id}`
+            elem.blur()
         }
 
         const updateElementStyles = (elem, styles) => {
@@ -816,6 +720,13 @@ export default {
             page.elements[itemIndex].attributes.style = computedStyles
         }
 
+        const updateElementValue = ({item, index, value}) => {
+            const domElements = ['input', 'textarea', 'select']
+            if(domElements.includes(item)) {
+                page.elements[index].attributes.value = value
+            }
+        }
+
 
         const generateString = (length) => {
             const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
@@ -825,6 +736,21 @@ export default {
                 result += characters.charAt(Math.floor(Math.random() * charactersLength))
             }
             return result
+        }
+
+
+        const generateTextarea = () => {
+            page.elements.push({
+                item: 'textarea',
+                attributes: {
+                    class: 'draggable',
+                    style: '',
+                    dataName: 'textarea',
+                    id: generateString(12),
+                    value: ''
+                },
+                name: 'textarea'
+            })
         }
 
         const generateImage = async () => {
@@ -875,7 +801,6 @@ export default {
             })
         }
         
-
         const generateIcon = (e, { id, name }) => {
             page.elements.push({
                 item: id,
@@ -898,7 +823,10 @@ export default {
 
         const submitPage = async () => {
             try {
-                const data = await store.dispatch(`${[BUILDER_MODULE]}/${[SAVE_PAGE]}`, page)
+                const data = await store.dispatch(`${[BUILDER_MODULE]}/${[SAVE_PAGE]}`, { 
+                    page, 
+                    template: template.value 
+                })
                 if(data) generatePDF(data)
             }
             catch(e) {
@@ -914,27 +842,53 @@ export default {
             link.click()
         }
 
+        const fetchTemplates = () => {
+            templates.value = ([
+                {
+                    id: 'template1',
+                    name: 'Template1',
+                    template: {
+                        header: '../images/sample-template.png',
+                        footer: '../images/sample-footer-template.png'
+                    }
+                },
+                {
+                    id: 'template2',
+                    name: 'Template2',
+                    template: {
+                        header: '../images/sample-template-1.png',
+                        footer: '../images/sample-footer-template-1.png'
+                    }
+                },
+            ])
+        }
+
         onMounted(() => {
             nextTick(() => {
-                showcontainer.value=true
+                showcontainer.value = true
+                fetchTemplates()
             })
         })
       
         return { 
             page,
-            initDrag,
             onDrag,
             onRotate,
             onScale,
+            template,
+            templates,
+            activeTemplate,
+            assignTemplate,
             submitPage,
             activeItem,
             activateItem,
-            initRotate,
-            generateIcon,
             showcontainer,
+            generateIcon,
             generateButton,
+            generateTextarea,
             generateImage,
             toggleActiveItem,
+            updateElementValue,
         }
     },
 }
@@ -942,6 +896,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.cursor-move {
+    cursor: move;
+}
 
 .pointer {
     cursor: pointer;
@@ -975,6 +933,40 @@ export default {
     gap: 0.64rem;
 }
 
+.template {
+    &-header {
+        top: 0;
+        max-height: 4.75rem;
+    }
+    &-footer {
+        bottom: 0;
+    }
+    &-header, 
+    &-footer {
+        width: 100%;
+        height: auto;
+        position: absolute;
+        left: 0;
+        img {
+            width: 100%;
+            height: 100%;
+            padding: 1rem;
+            object-fit: cover;
+        }
+    }
+    &-body {
+        margin-top: 5.75rem;
+        img {
+            width: auto;
+            height: auto;
+            object-fit: cover;
+            max-height: 25rem;
+            max-width: 25rem;
+        }
+    }
+}
+
+
 .heading-buttons {
     font-family: sans-serif;
     font-style: normal;
@@ -990,13 +982,12 @@ export default {
 
 .builder-container {
     position: relative;
-    min-height: 37.5rem;
+    min-height: 40rem;
     background: #fff;
     overflow: hidden;
     padding: 1rem 2rem;
 
     .draggable {
-        cursor: move;
         z-index: 10;
         position: absolute;
     }
