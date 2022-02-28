@@ -761,6 +761,46 @@ public function GetOrderOuvrages(Request $request){
         return $isLoggedIn;
     }
 }
+
+public function GetOrderCategories(Request $request){
+    $Parameters=$request->post('Parameters');
+    $SessionID=$request->post('SessionID');
+    $AccountKey=$request->post('AccountKey');
+ 
+
+    $valid=$this->isValidAccountKeySessionID($request);
+    if($valid!==true)return $valid;
+    $isLoggedIn=$this->checkLogin($request);
+    if(!isset($Parameters['order_id'])||$this->isBlank($Parameters['order_id'])){
+        return $this->response(0,null,'Missing order_id.');
+    }
+
+
+
+    if($isLoggedIn===true){
+        $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
+        $order=$lcdtapp_api_instance->user->affiliate->orders->where('id','=',$Parameters['order_id'])->makeHidden(['created_at','updated_at','deleted_at'])->first();
+        if($order==null)
+        return $this->response(0,null,'Order not found.');
+        
+        $orderZones=$order->orderZones->makeHidden(['created_at','updated_at','deleted_at']);
+        $ordercats=array();
+        foreach($orderZones as &$orderzone){
+            $ordercat=$orderzone->orderCategories->makeHidden(['created_at','updated_at','deleted_at']);
+            if($ordercat->count()>0)
+            $ordercats=array_merge($ordercats,$ordercat->toArray());
+        }
+        $ordercatbyorderzone=array();
+        if(!empty($ordercats))
+        foreach($ordercats as $ordercat){
+            $ordercatbyorderzone[$ordercat['order_zone_id']][]=$ordercat;
+        }
+
+        return $this->response(1, $ordercatbyorderzone);
+    }else{
+        return $isLoggedIn;
+    }
+}
 public function SaveEvent(Request $request){
     $Parameters=$request->post('Parameters');
     $SessionID=$request->post('SessionID');
