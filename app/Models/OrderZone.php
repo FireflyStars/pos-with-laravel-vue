@@ -20,4 +20,8 @@ class OrderZone extends Model
         return $this->belongsTo(Order::class);
     }
 
+    public function orderCategories(){
+        return $this->hasMany(OrderCat::class);
+    }
+
 }
