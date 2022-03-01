@@ -1,4 +1,5 @@
 import { SAVE_PAGE, SAVE_PAGE_ELEMENTS } from "../types/types"
+import { unref } from 'vue'
 
 export const PageBuilder = {
     namespaced: true,
@@ -16,39 +17,66 @@ export const PageBuilder = {
         }
     },
     actions: {
-       async [SAVE_PAGE]({ commit }, { page, template }) {
 
-        const { elements } = page
+        async [SAVE_PAGE]({ commit }, { pages, template }) {
 
-        commit(SAVE_PAGE_ELEMENTS, elements)
-        let formData = new FormData()
+            let formData = new FormData()
 
-        let fileElements = elements
-            .filter((element) => element.item == 'img')
-            .map(element => {
-                return {
-                    id: element.attributes.id, 
-                    file: element.dataFile
-                }
+            pages = unref(pages)
+
+            pages.forEach((page) => {
+                
+                const { elements } = page
+                
+
+                let fileElements = elements
+                .filter((element) => element.item == 'img')
+                .map(element => {
+                    return {
+                        id: element.attributes.id, 
+                        file: element.dataFile
+                    }
+                })
+
+                fileElements.forEach(element => {
+                    formData.append(`Img#${element.id}`, element.file)
+                })    
+
             })
 
-        fileElements.forEach(element => {
-            formData.append(`Img#${element.id}`, element.file)
-        })    
-        console.log(template.id)
-        formData.append('elements', JSON.stringify({ ...elements }))
-        formData.append('template_id', template.id)
+            formData.append('pages', JSON.stringify({ ...pages }))
+            formData.append('template_id', template.id)
 
-        try {
-            const { data } = await axios.post('save-page-elements', formData, {  
-                responseType: 'arraybuffer'
-            })
-            return data
-        }
-        catch(e) {
-            throw e
+            // const { elements } = page
+
+            // commit(SAVE_PAGE_ELEMENTS, elements)
+
+            // let fileElements = elements
+            //     .filter((element) => element.item == 'img')
+            //     .map(element => {
+            //         return {
+            //             id: element.attributes.id, 
+            //             file: element.dataFile
+            //         }
+            //     })
+
+            // fileElements.forEach(element => {
+            //     formData.append(`Img#${element.id}`, element.file)
+            // })    
+            // formData.append('elements', JSON.stringify({ ...elements }))
+            // formData.append('template_id', template.id)
+
+            try {
+                const { data } = await axios.post('save-page-elements', formData, {  
+                    responseType: 'arraybuffer'
+                })
+                return data
+            }
+            catch(e) {
+                throw e
+            }
+
         }
 
-       }
     }
 }

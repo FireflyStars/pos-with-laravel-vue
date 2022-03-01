@@ -18,7 +18,7 @@
             height: 100%;
             width: 100%;
             overflow: hidden;
-            padding: 1rem;
+            padding: 1rem 2rem;
         }
         .draggable, .item {
             z-index: 10;
@@ -138,6 +138,7 @@
             min-width: 350px;
             min-height: 50px;
             position: absolute;
+            border: none;
         }
         
     </style>

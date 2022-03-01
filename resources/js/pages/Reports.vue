@@ -68,8 +68,10 @@
                                             
                                             <div>
 
-                                                <a class="orange text d-flex align-items-center gap-half">
-                                                    <Icon name="plus-circle" class="pointer" />
+                                                <a 
+                                                class="orange text d-flex align-items-center gap-half pointer" 
+                                                @click.prevent="addPage">
+                                                    <Icon name="plus-circle" />
                                                     Ajouter Page
                                                 </a>
 
@@ -83,7 +85,7 @@
                                             <div class="reports-dropdown page-dropdown">
 
                                                 <BaseButton 
-                                                title="Page 1" 
+                                                :title="pageName" 
                                                 class="reports-dropdown-button page-button"
                                                 @click="toggleActiveItem('pageDropdown')">
                                                     <Icon name="angle-down" />
@@ -96,10 +98,14 @@
                                                     width="100%"
                                                 >
                                                     <ul class="list-group w-100">
-                                                        <li class="list-group-item list-group-item-action">Page 1</li>
-                                                        <li class="list-group-item list-group-item-action">Page 2</li>
-                                                        <li class="list-group-item list-group-item-action">Page 3</li>
-                                                        <li class="list-group-item list-group-item-action">Page 4</li>
+                                                        <li 
+                                                        class="list-group-item list-group-item-action"
+                                                        v-for="(page, index) in pages"
+                                                        :key="page"
+                                                        @click.prevent="assignPage(index)"
+                                                        >
+                                                            Page {{ +index + 1 }}
+                                                        </li>
                                                     </ul>
                                                 </Dropdown>
 
@@ -122,30 +128,29 @@
 
 
                                         <div class="template-body">
-
-                                            <div class="title-bar">
-                                                Vue d'ensemble du batiment
-                                            </div>
-
                                             <div 
                                             v-for="(element, index) in page.elements" 
-                                            :key="index">
-                                            <!-- Changed event from click to dblclick becasue of a conflict in focus and drag -->
+                                            :key="index"
+                                            >
                                                 <component 
                                                     :is="element.item" 
                                                     v-bind="element.attributes"
-                                                    @dblclick="activateItem($event)" 
-                                                    @input="updateElementValue({ 
-                                                        value: $event.target.value,
-                                                        index,
-                                                        item: element.item
-                                                    })"
+                                                    @click.stop="activateItem($event)"
+                                                    @dblclick="openUpdatePopup(element)" 
                                                     :class="{ 
                                                         'cursor-move': `#${element.attributes.id}` == activeItem 
                                                     }"
                                                 />
+
                                                 
                                             </div>
+                                            
+                                            <popup 
+                                                :item="activeElement" 
+                                                v-if="openPopup"
+                                                @close="openPopup = false"
+                                                @update="updateElementFromPopup"
+                                            />
 
                                         </div>
 
@@ -621,58 +626,71 @@
 </template>
 
 <script>
-import { onMounted, reactive, ref, nextTick, computed } from 'vue'
+
+import { onMounted, unref, ref, nextTick, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import { BUILDER_MODULE, SAVE_PAGE } from '../store/types/types'
 import useToggler from '../composables/useToggler'
 import Moveable from "vue3-moveable"
-
+import popup from '../components/reports/popup'
+import useStyles from '../composables/reports/useStyles'
 
 export default {
 
     components: {
         Moveable,
+        popup
     },
 
     setup() {
 
         const store = useStore()
         const { toggleActiveItem } = useToggler()
+        const { itemAttributes } = useStyles()
 
-        const page = reactive({ elements: [] })
-
+        const pages = ref([])
+        const activePage = ref(0)
         const activeItem = ref(null)
         const showcontainer = ref(false)
         const templates = ref([])
         const activeTemplate = ref(0)
+        const activeElement = ref({})
+
+        const openPopup = ref(false)
 
         const template = computed(() => {
             return templates.value.length ? templates.value[activeTemplate.value] : {}
         })
+
+        const pageName = computed(() =>  {
+            const pageValue = +activePage.value + 1
+            return 'Page ' + pageValue
+        })
+
+        const page = computed(() =>  pages.value.length ? pages.value[activePage.value] : {})
 
         const assignTemplate = (index) => {
             activeTemplate.value = index
             toggleActiveItem('templatesDropdown')
         }
 
-        const onDrag = ({ top, left, target }) => {
-            // let styles = getStylesOfElement(target)
-            // styles['top'] = `${top}`
-            // styles['left'] = `${left}`
-            // styles['scale'] = `${styles['scale'] || []}`
-            // styles['rotate'] = `${styles['rotate'] || []}`
-            // target.style.left = `${left}px`
-            // target.style.top = `${top}px`
-            updateElementStyles(target, { left, top })
+        const assignPage = (index) => {
+            activePage.value = index
+            toggleActiveItem('pageDropdown')
         }
 
-        const onScale = ({ target, drag }) => {
-            // let styles = getStylesOfElement(target)
-            // styles['scale'] = scale
-            // styles['rotate'] = `${styles['rotate'] || []}`
-            // console.log(styles['scale'])
-            // target.style.transform = drag.transform
-            updateElementStyles(target, { transform: drag.transform })
+        const loadPages = () => {
+            pages.value = [{
+                id: generateString(12),
+                elements: []
+            }]
+        }
+
+        const addPage = () => {
+            pages.value.push({
+                id: generateString(12),
+                elements: []
+            })
         }
 
         const getStylesOfElement = (element) => {
@@ -681,13 +699,27 @@ export default {
                 right: element.style.right,
                 top: element.style.top,
                 bottom: element.style.bottom,
-                transform: element.style.transform
+                transform: element.style.transform,
+                width: element.style.width,
+                height: element.style.heigth,
+                fontSize: element.style.fontSize,
+                lineHeight: element.style.lineHeight, 
+                fontFamily: element.style.fontFamily,
+                color: element.style.color,
+                textAlign: element.style.textAlign
             }
         }
 
+        const onDrag = ({ top, left, target }) => {
+            updateElementStyles(target.id, { left, top }, getStylesOfElement(target))
+        }
+
+        const onScale = ({ target, drag }) => {
+            updateElementStyles(target.id, { transform: drag.transform }, getStylesOfElement(target))
+        }        
+
         const onRotate = ({ target, drag }) => {
-            // target.style.transform = drag.transform;
-            updateElementStyles(target, { transform: drag.transform })
+            updateElementStyles(target.id, { transform: drag.transform }, getStylesOfElement(target))
         }
 
         const activateItem = (e) => {
@@ -699,34 +731,56 @@ export default {
             elem.blur()
         }
 
-        const updateElementStyles = (elem, styles) => {
-            const { id } = elem
-            const itemIndex = page.elements.findIndex(item => item.attributes.id == id)
+        const updateElementStyles = (id, styles, elementOldStyles) => {
+            const itemIndex = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
 
-            const elementOldStyles = getStylesOfElement(elem)
+            styles = {
+                top: styles.top ? `${styles.top}px` : elementOldStyles.top,
+                left: styles.left ? `${styles.left}px` : elementOldStyles.left,
+                transform: styles.transform ? styles.transform : elementOldStyles.transform,
+                width: styles.width ? `${styles.width}px` : elementOldStyles.width,
+                height: styles.height ? `${styles.height}px` : elementOldStyles.height,
+                fontSize: styles.fontSize ? `${styles.fontSize}px` : elementOldStyles.fontSize,
+                lineHeight: styles.lineHeight ? styles.lineHeight : elementOldStyles.lineHeight,
+                fontFamily: styles.fontFamily ? styles.fontFamily : elementOldStyles.fontFamily,
+                color: styles.color ? styles.color : elementOldStyles.color,
+                textAlign: styles.textAlign ? styles.textAlign : elementOldStyles.textAlign,
+            }
 
-            let top = styles.top ? `${styles.top}px` : elementOldStyles.top
-            let left = styles.left ? `${styles.left}px` : elementOldStyles.left
-            let transform = styles.transform ? styles.transform : elementOldStyles.transform
+            let computedStyles = ''
 
-             let computedStyles =
-            `
-                top: ${top};
-                left: ${left};
-                transform: ${transform};
-            `
+            Object.keys(styles).forEach(key => {
+                let value = styles[key]
+                console.log(value, " was value")
+                if(value != undefined && value != '' && value != null) {
+                    computedStyles += ` ${key}: ${styles[key]}; `
+                }
+            })
 
             console.log(computedStyles)
-            page.elements[itemIndex].attributes.style = computedStyles
+
+            pages.value[activePage.value].elements[itemIndex].attributes.style = computedStyles
+            // document.querySelector(`#${id}`).style = computedStyles
         }
 
-        const updateElementValue = ({item, index, value}) => {
+        const updateElementValue = ({ item = 'textarea', index, value }) => {
             const domElements = ['input', 'textarea', 'select']
             if(domElements.includes(item)) {
-                page.elements[index].attributes.value = value
+                pages.value[activePage.value].elements[index].attributes.value = value
+                console.log("I was here", value, pages.value[activePage.value].elements[index].attributes.value)
             }
         }
 
+        const updateElementFromPopup = ({ id, textValue }) => {
+            const index = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
+            const domElem = document.querySelector(`#${id}`)
+            if(textValue != undefined) {
+                updateElementValue({ index, value: unref(textValue) })
+            }
+            updateElementStyles(id, unref(itemAttributes), getStylesOfElement(domElem))
+            openPopup.value = false
+            console.log(id, unref(itemAttributes), unref(textValue))
+        }
 
         const generateString = (length) => {
             const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
@@ -738,16 +792,16 @@ export default {
             return result
         }
 
-
         const generateTextarea = () => {
-            page.elements.push({
+            pages.value[activePage.value].elements.push({
                 item: 'textarea',
                 attributes: {
                     class: 'draggable',
                     style: '',
                     dataName: 'textarea',
                     id: generateString(12),
-                    value: ''
+                    value: '',
+                    readonly: true
                 },
                 name: 'textarea'
             })
@@ -762,12 +816,11 @@ export default {
             file.click()
 
             file.onchange = (e) => {
-                console.log(e.target)
                 image = e.target.files[0]
                 console.log(image)
                 filename = URL.createObjectURL(image)
 
-                page.elements.push({
+                pages.value[activePage.value].elements.push({
                     item: 'img',
                     attributes: {
                         src: filename,
@@ -780,14 +833,14 @@ export default {
                     name: 'img',
                     dataFile: image
                 })
+                
+                file.value = ''
 
             }
-
-
         }
 
         const generateButton = (e, { id, kind }) => {
-            page.elements.push({ 
+            pages.value[activePage.value].elements.push({ 
                 item: id,
                 attributes: {
                     kind,
@@ -802,21 +855,21 @@ export default {
         }
         
         const generateIcon = (e, { id, name }) => {
-            page.elements.push({
+            pages.value[activePage.value].elements.push({
                 item: id,
                 attributes: {
                     name,
                     class: 'draggable',
                     id: generateString(12),
                     style: '',
-                    dataName: 'svg'
+                    dataName: 'svg',
+                    color: 'orange'
                 },
                 name: 'svg'
             })
         }
 
         const getElementParent = (element, className = 'library-item') => {
-            console.log(element.className, className, element.className.split(' ').includes(className))
             if(element.className.split(' ').includes(className)) return element.cloneNode(true)
             return getElementParent(element.parentNode, className)
         }
@@ -824,7 +877,7 @@ export default {
         const submitPage = async () => {
             try {
                 const data = await store.dispatch(`${[BUILDER_MODULE]}/${[SAVE_PAGE]}`, { 
-                    page, 
+                    pages, 
                     template: template.value 
                 })
                 if(data) generatePDF(data)
@@ -863,32 +916,52 @@ export default {
             ])
         }
 
+        const openUpdatePopup = (element) => {
+            openPopup.value = true
+            activeElement.value = element
+            activeItem.value = null
+        }
+
+        watch(() => page.value, () => {
+            activeItem.value = null
+        })
+
         onMounted(() => {
             nextTick(() => {
                 showcontainer.value = true
+                loadPages()
                 fetchTemplates()
             })
         })
       
         return { 
             page,
+            pages,
             onDrag,
-            onRotate,
+            addPage,
             onScale,
+            pageName,
+            onRotate,
             template,
             templates,
-            activeTemplate,
-            assignTemplate,
+            openPopup,
+            assignPage,
+            activePage,
             submitPage,
             activeItem,
             activateItem,
             showcontainer,
             generateIcon,
-            generateButton,
-            generateTextarea,
             generateImage,
+            activeElement,
+            assignTemplate,
+            generateButton,
+            activeTemplate,
+            openUpdatePopup,
+            generateTextarea,
             toggleActiveItem,
             updateElementValue,
+            updateElementFromPopup
         }
     },
 }
@@ -896,6 +969,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+$orange: orange;
 
 .cursor-move {
     cursor: move;
@@ -962,6 +1037,7 @@ export default {
             object-fit: cover;
             max-height: 25rem;
             max-width: 25rem;
+            border: 3px solid $orange;
         }
     }
 }
@@ -982,7 +1058,7 @@ export default {
 
 .builder-container {
     position: relative;
-    min-height: 40rem;
+    min-height: 45rem;
     background: #fff;
     overflow: hidden;
     padding: 1rem 2rem;
@@ -1016,6 +1092,7 @@ export default {
         min-width: 350px;
         min-height: 50px;
         float: right;
+        resize: none !important;
         &::before,
         &::after {
             float: none;

@@ -10,13 +10,24 @@ class PageElementsController extends Controller
     
     public function store(Request $request) 
     {
+        // $elements = json_decode($request->elements);
+        
+        // $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
+        // ->loadView(
+        //     'page', [
+        //         'elements'  => $elements,
+        //         'template'  => $this->get_active_template($request->template_id),
+        //         'templates' => $this->templates(),
+        //         'svgs'      => $this->get_svgs()
+        //     ]
+        // );
 
-        $elements = json_decode($request->elements);
+        $pages = json_decode($request->pages);
         
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
         ->loadView(
-            'page', [
-                'elements'  => $elements,
+            'page-multiple', [
+                'pages'  => $pages,
                 'template'  => $this->get_active_template($request->template_id),
                 'templates' => $this->templates(),
                 'svgs'      => $this->get_svgs()
