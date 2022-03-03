@@ -137,11 +137,24 @@
             font-family: 'Almarai ExtraBold';
         }
 
-        textarea {
-            min-width: 350px;
-            min-height: 50px;
+        .textarea {
             position: absolute;
             border: none;
+            min-width: 350px;
+            min-height: 50px;
+            float: right;
+            resize: none !important;
+            border: 1px solid #ccc;
+            z-index: 99999;
+            word-break: break-all !important;
+        }
+        .textarea span {
+            word-break: break-all !important;
+        }
+        .textarea::before,
+        .textarea::after {
+            float: none;
+            clear: both;
         }
         
     </style>
@@ -176,12 +189,11 @@
                     @endif
         
                     @if (strtolower($element->name) == 'textarea')
-                        <textarea 
-                        class="{{ $element->attributes->class }}" 
+                        <div 
+                        class="{{ $element->attributes->class }} textarea" 
                         style="{{ $element->attributes->style ?? '' }}"
-                        readonly
-                        >{{ $element->attributes->value ?? '' }}
-                        </textarea>
+                        >{!! $element->content ?? '' !!}
+                        </div>
                     @endif
             
                     @if (strtolower($element->name) == 'svg')

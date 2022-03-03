@@ -5671,6 +5671,12 @@ url(/fonts/vendor/bootstrap-icons/bootstrap-icons.woff?ea6f3dfe4ebb15134576260fe
   font-style: normal;
 }
 
+.almarai_extrabold_normal_normal {
+  font-family: "Almarai ExtraBold";
+  font-weight: normal;
+  font-style: normal;
+}
+
 /*!
  * Bootstrap v5.1.3 (https://getbootstrap.com/)
  * Copyright 2011-2021 The Bootstrap Authors
@@ -16960,17 +16966,28 @@ textarea.form-control-lg {
   --lcdtRed:rgba(232, 88, 27, 0.7);
 }
 
+html:not(.Login):not(.ForgotPassword):not(.NewPassword):not(.not-found) {
+  background-color: #E5E5E5;
+}
+html:not(.Login):not(.ForgotPassword):not(.NewPassword):not(.not-found) body {
+  background-color: #E5E5E5;
+}
+
 html {
   min-height: 100%;
 }
 html body {
   min-height: 100%;
 }
-html.not-found, html.Login, html.ForgotPassword {
+html.not-found, html.Login, html.ForgotPassword, html.NewPassword {
   height: 100%;
 }
-html.not-found body, html.Login body, html.ForgotPassword body {
+html.not-found body, html.Login body, html.ForgotPassword body, html.NewPassword body {
   height: 100%;
+}
+html .bg-panel {
+  background-color: #FFFFFF;
+  box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
 }
 
 .btn-link {

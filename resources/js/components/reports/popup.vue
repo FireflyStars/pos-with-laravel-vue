@@ -11,16 +11,62 @@
                     
                     <p class="label h6">Item:</p>
 
-
                     <div class="item">
+
+                        <div class="d-flex align-items-center gap-2" v-if="isTextarea">
+                            
+                            <div>
+                                <label for="">Size</label>
+                                <select @change="commitAction('fontsize', $event.target.value)">
+                                    <option class="heading" selected>- size -</option>
+                                    <option value="1">Very small</option>
+                                    <option value="2">A bit small</option>
+                                    <option value="3">Normal</option>
+                                    <option value="4">Medium-large</option>
+                                    <option value="5">Big</option>
+                                    <option value="6">Very big</option>
+                                    <option value="7">Maximum</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="">Color</label>
+                                <input 
+                                    type="color" 
+                                    @change="commitAction('forecolor', $event.target.value)"
+                                    title="color"
+                                >
+                            </div>
+                            
+                            <div>
+                                <label for="">Background</label>
+                                <input 
+                                    type="color" 
+                                    @change="commitAction('backcolor', $event.target.value)"
+                                    title="Background color"
+                                >
+                            </div>
+
+                        </div>
+                        
+                        <div class="display-block" v-if="isTextarea" >
+                            <Icon
+                                v-for="action in actions"
+                                :key="action"
+                                :name="action"
+                                @click.prevent="action == 'blockquote' ? commitAction('formatblock', action) : commitAction(action)"
+                                :title="action"
+                            />
+                        </div>
+
                         <component 
-                            :is="item.item"
-                            :class="item.attributes?.class"
+                            :is="isTextarea ? 'div' : item.item"
+                            :class="[item.attributes?.class, { 'editable': isTextarea }]"
                             :src="item.attributes?.src"
                             :name="item.attributes?.name"
-                            @input="textValue = $event.target.value"
-                            :value="textValue"
+                            :contenteditable="isTextarea"
                         >
+                            <p v-html="textValue" v-if="isTextarea"></p>
                         </component>
                     </div>
 
@@ -41,13 +87,7 @@
                             <span class="unit">px</span>
                         </div>
                     </div>
-                    <div class="attribute">
-                        <div>Transform:</div>
-                        <div class="d-flex align-items-center gap-1">
-                            <input type="text" v-model="itemAttributes.transform" style="width: 70%">
-                            <span class="unit"></span>
-                        </div>
-                    </div>
+                
                     <div class="attribute">
                         <div>Top:</div>
                         <div class="d-flex align-items-center gap-1">
@@ -89,11 +129,7 @@
                     <div class="attribute">
                         <div>Color:</div>
                         <div class="d-flex align-items-center gap-1">
-                            <select name="color" v-model="itemAttributes.color">
-                                <option value="#000">Black</option>
-                                <option value="#fff">White</option>
-                                <option value="#ccc">Gray</option>
-                            </select>
+                            <input type="color" name="color" v-model="itemAttributes.color" style="width: 5rem">
                         </div>
                     </div>
                     <div class="attribute">
@@ -119,7 +155,7 @@
 
 <script>
 
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import useStyles from '../../composables/reports/useStyles'
 
 
@@ -138,19 +174,49 @@ export default {
 
         const { itemAttributes, loadDefaultStyles } = useStyles()
         const textValue = ref('')
+        const actions = [
+            'brush', 
+            'undo', 
+            'redo', 
+            'foramtting', 
+            'bold', 
+            'italic', 
+            'underline', 
+            'justifyleft', 
+            'justifycenter', 
+            'justifyright',
+            'insertorderedlist',
+            'insertunorderedlist',
+            'blockquote',
+            'outdent',
+            'indent',
+            'cut',
+            'copy',
+            'paste',
+        ]
+
+        const isTextarea = computed(() => props.item.name == 'textarea')
 
         const close = () => {
             emit('close')
         }
 
         const submit = () => {
-            emit('update', { id: props.item.attributes.id, textValue })
+            emit('update', { 
+                id: props.item.attributes.id, 
+                textValue: document.querySelector('.editable').innerHTML 
+            })
         }
 
         const loadDefaultValue = () => {
-            if(props.item.item == 'textarea' && props.item.attributes.value != '') {
-                textValue.value = props.item.attributes.value 
+            if(props.item.name == 'textarea' && props.item.content != '') {
+                textValue.value = props.item.content 
             }
+        }
+
+        const commitAction = (sCmd, sValue) => {
+            document.execCommand(sCmd, false, sValue)
+            document.querySelector('.editable').focus()
         }
 
         onMounted(() => {
@@ -159,9 +225,12 @@ export default {
         })
 
         return {
-            textValue,
             close,
             submit,
+            actions,
+            textValue,
+            isTextarea,
+            commitAction,
             itemAttributes
         }
 
@@ -223,6 +292,18 @@ export default {
             padding-bottom: .5rem;
             .item {
                 flex-grow: 1;
+                label {
+                    font-size: 9px;
+                }
+            }
+            .editable {
+                width: 95%;
+                height: 6rem;
+                background: white;
+                overflow: auto;
+                p {
+                    margin: 0;
+                }
             }
         }
         &-attributes {
@@ -244,7 +325,7 @@ export default {
         width: 95%;
         resize: none;
     }
-    input {
+    .attribute input {
         box-sizing: border-box;
         width: 30%;
     }

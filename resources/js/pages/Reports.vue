@@ -36,31 +36,14 @@
 
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="reports-dropdown">
-                                            <BaseButton 
-                                            :title="template.name || 'Template'" 
-                                            class="reports-dropdown-button"
-                                            @click="toggleActiveItem('templatesDropdown')">
-                                                <Icon name="angle-down" />
-                                            </BaseButton>
-                                            <Dropdown 
-                                                id="templatesDropdown"
-                                                height="200px"
-                                                background="transparent"
-                                                transformOrigin="bottom"
-                                                width="100%"
-                                            >
-                                                <ul class="list-group w-100">
-                                                    <template v-if="templates.length">
-                                                        <li class="list-group-item list-group-item-action"
-                                                        :class="{ 'active': index == activeTemplate }" 
-                                                        v-for="(template, index) in templates"
-                                                        :key="template.id"
-                                                        @click.prevent="assignTemplate(index)">
-                                                            {{ template.name }}
-                                                        </li>
-                                                    </template>
-                                                </ul>
-                                            </Dropdown>
+
+                                            <select-box
+                                                v-model="activeTemplate" 
+                                                :placeholder="template.name || 'Template'" 
+                                                :options="formattedTemplated" 
+                                                name="template"
+                                                classnames="reports-dropdown-button"
+                                            />
 
                                         </div>
 
@@ -84,7 +67,15 @@
                                             
                                             <div class="reports-dropdown page-dropdown">
 
-                                                <BaseButton 
+                                                <select-box
+                                                    v-model="activePage" 
+                                                    :placeholder="pageName" 
+                                                    :options="formattedPages" 
+                                                    name="page"
+                                                    classnames="reports-dropdown-button"
+                                                />
+
+                                                <!-- <BaseButton 
                                                 :title="pageName" 
                                                 class="reports-dropdown-button page-button"
                                                 @click="toggleActiveItem('pageDropdown')">
@@ -107,7 +98,7 @@
                                                             Page {{ +index + 1 }}
                                                         </li>
                                                     </ul>
-                                                </Dropdown>
+                                                </Dropdown> -->
 
                                             </div>
 
@@ -132,6 +123,7 @@
                                             v-for="(element, index) in page.elements" 
                                             :key="index"
                                             >
+
                                                 <component 
                                                     :is="element.item" 
                                                     v-bind="element.attributes"
@@ -140,9 +132,10 @@
                                                     :class="{ 
                                                         'cursor-move': `#${element.attributes.id}` == activeItem 
                                                     }"
-                                                />
+                                                >
+                                                    <span v-if="element.name =='textarea'" v-html="element.content"></span>
+                                                </component>
 
-                                                
                                             </div>
                                             
                                             <popup 
@@ -224,6 +217,7 @@
                                                 <BaseButton 
                                                     title="Ajouter Image"
                                                     class="image-button"
+                                                    @click.prevent="generateImage"
                                                 />            
 
 
@@ -322,7 +316,7 @@
                                                             <input type="file" id="file" accept="image/*">
                                                         </div>
                                                         <p class="m-0">Attention grosse poutre en haut</p>
-                                                        <Icon name="plus-circle" class="mt-2 pointer" @click.prevent="generateImage" />
+                                                        <Icon name="plus-circle" class="mt-2 pointer" />
                                                     </div>
                                                 </div>    
 
@@ -627,13 +621,14 @@
 
 <script>
 
-import { onMounted, unref, ref, nextTick, computed, watch } from 'vue'
+import { onMounted, unref, ref, nextTick, computed, watch, reactive } from 'vue'
 import { useStore } from 'vuex'
 import { BUILDER_MODULE, SAVE_PAGE } from '../store/types/types'
 import useToggler from '../composables/useToggler'
 import Moveable from "vue3-moveable"
 import popup from '../components/reports/popup'
 import useStyles from '../composables/reports/useStyles'
+import useHelpers from '../composables/useHelpers'
 
 export default {
 
@@ -647,19 +642,21 @@ export default {
         const store = useStore()
         const { toggleActiveItem } = useToggler()
         const { itemAttributes } = useStyles()
+        const { generateId } = useHelpers()
 
         const pages = ref([])
         const activePage = ref(0)
         const activeItem = ref(null)
         const showcontainer = ref(false)
         const templates = ref([])
-        const activeTemplate = ref(0)
+        const activeTemplate = ref(-1)
         const activeElement = ref({})
-
         const openPopup = ref(false)
 
         const template = computed(() => {
-            return templates.value.length ? templates.value[activeTemplate.value] : {}
+            return templates.value.length 
+            ? templates.value.find(template => template.id == activeTemplate.value) 
+            : {}
         })
 
         const pageName = computed(() =>  {
@@ -667,10 +664,29 @@ export default {
             return 'Page ' + pageValue
         })
 
+        const formattedPages = computed(() => {
+            return pages.value.map((_, index) => {
+                const pageValue = +index + 1
+                return {
+                    value: index, 
+                    display: 'Page ' + pageValue
+                }
+            })
+        })
+
+        const formattedTemplated = computed(() => {
+            return templates.value.map(template => {
+                return {
+                    value: template.id, 
+                    display: template.name
+                }
+            })
+        })
+    
         const page = computed(() =>  pages.value.length ? pages.value[activePage.value] : {})
 
-        const assignTemplate = (index) => {
-            activeTemplate.value = index
+        const assignTemplate = (id) => {
+            activeTemplate.value = id
             toggleActiveItem('templatesDropdown')
         }
 
@@ -681,14 +697,14 @@ export default {
 
         const loadPages = () => {
             pages.value = [{
-                id: generateString(12),
+                id: generateId(12),
                 elements: []
             }]
         }
 
         const addPage = () => {
             pages.value.push({
-                id: generateString(12),
+                id: generateId(12),
                 elements: []
             })
         }
@@ -751,23 +767,20 @@ export default {
 
             Object.keys(styles).forEach(key => {
                 let value = styles[key]
-                console.log(value, " was value")
                 if(value != undefined && value != '' && value != null) {
-                    computedStyles += ` ${key}: ${styles[key]}; `
+                    computedStyles += ` ${key}: ${styles[key]} !important; `
                 }
             })
 
             console.log(computedStyles)
 
             pages.value[activePage.value].elements[itemIndex].attributes.style = computedStyles
-            // document.querySelector(`#${id}`).style = computedStyles
         }
 
         const updateElementValue = ({ item = 'textarea', index, value }) => {
             const domElements = ['input', 'textarea', 'select']
             if(domElements.includes(item)) {
-                pages.value[activePage.value].elements[index].attributes.value = value
-                console.log("I was here", value, pages.value[activePage.value].elements[index].attributes.value)
+                pages.value[activePage.value].elements[index].content = value
             }
         }
 
@@ -782,27 +795,16 @@ export default {
             console.log(id, unref(itemAttributes), unref(textValue))
         }
 
-        const generateString = (length) => {
-            const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
-            let result = ''
-            const charactersLength = characters.length
-            for ( let i = 0; i < length; i++ ) {
-                result += characters.charAt(Math.floor(Math.random() * charactersLength))
-            }
-            return result
-        }
-
         const generateTextarea = () => {
             pages.value[activePage.value].elements.push({
-                item: 'textarea',
+                item: 'div', //textarea
                 attributes: {
-                    class: 'draggable',
+                    class: 'draggable textarea',
                     style: '',
                     dataName: 'textarea',
-                    id: generateString(12),
-                    value: '',
-                    readonly: true
+                    id: generateId(12),
                 },
+                content: '',
                 name: 'textarea'
             })
         }
@@ -828,7 +830,7 @@ export default {
                         class: 'draggable',
                         style: '',
                         dataName: 'img',
-                        id: generateString(12),
+                        id: generateId(12),
                     },
                     name: 'img',
                     dataFile: image
@@ -846,7 +848,7 @@ export default {
                     kind,
                     title: 'Button',
                     class: 'draggable',
-                    id: generateString(12),
+                    id: generateId(12),
                     style: '',
                     dataName: 'button'
                 },
@@ -860,7 +862,7 @@ export default {
                 attributes: {
                     name,
                     class: 'draggable',
-                    id: generateString(12),
+                    id: generateId(12),
                     style: '',
                     dataName: 'svg',
                     color: 'orange'
@@ -914,6 +916,7 @@ export default {
                     }
                 },
             ])
+            templates.value.length ? activeTemplate.value = templates.value[0]?.id : -1 
         }
 
         const openUpdatePopup = (element) => {
@@ -953,6 +956,7 @@ export default {
             showcontainer,
             generateIcon,
             generateImage,
+            formattedPages,
             activeElement,
             assignTemplate,
             generateButton,
@@ -960,6 +964,7 @@ export default {
             openUpdatePopup,
             generateTextarea,
             toggleActiveItem,
+            formattedTemplated,
             updateElementValue,
             updateElementFromPopup
         }
@@ -1039,6 +1044,9 @@ $orange: orange;
             max-width: 25rem;
             border: 3px solid $orange;
         }
+        span {
+            word-break: break-all !important;
+        }
     }
 }
 
@@ -1088,11 +1096,15 @@ $orange: orange;
         font-family: 'Almarai ExtraBold';
     }
 
-    textarea {
+    .textarea {
         min-width: 350px;
         min-height: 50px;
         float: right;
         resize: none !important;
+        border: 1px solid #ccc;
+        z-index: 99999;
+        max-width: 400px;
+        word-wrap: normal;
         &::before,
         &::after {
             float: none;

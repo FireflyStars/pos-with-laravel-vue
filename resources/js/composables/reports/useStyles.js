@@ -8,7 +8,7 @@ const itemAttributes = reactive({
     fontSize: '',
     lineHeight: '',
     fontFamily: 'poppins',
-    color: '#fff',
+    color: '',
     textAlign: 'left',
     top: 0,
     left: 0,
