@@ -18,6 +18,7 @@ use App\Models\GedDetail;
 use App\Models\lcdtapp\Api;
 use App\Models\lcdtapp\ApiSession;
 use App\Models\OrderState;
+use App\Models\OrderZoneComment;
 use App\Models\Status;
 use App\Models\User;
 use App\Traits\LcdtLog;
@@ -233,7 +234,7 @@ class ApiController extends Controller
                     $events->where('datedebut','<=',$Parameters['todate']);
                 }
                 
-                $events=$events->get();
+                $events=$events->orderBy('datedebut', 'asc')->get();
                 foreach($events as &$event){
                     $event->makeHidden(['created_at','updated_at','deleted_at']);
                     $event->user->roles=$event->user->getRoles();
@@ -406,6 +407,130 @@ class ApiController extends Controller
         }
     }
 
+    public function Search(Request $request){
+        $Parameters=$request->post('Parameters');
+        $SessionID=$request->post('SessionID');
+        $AccountKey=$request->post('AccountKey');
+
+        $valid=$this->isValidAccountKeySessionID($request);
+        if($valid!==true)return $valid;
+        $isLoggedIn=$this->checkLogin($request);
+
+       
+
+        if($isLoggedIn===true){
+            $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
+            $affiliate=$lcdtapp_api_instance->user->affiliate;
+            if($affiliate==null)
+                return $this->response(0,null,'Unable to perform search.','User not associated to an affiliate');
+
+            if(!isset($Parameters['words'])||$this->isBlank($Parameters['words'])){
+                return $this->response(0,null,'words is required.');   
+            }
+        
+          $words=explode(' ',$Parameters['words']);
+    
+          $results=DB::table('orders')->select(['orders.id as order_id','orders.reference','customers.name as lastname','customers.firstname','customers.company','addresses.address1', 'addresses.address2','addresses.postcode', 'addresses.city', 'events.id as event_id','events.name as event_name'])
+          ->join('events',function($join) use($words){
+                $join->on('orders.id','=','events.order_id')
+                ->whereNull('orders.deleted_at')
+                ->whereNull('events.deleted_at');
+               
+          })->join('addresses',function($join){
+              $join->on('events.address_id','=','addresses.id')
+              ->whereNull('addresses.deleted_at');
+          })->join('customers',function($join) use($words){
+              $join->on('orders.customer_id','=','customers.id')
+              ->whereNull('customers.deleted_at')
+              ->where('customers.active','=',1);
+          })
+          ->where(function($query) use ($words){
+            $query->where('orders.reference','LIKE','%'.$words[0].'%')->orWhere('orders.id','LIKE','%'.$words[0].'%');
+
+            if(count($words)>1){
+                foreach($words as $k=>$word){
+                    if($k>0)
+                    $query->orWhere('orders.reference','LIKE','%'.$word.'%')->orWhere('orders.id','LIKE','%'.$word.'%');
+                }
+            }
+
+            $query->orWhere('customers.name','LIKE','%'.$words[0].'%')->orWhere('customers.firstname','LIKE','%'.$words[0].'%')->orWhere('customers.company','LIKE','%'.$words[0].'%');
+    
+            if(count($words)>1){
+                foreach($words as $k=>$word){
+                    if($k>0)
+                    $query->orWhere('customers.name','LIKE','%'.$word.'%')->orWhere('customers.firstname','LIKE','%'.$word.'%')->orWhere('customers.company','LIKE','%'.$words[0].'%');
+                }
+            }
+          })
+          ->orderByDesc('orders.id')->get();
+          
+
+           
+            return $this->response(1,$results);
+         
+        }else{
+            return $isLoggedIn;
+        }
+    } 
+
+    public function SaveOrderZoneComment(Request $request){
+        $Parameters=$request->post('Parameters');
+        $SessionID=$request->post('SessionID');
+        $AccountKey=$request->post('AccountKey');
+
+        $valid=$this->isValidAccountKeySessionID($request);
+        if($valid!==true)return $valid;
+        $isLoggedIn=$this->checkLogin($request);
+
+
+
+        if($isLoggedIn===true){
+            $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
+            $affiliate=$lcdtapp_api_instance->user->affiliate;
+            if($affiliate==null)
+                return $this->response(0,null,'Unable to save order zone comment.','User not associated to an affiliate');
+
+            if(!isset($Parameters['order_zone_id'])||$this->isBlank($Parameters['order_zone_id'])){
+                return $this->response(0,null,'order_zone_id is required.');   
+            }
+
+            if(!isset($Parameters['comment'])||$this->isBlank($Parameters['comment'])){
+                return $this->response(0,null,'comment is required.');   
+            }
+            $OrderZone=OrderZone::find($Parameters['order_zone_id']);
+            if($OrderZone==null)
+            return $this->response(0,null,'OrderZone not found.'); 
+            
+            if($OrderZone->order->affiliate_id!=$affiliate->id)
+            return $this->response(0,null,'OrderZone is not linked to current affiliate.'); 
+
+            $comment=new OrderZoneComment();
+       
+            if(isset($Parameters['id'])||!$this->isBlank($Parameters['id'])){
+                $comment=OrderZoneComment::find($Parameters['id']);
+                if($comment==null)
+                return $this->response(0,null,'Existing comment not found.','order_zone_comment_id '.$Parameters['id']); 
+
+                if($comment->order_zone_id!=$OrderZone->id)
+                return $this->response(0,null,'Existing comment not related to specified order zone','order_zone_id '.$Parameters['order_zone_id'].' | Comment order zone id '.$comment->order_zone_id ); 
+                //only the user can edit his own comment else create new comment
+                if($comment->user_id!=$affiliate=$lcdtapp_api_instance->user->id)
+                $comment=new OrderZoneComment();
+            }
+            $comment->user_id= $affiliate=$lcdtapp_api_instance->user->id;
+
+           $comment->comment=$Parameters['comment'];
+
+           $OrderZone->orderZoneComments()->save($comment);
+
+           
+            return $this->response();
+         
+        }else{
+            return $isLoggedIn;
+        }
+    }
     public function DeleteEventComment(Request $request){
         $Parameters=$request->post('Parameters');
         $SessionID=$request->post('SessionID');
@@ -435,6 +560,45 @@ class ApiController extends Controller
             return $this->response(0,null,'Event comment is not linked to current affiliate.'); 
             $eventComment->delete();
             $this->l("DEL","API EVENT COMMENT DELETED",$lcdtapp_api_instance->user->id);
+           
+            return $this->response();
+         
+        }else{
+            return $isLoggedIn;
+        }
+    }
+
+    public function DeleteOrderZoneComment(Request $request){
+        $Parameters=$request->post('Parameters');
+        $SessionID=$request->post('SessionID');
+        $AccountKey=$request->post('AccountKey');
+
+        $valid=$this->isValidAccountKeySessionID($request);
+        if($valid!==true)return $valid;
+        $isLoggedIn=$this->checkLogin($request);
+
+
+
+        if($isLoggedIn===true){
+            $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
+            $affiliate=$lcdtapp_api_instance->user->affiliate;
+            if($affiliate==null)
+                return $this->response(0,null,'Unable to delete order zone comment.	','User not associated to an affiliate');
+
+            if(!isset($Parameters['orderzone_comment_id'])||$this->isBlank($Parameters['orderzone_comment_id'])){
+                return $this->response(0,null,'orderzone_comment_id is required.');   
+            }
+
+            $orderzoneComment=OrderZoneComment::find($Parameters['orderzone_comment_id']);
+            if($orderzoneComment==null)
+            return $this->response(0,null,'Order zone comment not found.'); 
+            $order=$orderzoneComment->OrderZone->order;
+
+
+            if($order->affiliate_id!=$affiliate->id)
+            return $this->response(0,null,'Order zone comment is not linked to current affiliate.'); 
+            $orderzoneComment->delete();
+            $this->l("DEL","API ORDER ZONE COMMENT DELETED",$lcdtapp_api_instance->user->id);
            
             return $this->response();
          
@@ -550,6 +714,34 @@ class ApiController extends Controller
         }else{
             return $isLoggedIn;
         }
+}
+public function GetMoyenAcces(Request $request){
+    $SessionID=$request->post('SessionID');
+    $AccountKey=$request->post('AccountKey');
+
+    $valid=$this->isValidAccountKeySessionID($request);
+    if($valid!==true)return $valid;
+    $isLoggedIn=$this->checkLogin($request);
+
+
+
+    if($isLoggedIn===true){
+        $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
+        $affiliate=$lcdtapp_api_instance->user->affiliate;
+        if($affiliate==null)
+            return $this->response(0,null,'Unable to moyen acces.','User not associated to an affiliate');
+
+        $moyenacces=$affiliate->moyenacces()->get();
+   
+        foreach($moyenacces as &$moyen){
+         
+            $moyen->makeHidden(['created_at','updated_at','deleted_at','affiliate_id']);
+          
+        }
+        return $this->response(1,$moyenacces);
+    }else{
+        return $isLoggedIn;
+    }
 }
 public function GetEventTypes(Request $request){
     $token_SessionID=$request->post('SessionID');
@@ -684,7 +876,13 @@ public function GetGedDetailCategory(Request $request){
                 $event->eventComments->makeHidden(['updated_at','deleted_at','user_id','event_id']);
      
             foreach($event->eventComments as &$eventComment){
-                $eventComment->user;
+                $eventComment->user->makeHidden([
+                    "email_verified_at",
+                    "settings",
+                    "created_at",
+                    "updated_at",
+                    "affiliate_id"
+            ]);
             }
             return $this->response(1,$event);
         }else{
@@ -720,6 +918,17 @@ public function GetDevis(Request $request){
         foreach($order->orderZones as &$order_zone){
             $order_zone->makeHidden(['created_at','updated_at','deleted_at']);
             $order_zone->gedDetails->makeHidden(['created_at','updated_at','deleted_at','storage_path','file']);
+            $order_zone->orderZoneComments->makeHidden(['updated_at','deleted_at','user_id','order_zone_id']);
+     
+            foreach($order_zone->orderZoneComments as &$orderZoneComment){
+                $orderZoneComment->user->makeHidden([
+                    "email_verified_at",
+                    "settings",
+                    "created_at",
+                    "updated_at",
+                    "affiliate_id"
+            ]);
+            }
             foreach($order_zone->gedDetails as &$ged_detail){
                 if($ged_detail->type!='description')
                 $ged_detail->urls=$this->getFileUrls($ged_detail);
@@ -731,6 +940,58 @@ public function GetDevis(Request $request){
     }
 }
 
+
+public function GetDevisByOrderId(Request $request){
+    $Parameters=$request->post('Parameters');
+    $SessionID=$request->post('SessionID');
+    $AccountKey=$request->post('AccountKey');
+ 
+
+    $valid=$this->isValidAccountKeySessionID($request);
+    if($valid!==true)return $valid;
+    $isLoggedIn=$this->checkLogin($request);
+    if(!isset($Parameters['order_id'])||$this->isBlank($Parameters['order_id'])){
+        return $this->response(0,null,'Missing order_id.');
+    }
+
+
+
+    if($isLoggedIn===true){
+        $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
+      
+        $order=Order::find($Parameters['order_id']);
+        if($order==null)  
+          return $this->response(0,null,'No quotation(devis) found');
+
+        if($lcdtapp_api_instance->user->affiliate->id!=$order->affiliate_id) 
+        return $this->response(0,null,'Quotation(devis) does not belong to user\'s affiliate');
+
+        $order->makeHidden(['created_at','updated_at','deleted_at']);
+        $order->orderZones;   
+        foreach($order->orderZones as &$order_zone){
+            $order_zone->makeHidden(['created_at','updated_at','deleted_at']);
+            $order_zone->gedDetails->makeHidden(['created_at','updated_at','deleted_at','storage_path','file']);
+            $order_zone->orderZoneComments->makeHidden(['updated_at','deleted_at','user_id','order_zone_id']);
+     
+            foreach($order_zone->orderZoneComments as &$orderZoneComment){
+                $orderZoneComment->user->makeHidden([
+                    "email_verified_at",
+                    "settings",
+                    "created_at",
+                    "updated_at",
+                    "affiliate_id"
+            ]);
+            }
+            foreach($order_zone->gedDetails as &$ged_detail){
+                if($ged_detail->type!='description')
+                $ged_detail->urls=$this->getFileUrls($ged_detail);
+            }
+        }
+        return $this->response(1, $order);
+    }else{
+        return $isLoggedIn;
+    }
+}
 public function GetOrderOuvrages(Request $request){
     $Parameters=$request->post('Parameters');
     $SessionID=$request->post('SessionID');
@@ -877,6 +1138,14 @@ public function SaveEvent(Request $request){
                 return $this->response(0,null,'Invalid user address id','Address does not exist or does not belong to customer.');
             }
         }
+        $eventstatus=null;
+        if(isset($Parameters['event_status_id'])&&!$this->isBlank($Parameters['event_status_id'])){
+           $eventstatus=EventStatus::find($Parameters['event_status_id']);
+           if($eventstatus==null){
+            return $this->response(0,null,'Invalid event status');
+           }
+        }
+
 
         if($event==null)
         $event=new Event();
@@ -909,7 +1178,15 @@ public function SaveEvent(Request $request){
         $event->emetteur_id=$lcdtapp_api_instance->user_id;
         $event->event_origin_id=($event->event_origin_id>0?$event->event_origin_id:$Parameters['event_origin_id']);
         $event->save();
-        $event->updateStatus(1,$lcdtapp_api_instance->user_id);
+      
+        if(isset($Parameters['event_id'])&&$Parameters['event_id']!=null){
+            if($eventstatus!=null){
+                $event->updateStatus($eventstatus->id,$lcdtapp_api_instance->user_id);
+            }
+        }else{
+            $event->updateStatus(1,$lcdtapp_api_instance->user_id);
+        }
+    
         return $this->response(1,$event);
     }else{
         return $isLoggedIn;
@@ -1098,7 +1375,7 @@ if(isset($params['order_zones'])&&is_array($params['order_zones'])){
                         $orderZone->name=$order_zone['name'];
                         $orderZone->description=isset($order_zone['description'])?$order_zone['description']:'';
                         $orderZone->hauteur=$order_zone['hauteur'];
-                        $orderZone->moyenacces=$order_zone['moyenacces'];
+                        $orderZone->moyenacces_id=$order_zone['moyenacces_id'];
                         $orderZone->latitude= $order_zone['latitude'];
                         $orderZone->longitude= $order_zone['longitude'];
                         $orderZone->save();

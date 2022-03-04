@@ -23,5 +23,7 @@ class OrderZone extends Model
     public function orderCategories(){
         return $this->hasMany(OrderCat::class);
     }
-
+    public function orderZoneComments(){
+        return $this->hasMany(OrderZoneComment::class);
+   }
 }

@@ -24,4 +24,8 @@ class Affiliate extends Model
     public function events(){
         return $this->hasMany(Event::class);
     }
+
+    public function moyenacces(){
+        return $this->hasMany(Moyenacces::class);
+    }
 }

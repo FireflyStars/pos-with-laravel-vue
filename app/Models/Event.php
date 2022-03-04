@@ -55,6 +55,8 @@ class Event extends Model
          $eventHistory->user_id=$user->id;
          $eventHistory->event_id=$this->id;
          $eventHistory->event_statut_id=$status_id;
+         $this->event_status_id=$status_id;
+         $this->save();
          $eventHistory->save();
          $this->l('EVENT STATUS UPDATE','status_id',$user->id);
      } 
