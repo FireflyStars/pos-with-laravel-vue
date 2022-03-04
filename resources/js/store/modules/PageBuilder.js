@@ -27,7 +27,6 @@ export const PageBuilder = {
             pages.forEach((page) => {
                 
                 const { elements } = page
-                
 
                 let fileElements = elements
                 .filter((element) => element.item == 'img')
@@ -45,26 +44,6 @@ export const PageBuilder = {
             })
 
             formData.append('pages', JSON.stringify({ ...pages }))
-            formData.append('template_id', template.id)
-
-            // const { elements } = page
-
-            // commit(SAVE_PAGE_ELEMENTS, elements)
-
-            // let fileElements = elements
-            //     .filter((element) => element.item == 'img')
-            //     .map(element => {
-            //         return {
-            //             id: element.attributes.id, 
-            //             file: element.dataFile
-            //         }
-            //     })
-
-            // fileElements.forEach(element => {
-            //     formData.append(`Img#${element.id}`, element.file)
-            // })    
-            // formData.append('elements', JSON.stringify({ ...elements }))
-            // formData.append('template_id', template.id)
 
             try {
                 const { data } = await axios.post('save-page-elements', formData, {  

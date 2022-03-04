@@ -40,7 +40,7 @@
                                             <select-box
                                                 v-model="activeTemplate" 
                                                 :placeholder="template.name || 'Template'" 
-                                                :options="formattedTemplated" 
+                                                :options="formattedTemplates" 
                                                 name="template"
                                                 classnames="reports-dropdown-button"
                                             />
@@ -58,7 +58,12 @@
                                                     Ajouter Page
                                                 </a>
 
-                                                <a class="text d-flex align-items-center gap-half">
+                                                <a 
+                                                class="text d-flex align-items-center gap-half"
+                                                :class="[pages.length <= 1 ? 'not-allowed': 'pointer']" 
+                                                @click.prevent="deletePage"
+                                                :disabled="pages.length <= 1"
+                                                >
                                                     <Icon name="bin" />
                                                     Supprimer Page
                                                 </a>
@@ -75,31 +80,6 @@
                                                     classnames="reports-dropdown-button"
                                                 />
 
-                                                <!-- <BaseButton 
-                                                :title="pageName" 
-                                                class="reports-dropdown-button page-button"
-                                                @click="toggleActiveItem('pageDropdown')">
-                                                    <Icon name="angle-down" />
-                                                </BaseButton>
-                                                <Dropdown 
-                                                    id="pageDropdown"
-                                                    height="200px"
-                                                    background="transparent"
-                                                    transformOrigin="bottom"
-                                                    width="100%"
-                                                >
-                                                    <ul class="list-group w-100">
-                                                        <li 
-                                                        class="list-group-item list-group-item-action"
-                                                        v-for="(page, index) in pages"
-                                                        :key="page"
-                                                        @click.prevent="assignPage(index)"
-                                                        >
-                                                            Page {{ +index + 1 }}
-                                                        </li>
-                                                    </ul>
-                                                </Dropdown> -->
-
                                             </div>
 
                                         </div>
@@ -111,8 +91,8 @@
 
                                         <div class="template-header">
                                             <img 
-                                                v-if="templates.length"
-                                                :src="template.template.header" 
+                                                v-if="'id' in activePageTemplate"
+                                                :src="activePageTemplate.template.header" 
                                                 alt="Template header" 
                                             >
                                         </div>
@@ -123,7 +103,6 @@
                                             v-for="(element, index) in page.elements" 
                                             :key="index"
                                             >
-
                                                 <component 
                                                     :is="element.item" 
                                                     v-bind="element.attributes"
@@ -149,8 +128,8 @@
 
                                         <div class="template-footer">
                                             <img 
-                                                v-if="templates.length"
-                                                :src="template.template.footer" 
+                                                v-if="'id' in activePageTemplate"
+                                                :src="activePageTemplate.template.footer" 
                                                 alt="Template footer" 
                                             >
                                         </div>
@@ -158,7 +137,7 @@
                                     </div>
 
                                     <Moveable
-                                        v-if="page.elements.length"
+                                        v-if="pages.length"
                                         className="moveable"
                                         v-bind:target="[activeItem]"
                                         v-bind:draggable="true"
@@ -184,7 +163,7 @@
                                                     <Icon name="file" class="d-inline" />
                                                     <p class="d-inline orange text-base">Ajouter Titre</p>
                                                 </div>
-                                                <div @click="generateTextarea" class="pointer">
+                                                <div @click="generateTextarea" class="pointer" style="margin-top: 1rem">
                                                     <Icon name="file" class="d-inline" />
                                                     <p class="d-inline orange text-base">Ajouter Zone texts</p>
                                                 </div>
@@ -215,6 +194,7 @@
                                                 </div>
 
                                                 <BaseButton 
+                                                    style="margin-top: 1rem"
                                                     title="Ajouter Image"
                                                     class="image-button"
                                                     @click.prevent="generateImage"
@@ -230,32 +210,7 @@
                                                     
                                     <div class="box-bottom-right bg-white p-3 shadow-sm">
                                         
-
-                                        <!-- <div class="d-flex align-items-center">
-                                            <BaseButton
-                                                class="library-item"
-                                                title="Button"
-                                                kind="primary"
-                                                @click="generateButton($event, { id: 'BaseButton', kind: 'primary' })"
-                                            />
-
-                                            <BaseButton
-                                                class="library-item"
-                                                title="Button"
-                                                kind="light"
-                                                @click="generateButton($event, { id: 'BaseButton', kind: 'light' })"
-                                            />
-
-                                            <BaseButton
-                                                class="library-item"
-                                                title="Button"
-                                                kind="danger"
-                                                @click="generateButton($event, { id: 'BaseButton', kind: 'danger' })"
-                                            />
-                                        </div> -->
-
-
-                                        <div class="row mx-0" style="margin-top: 3.4rem">
+                                        <div class="row mx-0" style="margin-top: 2rem">
                                             <div class="col">
                                                 <div class="d-flex gap-2 align-items-center">
                                                     <div class="thumbnail"></div>
@@ -276,7 +231,6 @@
                                                 </div>
                                             </div>
                                         </div>
-
 
                                         <div class="breadcrumb-section">
                                             <div class="breadcrumb d-flex align-items-center gap-4">
@@ -621,10 +575,9 @@
 
 <script>
 
-import { onMounted, unref, ref, nextTick, computed, watch, reactive } from 'vue'
+import { onMounted, unref, ref, nextTick, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import { BUILDER_MODULE, SAVE_PAGE } from '../store/types/types'
-import useToggler from '../composables/useToggler'
 import Moveable from "vue3-moveable"
 import popup from '../components/reports/popup'
 import useStyles from '../composables/reports/useStyles'
@@ -640,8 +593,7 @@ export default {
     setup() {
 
         const store = useStore()
-        const { toggleActiveItem } = useToggler()
-        const { itemAttributes } = useStyles()
+        const { itemAttributes, getStylesOfElement, getComputedStyle } = useStyles()
         const { generateId } = useHelpers()
 
         const pages = ref([])
@@ -656,6 +608,14 @@ export default {
         const template = computed(() => {
             return templates.value.length 
             ? templates.value.find(template => template.id == activeTemplate.value) 
+            : {}
+        })
+
+        const activePageTemplate = computed(() => {
+            return page.value?.template_id != undefined
+            ? templates.value.find(template => {
+                return template.id == page.value.template_id
+            }) 
             : {}
         })
 
@@ -674,7 +634,7 @@ export default {
             })
         })
 
-        const formattedTemplated = computed(() => {
+        const formattedTemplates = computed(() => {
             return templates.value.map(template => {
                 return {
                     value: template.id, 
@@ -685,44 +645,32 @@ export default {
     
         const page = computed(() =>  pages.value.length ? pages.value[activePage.value] : {})
 
-        const assignTemplate = (id) => {
-            activeTemplate.value = id
-            toggleActiveItem('templatesDropdown')
-        }
-
-        const assignPage = (index) => {
-            activePage.value = index
-            toggleActiveItem('pageDropdown')
+        const assignTemplateToActivePage = (id) => {
+            if(!pages.value.length && !activePage.value) return
+            pages.value[activePage.value].template_id = id
         }
 
         const loadPages = () => {
             pages.value = [{
                 id: generateId(12),
-                elements: []
+                elements: [],
+                template_id: activeTemplate.value || -1
             }]
         }
 
         const addPage = () => {
             pages.value.push({
                 id: generateId(12),
-                elements: []
+                elements: [],
+                template_id: activeTemplate.value
             })
         }
 
-        const getStylesOfElement = (element) => {
-            return {
-                left: element.style.left,
-                right: element.style.right,
-                top: element.style.top,
-                bottom: element.style.bottom,
-                transform: element.style.transform,
-                width: element.style.width,
-                height: element.style.heigth,
-                fontSize: element.style.fontSize,
-                lineHeight: element.style.lineHeight, 
-                fontFamily: element.style.fontFamily,
-                color: element.style.color,
-                textAlign: element.style.textAlign
+        const deletePage = () => {
+            if(pages.value.length > 1) {
+                const deletedPageIndex = activePage.value
+                if(activePage.value != 0) activePage.value --
+                pages.value.splice(deletedPageIndex, 1)
             }
         }
 
@@ -748,33 +696,11 @@ export default {
         }
 
         const updateElementStyles = (id, styles, elementOldStyles) => {
+
             const itemIndex = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
-
-            styles = {
-                top: styles.top ? `${styles.top}px` : elementOldStyles.top,
-                left: styles.left ? `${styles.left}px` : elementOldStyles.left,
-                transform: styles.transform ? styles.transform : elementOldStyles.transform,
-                width: styles.width ? `${styles.width}px` : elementOldStyles.width,
-                height: styles.height ? `${styles.height}px` : elementOldStyles.height,
-                fontSize: styles.fontSize ? `${styles.fontSize}px` : elementOldStyles.fontSize,
-                lineHeight: styles.lineHeight ? styles.lineHeight : elementOldStyles.lineHeight,
-                fontFamily: styles.fontFamily ? styles.fontFamily : elementOldStyles.fontFamily,
-                color: styles.color ? styles.color : elementOldStyles.color,
-                textAlign: styles.textAlign ? styles.textAlign : elementOldStyles.textAlign,
-            }
-
-            let computedStyles = ''
-
-            Object.keys(styles).forEach(key => {
-                let value = styles[key]
-                if(value != undefined && value != '' && value != null) {
-                    computedStyles += ` ${key}: ${styles[key]} !important; `
-                }
-            })
-
-            console.log(computedStyles)
-
+            const computedStyles = getComputedStyle(styles, elementOldStyles)
             pages.value[activePage.value].elements[itemIndex].attributes.style = computedStyles
+
         }
 
         const updateElementValue = ({ item = 'textarea', index, value }) => {
@@ -792,7 +718,6 @@ export default {
             }
             updateElementStyles(id, unref(itemAttributes), getStylesOfElement(domElem))
             openPopup.value = false
-            console.log(id, unref(itemAttributes), unref(textValue))
         }
 
         const generateTextarea = () => {
@@ -916,7 +841,8 @@ export default {
                     }
                 },
             ])
-            templates.value.length ? activeTemplate.value = templates.value[0]?.id : -1 
+            templates.value.length ? activeTemplate.value = templates.value[0]?.id : -1
+            return Promise.resolve() 
         }
 
         const openUpdatePopup = (element) => {
@@ -925,15 +851,19 @@ export default {
             activeItem.value = null
         }
 
-        watch(() => page.value, () => {
+        watch(page, () => {
             activeItem.value = null
         })
 
+        watch(activeTemplate, (value) => {
+            if(value) assignTemplateToActivePage(value)
+        })
+
         onMounted(() => {
-            nextTick(() => {
+            nextTick(async () => {
                 showcontainer.value = true
+                await fetchTemplates()
                 loadPages()
-                fetchTemplates()
             })
         })
       
@@ -948,9 +878,9 @@ export default {
             template,
             templates,
             openPopup,
-            assignPage,
             activePage,
             submitPage,
+            deletePage,
             activeItem,
             activateItem,
             showcontainer,
@@ -958,15 +888,15 @@ export default {
             generateImage,
             formattedPages,
             activeElement,
-            assignTemplate,
             generateButton,
             activeTemplate,
             openUpdatePopup,
             generateTextarea,
-            toggleActiveItem,
-            formattedTemplated,
+            activePageTemplate,
+            formattedTemplates,
             updateElementValue,
-            updateElementFromPopup
+            updateElementFromPopup,
+            assignTemplateToActivePage,
         }
     },
 }
@@ -979,6 +909,10 @@ $orange: orange;
 
 .cursor-move {
     cursor: move;
+}
+
+.not-allowed {
+    cursor: not-allowed;
 }
 
 .pointer {
@@ -1040,8 +974,8 @@ $orange: orange;
             width: auto;
             height: auto;
             object-fit: cover;
-            max-height: 25rem;
-            max-width: 25rem;
+            width: 25rem;
+            height: 25rem;
             border: 3px solid $orange;
         }
         span {
@@ -1100,10 +1034,8 @@ $orange: orange;
         min-width: 350px;
         min-height: 50px;
         float: right;
-        resize: none !important;
         border: 1px solid #ccc;
         z-index: 99999;
-        max-width: 400px;
         word-wrap: normal;
         &::before,
         &::after {
@@ -1239,7 +1171,7 @@ $orange: orange;
     }
 
     .breadcrumb {
-        margin-top: 7rem;
+        margin-top: 3rem;
         &-title {
             font-family: Mulish;
             font-style: normal;
@@ -1330,10 +1262,10 @@ $orange: orange;
     }
 
     .prestations-section {
-        margin-bottom: 10rem;
+        margin-bottom: 4rem;
         .title-section {
-            margin-top: 4.34rem;
-            margin-bottom: 6.593rem;
+            margin-top: 3rem;
+            margin-bottom: 3rem;
 
             .icon {
                 background: #ECEAFE;
