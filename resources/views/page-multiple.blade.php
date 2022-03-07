@@ -103,12 +103,23 @@
         .template-body {
             margin-top: 6.75rem;
         }
+        .template-body span {
+            word-break: break-all !important;
+        }
         .template-body img {
             width: auto;
             height: auto;
             object-fit: cover;
-            max-height: 25rem;
-            max-width: 25rem;
+            width: 25rem;
+            height: 25rem;
+            border: 3px solid orange;
+            position: absolute;
+        }
+
+        .template-body .svg {
+            width: 20px;
+            height: 30px;
+            border: none;
         }
 
         .draggable {
@@ -138,19 +149,16 @@
         }
 
         .textarea {
-            position: absolute;
+            position: absolute !important;
             border: none;
             min-width: 350px;
             min-height: 50px;
             float: right;
-            resize: none !important;
             border: 1px solid #ccc;
             z-index: 99999;
-            word-break: break-all !important;
+            word-wrap: normal;
         }
-        .textarea span {
-            word-break: break-all !important;
-        }
+       
         .textarea::before,
         .textarea::after {
             float: none;
@@ -170,7 +178,7 @@
             <div class="template-header" style="max-height: 6rem; position: absolute; top: 0; left: 0">
                 <img 
                     v-if="templates.length"
-                    src="{{ $template['template']['header'] }}" 
+                    src="{{ $builder::get_active_template($page->template_id)['template']['header'] }}" 
                     alt="Template header"
                     style="width: 90%; height: 6rem;"  
                 >
@@ -190,8 +198,8 @@
         
                     @if (strtolower($element->name) == 'textarea')
                         <div 
-                        class="{{ $element->attributes->class }} textarea" 
-                        style="{{ $element->attributes->style ?? '' }}"
+                        class="{{ $element->attributes->class }}" 
+                        style="{{ $element->attributes->style ?? '' }} position: absolute;"
                         >{!! $element->content ?? '' !!}
                         </div>
                     @endif
@@ -203,23 +211,16 @@
                             $src = 'data:image/svg+xml;base64,' . base64_encode($name);
                         ?>
                         <img 
-                            class="{{ $element->attributes->class ?? 'draggable' }}"
+                            class="{{ $element->attributes->class ?? 'draggable' }} svg"
                             src="{{ $src }}" 
                             style="{{ $element->attributes->style ?? '' }}" 
                         /> 
                     @endif    
             
                     @if (strtolower($element->name) == 'img')
-                        <?php 
-                            $src = request()->file("Img#".$element->attributes->id)->store('pdf-images', 'public');
-                            $path = public_path('\/storage/' . $src);
-                            $extenstion = pathinfo($path, PATHINFO_EXTENSION);
-                            $data = file_get_contents($path);
-                            $image = 'data:image/' . $extenstion . ';base64,' . base64_encode($data);
-                        ?>
                         <img 
                             class="{{ $element->attributes->class ?? 'draggable' }}"
-                            src="{{ $image }}" 
+                            src="{{ $builder::convert_resource_file("Img#".$element->attributes->id) }}" 
                             style="{{ $element->attributes->style ?? '' }}" 
                         /> 
                     @endif    
@@ -230,8 +231,7 @@
         
             <div class="template-footer" style="max-height: 6rem; position: absolute; bottom: 0; left: 0">
                 <img 
-                    v-if="templates.length"
-                    src="{{ $template['template']['footer'] }}" 
+                    src="{{ $builder::get_active_template($page->template_id)['template']['footer'] }}" 
                     alt="Template footer"
                     style="width: 90%; max-height: 6rem;" 
                 >

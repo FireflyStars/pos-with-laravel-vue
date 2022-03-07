@@ -126,7 +126,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="attribute">
+                    <div class="attribute" v-if="!isTextarea">
                         <div>Color:</div>
                         <div class="d-flex align-items-center gap-1">
                             <input type="color" name="color" v-model="itemAttributes.color" style="width: 5rem">
@@ -140,6 +140,12 @@
                                 <option value="right">Right</option>
                                 <option value="center">Center</option>
                             </select>
+                        </div>
+                    </div>
+                    <div class="attribute">
+                        <div>Z-index:</div>
+                        <div class="d-flex align-items-center gap-1">
+                            <input type="text" name="zindex" v-model="itemAttributes.zIndex">
                         </div>
                     </div>
                 </div>
@@ -204,7 +210,7 @@ export default {
         const submit = () => {
             emit('update', { 
                 id: props.item.attributes.id, 
-                textValue: document.querySelector('.editable').innerHTML 
+                textValue: isTextarea.value ? document.querySelector('.editable').innerHTML : ''
             })
         }
 
