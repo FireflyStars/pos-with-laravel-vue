@@ -7,7 +7,7 @@
             <div class="container-fluid h-100 bg-color" v-if="showcontainer">
                 <main-header />
 
-                <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap reports-page" style="z-index:100" >
+                <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100" >
                     
                     <side-bar />
 
@@ -28,16 +28,8 @@
                                         </div>
 
                                         <div class="d-flex">
-                                            <BaseButton 
-                                                title="Sauvegarder" 
-                                                kind="success" 
-                                                classes="me-12 heading-buttons" 
-                                            />
-                                            <BaseButton 
-                                                title="pdf" 
-                                                kind="danger" 
-                                                class="text-uppercase heading-buttons heading-buttons-pdf" @click="submitPage" 
-                                            />
+                                            <BaseButton title="Sauvegarder" kind="success" class="me-12 heading-buttons" />
+                                            <BaseButton title="pdf" kind="danger" class="text-uppercase heading-buttons heading-buttons-pdf" @click="submitPage" />
                                         </div>
 
                                     </div>
@@ -107,7 +99,6 @@
 
 
                                         <div class="template-body">
-
                                             <div 
                                             v-for="(element, index) in page.elements" 
                                             :key="index"
@@ -121,11 +112,7 @@
                                                         'cursor-move': `#${element.attributes.id}` == activeItem 
                                                     }"
                                                 >
-                                                    <span 
-                                                        v-if="element.name =='textarea'" 
-                                                        v-html="element.content"
-                                                    >
-                                                    </span>
+                                                    <span v-if="element.name =='textarea'" v-html="element.content"></span>
                                                 </component>
 
                                             </div>
@@ -167,10 +154,59 @@
 
                                 <div class="right-page-container">  <!-- Right section -->
 
-                                    <adjouter-zone 
-                                        @generateElement="generateElement"
-                                        @promptImage="promptImage"
-                                    />
+                                    <div class="box-top-right d-flex align-items-center shadow-sm">
+
+                                        <div class="row m-0">
+
+                                            <div class="col">
+                                                <div>
+                                                    <Icon name="file" class="d-inline" />
+                                                    <p class="d-inline orange text-base">Ajouter Titre</p>
+                                                </div>
+                                                <div @click="generateTextarea" class="pointer" style="margin-top: 1rem">
+                                                    <Icon name="file" class="d-inline" />
+                                                    <p class="d-inline orange text-base">Ajouter Zone texts</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="col">
+                                                
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <Icon 
+                                                        class="library-item"
+                                                        name="arrow-top"
+                                                        @click="generateIcon($event, { id: 'Icon', name: 'arrow-top' })"
+                                                    />
+                                                    
+                                                    <Icon 
+                                                        class="library-item"
+                                                        name="egg"
+                                                        @click="generateIcon($event, { id: 'Icon', name: 'egg' })"
+                                                    />
+
+                                                    <Icon 
+                                                        class="library-item"
+                                                        name="plus-o"
+                                                        @click="generateIcon($event, { id: 'Icon', name: 'plus-o' })"
+                                                    />
+
+                                                    <p class="orange text-base">Ajouter Forme</p>
+                                                </div>
+
+                                                <BaseButton 
+                                                    style="margin-top: 1rem"
+                                                    title="Ajouter Image"
+                                                    class="image-button"
+                                                    @click.prevent="generateImage"
+                                                />            
+
+
+                                            </div>
+
+                                        </div>
+
+
+                                    </div><!--  box-top-right -->
                                                     
                                     <div class="box-bottom-right bg-white p-3 shadow-sm">
                                         
@@ -182,11 +218,7 @@
                                                         <p>Nom du client</p>
                                                         <h4>M. Marcus Pinnochio</h4>
                                                     </div>
-                                                    <Icon 
-                                                        name="circle-plus" 
-                                                        class="pointer" 
-                                                        @click.prevent="generateElement('textarea', { content: 'M. Marcus Pinnochio' })" 
-                                                    />
+                                                    <Icon name="circle-plus" class="pointer" />
                                                 </div>
                                             </div>
                                             <div class="col">
@@ -195,11 +227,7 @@
                                                         <p>Adresse du chantier</p>
                                                         <h4>43 Lower Sloane Street 31000 Toulouse</h4>
                                                     </div>
-                                                    <Icon 
-                                                        name="circle-plus" 
-                                                        class="pointer"
-                                                        @click.prevent="generateElement('textarea', { content: '43 Lower Sloane Street 31000 Toulouse' })"
-                                                    />
+                                                    <Icon name="circle-plus" class="pointer" />
                                                 </div>
                                             </div>
                                         </div>
@@ -208,11 +236,7 @@
                                             <div class="breadcrumb d-flex align-items-center gap-4">
                                                 <Icon name="house" />
                                                 <h4 class="breadcrumb-title">Batiment exa</h4>
-                                                <Icon 
-                                                    name="circle-plus" 
-                                                    class="align-self-start pointer"
-                                                    @click.prevent="generateElement('textarea', { content: 'BATIMENT EXA' })"
-                                                />
+                                                <Icon name="circle-plus" class="align-self-start pointer" />
                                             </div>
                                             
                                             <div class="row camping-section ml-2">
@@ -224,13 +248,7 @@
                                                     <h4>20 M, Nacelle 30M</h4>
                                                 </div>
                                                 <div class="col">
-                                                    <Icon 
-                                                        name="circle-plus" 
-                                                        class="pointer"
-                                                        @click.prevent="generateElement('textarea', {
-                                                            content: '20 M, Nacelle 30M'
-                                                        })"
-                                                    />
+                                                    <Icon name="circle-plus" class="pointer" />
                                                 </div>
                                             </div>
 
@@ -557,31 +575,26 @@
 
 <script>
 
-import { useStore } from 'vuex'
 import { onMounted, unref, ref, nextTick, computed, watch } from 'vue'
+import { useStore } from 'vuex'
 import { BUILDER_MODULE, SAVE_PAGE } from '../store/types/types'
 import Moveable from "vue3-moveable"
 import popup from '../components/reports/popup'
-import adjouterZone from '../components/reports/adjouter-zone'
-
 import useStyles from '../composables/reports/useStyles'
 import useHelpers from '../composables/useHelpers'
-import useElementsGenerator from '../composables/reports/useElementsGenerator'
 
 export default {
 
     components: {
-        popup,
         Moveable,
-        adjouterZone,
+        popup
     },
 
     setup() {
 
         const store = useStore()
-        const { generateId } = useHelpers()
         const { itemAttributes, getStylesOfElement, getComputedStyle } = useStyles()
-        const { generateTextarea, generateIcon, generateButton, generateImage } = useElementsGenerator()
+        const { generateId } = useHelpers()
 
         const pages = ref([])
         const activePage = ref(0)
@@ -707,17 +720,21 @@ export default {
             openPopup.value = false
         }
 
-        const generateElement = (name, attrs = {}) => {
-            const elementMapping = {
-                textarea: generateTextarea,
-                icon: generateIcon,
-                button: generateButton
-            }
-            const element = elementMapping[name](attrs)
-            pages.value[activePage.value].elements.push(element)
+        const generateTextarea = () => {
+            pages.value[activePage.value].elements.push({
+                item: 'div', //textarea
+                attributes: {
+                    class: 'draggable textarea',
+                    style: '',
+                    dataName: 'textarea',
+                    id: generateId(12),
+                },
+                content: '',
+                name: 'textarea'
+            })
         }
 
-        const promptImage = async () => {
+        const generateImage = async () => {
 
             let image = {}
             let filename = {}
@@ -727,14 +744,56 @@ export default {
 
             file.onchange = (e) => {
                 image = e.target.files[0]
+                console.log(image)
                 filename = URL.createObjectURL(image)
 
-                pages.value[activePage.value].elements.push(generateImage({ filename, image }))
+                pages.value[activePage.value].elements.push({
+                    item: 'img',
+                    attributes: {
+                        src: filename,
+                        alt:  image.name || 'Uploaded Image',
+                        class: 'draggable',
+                        style: '',
+                        dataName: 'img',
+                        id: generateId(12),
+                    },
+                    name: 'img',
+                    dataFile: image
+                })
                 
                 file.value = ''
 
             }
+        }
 
+        const generateButton = (e, { id, kind }) => {
+            pages.value[activePage.value].elements.push({ 
+                item: id,
+                attributes: {
+                    kind,
+                    title: 'Button',
+                    class: 'draggable',
+                    id: generateId(12),
+                    style: '',
+                    dataName: 'button'
+                },
+                name: 'button'
+            })
+        }
+        
+        const generateIcon = (e, { id, name }) => {
+            pages.value[activePage.value].elements.push({
+                item: id,
+                attributes: {
+                    name,
+                    class: 'draggable',
+                    id: generateId(12),
+                    style: '',
+                    dataName: 'svg',
+                    color: 'orange'
+                },
+                name: 'svg'
+            })
         }
 
         const getElementParent = (element, className = 'library-item') => {
@@ -823,14 +882,16 @@ export default {
             submitPage,
             deletePage,
             activeItem,
-            promptImage,
             activateItem,
             showcontainer,
-            generateElement,
+            generateIcon,
+            generateImage,
             formattedPages,
             activeElement,
+            generateButton,
             activeTemplate,
             openUpdatePopup,
+            generateTextarea,
             activePageTemplate,
             formattedTemplates,
             updateElementValue,
@@ -843,7 +904,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 $orange: orange;
+
+.cursor-move {
+    cursor: move;
+}
+
+.not-allowed {
+    cursor: not-allowed;
+}
+
+.pointer {
+    cursor: pointer;
+}
 
 .left-page-container {
     width: 55%;
@@ -853,8 +927,24 @@ $orange: orange;
     width: 45%;
 }
 
+.bg-color {
+    background: #E5E5E5;
+}
+
 .main-view {
     margin-top: 6rem;
+}
+
+.me-12 {
+    margin-right: .75rem;
+}
+
+.margin-bottom {
+    margin-bottom: 2.375rem;
+}
+
+.gap-half {
+    gap: 0.64rem;
 }
 
 .template {
@@ -901,7 +991,7 @@ $orange: orange;
     font-weight: bold;
     font-size: 12px;
     line-height: 23px;
-    color: #fff !important;
+    color: #FFFFFF;
     width: auto;
     border: none;
 }
@@ -990,6 +1080,44 @@ $orange: orange;
 
 .page-dropdown {
     margin-left: 2.06rem;
+}
+
+.orange {
+    color: #E8581B !important;
+}
+
+.text {
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 22px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 3px;
+    text-decoration: none;
+    color: #000000;
+    &-base {
+        font-family: Poppins;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 22px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 3px;
+        font-size: 16px;
+    }
+}
+
+
+.box-top-right {
+    background: #fff;
+    padding: 1rem;
+    .image-button {
+        background: rgba(168, 168, 168, 0.25);
+        border-radius: 10px;
+        border: 1px solid rgba(168, 168, 168, 0.25) !important;
+    }
 }
 
 .box-bottom-right {
@@ -1163,29 +1291,6 @@ $orange: orange;
 
 }
 
-
-.text {
-    font-family: Poppins;
-    font-style: normal;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 22px;
-    display: flex;
-    align-items: center;
-    margin-bottom: 3px;
-    text-decoration: none;
-    color: #000000;
-    &-base {
-        font-family: Poppins;
-        font-style: normal;
-        font-weight: 600;
-        line-height: 22px;
-        display: flex;
-        align-items: center;
-        margin-bottom: 3px;
-        font-size: 16px;
-    }
-}
 
 .black-box {
     background: #525252;
