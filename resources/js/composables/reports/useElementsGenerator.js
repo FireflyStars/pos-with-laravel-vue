@@ -9,7 +9,7 @@ export default function useElementsGenerator() {
         return {
             item: 'div',
             attributes: {
-                class: 'draggable textarea',
+                class: `draggable textarea ${attributes.class || ''}`,
                 style: '',
                 dataName: 'textarea',
                 id: generateId(12),

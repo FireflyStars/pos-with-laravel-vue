@@ -18,8 +18,8 @@
         }
         main {
             position: relative;
-            width: 100%;
-            margin: 1rem 2rem;
+            width: 90%;
+            margin: 1rem auto;
             min-height: 45rem;
             max-height: 55rem;
         }
@@ -117,7 +117,7 @@
         }
 
         .template-body .svg {
-            width: 20px;
+            width: 35px;
             height: 30px;
             border: none;
         }
@@ -146,6 +146,9 @@
             font-size: 1.2rem;
             font-weight: 900;
             font-family: 'Almarai ExtraBold';
+            width: 100%;
+            display: flex;
+            align-items: center;
         }
 
         .textarea {
@@ -153,7 +156,6 @@
             border: none;
             min-width: 350px;
             min-height: 50px;
-            float: right;
             border: 1px solid #ccc;
             z-index: 99999;
             word-wrap: normal;
