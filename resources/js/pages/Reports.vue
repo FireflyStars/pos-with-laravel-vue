@@ -7,7 +7,9 @@
             <div class="container-fluid h-100 bg-color" v-if="showcontainer">
                 <main-header />
 
-                <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap reports-page" style="z-index:100" >
+                <div 
+                class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap reports-page" 
+                style="z-index:100" >
                     
                     <side-bar />
 
@@ -119,14 +121,24 @@
                                                     @click.stop="activateItem($event)"
                                                     @dblclick="openUpdatePopup(element)" 
                                                     :class="{ 
-                                                        'cursor-move': `#${element.attributes.id}` == activeItem 
+                                                        'active-item': `#${element.attributes.id}` == activeItem 
                                                     }"
                                                 >
+
                                                     <span 
                                                         v-if="element.name =='textarea'" 
                                                         v-html="element.content"
                                                     >
                                                     </span>
+
+                                                    <span 
+                                                    class="close" 
+                                                    v-show="`#${element.attributes.id}` == activeItem"
+                                                    @click.prevent="deleteItem($event.target, element.attributes.id)"
+                                                    >
+                                                        &times;
+                                                    </span>
+
                                                 </component>
 
                                             </div>
@@ -176,7 +188,6 @@
                                     <box-bottom-right 
                                         @generateElement="generateElement"
                                     />
-
 
                                 </div>
 
@@ -301,6 +312,19 @@ export default {
             }
         }
 
+        const deleteItem = (elem, id) => {
+            const elementIndex = page.value.elements.findIndex(page => {
+                return page.attributes.id == id
+            })
+            if(elementIndex != -1) {
+                elem = getDomElementParent(elem, 'draggable')
+                elem.remove()
+                document.querySelector('.moveable').style.display = "none"
+                pages.value[activePage.value].elements.splice(elementIndex, 1)
+                activeItem.value = null
+            }
+        }
+
         const onDrag = ({ top, left, target }) => {
             updateElementStyles(target.id, { left, top }, getStylesOfElement(target))
         }
@@ -317,6 +341,14 @@ export default {
             let elem = e.target
             const dataName = elem.getAttribute('dataName')
             elem = dataName == 'svg' ? elem : getDomElementParent(e.target, 'draggable')
+
+            // let closeElement = elem.querySelector('.close')
+            // if(closeElement == null) {
+            //     closeElement = document.createElement('div')
+            //     closeElement.classList.add('close')
+            //     elem.appendChild(closeElement)
+            // }
+            // console.log(elem)
             const id = elem.getAttribute('id')
             activeItem.value = `#${id}`
             elem.blur()
@@ -458,6 +490,7 @@ export default {
             submitPage,
             deletePage,
             activeItem,
+            deleteItem,
             promptImage,
             activateItem,
             showcontainer,
@@ -478,7 +511,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 $orange: orange;
+
+.active-item {
+    cursor: move;
+}
 
 .title_h1 {
     font-family: Almarai;
@@ -562,6 +600,25 @@ $orange: orange;
     .draggable {
         z-index: 10;
         position: absolute;
+        .close {
+            position: absolute;
+            top: -100%;
+            left: 50%;
+            width: 1.2rem;
+            height: 1.2rem;
+            background: #000;
+            color: white;
+            transform: translate(-50%, -50%);
+            transform-origin: center;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            &:hover {
+                opacity: .8;
+            }
+        }
     }
 
     .transparent-button {
