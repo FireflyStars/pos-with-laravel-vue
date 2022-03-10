@@ -208,7 +208,7 @@
 
 import { useStore } from 'vuex'
 import { onMounted, unref, ref, nextTick, computed, watch } from 'vue'
-import { BUILDER_MODULE, SAVE_PAGE } from '../store/types/types'
+import { BUILDER_MODULE, SAVE_PAGE, GET_ORDER_DETAILS } from '../store/types/types'
 import Moveable from "vue3-moveable"
 import popup from '../components/reports/popup'
 import adjouterZone from '../components/reports/adjouter-zone'
@@ -294,6 +294,7 @@ export default {
                 elements: [],
                 template_id: activeTemplate.value || -1
             }]
+            return Promise.resolve()
         }
 
         const addPage = () => {
@@ -341,14 +342,6 @@ export default {
             let elem = e.target
             const dataName = elem.getAttribute('dataName')
             elem = dataName == 'svg' ? elem : getDomElementParent(e.target, 'draggable')
-
-            // let closeElement = elem.querySelector('.close')
-            // if(closeElement == null) {
-            //     closeElement = document.createElement('div')
-            //     closeElement.classList.add('close')
-            //     elem.appendChild(closeElement)
-            // }
-            // console.log(elem)
             const id = elem.getAttribute('id')
             activeItem.value = `#${id}`
             elem.blur()
@@ -459,6 +452,10 @@ export default {
             activeItem.value = null
         }
 
+        const getOrderDetails = () => {
+            return store.dispatch(`${BUILDER_MODULE}/${GET_ORDER_DETAILS}`)
+        }
+
         watch(page, () => {
             activeItem.value = null
         })
@@ -471,7 +468,8 @@ export default {
             nextTick(async () => {
                 showcontainer.value = true
                 await fetchTemplates()
-                loadPages()
+                await loadPages()
+                getOrderDetails()
             })
         })
       

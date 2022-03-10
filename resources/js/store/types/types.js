@@ -42,3 +42,4 @@ export const SET_TOGGLER_ITEM = 'SET_TOGGLER_ITEM' //mutations
 export const BUILDER_MODULE = 'BUILDER_MODULE'
 export const SAVE_PAGE = 'SAVE_PAGE'
 export const SAVE_PAGE_ELEMENTS = 'SAVE_PAGE_ELEMENTS'
+export const GET_ORDER_DETAILS = 'getOrderDetails'
