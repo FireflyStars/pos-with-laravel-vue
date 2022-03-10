@@ -145,6 +145,17 @@
         <path fill-rule="evenodd" clip-rule="evenodd" d="M5.5 0.625C5.91421 0.625 6.25 0.960786 6.25 1.375V2.375H14.75V1.375C14.75 0.960786 15.0858 0.625 15.5 0.625C15.9142 0.625 16.25 0.960786 16.25 1.375V2.375H17.5C19.1569 2.375 20.5 3.71815 20.5 5.375V17.375C20.5 19.0319 19.1569 20.375 17.5 20.375H3.5C1.84315 20.375 0.5 19.0319 0.5 17.375V5.375C0.5 3.71815 1.84315 2.375 3.5 2.375H4.75V1.375C4.75 0.960786 5.08579 0.625 5.5 0.625ZM14.75 3.875V5.375C14.75 5.78921 15.0858 6.125 15.5 6.125C15.9142 6.125 16.25 5.78921 16.25 5.375V3.875H17.5C18.3284 3.875 19 4.54657 19 5.375V8.625H2V5.375C2 4.54657 2.67157 3.875 3.5 3.875H4.75V5.375C4.75 5.78921 5.08579 6.125 5.5 6.125C5.91421 6.125 6.25 5.78921 6.25 5.375V3.875H14.75ZM2 10.125V17.375C2 18.2034 2.67157 18.875 3.5 18.875H17.5C18.3284 18.875 19 18.2034 19 17.375V10.125H2Z" :fill="$attrs.color || '#5531FB'" />
     </svg>
 
+
+    <svg v-else-if="name == 'grid' || name == 'rectangle-grid'" 
+    :width="$attrs.width || 25" :height="$attrs.height || 21" viewBox="0 0 25 21" fill="none" xmlns="http://www.w3.org/2000/svg" v-bind="$attrs">
+        <path d="M13 20V1" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M24 20V1" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M1 20V1" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="1" y1="20.5" x2="24" y2="20.5" stroke="black" />
+        <line x1="1" y1="0.5" x2="24" y2="0.5" stroke="black" />
+        <line x1="1" y1="10.5" x2="24" y2="10.5" stroke="black" />
+    </svg>
+
         
     <img 
         v-else-if="name == 'brush'"

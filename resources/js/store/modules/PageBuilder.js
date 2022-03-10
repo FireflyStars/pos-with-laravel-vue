@@ -1,4 +1,4 @@
-import { SAVE_PAGE, SAVE_PAGE_ELEMENTS } from "../types/types"
+import { SAVE_PAGE, SAVE_PAGE_ELEMENTS, GET_ORDER_DETAILS } from "../types/types"
 import { unref } from 'vue'
 
 export const PageBuilder = {
@@ -55,6 +55,11 @@ export const PageBuilder = {
                 throw e
             }
 
+        },
+
+        async [GET_ORDER_DETAILS]() {
+            const { data } = await axios.get(`get-page-order/${1}`)
+            console.log(data)
         }
 
     }

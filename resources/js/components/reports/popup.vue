@@ -1,19 +1,19 @@
 <template>
-    <div class="popup">
+    <div class="popup almarai_bold_normal">
         <span @click.prevent="close" class="close">&times;</span>
         <div class="popup-header">
-            <h5 class="h5">Update Zone</h5>
+            <h4 class="popup-header-title">Update Zone</h4>
         </div>
-        <div class="popup-body">
+        <div class="popup-body almarai_regular_normal">
             <form @submit.prevent="submit">
 
                 <div class="popup-body-item">
                     
-                    <p class="label h6">Item:</p>
+                    <p class="label">Item:</p>
 
                     <div class="item">
 
-                        <div class="d-flex align-items-center gap-2" v-if="isTextarea">
+                        <div class="d-flex gap-2" v-if="isTextarea">
                             
                             <div>
                                 <label for="">Size</label>
@@ -181,24 +181,24 @@ export default {
         const { itemAttributes, loadDefaultStyles } = useStyles()
         const textValue = ref('')
         const actions = [
-            'brush', 
-            'undo', 
-            'redo', 
-            'foramtting', 
-            'bold', 
-            'italic', 
-            'underline', 
-            'justifyleft', 
-            'justifycenter', 
-            'justifyright',
-            'insertorderedlist',
-            'insertunorderedlist',
-            'blockquote',
-            'outdent',
-            'indent',
             'cut',
             'copy',
+            'undo', 
+            'redo', 
+            'bold', 
             'paste',
+            'brush', 
+            'indent',
+            'italic', 
+            'outdent',
+            'underline', 
+            'foramtting', 
+            'justifyleft', 
+            'blockquote',
+            'justifyright',
+            'justifycenter', 
+            'insertorderedlist',
+            'insertunorderedlist',
         ]
 
         const isTextarea = computed(() => props.item.name == 'textarea')
@@ -246,14 +246,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .popup {
-    background: #E5E5E5;
+    
+    background: #EEEEEE;
     box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 8%) !important;
     z-index: 999999;
-    width: 22rem;
+    width: 24rem;
     min-height: 25rem;
-    font-family: Mullish, sans-serif;
     position: relative;
+    line-height: 47px;
+    padding: 1rem;
+
     .close {
         color: white;
         font-weight: bold;
@@ -276,9 +280,22 @@ export default {
             opacity: .8;
         }
     }
+
     &-header {
         padding: 1rem;
+        &-title {
+            margin-bottom: 0.861rem;
+            font-size: 1rem;
+            line-height: 140%;
+            color: #47454B;
+            font-family: inherit;
+            font-weight: bold;
+            line-height: 140%;
+            text-transform: capitalize;
+            line-height: 22.4px;
+        }
     }
+
     &-body {
         padding: 1rem;
         width: 100%;
@@ -291,11 +308,19 @@ export default {
         &-item {
             display: grid;
             align-content: center;
-            grid-template-columns: 15% 85%;
+            grid-template-columns: 17% 83%;
             gap: 1rem;
             border-bottom: 1px solid #ccc;
             margin: 0 0 1rem 0;
             padding-bottom: .5rem;
+
+            font-size: 16px;
+            line-height: 20px;
+            color: #868686;
+            text-transform: capitalize;
+            font-weight: 700;
+            letter-spacing: 1px;
+
             .item {
                 flex-grow: 1;
                 label {
@@ -317,26 +342,36 @@ export default {
                 display: grid;
                 justify-items: flex-start;
                 align-content: center;
-                grid-template-columns: 15% 85%;
+                grid-template-columns: 17% 83%;
                 gap: 1rem;
                 margin: .4rem 0;
+                font-size: 16px;
+                line-height: 20px;
+                color: #868686;
+                text-transform: capitalize;
+                font-weight: 700;
+                letter-spacing: 1px;
                 .unit {
                     font-size: 12px;
                 } 
             }
         }
     }
+
     textarea {
         height: 4rem;
         width: 95%;
         resize: none;
     }
+
     .attribute input {
         box-sizing: border-box;
         width: 30%;
     }
+
     select {
         width: 100%;
     }
+    
 }
 </style>
