@@ -32,10 +32,10 @@ class PageElementsController extends Controller
             $order->load([
                 'customer',
                 'customer.addresses',
-                'orderOuvrages',
                 'orderZones',
                 'orderZones.gedDetails',
                 'orderZones.gedDetails.gedCategory',
+                'orderZones.gedDetails.orderOuvrage',
                 'orderZones.orderZoneComments',
                 'events',
             ])
