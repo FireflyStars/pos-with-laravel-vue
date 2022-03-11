@@ -29,14 +29,16 @@ class PageElementsController extends Controller
     public function get_page_order(Order $order) 
     {
         return response()->json(
-            $order->load(
+            $order->load([
+                'customer',
+                'customer.addresses',
+                'orderOuvrages',
                 'orderZones',
                 'orderZones.gedDetails',
                 'orderZones.gedDetails.gedCategory',
-                'events', 
-                'events.customer', 
-                'events.address'
-            )
+                'orderZones.orderZoneComments',
+                'events',
+            ])
         );
     }
 
