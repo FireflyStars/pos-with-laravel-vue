@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\reportsResource;
 use PDF;
 use App\Models\Order;
 use App\Models\page_builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class PageElementsController extends Controller
 {
@@ -28,17 +30,25 @@ class PageElementsController extends Controller
 
     public function get_page_order(Order $order) 
     {
+        // \DB::enableQueryLog(); 
+        // $order_data = $order->load([
+            // 'customer',
+            // 'customer.addresses',
+            // 'orderZones',
+            // 'orderZones.orderOuvrage',
+            // 'orderZones.orderOuvrage.orderCategory',
+            // 'orderZones.moyenacces',
+            // 'orderZones.orderZoneComments',
+            // 'orderZones.gedDetails',
+            // 'orderZones.gedDetails.gedCategory',
+        // ]);
+
+        // dd(\DB::getQueryLog());
+
+        // return $order_data;
+        
         return response()->json(
-            $order->load([
-                'customer',
-                'customer.addresses',
-                'orderZones',
-                'orderZones.gedDetails',
-                'orderZones.gedDetails.gedCategory',
-                'orderZones.gedDetails.orderOuvrage',
-                'orderZones.orderZoneComments',
-                'events',
-            ])
+            new reportsResource($order)
         );
     }
 

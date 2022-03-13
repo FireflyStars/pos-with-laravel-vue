@@ -8,12 +8,14 @@
                     <div class="thumbnail"></div>
                     <div class="title-section">
                         <p>Nom du client</p>
-                        <h4>M. Marcus Pinnochio</h4>
+                        <h4>{{ order?.customer?.firstname || 'Name' }}</h4>
                     </div>
                     <Icon 
                         name="circle-plus" 
                         class="pointer" 
-                        @click.prevent="generateElement('textarea', { content: 'M. Marcus Pinnochio' })" 
+                        @click.prevent="generateElement('textarea', { 
+                            content: order?.customer?.firstname || 'Name'
+                        })" 
                     />
                 </div>
             </div>
@@ -21,178 +23,235 @@
                 <div class="d-flex gap-2 align-items-center">
                     <div class="title-section title-section-right">
                         <p>Adresse du chantier</p>
-                        <h4>43 Lower Sloane Street 31000 Toulouse</h4>
+                        <h4>{{ order?.customer?.address?.address1 || 'Address' }}</h4>
                     </div>
                     <Icon 
                         name="circle-plus" 
                         class="pointer"
-                        @click.prevent="generateElement('textarea', { content: '43 Lower Sloane Street 31000 Toulouse' })"
-                    />
-                </div>
-            </div>
-        </div>
-
-        <div class="breadcrumb-section">
-            <div class="breadcrumb d-flex align-items-center gap-4">
-                <Icon name="house" />
-                <h4 class="breadcrumb-title">Batiment exa</h4>
-                <Icon 
-                    name="circle-plus" 
-                    class="align-self-start pointer"
-                    @click.prevent="generateElement('textarea', { 
-                        content: '<strong>BATIMENT << EXA >></strong>' 
-                    })"
-                />
-            </div>
-            
-            <div class="row camping-section ml-2">
-                <div class="col d-flex gap-3 p-0">
-                    <Icon name="camping" />
-                    <p class="text-base orange">Acces tolture</p>
-                </div>
-                <div class="col">
-                    <h4>20 M, Nacelle 30M</h4>
-                </div>
-                <div class="col">
-                    <Icon 
-                        name="circle-plus" 
-                        class="pointer"
-                        @click.prevent="generateElement('textarea', {
-                            content: '20 M, Nacelle 30M'
+                        @click.prevent="generateElement('textarea', { 
+                            content: order?.customer?.address?.address1 || 'Address'
                         })"
                     />
                 </div>
             </div>
-
-
-            <div class="image-grid-section ml-2">
-                <div class="d-flex align-items-center gap-2" style="margin-bottom: 1.31rem">
-                    <Icon name="camera" />
-                    <h4 class="text-base orange">Environment</h4>
-                </div>
-
-                <div class="d-flex gap-2">
-                    <div class="black-box" v-for="n in 4" :key="n"></div>
-                    
-                    <div class="ml-5 d-flex gap-2 align-items-start">
-                        <div class="d-none">
-                            <input type="file" id="file" accept="image/*">
-                        </div>
-                        <p class="m-0">Attention grosse poutre en haut</p>
-                        <Icon name="plus-circle" class="mt-2 pointer" />
-                    </div>
-                </div>    
-
-            </div>
-
-
-            <div class="image-grid-section ml-2">
-                <div class="d-flex align-items-center gap-2" style="margin-bottom: 1.31rem">
-                    <Icon name="camera" />
-                    <h4 class="text-base orange">Vue interieure</h4>
-                </div>
-
-                <div class="d-flex gap-2">
-                    <div class="black-box" v-for="n in 4" :key="n"></div>
-                
-                    <div class="ml-5 d-flex gap-2 align-items-start">
-                        <p class="m-0">Attention grosse poutre en haut</p>
-                        <Icon name="plus-circle" class="mt-2 pointer" />
-                    </div>
-                </div>    
-
-            </div>  
-
-
-            <div class="image-grid-section ml-2">
-                <div class="d-flex align-items-center gap-2" style="margin-bottom: 1.31rem">
-                    <Icon name="camera" />
-                    <h4 class="text-base orange">Vue Exterieure</h4>
-                </div>
-
-                <div class="d-flex gap-2">
-                    <div class="black-box" v-for="n in 4" :key="n"></div>
-                
-                    <div class="ml-5 d-flex gap-2 align-items-start">
-                        <p class="m-0">Attention grosse poutre en haut</p>
-                        <Icon name="plus-circle" class="mt-2 pointer" />
-                    </div>
-                </div>    
-
-            </div>   
-
-
-            <div class="image-grid-section ml-2">
-                <div class="d-flex align-items-center gap-2" style="margin-bottom: 1.31rem">
-                    <Icon name="camera" />
-                    <h4 class="text-base orange">Metre</h4>
-                </div>
-
-                <div class="d-flex gap-2">
-                    <div class="black-box" v-for="n in 4" :key="n"></div>
-                
-                    <div class="ml-5 d-flex gap-2 align-items-start">
-                        <p class="m-0">Attention grosse poutre en haut</p>
-                        <Icon name="plus-circle" class="mt-2 pointer" />
-                    </div>
-                </div>    
-
-            </div>                  
-
-
-
-        </div><!-- breadcrumb-section -->
-
-
-        <div class="installation-section">
-
-            <div class="title-section d-flex align-items-center gap-4" style="margin-bottom: 1.31rem">
-                <div class="icon">
-                    <Icon name="marker" />
-                </div>
-                <h4 class="title">Installation</h4>
-            </div>
-
-
-            <div class="installation-section-content">
-                
-                <h4 class="text-base orange main-title">Ouvrage A</h4>
-
-                <div class="main-body row m-0">
-                    <h4 
-                    class="text-base orange text-uppercase col-6 d-flex justify-content-center" 
-                    style="margin-bottom: .56rem">
-                        Avant
-                    </h4>
-
-                    <div class="col"></div>
-
-                    <div class="d-flex gap-2 col">
-                        <div class="black-box" v-for="n in 4" :key="n"></div>
-                    </div>    
-                </div>
-
-                <div class="main-body row mx-0" style="margin-top: 1.75rem">
-                    <h4 
-                    class="text-base orange text-uppercase col-6 d-flex justify-content-center" 
-                    style="margin-bottom: .56rem">
-                        apres
-                    </h4>
-
-                    <div class="col"></div>
-
-                    <div class="d-flex gap-2 col">
-                        <div class="black-box" v-for="n in 4" :key="n"></div>
-                    </div>    
-                </div>
-                
-            </div>
-
-
         </div>
 
+        <template v-if="'id' in order && order?.orderZones?.length">
 
-        <div class="security-section">
+            <div 
+                class="breadcrumb-section"
+                v-for="zone in order.orderZones"
+                :key="zone.id"
+            >
+
+                <div class="breadcrumb d-flex align-items-center gap-4">
+                    <Icon name="house" />
+                    <h4 class="breadcrumb-title">{{ zone.name }}</h4>
+                    <Icon 
+                        name="circle-plus" 
+                        class="align-self-start pointer"
+                        @click.prevent="generateElement('textarea', { 
+                            content: `<strong>${ zone.name }</strong>` 
+                        })"
+                    />
+                </div>
+                
+                <div class="row camping-section ml-2">
+                    <div class="col d-flex gap-3 p-0">
+                        <Icon name="camping" />
+                        <p class="text-base orange">Acces tolture</p>
+                    </div>
+                    <div class="col">
+                        <h4>20 M, Nacelle 30M</h4>
+                    </div>
+                    <div class="col">
+                        <Icon 
+                            name="circle-plus" 
+                            class="pointer"
+                            @click.prevent="generateElement('textarea', {
+                                content: '20 M, Nacelle 30M'
+                            })"
+                        />
+                    </div>
+                </div>
+
+                <template v-if="zone?.gedDetails">
+
+                    <div class="image-grid-section ml-2" 
+                    v-for="(gedDetail, category) in zone.gedDetails"
+                    :key="gedDetail.id"
+                    >
+                        <div class="d-flex align-items-center gap-2" style="margin-bottom: 1.31rem">
+                            <Icon name="camera" />
+                            <h4 class="text-base orange">{{ category }}</h4>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <div class="black-box" v-for="n in 4" :key="n"></div>
+                            
+                            <div class="ml-5 d-flex gap-2 align-items-start">
+                                <div class="d-none">
+                                    <input type="file" id="file" accept="image/*">
+                                </div>
+                                <p class="m-0">Attention grosse poutre en haut</p>
+                                <Icon name="plus-circle" class="mt-2 pointer" />
+                            </div>
+                        </div>    
+
+                    </div>
+
+                </template>
+
+                <!-- <div class="image-grid-section ml-2">
+                    <div class="d-flex align-items-center gap-2" style="margin-bottom: 1.31rem">
+                        <Icon name="camera" />
+                        <h4 class="text-base orange">Vue interieure</h4>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <div class="black-box" v-for="n in 4" :key="n"></div>
+                    
+                        <div class="ml-5 d-flex gap-2 align-items-start">
+                            <p class="m-0">Attention grosse poutre en haut</p>
+                            <Icon name="plus-circle" class="mt-2 pointer" />
+                        </div>
+                    </div>    
+
+                </div>  
+
+
+                <div class="image-grid-section ml-2">
+                    <div class="d-flex align-items-center gap-2" style="margin-bottom: 1.31rem">
+                        <Icon name="camera" />
+                        <h4 class="text-base orange">Vue Exterieure</h4>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <div class="black-box" v-for="n in 4" :key="n"></div>
+                    
+                        <div class="ml-5 d-flex gap-2 align-items-start">
+                            <p class="m-0">Attention grosse poutre en haut</p>
+                            <Icon name="plus-circle" class="mt-2 pointer" />
+                        </div>
+                    </div>    
+
+                </div>   
+
+
+                <div class="image-grid-section ml-2">
+                    <div class="d-flex align-items-center gap-2" style="margin-bottom: 1.31rem">
+                        <Icon name="camera" />
+                        <h4 class="text-base orange">Metre</h4>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <div class="black-box" v-for="n in 4" :key="n"></div>
+                    
+                        <div class="ml-5 d-flex gap-2 align-items-start">
+                            <p class="m-0">Attention grosse poutre en haut</p>
+                            <Icon name="plus-circle" class="mt-2 pointer" />
+                        </div>
+                    </div>    
+
+                </div>                   -->
+
+            </div><!-- breadcrumb-section -->
+
+        </template>
+
+        <template v-if="'id' in order && order.orderZoneComments?.length">
+
+            <div class="zone-comments-section">
+                
+                <div class="zone-comments-header d-flex align-items-center gap-4">
+                    <Icon name="house" />
+
+                    <h4 class="breadcrumb-title zone-comments-title">
+                        Orderzone Comments
+                    </h4>
+
+                </div>    
+
+                <div class="zone-comments-body"
+                    v-for="comment in order.orderZoneComments"
+                    :key="comment.id"
+                >
+                    <div class="d-flex align-items-center gap-4">
+                        <span>{{ comment.comment }}</span>
+                        <Icon 
+                            name="circle-plus" 
+                            class="pointer"
+                            @click.prevent="generateElement('textarea', { 
+                                content: comment.comment || 'Comment'
+                            })"
+                        />
+
+                    </div>
+                </div>
+
+            </div>
+            
+
+        </template>
+
+        <template v-if="'id' in order && order.orderOuvrages">
+            
+            <div 
+                :class="getCategoryClassName(category)" 
+                v-for="(ouvrage, category) in order.orderOuvrages" 
+                :key="category"
+            >
+
+                <div class="title-section d-flex align-items-center gap-4" style="margin-bottom: 1.31rem">
+                    <div class="icon">
+                        <Icon name="marker" />
+                    </div>
+                    <h4 class="title">{{ category }}</h4>
+                </div>
+
+
+                <div 
+                :class="getCategoryClassName(category) + '-content'">
+                    
+                    <h4 class="text-base orange main-title">{{ ouvrage.name }}</h4>
+
+                    <div class="main-body row m-0">
+                        <h4 
+                        class="text-base orange text-uppercase col-6 d-flex justify-content-center" 
+                        style="margin-bottom: .56rem">
+                            Avant
+                        </h4>
+
+                        <div class="col"></div>
+
+                        <div class="d-flex gap-2 col">
+                            <div class="black-box" v-for="n in 4" :key="n"></div>
+                        </div>    
+                    </div>
+
+                    <div class="main-body row mx-0" style="margin-top: 1.75rem">
+                        <h4 
+                        class="text-base orange text-uppercase col-6 d-flex justify-content-center" 
+                        style="margin-bottom: .56rem">
+                            apres
+                        </h4>
+
+                        <div class="col"></div>
+
+                        <div class="d-flex gap-2 col">
+                            <div class="black-box" v-for="n in 4" :key="n"></div>
+                        </div>    
+                    </div>
+                    
+                </div>
+
+
+            </div>
+
+        </template>
+
+
+        <!-- <div class="security-section">
 
             <div class="title-section d-flex align-items-center gap-4">
                 <div class="icon">
@@ -332,23 +391,43 @@
 
             </div>
 
-        </div>
+        </div> -->
 
     </div><!--  box-top-right -->
 
 </template>
 
 <script>
-export default {
 
+import { useStore } from 'vuex'
+import { computed } from 'vue'
+import { BUILDER_MODULE } from '../../store/types/types'
+
+export default {
+    name: 'report-order-resource',
     setup (_, { emit }) {
+
+        const store = useStore()
+
+        const order = computed(() => store.getters[`${BUILDER_MODULE}/order`])
+
+        const getCategoryClassName = (category) => {
+            const categories = {
+                installation: 'installation',
+                securite: 'securite',
+                prestation: 'prestation'
+            }
+            return category !='' ? `${categories[category.toLowerCase()]}-section` : ''
+        }
         
         const generateElement = (name, attributes) => {
             emit('generateElement', name, attributes)
         }
 
         return {
-            generateElement
+            order,
+            generateElement,
+            getCategoryClassName
         }
     }
 }
@@ -420,6 +499,17 @@ export default {
             margin-bottom: 0;
         }
 
+    }
+
+    .zone-comments-section {
+        margin-top: 2.75rem;
+        margin-bottom: 1.5rem;
+        .zone-comments-body {
+            margin-top: 1.125rem;
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
     }
 
     .camping-section,

@@ -2,10 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\GedDetail;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class GedCategory extends Model
 {
     use HasFactory;
+
+    public function getDetail() 
+    {
+        return $this->hasMany(GedDetail::class);
+    }
+
 }

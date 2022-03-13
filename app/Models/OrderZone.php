@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Moyenacces;
+use App\Models\OrderOuvrage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class OrderZone extends Model
 {
@@ -16,6 +18,11 @@ class OrderZone extends Model
        return $this->hasMany(GedDetail::class);
     }
 
+    public function moyenacces() 
+    {
+        return $this->belongsTo(Moyenacces::class);
+    }
+
     public function order(){
         return $this->belongsTo(Order::class);
     }
@@ -25,5 +32,9 @@ class OrderZone extends Model
     }
     public function orderZoneComments(){
         return $this->hasMany(OrderZoneComment::class);
-   }
+    }
+    public function orderOuvrage() 
+    {
+        return $this->hasMany(OrderOuvrage::class);
+    }
 }

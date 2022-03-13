@@ -166,7 +166,7 @@ import useStyles from '../../composables/reports/useStyles'
 
 
 export default {
-
+    name: 'popup',
     props: {
         item: {
             required: true,

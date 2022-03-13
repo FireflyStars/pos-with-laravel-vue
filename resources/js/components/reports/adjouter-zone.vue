@@ -84,7 +84,7 @@
 
 <script>
 export default {
-
+    name: 'adjouter-zone',
     emits: ['generateElement', 'promptImage'],
 
     setup (_, { emit }) {

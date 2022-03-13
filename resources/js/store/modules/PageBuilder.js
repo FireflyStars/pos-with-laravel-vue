@@ -1,4 +1,4 @@
-import { SAVE_PAGE, SAVE_PAGE_ELEMENTS, GET_ORDER_DETAILS } from "../types/types"
+import { SAVE_PAGE, SAVE_PAGE_ELEMENTS, GET_ORDER_DETAILS, SAVE_PAGE_ORDER } from "../types/types"
 import { unref } from 'vue'
 
 export const PageBuilder = {
@@ -6,14 +6,19 @@ export const PageBuilder = {
     state: {
         page: {
             elements: []
-        }
+        },
+        order: {}
     },
     getters: {
-        page: (state) => state.page
+        page: (state) => state.page,
+        order: (state) => state.order
     },
     mutations: {
         [SAVE_PAGE_ELEMENTS](state, elements) {
             state.page.elements = elements
+        },
+        [SAVE_PAGE_ORDER](state, order) {
+            state.order = order
         }
     },
     actions: {
@@ -57,9 +62,9 @@ export const PageBuilder = {
 
         },
 
-        async [GET_ORDER_DETAILS]() {
-            const { data } = await axios.get(`get-page-order/${1}`)
-            console.log(data)
+        async [GET_ORDER_DETAILS]({ commit }, orderId) {
+            const { data } = await axios.get(`get-page-order/${orderId}`)
+            commit(SAVE_PAGE_ORDER, data)
         }
 
     }

@@ -115,6 +115,7 @@
                                             v-for="(element, index) in page.elements" 
                                             :key="index"
                                             >
+
                                                 <component 
                                                     :is="element.item" 
                                                     v-bind="element.attributes"
@@ -138,7 +139,7 @@
                                                     >
                                                         &times;
                                                     </span>
-
+                                                    
                                                 </component>
 
                                             </div>
@@ -185,7 +186,7 @@
                                         @promptImage="promptImage"
                                     />
                                                     
-                                    <box-bottom-right 
+                                    <report-order-resources 
                                         @generateElement="generateElement"
                                     />
 
@@ -212,7 +213,7 @@ import { BUILDER_MODULE, SAVE_PAGE, GET_ORDER_DETAILS } from '../store/types/typ
 import Moveable from "vue3-moveable"
 import popup from '../components/reports/popup'
 import adjouterZone from '../components/reports/adjouter-zone'
-import boxBottomRight from '../components/reports/box-bottom-right'
+import reportOrderResources from '../components/reports/report-order-resources'
 
 import useStyles from '../composables/reports/useStyles'
 import useHelpers from '../composables/useHelpers'
@@ -224,7 +225,7 @@ export default {
         popup,
         Moveable,
         adjouterZone,
-        boxBottomRight
+        reportOrderResources
     },
 
     setup() {
@@ -397,7 +398,6 @@ export default {
                 pages.value[activePage.value].elements.push(generateImage({ filename, image }))
                 
                 file.value = ''
-
             }
 
         }
@@ -452,8 +452,8 @@ export default {
             activeItem.value = null
         }
 
-        const getOrderDetails = () => {
-            return store.dispatch(`${BUILDER_MODULE}/${GET_ORDER_DETAILS}`)
+        const getOrderDetails = (id) => {
+            return store.dispatch(`${BUILDER_MODULE}/${GET_ORDER_DETAILS}`, id)
         }
 
         watch(page, () => {
@@ -469,7 +469,7 @@ export default {
                 showcontainer.value = true
                 await fetchTemplates()
                 await loadPages()
-                getOrderDetails()
+                getOrderDetails(83)
             })
         })
       
@@ -606,12 +606,12 @@ $orange: orange;
             height: 1.2rem;
             background: #000;
             color: white;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -100%);
             transform-origin: center;
             border-radius: 50%;
             display: flex;
             justify-content: center;
-            align-items: center;
+            line-height: 1.08rem;
             cursor: pointer;
             &:hover {
                 opacity: .8;
