@@ -228,7 +228,14 @@ export default {
         reportOrderResources
     },
 
-    setup() {
+    props: {
+        id: {
+            required: true,
+            type: [Number, String]
+        }
+    },
+
+    setup(props) {
 
         const store = useStore()
         const { generateId, getDomElementParent } = useHelpers()
@@ -469,7 +476,8 @@ export default {
                 showcontainer.value = true
                 await fetchTemplates()
                 await loadPages()
-                getOrderDetails(83)
+                console.log(props.id)
+                getOrderDetails(props.id || 83)
             })
         })
       

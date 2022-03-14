@@ -63,7 +63,7 @@ export const PageBuilder = {
         },
 
         async [GET_ORDER_DETAILS]({ commit }, orderId) {
-            const { data } = await axios.get(`get-page-order/${orderId}`)
+            const { data } = await axios.get(`/get-page-order/${orderId}`)
             commit(SAVE_PAGE_ORDER, data)
         }
 

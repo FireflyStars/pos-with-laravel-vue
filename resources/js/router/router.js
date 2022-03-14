@@ -28,9 +28,10 @@ const router = createRouter({
 
         },
         {
-            path:'/reports',
+            path:'/reports/:id',
             name:'reports',
             component:()=> import('../pages/Reports'),
+            props: true,
             meta:{
                 authenticated:true
             },
