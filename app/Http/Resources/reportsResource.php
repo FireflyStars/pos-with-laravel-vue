@@ -7,12 +7,7 @@ use Illuminate\Support\Collection;
 
 class reportsResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
+    
     public function toArray($request)
     {
         return [
@@ -80,11 +75,13 @@ class reportsResource extends JsonResource
         }
         return $ouvrages->where('order_cat_id', $id)
         ->filter()
-        ->map(fn($ouvrage) => [
-            'id'   => $ouvrage->id,
-            'type' => $ouvrage->type,
-            'name' => $ouvrage->name
-        ]);
+        ->map(function($ouvrage) { 
+            return [
+                'id'   => $ouvrage->id,
+                'type' => $ouvrage->type,
+                'name' => $ouvrage->name
+            ];
+        });
     }
 
 
@@ -92,8 +89,8 @@ class reportsResource extends JsonResource
     {
         $formatted_orderzone_comments = [];
         $orderZoneComments = $orderZones
-                ->map(fn($item) => $item->orderZoneComments)
-                ->filter(fn($item) => $item->isNotEmpty());
+                ->map(function($item) { return $item->orderZoneComments; })
+                ->filter(function($item) { return $item->isNotEmpty(); });
         
         foreach($orderZoneComments as $comments) 
         {
@@ -109,16 +106,18 @@ class reportsResource extends JsonResource
 
     private function get_order_zones($orderZones) 
     {
-        return $orderZones->map(fn($zone) =>  [
-            'id' => $zone->id,
-            'latitude' => $zone->latitude,
-            'longitude' => $zone->longitude,
-            'description' => $zone->description,
-            'hauteur' => $zone->hauteur,
-            'name' => $zone->name,
-            'moyenacces' => $zone->moyenacces,
-            'gedDetails' => $this->get_formatted_ged_details($zone->gedDetails),
-        ]);
+        return $orderZones->map(function($zone) {  
+            return [
+                'id' => $zone->id,
+                'latitude' => $zone->latitude,
+                'longitude' => $zone->longitude,
+                'description' => $zone->description,
+                'hauteur' => $zone->hauteur,
+                'name' => $zone->name,
+                'moyenacces' => $zone->moyenacces,
+                'gedDetails' => $this->get_formatted_ged_details($zone->gedDetails),
+            ];
+        });
     }
 
     private function get_formatted_ged_details($details) 
@@ -142,27 +141,29 @@ class reportsResource extends JsonResource
     {
         return $details
         ->where('ged_category_id', $id)
-        ->map(fn($detail) => [
-            'id' => $detail->id,
-            'ged_id' => $detail->ged_id,
-            'order_zone_id' => $detail->order_zone_id,
-            'order_ouvrage_id' => $detail->order_ouvrage_id,
-            'user_id' => $detail->user_id,
-            'description' => $detail->description,
-            'file' => $detail->file,
-            'human_readable_filename' => $detail->human_readable_filename,
-            'storage_path' => $detail->storage_path,
-            'type' => $detail->type,
-            'longitude' => $detail->longitude,
-            'latitude' => $detail->latitude,
-            'timeline' => $detail->timeline,
-        ]);
+        ->map(function($detail) { 
+            return [
+                'id' => $detail->id,
+                'ged_id' => $detail->ged_id,
+                'order_zone_id' => $detail->order_zone_id,
+                'order_ouvrage_id' => $detail->order_ouvrage_id,
+                'user_id' => $detail->user_id,
+                'description' => $detail->description,
+                'file' => $detail->file,
+                'human_readable_filename' => $detail->human_readable_filename,
+                'storage_path' => $detail->storage_path,
+                'type' => $detail->type,
+                'longitude' => $detail->longitude,
+                'latitude' => $detail->latitude,
+                'timeline' => $detail->timeline,
+            ];
+        });
     }
 
     private function get_order_categories($zones) 
     {
         $ouvrage_categories = new Collection;
-        $order_ouvrages = $zones->map(fn($zone) => $zone->orderOuvrage);
+        $order_ouvrages = $zones->map(function($zone) { return $zone->orderOuvrage; });
         foreach($order_ouvrages as $ouvrages) 
         {
             foreach($ouvrages as $ouvrage) 
@@ -176,12 +177,14 @@ class reportsResource extends JsonResource
     private function get_ged_categories($ged_details) 
     {
         return $ged_details
-        ->map(fn($item) => $item->gedCategory)
-        ->filter(fn($item) => !is_null($item))
-        ->map(fn($item) => [
-            'id' => $item->id,
-            'name' => $item->name
-        ]);
+        ->map(function($item) { return $item->gedCategory; })
+        ->filter(function($item) { return !is_null($item); })
+        ->map(function($item) { 
+            return [
+                'id' => $item->id,
+                'name' => $item->name
+            ];
+        });
     }
 
 }
