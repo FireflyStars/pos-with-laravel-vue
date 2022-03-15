@@ -476,8 +476,7 @@ export default {
                 showcontainer.value = true
                 await fetchTemplates()
                 await loadPages()
-                console.log(props.id)
-                getOrderDetails(props.id || 83)
+                getOrderDetails(props.id)
             })
         })
       
