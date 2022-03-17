@@ -772,10 +772,7 @@ export default {
                 data: element,
                 data_old: element_old,
                 for_template: categ_id,
-                name:
-                    "compagne-" +
-                    Math.floor(Math.random() * (10000 - 1 + 1)) +
-                    1,
+              
                 count: parseInt(
                     document.getElementById("total_mails").innerText
                 ),
@@ -841,10 +838,7 @@ export default {
                 data: element,
                 data_old: element_old,
                 for_template: categ_id,
-                name:
-                    "compagne-" +
-                    Math.floor(Math.random() * (10000 - 1 + 1)) +
-                    1,
+           
                 count: parseInt(
                     document.getElementById("total_mails").innerText
                 ),

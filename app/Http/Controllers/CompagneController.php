@@ -13,7 +13,7 @@ use App\Models\CampagneCible;
 use App\Models\CampagneCibleStatuts;
 use App\Models\CustomerStatut;
 use App\Models\CustomerNaf;
-use App\Models\Campagnes;
+use App\Models\Campagne;
 use App\Models\Customer;
 use App\Models\Contact;
 use App\Models\User;
@@ -21,9 +21,13 @@ use App\Models\User;
 use App\Models\PDF;
 use Mail;
 use App\Mail\MyDemoMail;
+use App\Traits\Sarbacane;
 
 class CompagneController extends Controller
 {
+
+    use Sarbacane;
+
      private  $pdf;
     /**
      * Get campagnes for a specefic compagne
@@ -33,7 +37,7 @@ class CompagneController extends Controller
     public function getCampagnes()
     {
 
-        $campagnes = Campagnes::get();
+        $campagnes = Campagne::get();
 
         if($campagnes) {
             return response()->json([
@@ -244,6 +248,31 @@ class CompagneController extends Controller
             ], 400);
         }
     }
+
+
+         /**
+     * Get categories compagne
+     *  @param  string  $campagne_id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getCampagneCampagneCategory($campagne_id)
+    {
+
+        $campagne=Campagne::find($campagne_id);
+        if($campagne==null)
+         return response()->json('Campagne invalide', 509);
+
+         $campagne_category=CampagneCategory::find($campagne->campagne_category_id);
+
+         if($campagne_category==null)
+         return response()->json('Campagne category '.$campagne->campagne_category_id.' not found', 509);
+     
+            return response()->json([
+                'campagnesCategory' =>$campagne_category,
+            ]);
+      
+    }
+
 
      /**
      * Get ciblesum (somme des contacts de chaque selection & type)
@@ -466,11 +495,12 @@ class CompagneController extends Controller
     {
         $user = Auth::user();
       
-        $name = $request->name;
+   
         $campagne_category_id = $request->for_template;
 
 
         $campagne_category = CampagneCategory::find($campagne_category_id);
+        $name=$campagne_category->name.'-';
                                             
         if($campagne_category==null)
         return response('Campagne category id '.$campagne_category_id.' not found',509);
@@ -482,6 +512,7 @@ class CompagneController extends Controller
             'user_id' => $user->id,
             'affiliate_id' => $user->affiliate->id,
             'email_template_id' => intval($campagne_category->idapi),
+            'campagne_category_id'=>$campagne_category->id,
             'address' => null,
             'expediteur' => null,
             'phone' => null,
@@ -494,7 +525,9 @@ class CompagneController extends Controller
             'created_at' =>date("Y-m-d"),
             'updated_at' =>date("Y-m-d"),
         ]);
-
+        DB::table('campagnes')->where('id','=',$addCompagne)->update([
+            'name'=>$name.$addCompagne.'_'.date('Ymd')
+        ]);
         $GLOBALS = $addCompagne;
 
         for ($i=0; $i <count($request->data) ; $i++) {
@@ -615,7 +648,7 @@ class CompagneController extends Controller
     public function getCompgneCibleSelected($id)
     {
         $cibles = DB::table('campagne_cible')->where('campagne_id' ,"=", $id)
-                                            ->where('delete_at','=',NULL)
+                                            ->where('deleted_at','=',NULL)
                                             ->groupBy('industrie')
                                             ->groupBy('statut')
                                             ->get(
@@ -700,11 +733,11 @@ class CompagneController extends Controller
         $cmp = DB::table('campagne_cible')->where('id', $request->id)
         ->where('campagne_id', intval($request->campagne_id))
         ->update([
-                'delete_at' =>  date("Y-m-d"),
+                'deleted_at' =>  date("Y-m-d"),
         ]);
 
         $cible = DB::table('campagne_cible')->where('campagne_id',"=", $request->campagne_id)
-                                                ->where('delete_at',"=", NULL)->get();
+                                                ->where('deleted_at',"=", NULL)->get();
         $cmp = DB::table('campagnes')->where('id', intval($request->campagne_id))
         ->update([
             'nb' =>   $cible->count()
@@ -726,10 +759,10 @@ class CompagneController extends Controller
         $cmp = DB::table('campagne_cible')->where('id',  $request->id)
         ->where('campagne_id', intval($request->campagne_id))
         ->update([
-                'delete_at' =>  NULL,
+                'deleted_at' =>  NULL,
         ]);
         $cible = DB::table('campagne_cible')->where('campagne_id',"=", $request->campagne_id)
-                                                ->where('delete_at',"=", NULL)->get();
+                                                ->where('deleted_at',"=", NULL)->get();
         $cmp = DB::table('campagnes')->where('id', intval($request->campagne_id))
         ->update([
             'nb' =>   $cible->count()
@@ -1015,121 +1048,43 @@ class CompagneController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function insertdestinataire(Request $request , $id){
-        $user = auth()->user();
-        $number = date("Y-m-d H:i:s");
-        $name =  'Campagne_Test'. '_' .$number;
-        $listname =  'list_test'. '_' .$number;
-        $formatedDate = date("Y-m-d H:i:s"); //'2022-01-28T05:07:43.280Z'
-        // return $request->data;
-        //creation d'une compagne
-        //return $data;
-        $cible = $request->data;
-
-
-            $array_cible  =[
-                "email" => $request->email,
-                "Nom agence" => $request->input_agence,
-                "Tel agence" => $request->input_phone,
-                "E-mail agence" => $request->input_email
-                ] ;
-
-        $data = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-        ])->post('https://sarbacaneapis.com/v1/lists', [
-
-            "name"=>$listname
-        ]);
+ 
+        $test_contacts=$request->get('data');
+    
+        $campagne=Campagne::find($id);
+        $uid=uniqid();
+        $data = $this->sarbacane()->post('lists', ["name"=>str_replace(' ','_','List_contact_test'. '_' .$campagne->name.'_'.$uid)]);
         $id_list = $data['id'];
-        $data_champ_name = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [
+        //Permet d'ajouter un champ (une colonne) à une liste.
+        //Permet d'ajouter un contact à une liste.
+        $this->sarbacane()->addCampagneFieldsAndContacts($id_list,$id,$request->input_phone,$request->input_email,$test_contacts);
 
-                "kind" => 'STRING',
-                "caption" => 'Nom agence',
+        $template = CampagneCategory::find($campagne->campagne_category_id);
+        //Permet de créer une campagne E-mail
+        $send = $this->sarbacane()->post('campaigns/email', [
 
-        ]);
-        $data_champ_tel = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [
-
-                "kind" => 'STRING',
-                "caption" => 'Tel agence'
-
-        ]);
-        $data_champ_email = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [
-
-                "kind" => 'STRING',
-                "caption" => 'E-mail agence'
-
-        ]);
-        $send = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-        ])->post('https://sarbacaneapis.com/v1/campaigns/email', [
-
-                "name"=> $name,
+                "name"=>  $campagne->name.'_test_'.$uid,
                 "emailFrom"=>$request->emailFrom,
                 "aliasFrom"=> $request->emailFrom,
-                "emailReplyTo"=>$request->emailReplyTo,
-                "aliasReplyTo"=> $request->emailReplyTo,
+                "emailReplyTo"=>$request->emailFrom,
+                "aliasReplyTo"=> $request->emailFrom,
                 "subject"=> $request->subject,
-                "preheader"=> "Preheader",
-
+        
         ]);
 
-
-        $data_added = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/contacts',
-                $array_cible
-        );
-
-        $template = DB::table('campagne_category')->where('id',"=", $id)->get();
-        foreach ($template as $key => $code) {
-            $array_temp =$code->idapi;
-        };
-            //    return $data_added;
         if($send){
-            //ajout du model
-            $id= $send['id'] ;
-            $template = Http::withHeaders([
-                'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'])
-            ->post('https://sarbacaneapis.com/v1/campaigns/'.$id.'/content', [
-
-                    "templateId"=> $array_temp
-
-            ]);
-            $contact_list = Http::withHeaders([
-                'accountId'=> '61a62892e924e35ea3f5469e',
-                'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'])
-            ->post('https://sarbacaneapis.com/v1/campaigns/'.$id.'/list', [
-
-                    "listId"=> $id_list
-
-            ]);
+            $camp_id= $send['id'] ;
+             //Permet d'importer la copie d'un modèle dans la campagne.
+            $this->sarbacane()->post('campaigns/'.$camp_id.'/content', [ "templateId"=> $template->idapi]);
+            //Permet d'importer la copie d'une liste de contacts dans la campagne.
+            $contact_list = $this->sarbacane()->post('campaigns/'.$camp_id.'/list', ["listId"=> $id_list]);
         }
-
-        //envoi des compagnes
-
-        $daysent = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-            ])->post('https://sarbacaneapis.com/v1/campaigns/'.$id.'/send', [
-                    [
-                        "requestedSendDate"=> $formatedDate
-                ]
-            ]);
-
-        return $array_cible;
-
+        if ($contact_list) {
+            $camp_id= $send['id'] ;
+             //Permet d'envoyer (ou de programmer) une campagne.
+            $this->sarbacane()->post('campaigns/'.$camp_id.'/send');
+        }
+        return  response()->json('Envoi TEST campagne '.$campagne->name. ' réussie.');
     }
 
     /**
@@ -1168,7 +1123,7 @@ class CompagneController extends Controller
     //     $user = auth()->user();
     //     //get cible
     //     $cible = DB::table('campagne_cible')->where('campagne_id',"=", $id)
-    //                                         ->where('delete_at',"=", NULL)
+    //                                         ->where('deleted_at',"=", NULL)
     //                                         ->get();
     //     // return $cible;
     //     foreach ($cible as $key => $code) {
@@ -1241,128 +1196,79 @@ class CompagneController extends Controller
     //     return 'data added imme';
     // }
     /**
-     * send compagne deffirer
+     * envoi compagne differer
      * @param string $id
      * @param \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function envoiprogramme(Request $request , $id)
     {
-        $user = auth()->user();
-        $number = mt_rand(1000, 9999999);
-        $name =  'list_differed'. '_' .$number;
-        $data = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-        ])->post('https://sarbacaneapis.com/v1/lists', [
+        
+      if($request->date==""||$request->time==""){
+          return response()->json('Erreur envoi différé. Veuillez préciser la date et l\'heure.',509);
+      }
+        $campagne=Campagne::find($id);
+        $uid=uniqid();
+     
+        //Permet de créer une liste de contacts.
+        $data = $this->sarbacane()->post('lists', [ "name"=>str_replace(' ','_','List_contact_diff'. '_' .$campagne->name.'_'.$uid)]);
 
-            "name"=>$name
-        ]);
         $id_list = $data['id'];
-        $cible = DB::table('campagne_cible')->where('campagne_cible.campagne_id',"=", $id)->where('campagne_cible.delete_at',"=", NULL)->get();
+        //Permet d'ajouter un champ (une colonne) à une liste.
+        //Permet d'ajouter un contact à une liste.
+        $this->sarbacane()->addCampagneFieldsAndContacts($id_list,$id,$request->input_phone,$request->input_email);
+   /*
+        $cible = DB::table('campagne_cible')->where('campagne_cible.campagne_id',"=", $id)->where('campagne_cible.deleted_at',"=", NULL)->get();
 
-        foreach ($cible as $key => $code) {
+        /*foreach ($cible as $key => $code) {
             $array_cible[] =[
+                "Email_contact" => $code->email,
                 "email" => $code->email,
-                "Nom agence" => $request->input_agence,
-                "Tel agence" => $request->input_phone,
-                "E-mail agence" => $request->input_email
+                "Nom_agence" => $request->input_agence,
+                "Telephone_agence" => $request->input_phone,
+                "Email_agence" => $request->input_email
                 ] ;
         }
+        //Permet d'ajouter un champ (une colonne) à une liste.
+        $this->sarbacane()->post('lists/'.$id_list.'/fields', ["kind" => 'STRING',"caption" => 'Nom_agence']);
+        $this->sarbacane()->post('lists/'.$id_list.'/fields', ["kind" => 'STRING',"caption" => 'Telephone_agence']);
+        $this->sarbacane()->post('lists/'.$id_list.'/fields', ["kind" => 'STRING',"caption" => 'Email_agence']);
 
-        $data_champ_name = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [
-
-                "kind" => 'STRING',
-                "caption" => 'Nom agence',
-
-        ]);
-        $data_champ_tel = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [
-
-                "kind" => 'STRING',
-                "caption" => 'Tel agence'
-
-        ]);
-        $data_champ_email = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [
-
-                "kind" => 'STRING',
-                "caption" => 'E-mail agence'
-
-        ]);
         for($i=0; $i<count($array_cible); $i++) {
-        $data_added = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/contacts',
-                $array_cible[$i]
-        );
-        }
+            //Permet d'ajouter un contact à une liste.
+        $data_added = $this->sarbacane()->post('lists/'.$id_list.'/contacts', $array_cible[$i] );
+        }*/
 
-        $template = DB::table('campagne_category')->where('id',"=", $request->id_category)->get();
-        foreach ($template as $key => $code) {
-            $array_temp =$code->idapi;
-        };
-        foreach ($template as $key => $code) {
-            $array_name =$code->name.'-programmé-'.$number;
-        };
-        // $data_template = DB::table('email_template')->where('id',"=", $array_temp)->get();
-        // foreach ($data_template as $key => $code) {
-        //     $temp =$code->idapi;
-        // };
-        $send = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-        ])->post('https://sarbacaneapis.com/v1/campaigns/email', [
+        $template = CampagneCategory::find($campagne->campagne_category_id);
+        
+     
+       //Permet de créer une campagne E-mail
+        $send = $this->sarbacane()->post('campaigns/email', [
 
-                "name"=> $array_name,
+                "name"=> $campagne->name.'_diff_'.$uid,
                 "emailFrom"=>$request->emailFrom,
                 "aliasFrom"=> $request->emailFrom,
                 "emailReplyTo"=>$request->emailFrom,
                 "aliasReplyTo"=> $request->emailFrom,
                 "subject"=> $request->subject,
-                "preheader"=> "Preheader",
+        
         ]);
 
         if($send){
-            //ajout du model
             $camp_id= $send['id'] ;
-            $template_data = Http::withHeaders([
-                'accountId'=> '61a62892e924e35ea3f5469e',
-                'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'])
-            ->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/content', [
-
-                    "templateId"=> $array_temp
-
-            ]);
-            $contact_list = Http::withHeaders([
-                'accountId'=> '61a62892e924e35ea3f5469e',
-                'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'])
-            ->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/list', [
-
-                    "listId"=> $id_list
-
-            ]);
+            //Permet d'importer la copie d'un modèle dans la campagne.
+            $template_data = $this->sarbacane()->post('campaigns/'.$camp_id.'/content', [ "templateId"=> $template->idapi ]);
+            //Permet d'importer la copie d'une liste de contacts dans la campagne.
+            $contact_list = $this->sarbacane()->post('campaigns/'.$camp_id.'/list', [  "listId"=> $id_list ]);
         }
+        $formatedDate=Carbon::parse($request->date.' '.$request->time);
         if ($contact_list) {
+
             $camp_id= $send['id'] ;
-            $daysent = Http::withHeaders([
-                'accountId'=> '61a62892e924e35ea3f5469e',
-                'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-            ])->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/send', [
-                    [
-                        "requestedSendDate"=> $request->formatedDate
-                ]
-            ]);
+            //Permet d'envoyer (ou de programmer) une campagne.
+            $daysent = $this->sarbacane()->post('campaigns/'.$camp_id.'/send', [ "requestedSendDate"=> $formatedDate]);
         }
-        return  $request->formatedDate;
+        return  response()->json('Envoi différé de la campagne '.$campagne->name. ' réussie.');
 
     }
 
@@ -1376,7 +1282,7 @@ class CompagneController extends Controller
     public function getCount_cible($id)
     {
         $count_cible = DB::table('campagne_cible')->where('campagne_cible.campagne_id',"=", $id)
-                                                ->where('campagne_cible.delete_at',"=", NULL)->get();
+                                                ->where('campagne_cible.deleted_at',"=", NULL)->get();
 
         if($count_cible) {
 
@@ -1390,127 +1296,46 @@ class CompagneController extends Controller
         }
     }
     /**
-    * createdata
+    * envoi campagne immediat
      * @param string $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function createdata(Request $request, $id){
-        $user = auth()->user();
-        $number = mt_rand(1000, 9999999);
-        $name =  'list'. '_' .$number;
-        $data = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-        ])->post('https://sarbacaneapis.com/v1/lists', [
 
-            "name"=>$name
-        ]);
+        $campagne=Campagne::find($id);
+        $uid=uniqid();
+        $data = $this->sarbacane()->post('lists', ["name"=>str_replace(' ','_','List_contact_imme'. '_' .$campagne->name.'_'.$uid)]);
         $id_list = $data['id'];
-        $cible = DB::table('campagne_cible')->where('campagne_cible.campagne_id',"=", $id)->where('campagne_cible.delete_at',"=", NULL)->get();
+        //Permet d'ajouter un champ (une colonne) à une liste.
+        //Permet d'ajouter un contact à une liste.
+        $this->sarbacane()->addCampagneFieldsAndContacts($id_list,$id,$request->input_phone,$request->input_email);
 
-        foreach ($cible as $key => $code) {
-            $array_cible[] =[
-                "email" => $code->email,
-                "Nom agence" => $request->input_agence,
-                "Tel agence" => $request->input_phone,
-                "E-mail agence" => $request->input_email
-                ] ;
-        }
+        $template = CampagneCategory::find($campagne->campagne_category_id);
+        //Permet de créer une campagne E-mail
+        $send = $this->sarbacane()->post('campaigns/email', [
 
-        $data_champ_name = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [
-
-                "kind" => 'STRING',
-                "caption" => 'Nom agence',
-
-        ]);
-        $data_champ_tel = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [
-
-                "kind" => 'STRING',
-                "caption" => 'Tel agence'
-
-        ]);
-        $data_champ_email = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-        ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/fields', [
-
-                "kind" => 'STRING',
-                "caption" => 'E-mail agence'
-
-        ]);
-
-        for( $i=0; $i<count($array_cible); $i++ ) {
-            $data_added = Http::withHeaders([
-                'accountId'=> '61a62892e924e35ea3f5469e',
-                'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-            ])->post('https://sarbacaneapis.com/v1/lists/'.$id_list.'/contacts',
-                    $array_cible[$i]
-            );
-        }
-
-        $template = DB::table('campagne_category')->where('id',"=", $request->id_category)->get();
-        foreach ($template as $key => $code) {
-            $array_temp =$code->idapi;
-        };
-        foreach ($template as $key => $code) {
-            $array_name =$code->name.'-immédiat-'.$number;
-        };
-        // $data_template = DB::table('email_template')->where('id',"=", $array_temp)->get();
-        // foreach ($data_template as $key => $code) {
-        //     $temp =$code->idapi;
-        // };
-        $send = Http::withHeaders([
-            'accountId'=> '61a62892e924e35ea3f5469e',
-            'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-        ])->post('https://sarbacaneapis.com/v1/campaigns/email', [
-
-                "name"=> $array_name,
+                "name"=>  $campagne->name.'_imme_'.$uid,
                 "emailFrom"=>$request->emailFrom,
                 "aliasFrom"=> $request->emailFrom,
                 "emailReplyTo"=>$request->emailFrom,
                 "aliasReplyTo"=> $request->emailFrom,
                 "subject"=> $request->subject,
-                "preheader"=> "Preheader",
+        
         ]);
 
         if($send){
-            //ajout du model
             $camp_id= $send['id'] ;
-            $template_data = Http::withHeaders([
-                'accountId'=> '61a62892e924e35ea3f5469e',
-                'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'])
-            ->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/content', [
-
-                    "templateId"=> $array_temp
-
-            ]);
-            $contact_list = Http::withHeaders([
-                'accountId'=> '61a62892e924e35ea3f5469e',
-                'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'])
-            ->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/list', [
-
-                    "listId"=> $id_list
-
-            ]);
+             //Permet d'importer la copie d'un modèle dans la campagne.
+            $this->sarbacane()->post('campaigns/'.$camp_id.'/content', [ "templateId"=> $template->idapi]);
+            //Permet d'importer la copie d'une liste de contacts dans la campagne.
+            $contact_list = $this->sarbacane()->post('campaigns/'.$camp_id.'/list', ["listId"=> $id_list]);
         }
         if ($contact_list) {
             $camp_id= $send['id'] ;
-            $daysent = Http::withHeaders([
-                'accountId'=> '61a62892e924e35ea3f5469e',
-                'apiKey'=> 'gCdU9nAUQj6THBlujWyMvA'
-            ])->post('https://sarbacaneapis.com/v1/campaigns/'.$camp_id.'/send', [
-                    [
-                        "requestedSendDate"=> $request->formatedDate
-                ]
-            ]);
+             //Permet d'envoyer (ou de programmer) une campagne.
+            $this->sarbacane()->post('campaigns/'.$camp_id.'/send');
         }
-        return 'data';
+        return  response()->json('Envoi de la campagne '.$campagne->name. ' réussie.');
     }
     public function getTempname($id){
         $campagnesCategory = DB::table('campagne_category')->where('id',"=",$id)->first();
@@ -1563,5 +1388,7 @@ class CompagneController extends Controller
             ]);
 
     }
+
+    
 
 }

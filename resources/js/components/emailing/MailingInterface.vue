@@ -313,6 +313,7 @@ export default {
 
         const { type, router, errors, company, contentform } = useCompanies();
         const route = useRoute();
+
         let show = route.params.show;
         const showcontainer = ref(false);
         onMounted(() => {
@@ -327,9 +328,11 @@ export default {
                 .get("/lettredata/" + localStorage.getItem("id_category"))
                 .then((res) => {
                     input_content.value = res.data.content;
+                         console.log(input_content.value);
+                         state.content=input_content.value;
                 });
         });
-
+   
         const state = reactive({
             curTheme: "snow",
             showEditor: true,
@@ -454,6 +457,16 @@ export default {
             }, 3000);
         }
 
+        function validate() {
+            router.push({
+                name: "envoi",
+                params: {
+                    cible_id: `${route.params.cible_id}`,
+                    type: route.params.type,
+                },
+            });
+            return router;
+        }
         return {
             errors,
             company,
@@ -478,6 +491,7 @@ export default {
             input_flyer_coord,
             input_flyer_email,
             my_name,
+            validate
         };
     },
     methods: {
@@ -500,17 +514,7 @@ export default {
             this.getPDFPath();
         },
 
-        validate() {
-            const route = useRoute();
-            this.$router.push({
-                name: "envoi",
-                params: {
-                    cible_id: `${route.params.cible_id}`,
-                    type: route.params.type,
-                },
-            });
-            return this.$router;
-        },
+
 
         goToHome() {
             this.$router.push("/emailing");

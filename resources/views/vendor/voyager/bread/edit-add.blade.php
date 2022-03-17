@@ -31,6 +31,130 @@
             font-size:20pt;
             margin-top: -10px;
         }
+
+
+        .switch-wrapper{
+        display: flex;
+        align-items: center;
+    }
+    .switch-wrapper label{
+        cursor: pointer;
+    }
+    .switch{
+        background-color: #C3C3C3;
+        height: 28px;
+        padding: 5px 3px 5px 8px;
+        border-radius: 40px;
+        display: flex;
+        align-items: center;
+        width: 65px;
+        position: relative;
+        cursor: pointer;
+        transition: 0.3s ease-in-out background-color;
+    }
+    .switch span{
+        color:#FFF;
+    }
+    .switch:before{
+        content: " ";
+        width: 18px;
+        height: 18px;
+        position: absolute;
+        background: #FFF;
+        top:5px;
+        left:3px;
+        border-radius: 50%;
+        transition: 0.3s ease-in-out left;
+    }
+    .switch span{
+        transition: 0.2s ease-in-out opacity;
+    }
+    .switch.on{
+        background-color: #42A71E;
+    }
+    .switch.on:before{
+        left: 44px;
+    }
+    .switch span:first-child{
+        opacity: 0;
+    }
+    .switch span:last-child{
+        opacity: 1;
+    }
+    .switch.on span:last-child{
+        opacity: 0;
+    }
+    .switch.on span:first-child{
+        opacity: 1;
+    }
+    .disabled .switch{
+        opacity: 0.5;
+        cursor: default;
+        pointer-events: none;
+    }
+    .disabled label{
+        opacity: 0.5;
+        pointer-events: none;
+        cursor: default;
+
+    }
+    .switch-wrapper label:first-child{
+        margin-right: 8px;
+    }
+    .switch-wrapper label:last-child{
+        margin-left: 8px;
+    }
+    .d-inline-block{
+        display: inline-block;
+    }
+
+    /* Chrome, Safari, Edge, Opera */
+#modal_pos  input::-webkit-outer-spin-button,
+#modal_pos  input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+#modal_pos  input[type=number] {
+  -moz-appearance: textfield;
+  -webkit-appearance: textfield;
+  width: 40px;
+  height: 25px;
+vertical-align: middle;
+}
+#modal_pos .color{
+    height: 20px;
+    width: 20px;
+    overflow: hidden;
+    border-radius: 20px;
+    vertical-align: middle;
+    display: inline-block;
+    box-shadow: 1px 1px 6px;
+}
+#modal_pos [type="color"] {
+  border: 0;
+  padding: 0;
+  width: 200%;
+  height: 200%;
+  cursor: pointer;
+  transform: translate(-25%, -25%)
+}
+.police{
+    width: 100px;
+    vertical-align: middle;
+    line-height: 25px;
+}
+.rw{
+    display: flex;
+}
+.cl{
+    padding: 0 4px;
+    line-height: 35px;
+}
+.fields h5{
+    width: 130px;
+}
     </style>
 @stop
 
@@ -152,30 +276,68 @@
                 <div class="modalPosDiv float-left" id="div_modal_{{ $dataTypeContent->getKey() }}" style="background-size:auto 100%;">
 
                     <div id="modalDraggable" style="background:rgba(0,0,0,0.5); position: relative;">
-                        <span id="textpos_1" class="textpos">Nom agence</span>
-                        <span id="textpos_2" class="textpos">Email agence</span>
-                        <span id="textpos_3" class="textpos">Telephone agence</span>
+                   
                     </div>
                 </div>
-                <div class="float-left" style="width:300px; padding-left:30px;">
+                <div class="float-left" style=" padding-left:20px;">
+                <datalist id="fontsizes">
+                                <option value="8">
+                                <option value="9">
+                                <option value="10">
+                                <option value="11">
+                                <option value="12">
+                                <option value="14">
+                                <option value="16">    
+                                <option value="18">    
+                                <option value="20">    
+                                <option value="22">    
+                                <option value="24">    
+                                <option value="26">    
+                                <option value="28">  
+                                <option value="36">      
+                                <option value="48">   
+                                <option value="72">   
+                            </datalist> 
+                        <div id="field_template" class="rw hidden">
+                        <div class="cl"><h5>Nom Agence</h5></div>
+                        <div class="cl">
+                            <div class="d-inline-block">
+                                <div class="switch-wrapper" >
+                                    <div class="switch"  >
+                                            <span class="body_medium noselect">On</span>
+                                            <span class="body_medium noselect">Off</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cl">
+                            <input type="number" list="fontsizes" placeholder="Taille" class="taille"/>
+                        </div>
+                        <div class="cl">
+                            <select class="police">
+                                <option value="">Choisir une police</option>
+                                <option value="arial">Arial</option>
+                                <option value="helvetica">Helvetica</option>
+                                <option value="open sans">Open Sans</option>
+                            </select>
+                        </div>
+                        <div class="cl">
+                            <div class="color">
+                                <input type="color" class="couleur" />
+                                <input type="hidden" class="x" />
+                                <input type="hidden" class="y"/>
+                            </div>
+                        </div>
 
-                    <div style="margin-bottom:20px;">
-                        <h5>Nom Agence: </h5>
-                        Position X: <span id="textpos_1_x" class="pos_coords"></span><br/>
-                        Position Y: <span id="textpos_1_y" class="pos_coords"></span>
+                    </div>   
+                    <div style="margin-bottom:20px;" class="fields">
+        
+
+
+
                     </div>
 
-                    <div style="margin-bottom:20px;">
-                        <h5>Email Agence: </h5>
-                        Position X: <span id="textpos_2_x" class="pos_coords"></span><br/>
-                        Position Y: <span id="textpos_2_y" class="pos_coords"></span>
-                    </div>
-
-                    <div style="margin-bottom:20px;">
-                        <h5>Telephone agence </h5>
-                        Position X: <span id="textpos_3_x" class="pos_coords"></span><br/>
-                        Position Y: <span id="textpos_3_y" class="pos_coords"></span>
-                    </div>
+                   
 
                     <a href="javascript:void(0);" class="btn btn-default" onclick="updateTextCoords({{ $dataTypeContent->getKey() }})">Sauvegarder</a>
                 </div>
@@ -243,7 +405,11 @@
           };
         }
 
+ 
         $('document').ready(function () {
+
+            
+
             $('.toggleswitch').bootstrapToggle();
 
             //Init datepicker for date fields if data-datepicker attribute defined
@@ -310,29 +476,7 @@
             }
 
 
-            $('.textpos').draggable({
-                containment: "#modalDraggable",
-                scroll: false,
-                stop: function(ev, ui){
-                   let el = $(ev.target);
-                   let id = el.attr('id');
-                    //console.log(id);
-
-                    var position = ui.position;
-                    var originalPosition = ui.originalPosition;
-                   //console.log(position);
-                    $('#'+id+'_x').html(parseFloat(position.left));
-                    $('#'+id+'_y').html(parseFloat(position.top));
-
-                  }
-            });
-
-            $('.textpos').click(function(){
-                let el = $(this);
-
-                $('.textpos').not(this).removeClass('active-text');
-                el.toggleClass('active-text');
-            });
+  
 
 
             $(document).bind('keydown', function(e) {
@@ -380,43 +524,125 @@
 
 
         });
+        let fieldsdef;
+        function renderfields(){
+            let modalDraggable=document.getElementById('modalDraggable');
+            modalDraggable.innerHTML='';
 
+                for(const prop in fieldsdef){
+                    if(fieldsdef[prop].active==1){
+                            const span = document.createElement("span");
+                            // and give it some content
+                            const newContent = document.createTextNode(fieldsdef[prop].name);
+                            // add the text node to the newly created div
+                            span.appendChild(newContent);
+                            span.classList.add('textpos');
+                            span.setAttribute('id',`#${prop}`);
+                            span.style.color=fieldsdef[prop].color;
+                            span.style.left=`${fieldsdef[prop].x}px`;
+                            span.style.top=`${fieldsdef[prop].y}px`;
+                            span.style.fontSize=`${fieldsdef[prop].size}px`;
+                            span.style.fontFamily=`${fieldsdef[prop].font}`;
+                            modalDraggable.appendChild(span);
+                    }
+                            
+                }
+setTimeout(function(){
+    $('.textpos').draggable({
+                containment: "#modalDraggable",
+                scroll: false,
+                stop: function(ev, ui){
+                   let el = $(ev.target);
+                   let id = el.attr('id');
+                    //console.log(id);
+                    let prop=id.replace('#','');
+                    var position = ui.position;
+                    var originalPosition = ui.originalPosition;
+                    fieldsdef[prop].x=parseFloat(position.left);
+                    fieldsdef[prop].y=parseFloat(position.top);
+                  
 
+                    
+
+                  }
+            });
+
+            $('.textpos').click(function(){
+                let el = $(this);
+
+                $('.textpos').not(this).removeClass('active-text');
+                el.toggleClass('active-text');
+            });
+},100)
+               
+     
+        }
 
         function loadPosModal(id,imageUrl){
             let params = {};
             params['id'] = id;
 
-            let color1 = $('input[name=color1]').val();
-            let color2 = $('input[name=color2]').val();
-            let color3 = $('input[name=color3]').val();
-
-            $('#textpos_1').css('color',(color1!=''?color1:'#000'));
-            $('#textpos_2').css('color',(color2!=''?color2:'#000'));
-            $('#textpos_3').css('color',(color3!=''?color3:'#000'));
 
 
             $.post('/admin/get-text-pos', params, function (response) {
-                if(response.cc){
-                    let cc = response.cc;
+                if(response.FIELDS_DEF){
+                    fieldsdef=response.FIELDS_DEF;
+                    document.querySelector('.fields').innerHTML='';
+                    field_template= document.getElementById("field_template");
+                    for(const prop in response.FIELDS_DEF){
+                       field=field_template.cloneNode(true);
+                       field.setAttribute('id',prop);
+                       field.classList.remove('hidden');
+                       field.querySelector('h5').innerText= response.FIELDS_DEF[prop].name;
+                       if(response.FIELDS_DEF[prop].active==1)
+                       field.querySelector('.switch').classList.add('on');
 
-                    $('#textpos_1').css('left',cc.xfield1+'px');
-                    $('#textpos_1_x').html(cc.xfield1);
-                    $('#textpos_1').css('top',cc.yfield1+'px');
-                    $('#textpos_1_y').html(cc.yfield1);
+                       let switchbtn = field.querySelector('.switch');
 
-                    $('#textpos_2').css('left',cc.xfield2+'px');
-                    $('#textpos_2_x').html(cc.xfield2);
-                    $('#textpos_2').css('top',cc.yfield2+'px');
-                    $('#textpos_2_y').html(cc.yfield2);
+                       switchbtn.addEventListener('click', function(event){
+                               
 
-                    $('#textpos_3').css('left',cc.xfield3+'px');
-                    $('#textpos_3_x').html(cc.xfield3);
-                    $('#textpos_3').css('top',cc.yfield3+'px');
-                    $('#textpos_3_y').html(cc.xfield3);
+                                switchbtn.classList.toggle("on");
+                                console.log( prop);
+                                fieldsdef[prop].active=switchbtn.classList.contains("on")?1:0;
+                                renderfields();
+                                }, true);
+                                                    
+                       field.querySelector('.taille').value=response.FIELDS_DEF[prop].size;
+                       function f_taille(event){
+                        fieldsdef[prop].size=event.target.value;
+                        renderfields();
+                       }
+                       let taille= field.querySelector('.taille');
+                           taille.addEventListener('paste',f_taille);         
+                           taille.addEventListener('keyup',f_taille);     
 
+                       field.querySelector('.police').value=response.FIELDS_DEF[prop].font;
 
+                       function f_police(event){
+                        fieldsdef[prop].font=event.target.value;
+                        renderfields();
+                       }
+                       let police= field.querySelector('.police');
+                            police.addEventListener('change',f_police);         
+                
+                       field.querySelector('.couleur').value=response.FIELDS_DEF[prop].color;
+
+                       function f_couleur(event){
+                        fieldsdef[prop].color=event.target.value;
+                        renderfields();
+                       }
+                       let couleur= field.querySelector('.couleur');
+                       couleur.addEventListener('change',f_couleur); 
+
+                       field.querySelector('.x').value=response.FIELDS_DEF[prop].x;
+                       field.querySelector('.y').value=response.FIELDS_DEF[prop].y;
+                       document.querySelector('.fields').appendChild(field);
+                   
+                    }
+                    renderfields();
                 }
+               
             }).done(function() {
                 //alert( "second success" );
             })
@@ -437,11 +663,7 @@
 
             $('.textpos').removeClass('active-text');
 
-            $('body').find('.pos_coords').each(function(i,v){
-                let el = $(v);
-                let  id = el.attr('id');
-                params[id] = el.html();
-            });
+            params['fieldsdef'] = fieldsdef;
 
             $.post('/admin/update-text-pos', params, function (response) {
                     console.log(response);

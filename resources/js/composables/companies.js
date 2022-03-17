@@ -70,6 +70,11 @@ export default function useCompanies() {
         selectedcibles.value = response.data.cibles;
     };
 
+    const getCampagneCampagneCategory = async (campagne_id)=>{
+        let response = await axios.get("/getCampagneCampagneCategory/"+campagne_id)
+        return response;
+    }
+
     const getCategory = async () => {
         let response = await axios.get("/getCampagneCategory");
         category.value = response.data.campagnes;
@@ -150,6 +155,8 @@ export default function useCompanies() {
         my_ids.value = response.data.mylist;
         selected_id.value = response.data.id;
         mytitle.value = response.data.myvar;
+        type.value=response.data.type[0];
+        
         if ((mytitle.value = true)) {
             myvar2.value = true;
             myvar.value = false;
@@ -165,6 +172,7 @@ export default function useCompanies() {
                     params: { id: `${selected_id.value}` },
                 });
             } else {
+               
                 if (template.value.length == 0) {
                     router.push({
                         name: "cible",
@@ -284,5 +292,6 @@ export default function useCompanies() {
         dataimage2,
         dataimage3,
         old_campagne_emails,
+        getCampagneCampagneCategory
     };
 }

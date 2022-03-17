@@ -49,6 +49,7 @@ Route::group([
     Route::get('/getCampagneCategory',[CompagneController::class, 'getCampagneCategory'])->middleware('auth')->name('getCampagneCategory');
     Route::get('/getTemplates/{id}',[CompagneController::class, 'getTemplates'])->middleware('auth')->name('getTemplates');
     Route::get('/campagne_id/{id}',[CompagneController::class, 'campagne_id'])->middleware('auth')->name('campagne_id');
+    Route::get('/getCampagneCampagneCategory/{id}',[CompagneController::class, 'getCampagneCampagneCategory'])->middleware('auth')->name('getCampagneCampagneCategory');
     Route::get('/getCampagny_Cible',[CompagneController::class, 'getCampagny_Cible'])->middleware('auth')->name('getCampagny_Cible');
     Route::post('/ciblesum',[CompagneController::class, 'ciblesum'])->middleware('auth')->name('ciblesum');
     Route::post('/sendEmailReminder',[CompagneController::class, 'sendEmailReminder'])->middleware('auth')->name('sendEmailReminder');
