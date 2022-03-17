@@ -188,6 +188,7 @@
                                                     
                                     <report-order-resources 
                                         @generateElement="generateElement"
+                                        @generatePrefetchedImage="generatePrefetchedImage"
                                     />
 
                                 </div>
@@ -390,6 +391,14 @@ export default {
             pages.value[activePage.value].elements.push(element)
         }
 
+        const generatePrefetchedImage = (detail) => {
+            pages.value[activePage.value].elements.push(generateImage({ 
+                filename: detail.urls.original,
+                image: `${detail.storage_path}/${detail.file}.${detail.type}`,
+                prefetched: true
+            }))
+        }
+
         const promptImage = async () => {
 
             let image = {}
@@ -508,6 +517,7 @@ export default {
             formattedTemplates,
             updateElementValue,
             updateElementFromPopup,
+            generatePrefetchedImage,
             assignTemplateToActivePage,
         }
     },

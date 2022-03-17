@@ -220,9 +220,14 @@
                     @endif    
             
                     @if (strtolower($element->name) == 'img')
+                        <?php
+                            $src = $element->prefetched 
+                            ? $builder::convert_base64(public_path('\/storage/' . $element->dataFile))
+                            : $builder::convert_resource_file("Img#".$element->attributes->id);
+                        ?>
                         <img 
                             class="{{ $element->attributes->class ?? 'draggable' }}"
-                            src="{{ $builder::convert_resource_file("Img#".$element->attributes->id) }}" 
+                            src="{{ $src }}" 
                             style="{{ $element->attributes->style ?? '' }}" 
                         /> 
                     @endif    

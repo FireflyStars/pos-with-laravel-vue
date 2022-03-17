@@ -51,7 +51,7 @@ export const PageBuilder = {
             formData.append('pages', JSON.stringify({ ...pages }))
 
             try {
-                const { data } = await axios.post('save-page-elements', formData, {  
+                const { data } = await axios.post('/save-page-elements', formData, {  
                     responseType: 'arraybuffer'
                 })
                 return data

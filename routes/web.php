@@ -26,8 +26,8 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('/get-text-pos',[LcdtAdminController::class,'getTextPos'])->name('get-text-pos');
 });
 
-Route::post('save-page-elements', [PageElementsController::class, 'store']);
-Route::get('get-page-order/{order}', [PageElementsController::class, 'get_page_order']);
+Route::post('/save-page-elements', [PageElementsController::class, 'store']);
+Route::get('/get-page-order/{order}', [PageElementsController::class, 'get_page_order']);
 
 Route::post('/api',[ApiController::class,'index'])->middleware('cors')->name('api');
 

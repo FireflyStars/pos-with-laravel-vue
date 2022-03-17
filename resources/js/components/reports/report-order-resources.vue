@@ -23,13 +23,13 @@
                 <div class="d-flex gap-2 align-items-center">
                     <div class="title-section title-section-right">
                         <p>Adresse du chantier</p>
-                        <h4>{{ order?.customer?.address?.address1 || 'Address' }}</h4>
+                        <h4>{{ order?.customer?.address?.address1 || 'Customer Address' }}</h4>
                     </div>
                     <Icon 
                         name="circle-plus" 
                         class="pointer"
                         @click.prevent="generateElement('textarea', { 
-                            content: order?.customer?.address?.address1 || 'Address'
+                            content: order?.customer?.address?.address1 || 'Customer Address'
                         })"
                     />
                 </div>
@@ -50,7 +50,7 @@
                     <Icon 
                         name="circle-plus" 
                         class="align-self-start pointer"
-                        @click.prevent="generateElement('textarea', { 
+                        @click="generateElement('textarea', { 
                             content: `<strong>${ zone.name }</strong>` 
                         })"
                     />
@@ -62,13 +62,15 @@
                         <p class="text-base orange">Acces tolture</p>
                     </div>
                     <div class="col">
-                        <h4>20 M, Nacelle 30M</h4>
+                        <h4>
+                            20 M, Nacelle 30M
+                        </h4>
                     </div>
                     <div class="col">
                         <Icon 
                             name="circle-plus" 
                             class="pointer"
-                            @click.prevent="generateElement('textarea', {
+                            @click="generateElement('textarea', {
                                 content: '20 M, Nacelle 30M'
                             })"
                         />
@@ -81,285 +83,152 @@
                     v-for="(gedDetail, category) in zone.gedDetails"
                     :key="gedDetail.id"
                     >
+
                         <div class="d-flex align-items-center gap-2" style="margin-bottom: 1.31rem">
                             <Icon name="camera" />
                             <h4 class="text-base orange">{{ category }}</h4>
                         </div>
 
                         <div class="d-flex gap-2">
-                            <div class="black-box" v-for="n in 4" :key="n"></div>
-                            
-                            <div class="ml-5 d-flex gap-2 align-items-start">
-                                <div class="d-none">
-                                    <input type="file" id="file" accept="image/*">
-                                </div>
-                                <p class="m-0">Attention grosse poutre en haut</p>
-                                <Icon name="plus-circle" class="mt-2 pointer" />
+
+                            <div class="black-box pointer" 
+                            v-for="[, detail] in images(gedDetail)" 
+                            :key="detail.id">
+                                <img 
+                                    :src="detail.urls.small" 
+                                    :alt="detail.human_readable_filename"
+                                    @click.prevent="generatePrefetchedImage(detail)"
+                                />
                             </div>
-                        </div>    
+                            
+                            <div
+                            v-for="[, detail] in nonImages(gedDetail)"
+                            :key="detail.id"
+                            >
+                                <div 
+                                    class="ml-5 d-flex gap-2 align-items-center" 
+                                    v-if="detail.description"
+                                >
+                                    <p class="m-0">
+                                        {{ detail.description }}
+                                    </p>
+                                    <Icon 
+                                        name="plus-circle" 
+                                        class="pointer"
+                                        @click="generateElement('textarea', {
+                                            content: detail.description
+                                        })"
+                                    />
+                                </div>
+                            </div>
+
+                        </div>
 
                     </div>
 
                 </template>
 
-                <!-- <div class="image-grid-section ml-2">
-                    <div class="d-flex align-items-center gap-2" style="margin-bottom: 1.31rem">
-                        <Icon name="camera" />
-                        <h4 class="text-base orange">Vue interieure</h4>
-                    </div>
+                
+                <template v-if="zone?.orderZoneComments?.length">
 
-                    <div class="d-flex gap-2">
-                        <div class="black-box" v-for="n in 4" :key="n"></div>
-                    
-                        <div class="ml-5 d-flex gap-2 align-items-start">
-                            <p class="m-0">Attention grosse poutre en haut</p>
-                            <Icon name="plus-circle" class="mt-2 pointer" />
+                    <div class="zone-comments-section">
+                        
+                        <div class="zone-comments-header d-flex align-items-center gap-4">
+                            <Icon name="house" />
+
+                            <h4 class="breadcrumb-title zone-comments-title">
+                                zone Comments
+                            </h4>
+
+                        </div>    
+
+                        <div class="zone-comments-body"
+                            v-for="comment in zone.orderZoneComments"
+                            :key="comment.id"
+                        >
+                            <div class="d-flex align-items-center gap-4">
+                                <span>{{ comment.comment }}</span>
+                                <Icon 
+                                    name="circle-plus" 
+                                    class="pointer"
+                                    @click.prevent="generateElement('textarea', { 
+                                        content: comment.comment || 'Comment'
+                                    })"
+                                />
+
+                            </div>
                         </div>
-                    </div>    
 
-                </div>  
-
-
-                <div class="image-grid-section ml-2">
-                    <div class="d-flex align-items-center gap-2" style="margin-bottom: 1.31rem">
-                        <Icon name="camera" />
-                        <h4 class="text-base orange">Vue Exterieure</h4>
                     </div>
-
-                    <div class="d-flex gap-2">
-                        <div class="black-box" v-for="n in 4" :key="n"></div>
                     
-                        <div class="ml-5 d-flex gap-2 align-items-start">
-                            <p class="m-0">Attention grosse poutre en haut</p>
-                            <Icon name="plus-circle" class="mt-2 pointer" />
-                        </div>
-                    </div>    
 
-                </div>   
-
-
-                <div class="image-grid-section ml-2">
-                    <div class="d-flex align-items-center gap-2" style="margin-bottom: 1.31rem">
-                        <Icon name="camera" />
-                        <h4 class="text-base orange">Metre</h4>
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <div class="black-box" v-for="n in 4" :key="n"></div>
-                    
-                        <div class="ml-5 d-flex gap-2 align-items-start">
-                            <p class="m-0">Attention grosse poutre en haut</p>
-                            <Icon name="plus-circle" class="mt-2 pointer" />
-                        </div>
-                    </div>    
-
-                </div>                   -->
+                </template>
 
             </div><!-- breadcrumb-section -->
 
-        </template>
+            <template v-if="'id' in order && order?.orderZones?.length">
 
-        <template v-if="'id' in order && order.orderZoneComments?.length">
-
-            <div class="zone-comments-section">
-                
-                <div class="zone-comments-header d-flex align-items-center gap-4">
-                    <Icon name="house" />
-
-                    <h4 class="breadcrumb-title zone-comments-title">
-                        Orderzone Comments
-                    </h4>
-
-                </div>    
-
-                <div class="zone-comments-body"
-                    v-for="comment in order.orderZoneComments"
-                    :key="comment.id"
-                >
-                    <div class="d-flex align-items-center gap-4">
-                        <span>{{ comment.comment }}</span>
-                        <Icon 
-                            name="circle-plus" 
-                            class="pointer"
-                            @click.prevent="generateElement('textarea', { 
-                                content: comment.comment || 'Comment'
-                            })"
-                        />
-
-                    </div>
-                </div>
-
-            </div>
-            
-
-        </template>
-
-        <template v-if="'id' in order && order.orderOuvrages">
-            
-            <div 
-                :class="getCategoryClassName(category)" 
-                v-for="(ouvrage, category) in order.orderOuvrages" 
-                :key="category"
-            >
-
-                <div class="title-section d-flex align-items-center gap-4" style="margin-bottom: 1.31rem">
-                    <div class="icon">
-                        <Icon name="marker" />
-                    </div>
-                    <h4 class="title">{{ category }}</h4>
-                </div>
-
-
-                <div 
-                :class="getCategoryClassName(category) + '-content'">
+                <template 
+                v-for="zone in order.orderZones"
+                :key="zone.id">
                     
-                    <h4 class="text-base orange main-title">{{ ouvrage.name }}</h4>
+                    <div 
+                        :class="getCategoryClassName(category)" 
+                        v-for="(ouvrage, category) in zone.orderOuvrages" 
+                        :key="category"
+                    >
 
-                    <div class="main-body row m-0">
-                        <h4 
-                        class="text-base orange text-uppercase col-6 d-flex justify-content-center" 
-                        style="margin-bottom: .56rem">
-                            Avant
-                        </h4>
-
-                        <div class="col"></div>
-
-                        <div class="d-flex gap-2 col">
-                            <div class="black-box" v-for="n in 4" :key="n"></div>
-                        </div>    
-                    </div>
-
-                    <div class="main-body row mx-0" style="margin-top: 1.75rem">
-                        <h4 
-                        class="text-base orange text-uppercase col-6 d-flex justify-content-center" 
-                        style="margin-bottom: .56rem">
-                            apres
-                        </h4>
-
-                        <div class="col"></div>
-
-                        <div class="d-flex gap-2 col">
-                            <div class="black-box" v-for="n in 4" :key="n"></div>
-                        </div>    
-                    </div>
-                    
-                </div>
-
-
-            </div>
-
-        </template>
-
-
-        <!-- <div class="security-section">
-
-            <div class="title-section d-flex align-items-center gap-4">
-                <div class="icon">
-                    <Icon name="notepad" />
-                </div>
-                <h4 class="title">Securite</h4>
-            </div>
-
-            <div class="security-section-content">
-                
-                <h4 class="text-base orange main-title">Ouvrage XXXXXXXX</h4>
-
-                <div class="main-body">
-
-                    <div class="row m-0">
-
-                        <h4 
-                        class="text-base orange text-uppercase col-6 d-flex justify-content-center" 
-                        style="margin-bottom: .56rem">
-                            Avant
-                        </h4>
-                        
-                        <div class="col"></div>
-
-                        <div class="col">
-                            <div class="d-flex gap-2">
-                                <div class="black-box" v-for="n in 4" :key="n"></div>
-                            </div>   
-                        </div>
-                        
-                    </div>
-
-                        
-                </div>
-
-                <div class="main-body" style="margin-top: 1.75rem">
-
-                    <div class="row m-0">
-                        <h4 
-                        class="text-base orange text-uppercase col-6 d-flex justify-content-center" 
-                        style="margin-bottom: .56rem">
-                            apres
-                        </h4>
-                        <div class="col"></div>
-                        <div class="d-flex gap-2">
-                            <div class="black-box" v-for="n in 4" :key="n"></div>
-                        </div>    
-
-                    </div>
-
-                </div>
-                
-            </div>
-            
-            <div class="security-section-content">
-                
-                <h4 class="text-base orange main-title">Ouvrage YYYYYYYY</h4>
-
-                <div class="main-body">
-
-                    <div class="row m-0">
-
-                        <h4 
-                        class="text-base orange text-uppercase col-6 d-flex justify-content-center" 
-                        style="margin-bottom: .56rem">
-                            Avant
-                        </h4>
-                        
-                        <div class="col"></div>
-
-                        <div class="col">
-                            <div class="d-flex gap-2">
-                                <div class="black-box" v-for="n in 4" :key="n"></div>
-                            </div>   
-                        </div>
-
-                        <div class="col">
-                            <div class="d-flex gap-2 align-items-start">
-                                <p class="m-0">Attention grosse poutre en haut</p>
-                                <Icon name="plus-circle" class="mt-2 pointer" />
+                        <div class="title-section d-flex align-items-center gap-4" style="margin-bottom: 1.31rem">
+                            <div class="icon">
+                                <Icon name="marker" />
                             </div>
+                            <h4 class="title">{{ category }}</h4>
                         </div>
+
+
+                        <div 
+                        :class="getCategoryClassName(category) + '-content'">
+                            
+                            <h4 class="text-base orange main-title">{{ ouvrage.name }}</h4>
+
+                            <div class="main-body row m-0">
+                                <h4 
+                                class="text-base orange text-uppercase col-6 d-flex justify-content-center" 
+                                style="margin-bottom: .56rem">
+                                    Avant
+                                </h4>
+
+                                <div class="col"></div>
+
+                                <div class="d-flex gap-2 col">
+                                    <div class="black-box" v-for="n in 4" :key="n"></div>
+                                </div>    
+                            </div>
+
+                            <div class="main-body row mx-0" style="margin-top: 1.75rem">
+                                <h4 
+                                class="text-base orange text-uppercase col-6 d-flex justify-content-center" 
+                                style="margin-bottom: .56rem">
+                                    apres
+                                </h4>
+
+                                <div class="col"></div>
+
+                                <div class="d-flex gap-2 col">
+                                    <div class="black-box" v-for="n in 4" :key="n"></div>
+                                </div>    
+                            </div>
+                            
+                        </div>
+
+
                     </div>
 
-                        
-                </div>
+                </template>
+            
+            </template>
 
-                <div class="main-body" style="margin-top: 1.75rem">
-
-                    <div class="row m-0">
-                        <h4 
-                        class="text-base orange text-uppercase col-6 d-flex justify-content-center" 
-                        style="margin-bottom: .56rem">
-                            apres
-                        </h4>
-                        <div class="col"></div>
-                        <div class="d-flex gap-2">
-                            <div class="black-box" v-for="n in 4" :key="n"></div>
-                        </div>    
-
-                    </div>
-
-                </div>
-                
-            </div>
-
-
-        </div>
+        </template>
 
 
         <div class="prestations-section">
@@ -380,20 +249,32 @@
                 <div class="row m-0">
                     
                     <div class="col">
-                        <div class="black-box"></div>
+                        <div class="black-box" style="background: black"></div>
                     </div>
                 
                     <div class="col d-flex gap-2 align-items-start">
-                        <p class="m-0">Attention grosse poutre en haut</p>
-                        <Icon name="plus-circle" class="mt-2 pointer" />
+                        <p class="m-0">
+                            Attention grosse poutre en haut
+                        </p>
+                        <Icon 
+                            name="plus-circle" 
+                            class="mt-2 pointer" 
+                            @click="generateElement('textarea', {
+                                content: 'Attention grosse poutre en haut'
+                            })"
+                        />
                     </div>
                 </div>    
 
             </div>
 
-        </div> -->
+        </div>
 
-    </div><!--  box-top-right -->
+    </div>
+
+    <div class="d-none">
+        <input type="file" id="file" accept="image/*">
+    </div>
 
 </template>
 
@@ -404,7 +285,11 @@ import { computed } from 'vue'
 import { BUILDER_MODULE } from '../../store/types/types'
 
 export default {
+
     name: 'report-order-resource',
+
+    emits: ['generateElement', 'generatePrefetchedImage'],
+
     setup (_, { emit }) {
 
         const store = useStore()
@@ -414,20 +299,41 @@ export default {
         const getCategoryClassName = (category) => {
             const categories = {
                 installation: 'installation',
-                securite: 'securite',
+                securite: 'security',
                 prestation: 'prestation'
             }
             return category !='' ? `${categories[category.toLowerCase()]}-section` : ''
+        }
+
+        const isImage = (gedDetail) => ['png', 'jpg', 'jpeg', 'gif', 'svg'].includes(gedDetail.type)
+
+        const images = (gedDetails) => {
+            return Object.entries(gedDetails).filter(([_, detail]) => {
+                return isImage(detail)
+            })
+        }
+
+        const nonImages = (gedDetails) => {
+            return Object.entries(gedDetails).filter(([_, detail]) => {
+                return !isImage(detail)
+            })
         }
         
         const generateElement = (name, attributes) => {
             emit('generateElement', name, attributes)
         }
 
+        const generatePrefetchedImage = (detail) => {
+            emit('generatePrefetchedImage', detail)
+        }
+
         return {
+            images,
+            nonImages,
             order,
             generateElement,
-            getCategoryClassName
+            getCategoryClassName,
+            generatePrefetchedImage
         }
     }
 }
@@ -618,10 +524,14 @@ export default {
 }
 
 .black-box {
-    background: #525252;
     border-radius: 8px;
     width: 3.43rem !important;
     height: 3.43rem !important;
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 }
 
 .text {

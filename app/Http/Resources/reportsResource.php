@@ -2,12 +2,16 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
+use App\Traits\GedFileProcessor;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class reportsResource extends JsonResource
 {
     
+    use GedFileProcessor;
+
     public function toArray($request)
     {
         return [
@@ -24,18 +28,16 @@ class reportsResource extends JsonResource
                 'company' => $this->customer->company,
                 'signupdate' => $this->customer->signupdate,
                 'active' => $this->customer->active,
-                'address' => $this->get_customer_address($this->customer)
+                'address' => $this->get_customer_address($this->events)
             ],
             'orderZones' => $this->get_order_zones($this->orderZones),
-            'orderZoneComments' => $this->get_order_zone_comments($this->orderZones),
-            'orderOuvrages' => $this->get_order_ouvrages($this->orderZones)
         ];
     }
 
-    private function get_customer_address($customer) 
+    private function get_customer_address($events) 
     {
-        $customer_address = $customer?->addresses;
-        if($customer_address->count()) 
+        $customer_address = $events?->last()?->address; 
+        if(!is_null($customer_address)) 
         {
             return $customer_address->first()->only([
                 'address1',
@@ -52,28 +54,20 @@ class reportsResource extends JsonResource
         }
     }
 
-    private function get_order_ouvrages($zones) 
+    private function get_order_ouvrages($zone) 
     {
-        $order_categories = $this->get_order_categories($zones);
+        $order_categories = $this->get_order_categories($zone);
         $foramtted_ouvrages = new Collection;
         foreach($order_categories as $category) 
         {
-            $foramtted_ouvrages[$category->name] = $this->get_zone_ouvrages($zones, $category->id);
+            $foramtted_ouvrages[$category->name] = $this->get_zone_ouvrages($zone, $category->id);
         }
         return $foramtted_ouvrages;
     }
 
-    private function get_zone_ouvrages($zones, $id) 
+    private function get_zone_ouvrages($zone, $id) 
     {
-        $ouvrages = new Collection;
-        foreach($zones as $zone) 
-        {
-            foreach($zone->orderOuvrage as $ouvrage) 
-            {
-                $ouvrages []= $ouvrage;
-            }
-        }
-        return $ouvrages->where('order_cat_id', $id)
+        return $zone->orderOuvrage->where('order_cat_id', $id)
         ->filter()
         ->map(function($ouvrage) { 
             return [
@@ -83,26 +77,6 @@ class reportsResource extends JsonResource
             ];
         });
     }
-
-
-    private function get_order_zone_comments($orderZones) 
-    {
-        $formatted_orderzone_comments = [];
-        $orderZoneComments = $orderZones
-                ->map(function($item) { return $item->orderZoneComments; })
-                ->filter(function($item) { return $item->isNotEmpty(); });
-        
-        foreach($orderZoneComments as $comments) 
-        {
-            foreach($comments as $comment) 
-            {
-                $formatted_orderzone_comments []= $comment;
-            }
-        }
-
-        return $formatted_orderzone_comments;        
-                
-    }   
 
     private function get_order_zones($orderZones) 
     {
@@ -116,6 +90,8 @@ class reportsResource extends JsonResource
                 'name' => $zone->name,
                 'moyenacces' => $zone->moyenacces,
                 'gedDetails' => $this->get_formatted_ged_details($zone->gedDetails),
+                'orderZoneComments' => $zone->orderZoneComments,
+                'orderOuvrages' => $this->get_order_ouvrages($zone)
             ];
         });
     }
@@ -156,20 +132,17 @@ class reportsResource extends JsonResource
                 'longitude' => $detail->longitude,
                 'latitude' => $detail->latitude,
                 'timeline' => $detail->timeline,
+                'urls'   => $this->getFileUrls($detail),
             ];
         });
     }
 
-    private function get_order_categories($zones) 
+    private function get_order_categories($zone) 
     {
         $ouvrage_categories = new Collection;
-        $order_ouvrages = $zones->map(function($zone) { return $zone->orderOuvrage; });
-        foreach($order_ouvrages as $ouvrages) 
+        foreach($zone->orderOuvrage as $ouvrage) 
         {
-            foreach($ouvrages as $ouvrage) 
-            {
-                $ouvrage_categories []= $ouvrage->orderCategory;
-            }
+            $ouvrage_categories []= $ouvrage->orderCategory;
         }
         return $ouvrage_categories;
     }

@@ -49,7 +49,7 @@ export default function useElementsGenerator() {
         }
     }
 
-    const generateImage = ({ filename, image }) => {
+    const generateImage = ({ filename, image, prefetched = false }) => {
         return {
             item: 'img',
             attributes: {
@@ -61,7 +61,8 @@ export default function useElementsGenerator() {
                 id: generateId(12),
             },
             name: 'img',
-            dataFile: image
+            dataFile: image,
+            prefetched
         }
     }
 
