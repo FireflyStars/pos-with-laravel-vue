@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use App\Traits\GedFileProcessor;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class reportsResource extends JsonResource
@@ -31,6 +31,7 @@ class reportsResource extends JsonResource
                 'address' => $this->get_customer_address($this->events)
             ],
             'orderZones' => $this->get_order_zones($this->orderZones),
+            'queryLog' => DB::getQueryLog()
         ];
     }
 
@@ -60,22 +61,27 @@ class reportsResource extends JsonResource
         $foramtted_ouvrages = new Collection;
         foreach($order_categories as $category) 
         {
-            $foramtted_ouvrages[$category->name] = $this->get_zone_ouvrages($zone, $category->id);
+            $ouvrage_ids = $this->get_zone_ouvrages_in_order_category($zone, $category->id);
+            foreach($ouvrage_ids as $ouvrage_id) 
+            {
+                $foramtted_ouvrages[$category->name] = $this->get_category_ged_details($zone->gedDetails, $ouvrage_id, 'order_ouvrage_id');   
+            }
         }
         return $foramtted_ouvrages;
     }
 
-    private function get_zone_ouvrages($zone, $id) 
+    private function get_zone_ouvrages_in_order_category($zone, $id) 
     {
-        return $zone->orderOuvrage->where('order_cat_id', $id)
-        ->filter()
-        ->map(function($ouvrage) { 
-            return [
-                'id'   => $ouvrage->id,
-                'type' => $ouvrage->type,
-                'name' => $ouvrage->name
-            ];
-        });
+        return $zone->orderOuvrage->where('order_cat_id', $id)->pluck('id')->toArray();
+
+        // ->filter()
+        // ->map(function($ouvrage) { 
+        //     return [
+        //         'id'   => $ouvrage->id,
+        //         'type' => $ouvrage->type,
+        //         'name' => $ouvrage->name
+        //     ];
+        // });
     }
 
     private function get_order_zones($orderZones) 
@@ -113,10 +119,10 @@ class reportsResource extends JsonResource
 
     }
 
-    private function get_category_ged_details($details, $id) 
+    private function get_category_ged_details($details, $id, $group_category = 'ged_category_id') 
     {
         return $details
-        ->where('ged_category_id', $id)
+        ->where($group_category, $id)
         ->map(function($detail) { 
             return [
                 'id' => $detail->id,

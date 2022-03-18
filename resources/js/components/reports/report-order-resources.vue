@@ -38,237 +38,62 @@
 
         <template v-if="'id' in order && order?.orderZones?.length">
 
-            <div 
-                class="breadcrumb-section"
+            <template  
                 v-for="zone in order.orderZones"
-                :key="zone.id"
-            >
-
-                <div class="breadcrumb d-flex align-items-center gap-4">
-                    <Icon name="house" />
-                    <h4 class="breadcrumb-title">{{ zone.name }}</h4>
-                    <Icon 
-                        name="circle-plus" 
-                        class="align-self-start pointer"
-                        @click="generateElement('textarea', { 
-                            content: `<strong>${ zone.name }</strong>` 
-                        })"
-                    />
-                </div>
+                :key="zone.id">
                 
-                <div class="row camping-section ml-2">
-                    <div class="col d-flex gap-3 p-0">
-                        <Icon name="camping" />
-                        <p class="text-base orange">Acces tolture</p>
-                    </div>
-                    <div class="col">
-                        <h4>
-                            20 M, Nacelle 30M
-                        </h4>
-                    </div>
-                    <div class="col">
+                <div class="breadcrumb-section">
+
+                    <div class="breadcrumb d-flex align-items-center gap-4">
+                        <Icon name="house" />
+                        <h4 class="breadcrumb-title">{{ zone.name }}</h4>
                         <Icon 
                             name="circle-plus" 
-                            class="pointer"
-                            @click="generateElement('textarea', {
-                                content: '20 M, Nacelle 30M'
+                            class="align-self-start pointer"
+                            @click="generateElement('textarea', { 
+                                content: `<strong>${ zone.name }</strong>` 
                             })"
                         />
                     </div>
-                </div>
+                    
+                    <camping-section 
+                        :zone="zone"
+                        @generateElement="generateElement" 
+                    />
 
-                <template v-if="zone?.gedDetails">
+                    <template v-if="zone?.gedDetails">
 
-                    <div class="image-grid-section ml-2" 
-                    v-for="(gedDetail, category) in zone.gedDetails"
-                    :key="gedDetail.id"
-                    >
+                        <ged-detail-image-grid-section 
+                            :gedDetails="zone.gedDetails"
+                            @generatePrefetchedImage="generatePrefetchedImage"
+                            @generateElement="generateElement" 
+                        />
 
-                        <div class="d-flex align-items-center gap-2" style="margin-bottom: 1.31rem">
-                            <Icon name="camera" />
-                            <h4 class="text-base orange">{{ category }}</h4>
-                        </div>
+                    </template>
 
-                        <div class="d-flex gap-2">
+                    
+                    <template v-if="zone?.orderZoneComments?.length">
 
-                            <div class="black-box pointer" 
-                            v-for="[, detail] in images(gedDetail)" 
-                            :key="detail.id">
-                                <img 
-                                    :src="detail.urls.small" 
-                                    :alt="detail.human_readable_filename"
-                                    @click.prevent="generatePrefetchedImage(detail)"
-                                />
-                            </div>
-                            
-                            <div
-                            v-for="[, detail] in nonImages(gedDetail)"
-                            :key="detail.id"
-                            >
-                                <div 
-                                    class="ml-5 d-flex gap-2 align-items-center" 
-                                    v-if="detail.description"
-                                >
-                                    <p class="m-0">
-                                        {{ detail.description }}
-                                    </p>
-                                    <Icon 
-                                        name="plus-circle" 
-                                        class="pointer"
-                                        @click="generateElement('textarea', {
-                                            content: detail.description
-                                        })"
-                                    />
-                                </div>
-                            </div>
+                        <zone-comments-section 
+                            :orderZoneComments="zone.orderZoneComments"
+                            @generateElement="generateElement"
+                        />
 
-                        </div>
+                    </template>
 
-                    </div>
-
-                </template>
+                </div><!-- breadcrumb-section -->
 
                 
-                <template v-if="zone?.orderZoneComments?.length">
+                <order-ouvrages
+                    :orderOuvrages="zone.orderOuvrages"
+                    @generatePrefetchedImage="generatePrefetchedImage"
+                    @generateElement="generateElement"
+                />    
 
-                    <div class="zone-comments-section">
-                        
-                        <div class="zone-comments-header d-flex align-items-center gap-4">
-                            <Icon name="house" />
-
-                            <h4 class="breadcrumb-title zone-comments-title">
-                                zone Comments
-                            </h4>
-
-                        </div>    
-
-                        <div class="zone-comments-body"
-                            v-for="comment in zone.orderZoneComments"
-                            :key="comment.id"
-                        >
-                            <div class="d-flex align-items-center gap-4">
-                                <span>{{ comment.comment }}</span>
-                                <Icon 
-                                    name="circle-plus" 
-                                    class="pointer"
-                                    @click.prevent="generateElement('textarea', { 
-                                        content: comment.comment || 'Comment'
-                                    })"
-                                />
-
-                            </div>
-                        </div>
-
-                    </div>
-                    
-
-                </template>
-
-            </div><!-- breadcrumb-section -->
-
-            <template v-if="'id' in order && order?.orderZones?.length">
-
-                <template 
-                v-for="zone in order.orderZones"
-                :key="zone.id">
-                    
-                    <div 
-                        :class="getCategoryClassName(category)" 
-                        v-for="(ouvrage, category) in zone.orderOuvrages" 
-                        :key="category"
-                    >
-
-                        <div class="title-section d-flex align-items-center gap-4" style="margin-bottom: 1.31rem">
-                            <div class="icon">
-                                <Icon name="marker" />
-                            </div>
-                            <h4 class="title">{{ category }}</h4>
-                        </div>
-
-
-                        <div 
-                        :class="getCategoryClassName(category) + '-content'">
-                            
-                            <h4 class="text-base orange main-title">{{ ouvrage.name }}</h4>
-
-                            <div class="main-body row m-0">
-                                <h4 
-                                class="text-base orange text-uppercase col-6 d-flex justify-content-center" 
-                                style="margin-bottom: .56rem">
-                                    Avant
-                                </h4>
-
-                                <div class="col"></div>
-
-                                <div class="d-flex gap-2 col">
-                                    <div class="black-box" v-for="n in 4" :key="n"></div>
-                                </div>    
-                            </div>
-
-                            <div class="main-body row mx-0" style="margin-top: 1.75rem">
-                                <h4 
-                                class="text-base orange text-uppercase col-6 d-flex justify-content-center" 
-                                style="margin-bottom: .56rem">
-                                    apres
-                                </h4>
-
-                                <div class="col"></div>
-
-                                <div class="d-flex gap-2 col">
-                                    <div class="black-box" v-for="n in 4" :key="n"></div>
-                                </div>    
-                            </div>
-                            
-                        </div>
-
-
-                    </div>
-
-                </template>
-            
             </template>
 
         </template>
 
-
-        <div class="prestations-section">
-
-            <div class="title-section d-flex align-items-center gap-4">
-                <div class="icon">
-                    <Icon name="settings" />
-                </div>
-                <h4 class="title">Prestations</h4>
-            </div>
-            
-            <div class="image-grid-section ml-2">
-                <div class="d-flex align-items-center gap-2" style="margin-bottom: 1.31rem">
-                    <Icon name="camera" />
-                    <h4 class="text-base orange">Validation Chantier / Signature</h4>
-                </div>
-
-                <div class="row m-0">
-                    
-                    <div class="col">
-                        <div class="black-box" style="background: black"></div>
-                    </div>
-                
-                    <div class="col d-flex gap-2 align-items-start">
-                        <p class="m-0">
-                            Attention grosse poutre en haut
-                        </p>
-                        <Icon 
-                            name="plus-circle" 
-                            class="mt-2 pointer" 
-                            @click="generateElement('textarea', {
-                                content: 'Attention grosse poutre en haut'
-                            })"
-                        />
-                    </div>
-                </div>    
-
-            </div>
-
-        </div>
 
     </div>
 
@@ -282,11 +107,26 @@
 
 import { useStore } from 'vuex'
 import { computed } from 'vue'
+import orderOuvrages from './order-ouvrages.vue'
+import gedDetailFiles from './ged-detail-files.vue'
+import zoneCommentsSection from './zone-comments-section.vue'
+import gedDetailImageGridSection from './ged-detail-image-grid-section.vue'
+import campingSection from './camping-section.vue'
+import signatureSection from './signature-section'
 import { BUILDER_MODULE } from '../../store/types/types'
 
 export default {
 
     name: 'report-order-resource',
+
+    components: {
+        orderOuvrages,
+        campingSection,
+        gedDetailFiles,
+        zoneCommentsSection,
+        gedDetailImageGridSection,
+        signatureSection
+    },
 
     emits: ['generateElement', 'generatePrefetchedImage'],
 
@@ -304,20 +144,6 @@ export default {
             }
             return category !='' ? `${categories[category.toLowerCase()]}-section` : ''
         }
-
-        const isImage = (gedDetail) => ['png', 'jpg', 'jpeg', 'gif', 'svg'].includes(gedDetail.type)
-
-        const images = (gedDetails) => {
-            return Object.entries(gedDetails).filter(([_, detail]) => {
-                return isImage(detail)
-            })
-        }
-
-        const nonImages = (gedDetails) => {
-            return Object.entries(gedDetails).filter(([_, detail]) => {
-                return !isImage(detail)
-            })
-        }
         
         const generateElement = (name, attributes) => {
             emit('generateElement', name, attributes)
@@ -328,8 +154,6 @@ export default {
         }
 
         return {
-            images,
-            nonImages,
             order,
             generateElement,
             getCategoryClassName,
@@ -406,120 +230,6 @@ export default {
         }
 
     }
-
-    .zone-comments-section {
-        margin-top: 2.75rem;
-        margin-bottom: 1.5rem;
-        .zone-comments-body {
-            margin-top: 1.125rem;
-            width: 90%;
-            margin-left: auto;
-            margin-right: auto;
-        }
-    }
-
-    .camping-section,
-    .image-grid-section, 
-    .installation-section-content, 
-    .security-section-content {
-        width: 90%;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .camping-section {
-        margin-top: 2.75rem;
-        h4 {
-            font-family: Mulish;
-            font-style: normal;
-            font-weight: normal;
-            font-size: 16px;
-            line-height: 20px;
-            color: #000000;
-            margin-bottom: 0;
-        }
-    }
-
-    .image-grid-section {
-        margin-top: 2.845rem;
-        h4 {
-            margin-bottom: 0;
-        }
-    }
-
-    .installation-section, .security-section {
-        margin-top: 2.875rem;
-        .title-section {
-            .icon {
-                background: #FFF0E6;
-                width: 3.31rem;
-                height: 3.31rem;
-                border-radius: 50%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-            .title {
-                font-family: Mulish;
-                font-style: normal;
-                font-weight: 900;
-                font-size: 17px;
-                line-height: 21px;
-                color: #000000;
-                opacity: 0.5;
-            }
-        }
-
-        &-content {
-            
-            margin-top: 2.03rem;
-            .main-body {
-                margin-top: 1.125rem;
-            }
-
-        }
-
-    }
-
-    .security-section {
-        .title-section {
-            .icon {
-                background: #ECEAFE;
-            }
-            .title {
-                font-weight: 900;
-                font-family: Mullish, sans-serif;
-            }
-        }
-    }
-
-    .prestations-section {
-        margin-bottom: 4rem;
-        .title-section {
-            margin-top: 3rem;
-            margin-bottom: 3rem;
-
-            .icon {
-                background: #ECEAFE;
-                width: 3.31rem;
-                height: 3.31rem;
-                border-radius: 50%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-            .title {
-                font-family: Mulish;
-                font-style: normal;
-                font-weight: 900;
-                font-size: 17px;
-                line-height: 21px;
-                color: #000000;
-                opacity: 0.5;
-            }
-        }
-    }
-
 
 }
 
