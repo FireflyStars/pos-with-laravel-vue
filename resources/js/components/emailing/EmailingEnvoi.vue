@@ -28,7 +28,8 @@
             <div class="col-lg-4" v-if="type != 'COURRIER'">
                 <h5 class="color bold">TEST</h5>
                 <p class="">Testez votre campagne avant envoi.</p>
-                <div class="bloc-input">
+                <div class="bloc-input row">
+                    <div class="col-lg-10">
                     <input
                         placeholder="E-mail de test"
                         type="email"
@@ -38,7 +39,10 @@
                         size="30"
                         v-model="todoText"
                     />
+                    </div>
+                    <div class="col-lg-2">
                     <i class="bi bi-plus plus-but" v-on:click="addTodo()"></i>
+                    </div>
                 </div>
                 <div>
                     <p class="l-size">CARNET D’ADRESSES :</p>
@@ -86,7 +90,7 @@
                         <span class="emphasized size-mail"> courriers</span>
                     </p>
                     <p class="color">
-                        <strong class="font">210</strong>
+                        <strong class="font">{{formatPrice(campagne_price*count_cible)}}</strong>
                         <span class="emphasized size-mail"> euros HT</span>
                     </p>
                 </div>
@@ -111,7 +115,7 @@
                         <span class="emphasized size-mail"> e-mails</span>
                     </p>
                     <p class="color">
-                        <strong class="font">7,50</strong>
+                        <strong class="font">{{formatPrice(campagne_price*count_cible)}}</strong>
                         <span class="emphasized size-mail"> euros HT</span>
                     </p>
                 </div>
@@ -120,7 +124,7 @@
                 </button>
             </div>
 
-            <div class="col-lg-4" v-if="type == 'COURRIER'">
+            <div class="col-lg-4" :class={collg6} v-if="type == 'COURRIER'">
                 <h5 class="color bold">ENVOI DIFFÉRÉ</h5>
                 <p class="">Programmez l’envoi de votre campagne.</p>
                 <div class="time_envoi">
@@ -150,7 +154,7 @@
                         <span class="emphasized size-mail"> courriers</span>
                     </p>
                     <p class="color">
-                        <strong class="font">210</strong>
+                        <strong class="font">{{formatPrice(campagne_price*count_cible)}}</strong>
                         <span class="emphasized size-mail"> euros HT</span>
                     </p>
                 </div>
@@ -166,6 +170,7 @@
                     <span style=""
                         ><input
                             type="date"
+                             :min="today" 
                             name="dateofbirth"
                             id="dateofbirth"
                             v-model="date"
@@ -185,12 +190,12 @@
                         <span class="emphasized size-mail"> e-mails</span>
                     </p>
                     <p class="color">
-                        <strong class="font">7,50</strong>
+                        <strong class="font">{{formatPrice(campagne_price*count_cible)}}</strong>
                         <span class="emphasized size-mail"> euros HT</span>
                     </p>
                 </div>
 
-                <button class="button-programmer type" @click="sendImme()">
+                <button class="button-programmer type" @click="sendDifferer()">
                     PROGRAMMER
                 </button>
             </div>
@@ -213,6 +218,7 @@ import useCompanies from "../../composables/companies";
 import { useRouter, RouterView, useRoute } from "vue-router";
 import { useStore } from "vuex";
 import { reactive } from "vue";
+import {formatDate,formatPrice} from "../helpers/helpers"
 import {
     DISPLAY_LOADER,
     HIDE_LOADER,
@@ -256,25 +262,33 @@ export default {
     setup(data) {
         const my_name = localStorage.getItem("category");
         const todos = ref([]);
-
+        const today="2022-03-10"
         const {
             datacible,
             getCible_data,
             router,
             datacibleCount,
+            getCampagneCampagneCategory,
             count_cible,
         } = useCompanies();
         const route = useRoute();
         const store = useStore();
         const type = route.params.type;
            const showcontainer = ref(false);
+        const campagne_price=ref(0);
 
         onMounted(() => {
-               nextTick(() => {
-
-                showcontainer.value = true;
-            });
+        
             const id = route.params.cible_id;
+
+            
+            localStorage.setItem("id_campagne",id);
+                getCampagneCampagneCategory(id).then((response)=>{
+                
+                     campagne_price.value=response.data.campagnesCategory.price;
+                        showcontainer.value = true;
+                });
+            
             store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [
                 true,
                 "Chargement en cours..",
@@ -306,6 +320,11 @@ export default {
                     store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
                 });
         });
+
+        function collg6(){
+            if(type==COURRIER)
+            return 'col-lg-6';
+        }
         return {
             data,
             count_cible,
@@ -314,20 +333,22 @@ export default {
             my_name,
             showcontainer,
             todos,
+            campagne_price,
+            formatPrice,
+            formatDate,
+            collg6,
+            today
         };
     },
     methods: {
         currentDate() {
             const current = new Date();
-            const date = `${current.getDate()}/${
-                current.getMonth() + 1
-            }/${current.getFullYear()}`;
-            return date;
+            const date = `${current.getMonth() + 1}/${current.getDate()}/${current.getFullYear()}`;
+            return formatDate(date);
         },
         currentTime() {
             const current = new Date();
-            const time =
-                `${current.getHours()}` + ":" + `${current.getMinutes()}`;
+            const time =(current.getHours()<10?`0${current.getHours()}`:`${current.getHours()}:`) + (current.getMinutes()<10?`0${current.getMinutes()}`:`${current.getMinutes()}`);
 
             return time;
         },
@@ -410,11 +431,12 @@ export default {
             axios
                 .post(
                     "/insertdestinataire/" +
-                        localStorage.getItem("id_category"),
-                    form
+                        localStorage.getItem("id_campagne"),
+                    form2
                 )
                 .then((response) => {
                     this.singleData = response.data;
+                    this.store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,{message:response.data,ttl:8,type:'success'});
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -447,13 +469,14 @@ export default {
             v.fulldata = v.date.concat("T" + v.time + ":43.280Z");
             this.time_full = v.fulldata;
         },
-        sendImme() {
+        sendDifferer() {
             this.store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [
                 true,
-                "Chargement en cours..",
+                "Envoi différé en cours..",
             ]);
             var form = {
-                formatedDate: this.time_full,
+                date: this.date,
+                time: this.time,
                 id: this.$route.params.cible_id,
                 input_agence: localStorage.getItem("storedName"),
                 input_email: localStorage.getItem("storedEmail"),
@@ -467,6 +490,7 @@ export default {
                 .post("/envoiprogramme/" + this.$route.params.cible_id, form)
                 .then((response) => {
                     this.singleData = response.data;
+                    this.store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,{message:response.data,ttl:8,type:'success'});
                     this.$router.push("/emailing");
                 })
                 .catch(function (error) {
@@ -494,6 +518,7 @@ export default {
             axios
                 .post("/createdata/" + this.$route.params.cible_id, formrequest)
                 .then((response) => {
+                    this.store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,{message:response.data,ttl:8,type:'success'});
                     this.$router.push("/emailing");
                 })
                 .catch(function (error) {
@@ -634,7 +659,7 @@ export default {
 }
 
 .input-text {
-    width: 310px;
+
     border: none;
     background-color: #e3e2e2;
     height: 23px;
@@ -659,14 +684,15 @@ input[type="checkbox"] {
 }
 input[type="checkbox"] {
     -moz-appearance: initial;
+    position:relative;
 }
 input[type="checkbox"]:before {
     width: 13px;
     height: 13px;
     border-radius: 15px;
-    top: -3px;
+    top: 4px;
     left: -1px;
-    position: relative;
+    position: absolute;
     background-color: white;
     content: "";
     display: inline-block;
@@ -681,9 +707,7 @@ input[type="checkbox"]:checked:before {
     width: 13px;
     height: 13px;
     border-radius: 15px;
-    top: -3px;
-    left: -1px;
-    position: relative;
+
     background-color: #ff4500;
     content: "";
     display: inline-block;
@@ -697,7 +721,7 @@ input[type="checkbox"] {
 .border_hr:before {
     content: "";
     width: 1px;
-    height: 420px;
+    height: calc(100% - 20px);
     position: absolute;
     border-radius: 15px;
     background-color: #000000;
