@@ -25,32 +25,13 @@
             <div class="col-7">
                 
                 <div class="d-flex align-items-center gap-6">
-                    <Icon 
+                    <Icon
+                        v-for="icon in libraryIcons"
+                        :key="icon" 
                         class="library-item"
-                        name="arrow-top"
+                        :name="icon"
                         height="20"
-                        @click="generateElement('icon', { id: 'Icon', name: 'arrow-top' })"
-                    />
-                    
-                    <Icon 
-                        class="library-item"
-                        name="egg"
-                        height="20"
-                        @click="generateElement('icon', { id: 'Icon', name: 'egg' })"
-                    />
-
-                    <Icon 
-                        class="library-item"
-                        name="plus-o"
-                        height="20"
-                        @click="generateElement('icon', { id: 'Icon', name: 'plus-o' })"
-                    />
-
-                    <Icon 
-                        class="library-item flex-grow"
-                        name="grid"
-                        height="20"
-                        @click="generateElement('icon', { id: 'Icon', name: 'grid' })"
+                        @click="generateElement('icon', { id: 'Icon', name: icon })"
                     />
 
                     <p class="orange text-base self-end">Ajouter Forme</p>
@@ -71,38 +52,39 @@
 
                 </div>
 
-
-
             </div>
 
         </div>
 
 
-    </div><!--  box-top-right -->
+    </div>
 
 </template>
 
 <script>
+
+import { inject } from 'vue'
+
 export default {
+    
     name: 'adjouter-zone',
-    emits: ['generateElement', 'promptImage'],
-
-    setup (_, { emit }) {
+    
+    setup () {
         
-        const generateElement = (name, attributes) => {
-            emit('generateElement', name, attributes)
-        }
+        const promptImage = inject('promptImage')
+        const generateElement = inject('generateElement')
 
-        const promptImage = () => {
-            emit('promptImage')
-        }
+        const libraryIcons = ['arrow-top', 'egg', 'plus-o', 'grid']
 
         return {
             promptImage,
+            libraryIcons,
             generateElement
         }
     }
+
 }
+
 </script>
 
 <style lang="scss" scoped>

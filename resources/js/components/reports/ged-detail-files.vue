@@ -6,7 +6,7 @@
         <img 
             :src="detail.urls.small" 
             :alt="detail.human_readable_filename"
-            @click.prevent="$emit('generatePrefetchedImage', detail)"
+            @click.prevent="generatePrefetchedImage(detail)"
         />
     </div>
 
@@ -34,6 +34,9 @@
 </template>
 
 <script>
+
+import { inject } from 'vue'
+
 export default {
 
     props: {
@@ -43,11 +46,9 @@ export default {
         }
     },
 
-    emits: ['generatePrefetchedImage', 'generateElement'],
+    setup () {
 
-    setup (_, { emit }) {
-
-        const isImage = (gedDetail) => ['png', 'jpg', 'jpeg', 'gif', 'svg'].includes(gedDetail.type)
+        const isImage = (gedDetail) => ['png', 'jpg', 'jpeg', 'gif', 'svg', 'ttf'].includes(gedDetail.type)
 
         const images = (gedDetails) => {
             if(!Object.entries(gedDetails)) return []
@@ -63,12 +64,15 @@ export default {
             })
         }
 
-        const generateElement = () => emit('generateElement', data)
+        const generatePrefetchedImage = inject('generatePrefetchedImage')
+        const generateElement = inject('generateElement')
+
 
         return {
             images,
             nonImages,
-            generateElement
+            generateElement,
+            generatePrefetchedImage
         }
 
     }

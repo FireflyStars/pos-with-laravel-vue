@@ -35,5 +35,10 @@ class PageElementsController extends Controller
         );
     }
 
+    public function get_page_templates(Order $order) 
+    {
+        return response()->json(page_builder::templates());   
+    }
+
 
 }
