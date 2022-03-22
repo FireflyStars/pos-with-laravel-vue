@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import { inject } from 'vue'
 export default {
     
     props: {
@@ -42,11 +43,9 @@ export default {
         }
     },
 
-    emits: ['generateElement'],
-
-    setup (_, { emit }) {
+    setup () {
         
-        const generateElement = (data) => emit('generateElement', data)
+        const generateElement = inject('generateElement')
 
         return {
             generateElement

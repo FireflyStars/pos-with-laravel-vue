@@ -20,6 +20,7 @@
                 <h4 class="text-base orange main-title">{{ gedDetail.name }}</h4>
 
                 <div class="main-body row m-0">
+                    
                     <h4 
                     class="text-base orange text-uppercase col-6 d-flex justify-content-center" 
                     style="margin-bottom: .56rem">
@@ -29,17 +30,13 @@
                     <div class="col-12"></div>
 
                     <div class="d-flex gap-2 col">
+                        <ged-detail-files :gedDetail="gedDetail" />
+                    </div> 
 
-                        <ged-detail-files 
-                            :gedDetail="gedDetail"
-                            @generatePrefetchedImage="generatePrefetchedImage"
-                            @generateElement="generateElement" 
-                        />
-
-                    </div>    
                 </div>
 
                 <div class="main-body row mx-0" style="margin-top: 1.75rem">
+                    
                     <h4 
                     class="text-base orange text-uppercase col-6 d-flex justify-content-center" 
                     style="margin-bottom: .56rem">
@@ -49,13 +46,7 @@
                     <div class="col-12"></div>
 
                     <div class="d-flex gap-2 col">
-
-                        <ged-detail-files 
-                            :gedDetail="gedDetail"
-                            @generatePrefetchedImage="generatePrefetchedImage"
-                            @generateElement="generateElement" 
-                        />
-
+                        <ged-detail-files :gedDetail="gedDetail" />
                     </div> 
 
                 </div>
@@ -84,9 +75,7 @@ export default {
         }
     },
 
-    emits: ['generatePrefetchedImage', 'generateElement'],
-
-    setup (_, { emit }) {
+    setup () {
         
         const getCategoryClassName = (category) => {
             const categories = {
@@ -97,13 +86,8 @@ export default {
             return category !='' ? `${categories[category.toLowerCase()]}-section` : ''
         }
 
-        const generatePrefetchedImage = (data) => emit('generatePrefetchedImage', data)
-        const generateElement = (data) => emit('generateElement', data)
-
         return {
-            generateElement,
             getCategoryClassName,
-            generatePrefetchedImage
         }
 
     }

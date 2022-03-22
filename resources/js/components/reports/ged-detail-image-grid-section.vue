@@ -10,11 +10,7 @@
         </div>
 
         <div class="d-flex gap-2">
-            <ged-detail-files 
-                :gedDetail="gedDetail"
-                @generatePrefetchedImage="generatePrefetchedImage"
-                @generateElement="generateElement" 
-            />
+            <ged-detail-files :gedDetail="gedDetail" />
         </div>
 
     </div>
@@ -35,20 +31,8 @@ export default {
             required: true,
             type: [Object, Array]
         }
-    },
-
-    emits: ['generateElement', 'generatePrefetchedImage'],
-
-    setup (_, { emit }) {
-        
-        const generatePrefetchedImage = (data) => emit('generatePrefetchedImage', data)
-        const generateElement = (data) => emit('generateElement', data)
-
-        return {
-            generateElement,
-            generatePrefetchedImage
-        }
     }
+    
 }
 </script>
 
