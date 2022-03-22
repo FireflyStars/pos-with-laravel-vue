@@ -51,7 +51,7 @@ class ApiController extends Controller
         if(method_exists($this,$RequestType)&&is_callable([$this,$RequestType])){
             return call_user_func_array([$this,$RequestType],[$request]);
         }else{
-            return $this->response(0,null,$RequestType.' resource not found');
+            return $this->response(0,null,$RequestType.'Ressource introuvable');
         }
     }
 
@@ -61,15 +61,15 @@ class ApiController extends Controller
 
         if($AccountKey==null){
 
-            return $this->response(0,null,'Unable to fetch token, missing AccountKey parameter.');
+            return $this->response(0,null,'Impossible de récupérer le jeton, paramètre AccountKey manquant.');
         }
         if($SecurityID==null){
-            return $this->response(0,null,'Unable to fetch token, missing SecurityID parameter.');
+            return $this->response(0,null,'Impossible de récupérer le jeton, paramètre SecurityID manquant.');
         }
 
         $lcdtapp_api=Api::where('accountkey','=',$AccountKey)->where('securityid','=',$SecurityID)->first();
         if($lcdtapp_api==null){
-            return $this->response(0,null,'Unable to fetch token.','Invalid Account Key or Invalid SecurityID');
+            return $this->response(0,null,'Impossible de récupérer le jeton.','Clé de compte ou ID de sécurité non valide');
         }
         $lcdapp_api_session=new ApiSession();
         $lcdapp_api_session->api_id=$lcdtapp_api->id;
@@ -93,20 +93,20 @@ class ApiController extends Controller
         $password=isset($params['Password'])?$params['Password']:null;
 
         if($token_SessionID==null){
-            return $this->response(0,null,'Missing SessionID parameter.');
+            return $this->response(0,null,'Paramètre SessionID manquant.');
         }
         if($AccountKey==null){
-            return $this->response(0,null,'Missing AccountKey parameter.');
+            return $this->response(0,null,'Paramètre AccountKey manquant.');
         }
         if($user==null){
-            return $this->response(0,null,'Missing user parameter.');
+            return $this->response(0,null,'Paramètre utilisateur manquant.');
         }
         if($password==null){
-            return $this->response(0,null,'Missing password.');
+            return $this->response(0,null,'Mot de passe manquant.');
         }
         //verify sessionid
         if($this->isExpired($token_SessionID,$AccountKey)){
-            return $this->response(0,null,'Unable to login','Invalid or expired session.',null,401);
+            return $this->response(0,null,'Connection impossible','Session invalide ou expirée.',null,401);
         }
 
         $user=User::where('email','=',$user)->first();
@@ -114,12 +114,12 @@ class ApiController extends Controller
             //tout ok. considerer comme login valide
         }else {
             if ($user == null || !Hash::check($password, $user->password)) {
-                return $this->response(0, null, 'Unable to login', 'Invalid user or password', null, 401);
+                return $this->response(0, null, 'Connection impossible', 'Utilisateur ou mot de passe invalide', null, 401);
             }
         }
 
         if($user->affiliate==null)
-        return $this->response(0, null, 'Unable to login', 'User is not affiliated to any franchise', null, 401);
+        return $this->response(0, null, 'Connection impossible', 'Utilisateur nest affilié à aucune franchise', null, 401);
 
 
         $lcdtapp_api= DB::table('apis')
@@ -160,21 +160,21 @@ class ApiController extends Controller
         if($valid!==true)return $valid;
 
         if(!$this->isValidAccount($AccountKey)){
-            return $this->response(0,null,'Unable to load account',null,null,500);
+            return $this->response(0,null,'Impossible de charger le compte',null,null,500);
         }
         $lcdtapp_api_session=ApiSession::where('sessionid','=', $SessionID)->first();
  
        
 
         if($lcdtapp_api_session==null)
-            return $this->response(0,null,'Invalid or expired session.',null,null,401);
+            return $this->response(0,null,'Session invalide ou expirée.',null,null,401);
         
         $SessionType = $lcdtapp_api_session->sessiontype;
 
         $expired=$this->isExpired($SessionID,$AccountKey);
         $obj = new \stdClass();
         $obj->isLoggedIn = !$expired&&$SessionType=='login';
-       return $this->response(1,$obj,($expired?'Invalid or expired session.':'Token is valid'));
+       return $this->response(1,$obj,($expired?'Session invalide ou expirée.':'Le jeton est valide.'));
 
     }
     public function isValidAccount($AccountKey){
@@ -195,7 +195,7 @@ class ApiController extends Controller
     
         $lcdtapp_api_session=ApiSession::where('sessionid','=', $SessionID)->first();
         if($lcdtapp_api_session==null)
-        return $this->response(0,null,'Invalid or expired session.',null,null,401);
+        return $this->response(0,null,'Session invalide ou expirée.',null,null,401);
     
         $SessionType = $lcdtapp_api_session->sessiontype;
 
@@ -203,13 +203,13 @@ class ApiController extends Controller
 
         $expired=$this->isExpired($SessionID,$AccountKey);
         if($expired||$SessionType=='token'){
-            return $this->response(0,null,'Invalid or expired session.',null,null,401);
+            return $this->response(0,null,'Session invalide ou expirée.',null,null,401);
         }
         $lcdtapp_api_session->last_activity='2000-01-01 00:00:00';
         $lcdtapp_api_session->save();
   
 
-        return $this->response(1,null,"Logoff successful");
+        return $this->response(1,null,"Déconnexion réussie.");
     }
 
     public function GetEventList(Request $request){
@@ -263,7 +263,7 @@ class ApiController extends Controller
             $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
             $affiliate=$lcdtapp_api_instance->user->affiliate;
             if($affiliate==null)
-            return $this->response(0,null,'Unable to fetch customers.','User not associated to an affiliate');
+            return $this->response(0,null,'Impossible de récupérer les clients.','Utilisateur non associé à un affilié.');
 
 
             return $this->response(1,$affiliate->customers->where('active','=',1));
@@ -286,20 +286,20 @@ class ApiController extends Controller
             $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
             $affiliate=$lcdtapp_api_instance->user->affiliate;
             if($affiliate==null)
-                return $this->response(0,null,'Unable to delete ged detail.','User not associated to an affiliate');
+                return $this->response(0,null,'Impossible de supprimer les détails de ged.','Utilisateur non associé à un affilié.');
 
             if(!isset($Parameters['ged_detail_id'])||$this->isBlank($Parameters['ged_detail_id'])){
-                return $this->response(0,null,'ged_detail_id is required.');   
+                return $this->response(0,null,'ged_detail_id est requis.');   
             }
             $gedDetail=GedDetail::where('id','=',$Parameters['ged_detail_id'])->first();
             if($gedDetail==null)
-                return $this->response(0,null,'No ged detail found.');
+                return $this->response(0,null,'Aucun détail de ged trouvé');
             $order=$gedDetail->ged->order;     
 
             if($order->affiliate_id!=$affiliate->id){
-                    return $this->response(0,null,'Ged detail is not linked to current affiliate.');   
+                    return $this->response(0,null,'Les détails de Ged ne sont pas liés à l\'affilié actuel.');   
             }
-            $this->l("DEL","API GED DETAIL DELETED",$lcdtapp_api_instance->user->id);
+            $this->l("DEL","DÉTAIL API GED SUPPRIMÉ",$lcdtapp_api_instance->user->id);
             $gedDetail->delete();
             return $this->response();
          
@@ -323,7 +323,7 @@ class ApiController extends Controller
             $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
             $affiliate=$lcdtapp_api_instance->user->affiliate;
             if($affiliate==null)
-                return $this->response(0,null,'Unable to delete order zone.','User not associated to an affiliate');
+                return $this->response(0,null,'Impossible de supprimer la zone de commande.','Utilisateur non associé à un affilié.');
 
             if(!isset($Parameters['order_zone_id'])||$this->isBlank($Parameters['order_zone_id'])){
                 return $this->response(0,null,'order_zone_id is required.');   
@@ -331,16 +331,16 @@ class ApiController extends Controller
             $orderZone=OrderZone::find($Parameters['order_zone_id']);
 
             if($orderZone==null)
-                return $this->response(0,null,'No Order Zone found.');
+                return $this->response(0,null,'Aucune zone de commande trouvée.');
             $order=$orderZone->order;     
 
             if($order==null)
-            return $this->response(0,null,'Related order not found.');
+            return $this->response(0,null,'Commande associée introuvable');
 
             if($order->affiliate_id!=$affiliate->id){
-                    return $this->response(0,null,'Order Zone is not linked to current affiliate.');   
+                    return $this->response(0,null,'La zone de commande n\'est pas liée à l\'affilié actuel.');   
             }
-            $this->l("DEL","API ORDER ZONE DELETED",$lcdtapp_api_instance->user->id);
+            $this->l("DEL","ZONE DE COMMANDE API SUPPRIMÉE",$lcdtapp_api_instance->user->id);
             $orderZone->delete();
             return $this->response();
          
@@ -364,31 +364,31 @@ class ApiController extends Controller
             $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
             $affiliate=$lcdtapp_api_instance->user->affiliate;
             if($affiliate==null)
-                return $this->response(0,null,'Unable to save event comment.','User not associated to an affiliate');
+                return $this->response(0,null,'	Impossible d\'enregistrer le commentaire de l\'événement.','Utilisateur non associé à un affilié.');
 
             if(!isset($Parameters['event_id'])||$this->isBlank($Parameters['event_id'])){
-                return $this->response(0,null,'event_id is required.');   
+                return $this->response(0,null,'event_id est requis.');   
             }
 
             if(!isset($Parameters['comment'])||$this->isBlank($Parameters['comment'])){
-                return $this->response(0,null,'comment is required.');   
+                return $this->response(0,null,'un commentaire est requis.');   
             }
             $event=Event::find($Parameters['event_id']);
             if($event==null)
-            return $this->response(0,null,'Event not found.'); 
+            return $this->response(0,null,'Evénement introuvable.'); 
             
             if($event->affiliate_id!=$affiliate->id)
-            return $this->response(0,null,'Event is not linked to current affiliate.'); 
+            return $this->response(0,null,'L\'événement n\'est pas lié à l\'affilié actuel.'); 
 
             $comment=new EventComment();
        
             if(isset($Parameters['id'])||!$this->isBlank($Parameters['id'])){
                 $comment=EventComment::find($Parameters['id']);
                 if($comment==null)
-                return $this->response(0,null,'Existing comment not found.','event_comment_id '.$Parameters['id']); 
+                return $this->response(0,null,'Commentaire existant introuvable.','event_comment_id '.$Parameters['id']); 
 
                 if($comment->event_id!=$event->id)
-                return $this->response(0,null,'Existing comment not related to specified event','event_id '.$Parameters['event_id'].' | Comment event id '.$comment->event_id ); 
+                return $this->response(0,null,'Commentaire existant non lié à l\'événement spécifié','event_id '.$Parameters['event_id'].' | Comment event id '.$comment->event_id ); 
                 //only the user can edit his own comment else create new comment
                 if($comment->user_id!=$affiliate=$lcdtapp_api_instance->user->id)
                 $comment=new EventComment();
@@ -422,10 +422,10 @@ class ApiController extends Controller
             $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
             $affiliate=$lcdtapp_api_instance->user->affiliate;
             if($affiliate==null)
-                return $this->response(0,null,'Unable to perform search.','User not associated to an affiliate');
+                return $this->response(0,null,'Impossible d\'effectuer la recherche.','Utilisateur non associé à un affilié.');
 
             if(!isset($Parameters['words'])||$this->isBlank($Parameters['words'])){
-                return $this->response(0,null,'words is required.');   
+                return $this->response(0,null,'mots est nécessaire.');   
             }
         
           $words=explode(' ',$Parameters['words']);
@@ -489,31 +489,31 @@ class ApiController extends Controller
             $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
             $affiliate=$lcdtapp_api_instance->user->affiliate;
             if($affiliate==null)
-                return $this->response(0,null,'Unable to save order zone comment.','User not associated to an affiliate');
+                return $this->response(0,null,'	Impossible d\'enregistrer le commentaire de la zone de commande.','Utilisateur non associé à un affilié.');
 
             if(!isset($Parameters['order_zone_id'])||$this->isBlank($Parameters['order_zone_id'])){
-                return $this->response(0,null,'order_zone_id is required.');   
+                return $this->response(0,null,'order_zone_id est requis. ');   
             }
 
             if(!isset($Parameters['comment'])||$this->isBlank($Parameters['comment'])){
-                return $this->response(0,null,'comment is required.');   
+                return $this->response(0,null,'un commentaire est requis.');   
             }
             $OrderZone=OrderZone::find($Parameters['order_zone_id']);
             if($OrderZone==null)
-            return $this->response(0,null,'OrderZone not found.'); 
+            return $this->response(0,null,'OrderZone introuvable.'); 
             
             if($OrderZone->order->affiliate_id!=$affiliate->id)
-            return $this->response(0,null,'OrderZone is not linked to current affiliate.'); 
+            return $this->response(0,null,'OrderZone n\'est pas lié à l\'affilié actuel.'); 
 
             $comment=new OrderZoneComment();
        
             if(isset($Parameters['id'])||!$this->isBlank($Parameters['id'])){
                 $comment=OrderZoneComment::find($Parameters['id']);
                 if($comment==null)
-                return $this->response(0,null,'Existing comment not found.','order_zone_comment_id '.$Parameters['id']); 
+                return $this->response(0,null,'Commentaire existant introuvable.','order_zone_comment_id '.$Parameters['id']); 
 
                 if($comment->order_zone_id!=$OrderZone->id)
-                return $this->response(0,null,'Existing comment not related to specified order zone','order_zone_id '.$Parameters['order_zone_id'].' | Comment order zone id '.$comment->order_zone_id ); 
+                return $this->response(0,null,'Commentaire existant non lié à la zone de commande spécifiée','order_zone_id '.$Parameters['order_zone_id'].' | Comment order zone id '.$comment->order_zone_id ); 
                 //only the user can edit his own comment else create new comment
                 if($comment->user_id!=$affiliate=$lcdtapp_api_instance->user->id)
                 $comment=new OrderZoneComment();
@@ -546,20 +546,20 @@ class ApiController extends Controller
             $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
             $affiliate=$lcdtapp_api_instance->user->affiliate;
             if($affiliate==null)
-                return $this->response(0,null,'Unable to delete event comment.','User not associated to an affiliate');
+                return $this->response(0,null,'Impossible de supprimer le commentaire de l\'événement.','Utilisateur non associé à un affilié.');
 
             if(!isset($Parameters['event_comment_id'])||$this->isBlank($Parameters['event_comment_id'])){
-                return $this->response(0,null,'event_comment_id is required.');   
+                return $this->response(0,null,'event_comment_id est requis.');   
             }
 
             $eventComment=EventComment::find($Parameters['event_comment_id']);
             if($eventComment==null)
-            return $this->response(0,null,'Event comment not found.'); 
+            return $this->response(0,null,'Commentaire d\'événement introuvable.'); 
             $event=$eventComment->event;
             if($event->affiliate_id!=$affiliate->id)
-            return $this->response(0,null,'Event comment is not linked to current affiliate.'); 
+            return $this->response(0,null,'Le commentaire de l\'événement n\'est pas lié à l\'affilié actuel.'); 
             $eventComment->delete();
-            $this->l("DEL","API EVENT COMMENT DELETED",$lcdtapp_api_instance->user->id);
+            $this->l("DEL","COMMENTAIRE D\'ÉVÉNEMENT API SUPPRIMÉ",$lcdtapp_api_instance->user->id);
            
             return $this->response();
          
@@ -583,22 +583,22 @@ class ApiController extends Controller
             $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
             $affiliate=$lcdtapp_api_instance->user->affiliate;
             if($affiliate==null)
-                return $this->response(0,null,'Unable to delete order zone comment.	','User not associated to an affiliate');
+                return $this->response(0,null,'Impossible de supprimer le commentaire de la zone de commande.	','Utilisateur non associé à un affilié.');
 
             if(!isset($Parameters['orderzone_comment_id'])||$this->isBlank($Parameters['orderzone_comment_id'])){
-                return $this->response(0,null,'orderzone_comment_id is required.');   
+                return $this->response(0,null,'orderzone_comment_id est requis.');   
             }
 
             $orderzoneComment=OrderZoneComment::find($Parameters['orderzone_comment_id']);
             if($orderzoneComment==null)
-            return $this->response(0,null,'Order zone comment not found.'); 
+            return $this->response(0,null,'Commentaire de la zone de commande introuvable.'); 
             $order=$orderzoneComment->OrderZone->order;
 
 
             if($order->affiliate_id!=$affiliate->id)
-            return $this->response(0,null,'Order zone comment is not linked to current affiliate.'); 
+            return $this->response(0,null,'Le commentaire de la zone de commande n\'est pas lié à l\'affilié actuel.'); 
             $orderzoneComment->delete();
-            $this->l("DEL","API ORDER ZONE COMMENT DELETED",$lcdtapp_api_instance->user->id);
+            $this->l("DEL","COMMENTAIRE DE ZONE DE COMMANDE API SUPPRIMÉ",$lcdtapp_api_instance->user->id);
            
             return $this->response();
          
@@ -621,17 +621,17 @@ class ApiController extends Controller
             $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
             $affiliate=$lcdtapp_api_instance->user->affiliate;
             if($affiliate==null)
-                return $this->response(0,null,'Unable to fetch customer.','User not associated to an affiliate');
+                return $this->response(0,null,'Impossible de récupérer le client.','Utilisateur non associé à un affilié');
 
             if(!isset($Parameters['customeruuid'])||$this->isBlank($Parameters['customeruuid'])){
                 return $this->response(0,null,'Customer UUID is required.');   
             }
             $customer=Customer::where('customeruuid','=',$Parameters['customeruuid'])->first();
             if($customer==null)
-                return $this->response(0,null,'No customer found.'); 
+                return $this->response(0,null,'Aucun client trouvé.'); 
           
             if($customer->affiliate_id!=$affiliate->id)
-                return $this->response(0,null,'Customer does not belong to user\'s affiliate.'); 
+                return $this->response(0,null,'Le client n\'appartient pas à l\'affilié de l\'utilisateur.'); 
                 $customer->makeHidden(['created_at','updated_at','deleted_at']);
             return $this->response(1,$customer);
         }else{
@@ -653,7 +653,7 @@ class ApiController extends Controller
             $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
             $affiliate=$lcdtapp_api_instance->user->affiliate;
             if($affiliate==null)
-                return $this->response(0,null,'Unable to fetch customer.','User not associated to an affiliate');
+                return $this->response(0,null,'Impossible de récupérer le client.','Utilisateur non associé à un affilié.');
 
             if(!isset($Parameters['customeruuid'])||$this->isBlank($Parameters['customeruuid'])){
                 return $this->response(0,null,'Customer UUID is required.');   
@@ -729,7 +729,7 @@ public function GetMoyenAcces(Request $request){
         $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
         $affiliate=$lcdtapp_api_instance->user->affiliate;
         if($affiliate==null)
-            return $this->response(0,null,'Unable to moyen acces.','User not associated to an affiliate');
+            return $this->response(0,null,'Impossible d\'accéder au moyen.','Utilisateur non associé à un affilié.');
 
         $moyenacces=$affiliate->moyenacces()->get();
    
@@ -749,15 +749,15 @@ public function GetEventTypes(Request $request){
     
 
     if($token_SessionID==null){
-        return $this->response(0,null,'Missing SessionID parameter.');
+        return $this->response(0,null,'Paramètre SessionID manquant.');
     }
     if($AccountKey==null){
-        return $this->response(0,null,'Missing AccountKey parameter.');
+        return $this->response(0,null,'Paramètre AccountKey manquant.');
     }
 
     //verify sessionid
     if($this->isExpired($token_SessionID,$AccountKey)){
-        return $this->response(0,null,'Unable to verify account','Invalid or expired session.',null,401);
+        return $this->response(0,null,'Impossible de vérifier le compte','Session invalide ou expirée.',null,401);
     }
     return $this->response(1,EventType::all()->makeHidden(['created_at','updated_at','deleted_at']));
 
@@ -768,15 +768,15 @@ public function GetEventStatuses(Request $request){
     
 
     if($token_SessionID==null){
-        return $this->response(0,null,'Missing SessionID parameter.');
+        return $this->response(0,null,'Paramètre SessionID manquant. ');
     }
     if($AccountKey==null){
-        return $this->response(0,null,'Missing AccountKey parameter.');
+        return $this->response(0,null,'Paramètre AccountKey manquant.');
     }
 
     //verify sessionid
     if($this->isExpired($token_SessionID,$AccountKey)){
-        return $this->response(0,null,'Unable to verify account','Invalid or expired session.',null,401);
+        return $this->response(0,null,'Impossible de vérifier le compte','Session invalide ou expirée.',null,401);
     }
     return $this->response(1,EventStatus::all()->makeHidden(['created_at','updated_at','deleted_at']));
 
@@ -787,15 +787,15 @@ public function GetEventOrigins(Request $request){
     
 
     if($token_SessionID==null){
-        return $this->response(0,null,'Missing SessionID parameter.');
+        return $this->response(0,null,'Paramètre SessionID manquant. ');
     }
     if($AccountKey==null){
-        return $this->response(0,null,'Missing AccountKey parameter.');
+        return $this->response(0,null,'Paramètre AccountKey manquant.');
     }
 
     //verify sessionid
     if($this->isExpired($token_SessionID,$AccountKey)){
-        return $this->response(0,null,'Unable to verify account','Invalid or expired session.',null,401);
+        return $this->response(0,null,'Impossible de vérifier le compte','Session invalide ou expirée.',null,401);
     }
     return $this->response(1,EventOrigin::all()->makeHidden(['created_at','updated_at','deleted_at']));
 
@@ -806,15 +806,15 @@ public function GetOrderStates(Request $request){
     
 
     if($token_SessionID==null){
-        return $this->response(0,null,'Missing SessionID parameter.');
+        return $this->response(0,null,'Paramètre SessionID manquant.');
     }
     if($AccountKey==null){
-        return $this->response(0,null,'Missing AccountKey parameter.');
+        return $this->response(0,null,'Paramètre AccountKey manquant.');
     }
 
     //verify sessionid
     if($this->isExpired($token_SessionID,$AccountKey)){
-        return $this->response(0,null,'Unable to verify account','Invalid or expired session.',null,401);
+        return $this->response(0,null,'Impossible de vérifier le compte','Session invalide ou expirée.',null,401);
     }
     $states=OrderState::all()->makeHidden(['created_at','updated_at','deleted_at']);
     return $this->response(1,$states);
@@ -827,15 +827,15 @@ public function GetGedDetailCategory(Request $request){
     
 
     if($token_SessionID==null){
-        return $this->response(0,null,'Missing SessionID parameter.');
+        return $this->response(0,null,'Paramètre SessionID manquant.');
     }
     if($AccountKey==null){
-        return $this->response(0,null,'Missing AccountKey parameter.');
+        return $this->response(0,null,'Paramètre AccountKey manquant.');
     }
 
     //verify sessionid
     if($this->isExpired($token_SessionID,$AccountKey)){
-        return $this->response(0,null,'Unable to verify account','Invalid or expired session.',null,401);
+        return $this->response(0,null,'Impossible de vérifier le compte','Session invalide ou expirée.',null,401);
     }
     $statuses=GedCategory::all()->makeHidden(['created_at','updated_at','deleted_at']);
     return $this->response(1,$statuses);
@@ -865,7 +865,7 @@ public function GetGedDetailCategory(Request $request){
             return $this->response(0,null,'Event not found.');
 
             if($event->affiliate_id!=$lcdtapp_api_instance->user->affiliate->id)
-            return $this->response(0,null,'Event does not belong to user\'s affiliated franchise.');
+            return $this->response(0,null,'L\'événement n\'appartient pas à la franchise affiliée de l\'utilisateur.');
                 $event->user->roles=$event->user->getRoles();
                 $event->user->makeHidden(['created_at','updated_at']);
                 $event->user->avatar=getenv('APP_URL').Storage::url( $event->user->avatar);
@@ -912,7 +912,7 @@ public function GetDevis(Request $request){
         return $this->response(0,null,'Event not found.');
         $order=$event->order()->first();
         if($order==null)  
-          return $this->response(0,null,'No quotation(devis) found for this event.');
+          return $this->response(0,null,'Aucune cotation trouvée pour cet événement.');
         $order->makeHidden(['created_at','updated_at','deleted_at']);
         $order->orderZones;   
         foreach($order->orderZones as &$order_zone){
@@ -961,10 +961,10 @@ public function GetDevisByOrderId(Request $request){
       
         $order=Order::find($Parameters['order_id']);
         if($order==null)  
-          return $this->response(0,null,'No quotation(devis) found');
+          return $this->response(0,null,'Aucune cotation(devis) trouvée');
 
         if($lcdtapp_api_instance->user->affiliate->id!=$order->affiliate_id) 
-        return $this->response(0,null,'Quotation(devis) does not belong to user\'s affiliate');
+        return $this->response(0,null,'La citation (devis) n\'appartient pas à l\'affilié de l\'utilisateur');
 
         $order->makeHidden(['created_at','updated_at','deleted_at']);
         $order->orderZones;   
@@ -1011,11 +1011,11 @@ public function GetOrderOuvrages(Request $request){
         $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
         $order=$lcdtapp_api_instance->user->affiliate->orders->where('id','=',$Parameters['order_id'])->first();
         if($order==null)
-        return $this->response(0,null,'Order not found.');
+        return $this->response(0,null,'Commande introuvable.');
         
         $orderOuvrages=$order->orderOuvrages->makeHidden(['created_at','updated_at','deleted_at']);
         if($orderOuvrages->count()==0)
-        return $this->response(1,null,'Ouvrage list not available.');
+        return $this->response(1,null,'Liste d\'ouvrage non disponible.');
 
         return $this->response(1, $orderOuvrages);
     }else{
@@ -1033,7 +1033,7 @@ public function GetOrderCategories(Request $request){
     if($valid!==true)return $valid;
     $isLoggedIn=$this->checkLogin($request);
     if(!isset($Parameters['order_id'])||$this->isBlank($Parameters['order_id'])){
-        return $this->response(0,null,'Missing order_id.');
+        return $this->response(0,null,'order_id manquant.');
     }
 
 
@@ -1042,7 +1042,7 @@ public function GetOrderCategories(Request $request){
         $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
         $order=$lcdtapp_api_instance->user->affiliate->orders->where('id','=',$Parameters['order_id'])->makeHidden(['created_at','updated_at','deleted_at'])->first();
         if($order==null)
-        return $this->response(0,null,'Order not found.');
+        return $this->response(0,null,'Commande introuvable.');
         
         $orderZones=$order->orderZones->makeHidden(['created_at','updated_at','deleted_at']);
         $ordercats=array();
@@ -1072,42 +1072,42 @@ public function SaveEvent(Request $request){
     if($valid!==true)return $valid;
     $isLoggedIn=$this->checkLogin($request);
     if(!isset($Parameters['customer_id'])||$this->isBlank($Parameters['customer_id'])){
-        return $this->response(0,null,'Missing customer_id.');
+        return $this->response(0,null,'	Customer_id manquant.');
     }
     if(!isset($Parameters['description'])||$this->isBlank($Parameters['description'])){
-        return $this->response(0,null,'A description is required.');
+        return $this->response(0,null,'Une description est requise.');
     }
     if(!isset($Parameters['date_start'])||$this->isBlank($Parameters['date_start'])){
-        return $this->response(0,null,'Start date/time is required.');
+        return $this->response(0,null,'La date/l\'heure de début est requise.');
     }
     if(!isset($Parameters['date_end'])||$this->isBlank($Parameters['date_start'])){
-        return $this->response(0,null,'End date/time is required.');
+        return $this->response(0,null,'La date/l\'heure de fin est requise.');
     }
     if(!isset($Parameters['name'])||$this->isBlank($Parameters['name'])){
-        return $this->response(0,null,'Event name is required.');
+        return $this->response(0,null,'Le nom de l\'événement est requis.');
     }
     if(!isset($Parameters['event_type_id'])||$this->isBlank($Parameters['event_type_id'])){
-        return $this->response(0,null,'Event type id is required.');
+        return $this->response(0,null,'État de l\'événement non valide');
     }
 
     if(!isset($Parameters['event_origin_id'])||$this->isBlank($Parameters['event_origin_id'])){
-        return $this->response(0,null,'Event origin id is required.');
+        return $this->response(0,null,'L\'identifiant du type d\'événement est requis.');
     }
 
     if($this->isBlank($Parameters['contact_id'])){
         if(!isset($Parameters['contact_phone'])||$this->isBlank($Parameters['contact_phone'])){
-            return $this->response(0,null,'Contact phone is required.');
+            return $this->response(0,null,'Un numéro de téléphone est requis..');
         }
         if(!isset($Parameters['contact_email'])||$this->isBlank($Parameters['contact_email'])){
-            return $this->response(0,null,'Contact email is required.');
+            return $this->response(0,null,'E-mail de contact est requis.');
         }
         if(!$this->validateEmail($Parameters['contact_email'])){
-            return $this->response(0,null,'Contact email is invalid.');
+            return $this->response(0,null,'E-mail de contact n\'est pas valide.');
         }
     }else{
         $contact=Contact::find($Parameters['contact_id']);
         if($contact->customer_id!=$Parameters['customer_id'])
-        return $this->response(0,null,'Contact does not belong to customer.');
+        return $this->response(0,null,'Le contact n\'appartient pas au client.');
     }
     if($isLoggedIn===true){
   
@@ -1116,10 +1116,10 @@ public function SaveEvent(Request $request){
         if(isset($Parameters['event_id'])&&$Parameters['event_id']!=null){
             $event=Event::find($Parameters['event_id']);
             if($event==null)
-            return $this->response(0,null,'Event not found.');
+            return $this->response(0,null,'Evénement introuvable.');
     
             if($event->user_id!=$lcdtapp_api_instance->user_id){
-                return $this->response(0,null,'Unable to save', 'event not affected to current user.');
+                return $this->response(0,null,'Impossible de sauvegarder', 'événement non affecté à l\'utilisateur actuel.');
             }
            
         }
@@ -1129,20 +1129,20 @@ public function SaveEvent(Request $request){
                 if($address!=null){
                     $Parameters['address_id']=$address->id;
                 }else{
-                    return $this->response(0,null,'Invalid user address id','Address does not exist or does not belong to customer.');
+                    return $this->response(0,null,'Identifiant d\'adresse utilisateur non valide','L\'adresse n\'existe pas ou n\'appartient pas au client.');
                 }
                
         }else{
             $address=Address::where('id','=',$Parameters['address_id'])->first();
             if($address==null||$address->customer_id!=$Parameters['customer_id']){
-                return $this->response(0,null,'Invalid user address id','Address does not exist or does not belong to customer.');
+                return $this->response(0,null,'Identifiant d\'adresse utilisateur non valide','L\'adresse n\'existe pas ou n\'appartient pas au client.');
             }
         }
         $eventstatus=null;
         if(isset($Parameters['event_status_id'])&&!$this->isBlank($Parameters['event_status_id'])){
            $eventstatus=EventStatus::find($Parameters['event_status_id']);
            if($eventstatus==null){
-            return $this->response(0,null,'Invalid event status');
+            return $this->response(0,null,'État de l\'événement non valide');
            }
         }
 
@@ -1211,7 +1211,7 @@ public function SaveDevis(Request $request){
 
     if($isLoggedIn===true){
     if(!isset($Parameters['event_id'])||$this->isBlank($Parameters['event_id'])){
-        return $this->response(0,null,'Missing event_id.');
+        return $this->response(0,null,'	ID d\'événement manquant');
     }
 
     if(isset($Parameters['order_zones'])&&is_array($Parameters['order_zones'])){
@@ -1219,14 +1219,14 @@ public function SaveDevis(Request $request){
            //order zones
            foreach($Parameters['order_zones'] as $order_zone){
             if(!isset($order_zone['latitude'])||$this->isBlank($order_zone['latitude'])){
-                return $this->response(0,null,'Zone latitude is required.');
+                return $this->response(0,null,'La latitude de la zone est requise.');
             }
             if(!isset($order_zone['longitude'])||$this->isBlank($order_zone['longitude'])){
-                return $this->response(0,null,'Zone longitude is required.');
+                return $this->response(0,null,'La longitude de la zone est requise.');
             }
        
             if(!isset($order_zone['name'])||$this->isBlank($order_zone['name'])){
-                return $this->response(0,null,'Zone name is required.');
+                return $this->response(0,null,'Le nom de la zone est requis.');
             }
      
             //ged details
@@ -1235,18 +1235,18 @@ public function SaveDevis(Request $request){
                     //ged details
                     foreach($order_zone['ged_details'] as $ged_detail){
                         if((!isset($ged_detail['description'])||$this->isBlank($ged_detail['description']))&&(!isset($ged_detail['data'])||$this->isBlank($ged_detail['data']))){
-                            return $this->response(0,null,'Invalid ged details','At least a file data or a description is required.');
+                            return $this->response(0,null,'Détails ged non valides','Au moins une donnée de fichier ou une description est requise.');
                         }
 
                         if(isset($ged_detail['data'])&&!$this->isBlank($ged_detail['data']))
                             if(!isset($ged_detail['human_readable_filename'])||$this->isBlank($ged_detail['human_readable_filename'])){
-                                return $this->response(0,null,'Ged detail file name is required.');
+                                return $this->response(0,null,'	Le nom du fichier de détails Ged est requis.');
                             }
                         if(!isset($ged_detail['latitude'])||$this->isBlank($ged_detail['latitude'])){
-                            return $this->response(0,null,'Ged detail latitude is required.');
+                            return $this->response(0,null,'La latitude de détail Ged est requise.');
                         }
                         if(!isset($ged_detail['longitude'])||$this->isBlank($ged_detail['longitude'])){
-                            return $this->response(0,null,'Ged detail longitude is required.');
+                            return $this->response(0,null,'La longitude de détail Ged est requise.');
                         }
     
                     }
@@ -1267,10 +1267,10 @@ public function SaveDevis(Request $request){
         if(isset($Parameters['order_id'])&&$Parameters['order_id']!=null){
             $order=Order::where('id','=',$Parameters['order_id'])->where('affiliate_id','=',$lcdtapp_api_instance->user->affiliate->id)->first();
             if($order==null)
-                return $this->response(0,null,'Order not found.');
+                return $this->response(0,null,'Commande introuvable.');
     
             if($event->affiliate_id!=$lcdtapp_api_instance->user->affiliate->id){
-                return $this->response(0,null,'Unable to save', 'event not affected to current user\'s franchise.');
+                return $this->response(0,null,'Impossible de sauvegarder', 'événement non affecté à la franchise de l\'utilisateur actuel.');
             }
            
         }
@@ -1302,11 +1302,11 @@ if(isset($params['order_zones'])&&is_array($params['order_zones'])){
                     }else{
                         $orderZone=OrderZone::find($order_zone['id']);
                         if($orderZone==null){
-                            return $this->response(0,null,'Unable to save', 'Order zone id '.$order_zone['id'].' not found.');
+                            return $this->response(0,null,'Impossible de sauvegarder ', 'Order zone id '.$order_zone['id'].' pas trouvé.');
                         }
 
                         if($order!=null&&$order->id>0 && $orderZone->order_id!=$order->id){
-                            return $this->response(0,null,'Unable to save', 'Order zone id '.$orderZone->id.' not linked to order '.$order->id.'.');
+                            return $this->response(0,null,'Impossible de sauvegarder ', 'Order zone id '.$orderZone->id.' non lié à la commande '.$order->id.'.');
                         }
                     }
         
@@ -1319,15 +1319,15 @@ if(isset($params['order_zones'])&&is_array($params['order_zones'])){
                             if($ged_detail['id']>0){
                                     $gedDetails=GedDetail::find($ged_detail['id']);
                                     if($gedDetails==null)
-                                        return $this->response(0,null,'Unable to save', 'Ged detail with id '.$ged_detail['id'].' not found.');
+                                        return $this->response(0,null,'Impossible de sauvegarder', 'Détail Ged avec identifiant '.$ged_detail['id'].' pas trouvé.');
                                     $ged=Ged::find($gedDetails->ged_id);
                                     if($order!=null&&$order->id>0 && $ged->order_id!=$order->id)
-                                        return $this->response(0,null,'Unable to save', 'Ged detail with id'.$ged_detail['id'].' not linked to order '.$order->id.'.');
+                                        return $this->response(0,null,'Impossible de sauvegarder', 'Détail Ged avec identifiant '.$ged_detail['id'].' non lié à la commande '.$order->id.'.');
                             }
 
                             if(isset($ged_detail['order_ouvrage_id'])&&!$this->isBlank($ged_detail['order_ouvrage_id'])){
                                 if(!isset($ged_detail['timeline'])||!in_array($ged_detail['timeline'],['AVANT','APRES']))
-                                return $this->response(0,null,'Unable to save', 'Please specify a valid timeline for order ouvrage id '.$ged_detail['order_ouvrage_id'].'.');
+                                return $this->response(0,null,'Impossible de sauvegarder', 'Veuillez spécifier un calendrier valide pour l\'identifiant de l\'ouvrage de commande '.$ged_detail['order_ouvrage_id'].'.');
                             }
                         }
 
@@ -1448,7 +1448,7 @@ public function GetZones(Request $request){
     if($valid!==true)return $valid;
     $isLoggedIn=$this->checkLogin($request);
     if(!isset($Parameters['order_id'])||$this->isBlank($Parameters['order_id'])){
-        return $this->response(0,null,'Missing order_id.');
+        return $this->response(0,null,'Order_id manquant.');
     }
 
 
@@ -1459,7 +1459,7 @@ public function GetZones(Request $request){
 
         $order=$affiliate->orders->where('id','=',$Parameters['order_id'])->first();
         if($order==null){
-            return $this->response(0,null,'Order not found.');
+            return $this->response(0,null,'Commande introuvable.');
         }
            
         return $this->response(1, $order->orderZones);
@@ -1518,16 +1518,16 @@ public function GetZones(Request $request){
         $SessionID=$request->post('SessionID');
         $AccountKey=$request->post('AccountKey');
         if($SessionID==null){
-            return $this->response(0,null,'Missing SessionID parameter.');
+            return $this->response(0,null,'Paramètre SessionID manquant.');
         }
         if($AccountKey==null){
-            return $this->response(0,null,'Missing AccountKey parameter.');
+            return $this->response(0,null,'Paramètre AccountKey manquant.');
         }
 
 
          $lcdtapp_api_session=ApiSession::where('sessionid','=', $SessionID)->first();
         if($lcdtapp_api_session==null)
-        return $this->response(0,null,'Invalid or expired session.',null,null,401);
+        return $this->response(0,null,'Session invalide ou expirée. ',null,null,401);
     
         $SessionType = $lcdtapp_api_session->sessiontype;
 
@@ -1535,7 +1535,7 @@ public function GetZones(Request $request){
         $expired=$this->isExpired($SessionID,$AccountKey);
         $isLoggedIn = !$expired&&$SessionType=='login';
         if(!$isLoggedIn)
-            return $this->response(0,null,'Invalid or expired session.',null,null,401);
+            return $this->response(0,null,'Session invalide ou expirée.',null,null,401);
         return $isLoggedIn;
     }
 
@@ -1544,26 +1544,26 @@ public function GetZones(Request $request){
         $AccountKey=$request->post('AccountKey');
         $Parameters=$request->post('Parameters');
         if($SessionID==null){
-            return $this->response(0,null,'Missing SessionID parameter.');
+            return $this->response(0,null,'Paramètre SessionID manquant.');
         }
         if($AccountKey==null){
-            return $this->response(0,null,'Missing AccountKey parameter.');
+            return $this->response(0,null,'Paramètre AccountKey manquant.');
         }
 
         if(!isset($Parameters['User'])||$this->isBlank($Parameters['User'])){
-            return $this->response(0,null,'Missing User parameter.');     
+            return $this->response(0,null,'Paramètre utilisateur manquant.');     
         }
          $lcdtapp_api_session=ApiSession::where('sessionid','=', $SessionID)->first();
         if($lcdtapp_api_session==null)
-        return $this->response(0,null,'Invalid session.',null,null,401);
+        return $this->response(0,null,'Session invalide',null,null,401);
 
 
         $expired=$this->isExpired($SessionID,$AccountKey);
         if($expired)
-            return $this->response(0,null,'Expired session.',null,null,401);
+            return $this->response(0,null,'Session expirée',null,null,401);
             $user=User::where('email','=',$Parameters['User'])->first();
             if($user==null)
-            return $this->response(0,null,'User not found.');
+            return $this->response(0,null,'Utilisateur non trouvé');
 
 //TODO: send email via zoho crm
 
@@ -1574,10 +1574,10 @@ public function GetZones(Request $request){
         $AccountKey=$request->post('AccountKey');
 
         if($SessionID==null){
-            return $this->response(0,null,'Missing SessionID parameter.');
+            return $this->response(0,null,'Paramètre SessionID manquant.');
         }
         if($AccountKey==null){
-            return $this->response(0,null,'Missing AccountKey parameter.');
+            return $this->response(0,null,'Paramètre AccountKey manquant.');
         }
         return true;
     }
