@@ -872,6 +872,7 @@ public function GetGedDetailCategory(Request $request){
                 $event->customer->makeHidden(['created_at','updated_at','deleted_at']);
                 $event->address->makeHidden(['created_at','updated_at','deleted_at']);
                 $event->eventType->makeHidden(['created_at','updated_at','deleted_at']);
+                if($event->eventOrigin!=null)  
                 $event->eventOrigin->makeHidden(['created_at','updated_at','deleted_at']);
                 $event->eventComments->makeHidden(['updated_at','deleted_at','user_id','event_id']);
      
