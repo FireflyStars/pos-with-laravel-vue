@@ -27,7 +27,7 @@
                 type: String
             },
             textClass: {
-                type: String,
+                type: [String, Object],
                 default: ''
             },
             kind: {

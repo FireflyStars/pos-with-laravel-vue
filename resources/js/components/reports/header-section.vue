@@ -13,14 +13,16 @@
             <BaseButton 
                 title="Sauvegarder" 
                 kind="success" 
-                classes="me-12 heading-buttons" 
+                class="me-12 heading-buttons justify-content-center" 
             />
             <BaseButton 
                 title="pdf" 
                 kind="danger" 
-                class="text-uppercase heading-buttons heading-buttons-pdf" 
+                class="text-uppercase heading-buttons heading-buttons-pdf justify-content-center" 
                 @click="$emit('submitPage')" 
-            />
+            >
+                <Icon name="loader" width="30" height="30" v-show="loading" />
+            </BaseButton>
         </div>
 
     </div>
@@ -100,6 +102,11 @@ export default {
         
         const store = useStore()
         
+        const loading = computed(() => {
+            const { id, value } = store.getters[`${BUILDER_MODULE}/loading`]
+            return id == 'submit' && value
+        })
+
         const activeTemplate = computed({
             set(value) {
                 store.commit(`${BUILDER_MODULE}/${SET_ACTIVE_TEMPLATE}`, value)
@@ -170,6 +177,7 @@ export default {
             page,
             pages,
             addPage,
+            loading,
             pageName,
             template,
             templates,
@@ -221,8 +229,9 @@ export default {
     font-size: 12px;
     line-height: 23px;
     color: #fff !important;
-    width: auto;
+    width: 7.05rem;
     border: none;
+    height: 2.31rem;
 }
 
 .text {

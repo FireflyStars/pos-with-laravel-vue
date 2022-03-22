@@ -201,7 +201,7 @@
                     @if (strtolower($element->name) == 'textarea')
                         <div 
                         class="{{ $element->attributes->class }}" 
-                        style="{{ $element->attributes->style ?? '' }} position: absolute;"
+                        style="{{ $element->attributes->style ?? '' }} position: absolute; min-height: 50px"
                         >{!! $element->content ?? '' !!}
                         </div>
                     @endif

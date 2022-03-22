@@ -5,6 +5,7 @@ const { generateId } = useHelpers()
 
 import { 
     
+    SET_LOADING,
     SAVE_PAGE, 
     ADD_PAGE,
     DELETE_PAGE,
@@ -69,6 +70,10 @@ export const PageBuilder = {
     },
 
     mutations: {
+        [SET_LOADING](state, { id, value = true }) {
+            state.loading.id = id
+            state.loading.value = value
+        },
         [SAVE_PAGE_ELEMENTS](state, elements) {
             state.page.elements = elements
         },
@@ -128,6 +133,8 @@ export const PageBuilder = {
 
         async [SAVE_PAGE]({ commit }, { pages, template }) {
 
+            commit(SET_LOADING, { id: 'submit' })
+
             let formData = new FormData()
             pages = unref(pages)
             pages.forEach((page) => {
@@ -155,9 +162,11 @@ export const PageBuilder = {
                 const { data } = await axios.post('/save-page-elements', formData, {  
                     responseType: 'arraybuffer'
                 })
+                commit(SET_LOADING, { id: 'submit', value: false })
                 return data
             }
             catch(e) {
+                commit(SET_LOADING, { id: 'submit', value: false })
                 throw e
             }
 
