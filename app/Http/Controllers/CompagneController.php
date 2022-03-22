@@ -712,12 +712,13 @@ class CompagneController extends Controller
      */
     public function contentform(Request $request, $id)
     {
-        // $cmp = DB::table('campagnes')->where('id', $id)->update([
-        //         'expediteur' =>  $request->expediteur
-        // ]);
+      $c=Campagne::find($id);
+      $c->email=$request->post('email');
+      $c->phone=$request->post('phone');
+      $c->save();
 
         return response()->json([
-                'cibles' => $request,
+                'ok' => 1,
 
             ]);
 
@@ -1057,18 +1058,18 @@ class CompagneController extends Controller
         $id_list = $data['id'];
         //Permet d'ajouter un champ (une colonne) à une liste.
         //Permet d'ajouter un contact à une liste.
-        $this->sarbacane()->addCampagneFieldsAndContacts($id_list,$id,$request->input_phone,$request->input_email,$test_contacts);
+        $this->sarbacane()->addCampagneFieldsAndContacts($id_list,$id,$test_contacts);
 
         $template = CampagneCategory::find($campagne->campagne_category_id);
         //Permet de créer une campagne E-mail
         $send = $this->sarbacane()->post('campaigns/email', [
 
                 "name"=>  $campagne->name.'_test_'.$uid,
-                "emailFrom"=>$request->emailFrom,
-                "aliasFrom"=> $request->emailFrom,
-                "emailReplyTo"=>$request->emailFrom,
-                "aliasReplyTo"=> $request->emailFrom,
-                "subject"=> $request->subject,
+                "emailFrom"=>$campagne->affiliate->reponseaddress,
+                "aliasFrom"=> 'La compagnie des toits - '.$campagne->affiliate->name,
+                "emailReplyTo"=>$campagne->affiliate->reponseaddress,
+                "aliasReplyTo"=> 'La compagnie des toits - '.$campagne->affiliate->name,
+                "subject"=> $campagne->campagneCategory->objet,
         
         ]);
 
@@ -1216,7 +1217,7 @@ class CompagneController extends Controller
         $id_list = $data['id'];
         //Permet d'ajouter un champ (une colonne) à une liste.
         //Permet d'ajouter un contact à une liste.
-        $this->sarbacane()->addCampagneFieldsAndContacts($id_list,$id,$request->input_phone,$request->input_email);
+        $this->sarbacane()->addCampagneFieldsAndContacts($id_list,$id);
    /*
         $cible = DB::table('campagne_cible')->where('campagne_cible.campagne_id',"=", $id)->where('campagne_cible.deleted_at',"=", NULL)->get();
 
@@ -1246,11 +1247,11 @@ class CompagneController extends Controller
         $send = $this->sarbacane()->post('campaigns/email', [
 
                 "name"=> $campagne->name.'_diff_'.$uid,
-                "emailFrom"=>$request->emailFrom,
-                "aliasFrom"=> $request->emailFrom,
-                "emailReplyTo"=>$request->emailFrom,
-                "aliasReplyTo"=> $request->emailFrom,
-                "subject"=> $request->subject,
+                "emailFrom"=>$campagne->affiliate->reponseaddress,
+                "aliasFrom"=> 'La compagnie des toits - '.$campagne->affiliate->name,
+                "emailReplyTo"=>$campagne->affiliate->reponseaddress,
+                "aliasReplyTo"=> 'La compagnie des toits - '.$campagne->affiliate->name,
+                "subject"=> $campagne->campagneCategory->objet,
         
         ]);
 
@@ -1308,18 +1309,18 @@ class CompagneController extends Controller
         $id_list = $data['id'];
         //Permet d'ajouter un champ (une colonne) à une liste.
         //Permet d'ajouter un contact à une liste.
-        $this->sarbacane()->addCampagneFieldsAndContacts($id_list,$id,$request->input_phone,$request->input_email);
+        $this->sarbacane()->addCampagneFieldsAndContacts($id_list,$id);
 
         $template = CampagneCategory::find($campagne->campagne_category_id);
         //Permet de créer une campagne E-mail
         $send = $this->sarbacane()->post('campaigns/email', [
 
                 "name"=>  $campagne->name.'_imme_'.$uid,
-                "emailFrom"=>$request->emailFrom,
-                "aliasFrom"=> $request->emailFrom,
-                "emailReplyTo"=>$request->emailFrom,
-                "aliasReplyTo"=> $request->emailFrom,
-                "subject"=> $request->subject,
+                "emailFrom"=>$campagne->affiliate->reponseaddress,
+                "aliasFrom"=> 'La compagnie des toits - '.$campagne->affiliate->name,
+                "emailReplyTo"=>$campagne->affiliate->reponseaddress,
+                "aliasReplyTo"=> 'La compagnie des toits - '.$campagne->affiliate->name,
+                "subject"=> $campagne->campagneCategory->objet,
         
         ]);
 
@@ -1387,6 +1388,29 @@ class CompagneController extends Controller
                 'content' =>$lettre[0]->lettreaccompagnement,
             ]);
 
+    }
+
+
+    public function fields(Request $request,$id){
+        $c=Campagne::find($id);
+      
+        $affiliate=$c->affiliate;
+        $cc=$c->campagneCategory;
+        $fields=json_decode($cc->fields);
+        $fields->Nom_agence->value=$affiliate->name;
+        $fields->Telephone_agence->value=$affiliate->telephone;
+        $fields->Email_agence->value=$affiliate->reponseaddress;
+        $fields->Prenom_dirigeant->value=$affiliate->firstnamedirector;
+        $fields->Nom_dirigeant->value=$affiliate->namedirector;
+        $fields->Email_dirigeant->value=$affiliate->email;
+        $fields->Portable_dirigeant->value=$affiliate->mobile;
+        $fields->Adresse_agence->value=$affiliate->address.' '.$affiliate->address2;
+        $fields->CP_agence->value=$affiliate->postcod;
+        $fields->Ville_agence->value=$affiliate->city;
+        $fields->Page_agence->value=$affiliate->urlagence;
+        $fields->Linkedin_agence->value=$affiliate->linkedin;
+    
+        return response()->json(array('fields'=>$fields,'image'=>$cc->imagetemplate,'campagneCategory'=>$cc));
     }
 
     
