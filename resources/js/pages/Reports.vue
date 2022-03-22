@@ -18,85 +18,9 @@
 
                             <div class="d-flex gap-4">
 
-                                <div class="left-page-container"> <!-- Left section -->
+                                <div class="left-page-container">
 
-                                    <div class="d-flex justify-content-between align-items-center margin-bottom">
-                                
-                                        <div>
-                                            <h4 class="tile_h1">
-                                                <Icon name="report" width="32" height="32" />
-                                                Creation/Edition Report
-                                            </h4>
-                                        </div>
-
-                                        <div class="d-flex">
-                                            <BaseButton 
-                                                title="Sauvegarder" 
-                                                kind="success" 
-                                                classes="me-12 heading-buttons" 
-                                            />
-                                            <BaseButton 
-                                                title="pdf" 
-                                                kind="danger" 
-                                                class="text-uppercase heading-buttons heading-buttons-pdf" 
-                                                @click="submitPage" 
-                                            />
-                                        </div>
-
-                                    </div>
-
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="reports-dropdown">
-
-                                            <select-box
-                                                v-model="activeTemplate" 
-                                                :placeholder="template.name || 'Template'" 
-                                                :options="formattedTemplates" 
-                                                name="template"
-                                                classnames="reports-dropdown-button"
-                                            />
-
-                                        </div>
-
-                                        <div class="d-flex align-items-center">
-                                            
-                                            <div>
-
-                                                <a 
-                                                class="orange text d-flex align-items-center gap-half pointer" 
-                                                @click.prevent="addPage">
-                                                    <Icon name="plus-circle" />
-                                                    Ajouter Page
-                                                </a>
-
-                                                <a 
-                                                class="text d-flex align-items-center gap-half"
-                                                :class="[pages.length <= 1 ? 'not-allowed': 'pointer']" 
-                                                @click.prevent="deletePage"
-                                                :disabled="pages.length <= 1"
-                                                >
-                                                    <Icon name="bin" />
-                                                    Supprimer Page
-                                                </a>
-
-                                            </div>
-                                            
-                                            <div class="reports-dropdown page-dropdown">
-
-                                                <select-box
-                                                    v-model="activePage" 
-                                                    :placeholder="pageName" 
-                                                    :options="formattedPages" 
-                                                    name="page"
-                                                    classnames="reports-dropdown-button"
-                                                />
-
-                                            </div>
-
-                                        </div>
-
-
-                                    </div>
+                                    <header-section @submitPage="submitPage" />
                                     
                                     <div class="shadow-sm builder-container">
 
@@ -110,10 +34,10 @@
 
 
                                         <div class="template-body">
-
                                             <div 
-                                            v-for="(element, index) in page.elements" 
-                                            :key="index"
+                                                v-for="(element, index) in page.elements" 
+                                                :key="index"
+                                                class="item-container"
                                             >
 
                                                 <component 
@@ -139,8 +63,9 @@
                                                     >
                                                         &times;
                                                     </span>
-                                                    
+
                                                 </component>
+                                                
 
                                             </div>
                                             
@@ -170,7 +95,7 @@
                                         v-bind:draggable="true"
                                         v-bind:scalable="true"
                                         v-bind:rotatable="true"
-                                        :keepRatio="false"
+                                        :keepRatio="true"
                                         @drag="onDrag"
                                         @scale="onScale"
                                         @rotate="onRotate"
@@ -181,15 +106,9 @@
 
                                 <div class="right-page-container">  <!-- Right section -->
 
-                                    <adjouter-zone 
-                                        @generateElement="generateElement"
-                                        @promptImage="promptImage"
-                                    />
+                                    <adjouter-zone />
                                                     
-                                    <report-order-resources 
-                                        @generateElement="generateElement"
-                                        @generatePrefetchedImage="generatePrefetchedImage"
-                                    />
+                                    <report-order-resources />
 
                                 </div>
 
@@ -209,11 +128,22 @@
 <script>
 
 import { useStore } from 'vuex'
-import { onMounted, unref, ref, nextTick, computed, watch } from 'vue'
-import { BUILDER_MODULE, SAVE_PAGE, GET_ORDER_DETAILS } from '../store/types/types'
+import { onMounted, unref, ref, nextTick, computed, watch, provide } from 'vue'
+import { 
+    BUILDER_MODULE, 
+    SAVE_PAGE,
+    GET_ORDER_DETAILS, 
+    GET_TEMPLATES,
+    SAVE_REPORT_PAGES,
+    DELETE_ITEM,
+    GENERATE_ELEMENT,
+    UPDATE_ELEMENT_STYLES,
+    UPDATE_ELEMENT_CONTENT
+} from '../store/types/types'
 import Moveable from "vue3-moveable"
 import popup from '../components/reports/popup'
 import adjouterZone from '../components/reports/adjouter-zone'
+import headerSection from '../components/reports/header-section'
 import reportOrderResources from '../components/reports/report-order-resources'
 
 import useStyles from '../composables/reports/useStyles'
@@ -226,6 +156,7 @@ export default {
         popup,
         Moveable,
         adjouterZone,
+        headerSection,
         reportOrderResources
     },
 
@@ -239,87 +170,26 @@ export default {
     setup(props) {
 
         const store = useStore()
-        const { generateId, getDomElementParent } = useHelpers()
+        const { getDomElementParent } = useHelpers()
         const { itemAttributes, getStylesOfElement, getComputedStyle } = useStyles()
         const { generateTextarea, generateIcon, generateButton, generateImage } = useElementsGenerator()
 
-        const pages = ref([])
-        const activePage = ref(0)
         const activeItem = ref(null)
         const showcontainer = ref(false)
-        const templates = ref([])
-        const activeTemplate = ref(-1)
         const activeElement = ref({})
         const openPopup = ref(false)
 
-        const template = computed(() => {
-            return templates.value.length 
-            ? templates.value.find(template => template.id == activeTemplate.value) 
-            : {}
-        })
+        const activePage = computed(() => store.getters[`${BUILDER_MODULE}/activePage`])
+        const page = computed(() => store.getters[`${BUILDER_MODULE}/page`])
+        const pages = computed(() => store.getters[`${BUILDER_MODULE}/pages`])
 
-        const activePageTemplate = computed(() => {
-            return page.value?.template_id != undefined
-            ? templates.value.find(template => {
-                return template.id == page.value.template_id
-            }) 
-            : {}
-        })
-
-        const pageName = computed(() =>  {
-            const pageValue = +activePage.value + 1
-            return 'Page ' + pageValue
-        })
-
-        const formattedPages = computed(() => {
-            return pages.value.map((_, index) => {
-                const pageValue = +index + 1
-                return {
-                    value: index, 
-                    display: 'Page ' + pageValue
-                }
-            })
-        })
-
-        const formattedTemplates = computed(() => {
-            return templates.value.map(template => {
-                return {
-                    value: template.id, 
-                    display: template.name
-                }
-            })
-        })
+        const template = computed(() => store.getters[`${BUILDER_MODULE}/template`])
+        const activePageTemplate = computed(() => store.getters[`${BUILDER_MODULE}/activePageTemplate`])
+        const activeTemplate = computed(() => store.getters[`${BUILDER_MODULE}/activeTemplate`])
     
-        const page = computed(() =>  pages.value.length ? pages.value[activePage.value] : {})
-
-        const assignTemplateToActivePage = (id) => {
-            if(!pages.value.length && !activePage.value) return
-            pages.value[activePage.value].template_id = id
-        }
-
         const loadPages = () => {
-            pages.value = [{
-                id: generateId(12),
-                elements: [],
-                template_id: activeTemplate.value || -1
-            }]
+            store.commit(`${BUILDER_MODULE}/${SAVE_REPORT_PAGES}`)
             return Promise.resolve()
-        }
-
-        const addPage = () => {
-            pages.value.push({
-                id: generateId(12),
-                elements: [],
-                template_id: activeTemplate.value
-            })
-        }
-
-        const deletePage = () => {
-            if(pages.value.length > 1) {
-                const deletedPageIndex = activePage.value
-                if(activePage.value != 0) activePage.value --
-                pages.value.splice(deletedPageIndex, 1)
-            }
         }
 
         const deleteItem = (elem, id) => {
@@ -330,7 +200,7 @@ export default {
                 elem = getDomElementParent(elem, 'draggable')
                 elem.remove()
                 document.querySelector('.moveable').style.display = "none"
-                pages.value[activePage.value].elements.splice(elementIndex, 1)
+                store.commit(`${BUILDER_MODULE}/${DELETE_ITEM}`, elementIndex)
                 activeItem.value = null
             }
         }
@@ -357,17 +227,21 @@ export default {
         }
 
         const updateElementStyles = (id, styles, elementOldStyles) => {
-
             const itemIndex = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
             const computedStyles = getComputedStyle(styles, elementOldStyles)
-            pages.value[activePage.value].elements[itemIndex].attributes.style = computedStyles
-
+            store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_STYLES}`, { 
+                styles: computedStyles, 
+                index: itemIndex 
+            })
         }
 
         const updateElementValue = ({ item = 'textarea', index, value }) => {
             const domElements = ['input', 'textarea', 'select']
             if(domElements.includes(item)) {
-                pages.value[activePage.value].elements[index].content = value
+                store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_CONTENT}`, {
+                    content: value,
+                    index    
+                })
             }
         }
 
@@ -388,11 +262,11 @@ export default {
                 button: generateButton
             }
             const element = elementMapping[name](attrs)
-            pages.value[activePage.value].elements.push(element)
+            store.commit(`${BUILDER_MODULE}/${GENERATE_ELEMENT}`, element)
         }
 
         const generatePrefetchedImage = (detail) => {
-            pages.value[activePage.value].elements.push(generateImage({ 
+            store.commit(`${BUILDER_MODULE}/${GENERATE_ELEMENT}`, generateImage({ 
                 filename: detail.urls.original,
                 image: `${detail.storage_path}/${detail.file}.${detail.type}`,
                 prefetched: true
@@ -411,11 +285,25 @@ export default {
                 image = e.target.files[0]
                 filename = URL.createObjectURL(image)
 
-                pages.value[activePage.value].elements.push(generateImage({ filename, image }))
-                
+                store.commit(`${BUILDER_MODULE}/${GENERATE_ELEMENT}`, generateImage({ filename, image }))
+
                 file.value = ''
             }
 
+        }
+
+        const fetchTemplates = () => {
+            return store.dispatch(`${BUILDER_MODULE}/${GET_TEMPLATES}`, props.id)
+        }
+
+        const openUpdatePopup = (element) => {
+            openPopup.value = true
+            activeElement.value = element
+            activeItem.value = null
+        }
+
+        const getOrderDetails = () => {
+            return store.dispatch(`${BUILDER_MODULE}/${GET_ORDER_DETAILS}`, props.id)
         }
 
         const submitPage = async () => {
@@ -439,53 +327,18 @@ export default {
             link.click()
         }
 
-        const fetchTemplates = () => {
-            templates.value = ([
-                {
-                    id: 'template1',
-                    name: 'Template1',
-                    template: {
-                        header: '../images/sample-template.png',
-                        footer: '../images/sample-footer-template.png'
-                    }
-                },
-                {
-                    id: 'template2',
-                    name: 'Template2',
-                    template: {
-                        header: '../images/sample-template-1.png',
-                        footer: '../images/sample-footer-template-1.png'
-                    }
-                },
-            ])
-            templates.value.length ? activeTemplate.value = templates.value[0]?.id : -1
-            return Promise.resolve() 
-        }
+        provide('promptImage', promptImage)
+        provide('generateElement', generateElement)
+        provide('generatePrefetchedImage', generatePrefetchedImage)
 
-        const openUpdatePopup = (element) => {
-            openPopup.value = true
-            activeElement.value = element
-            activeItem.value = null
-        }
-
-        const getOrderDetails = (id) => {
-            return store.dispatch(`${BUILDER_MODULE}/${GET_ORDER_DETAILS}`, id)
-        }
-
-        watch(page, () => {
-            activeItem.value = null
-        })
-
-        watch(activeTemplate, (value) => {
-            if(value) assignTemplateToActivePage(value)
-        })
+        watch(page, () => activeItem.value = null)
 
         onMounted(() => {
             nextTick(async () => {
                 showcontainer.value = true
                 await fetchTemplates()
                 await loadPages()
-                getOrderDetails(props.id)
+                getOrderDetails()
             })
         })
       
@@ -493,32 +346,25 @@ export default {
             page,
             pages,
             onDrag,
-            addPage,
             onScale,
-            pageName,
             onRotate,
             template,
-            templates,
             openPopup,
             activePage,
-            submitPage,
-            deletePage,
             activeItem,
             deleteItem,
+            submitPage,
             promptImage,
             activateItem,
             showcontainer,
             generateElement,
-            formattedPages,
             activeElement,
             activeTemplate,
             openUpdatePopup,
             activePageTemplate,
-            formattedTemplates,
             updateElementValue,
             updateElementFromPopup,
             generatePrefetchedImage,
-            assignTemplateToActivePage,
         }
     },
 }
@@ -591,23 +437,10 @@ $orange: orange;
     }
 }
 
-
-.heading-buttons {
-    font-family: sans-serif;
-    font-style: normal;
-    font-weight: bold;
-    font-size: 12px;
-    line-height: 23px;
-    color: #fff !important;
-    width: auto;
-    border: none;
-}
-
-
-
 .builder-container {
     position: relative;
     min-height: 45rem;
+    height: auto;
     background: #fff;
     overflow: hidden;
     padding: 1rem 2rem;
@@ -682,34 +515,6 @@ $orange: orange;
 
 }
 
-
-.reports-dropdown {
-    position: relative;
-    margin-bottom: .75rem;
-    &-button {
-        background: #C4C4C4;
-        border: none;
-        font-family: Roboto;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 18px;
-        line-height: 21px;
-        color: #000000;
-        gap: 0.51rem;
-        padding-left: 1.43rem;
-        padding-right: 1.43rem;
-        min-width: 9.56rem;
-        min-height: 2.93rem;
-        border-radius: 0;
-    }
-    .page-button {
-        gap: 2.62rem;
-    }
-}
-
-.page-dropdown {
-    margin-left: 2.06rem;
-}
 
 .text {
     font-family: Poppins;

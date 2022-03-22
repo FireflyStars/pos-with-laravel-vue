@@ -6,6 +6,7 @@ use PDF;
 use App\Models\Order;
 use App\Models\page_builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Resources\reportsResource;
 
 class PageElementsController extends Controller
@@ -28,9 +29,15 @@ class PageElementsController extends Controller
 
     public function get_page_order(Order $order) 
     {
+        DB::enableQueryLog();
         return response()->json(
             new reportsResource($order)
         );
+    }
+
+    public function get_page_templates(Order $order) 
+    {
+        return response()->json(page_builder::templates());   
     }
 
 
