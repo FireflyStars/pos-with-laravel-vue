@@ -4,36 +4,74 @@
                                         
         <customer-info :order="order" />
 
-        <template v-if="'id' in order && order?.orderZones?.length">
+        <template v-if="fetching">
+            <div class="d-flex gap-2 align-items-center" style="margin-top: 3rem">
+                <loader type="icon-title" />
+                <loader />
+                <loader type="icon" />
+            </div>
 
-            <template  
-                v-for="zone in order.orderZones"
-                :key="zone.id">
-                
-                <div class="breadcrumb-section">
+            <div class="d-flex gap-2 align-items-center" style="margin-top: 1.75rem">
+                <loader type="icon-title" />
+                <loader />
+                <loader type="icon" />
+            </div>
 
-                    <zone-info :zone="zone" />
-                    
-                    <camping-section :zone="zone" />
-
-                    <ged-detail-image-grid-section 
-                        v-if="zone?.gedDetails" 
-                        :gedDetails="zone.gedDetails" 
-                    />
-
-                    <zone-comments-section 
-                        v-if="zone?.orderZoneComments?.length"
-                        :orderZoneComments="zone.orderZoneComments"
-                    />
-
+            <div 
+                v-for="n in 2"
+                :key="n"
+                style="margin-top: 1.75rem"
+            >
+                <div class="d-flex gap-2 align-items-center">
+                    <loader type="icon-title" />
+                    <loader />
                 </div>
+                <div class="d-flex gap-2 mt-2 align-items-center">
+                    <loader type="image" :count="4" />
+                </div>
+            </div>
 
-                <order-ouvrages :orderOuvrages="zone.orderOuvrages" />    
+            <div class="d-flex gap-2 align-items-center" style="margin-top: 1.75rem">
+                <loader type="icon-title" />
+                <loader />
+                <loader type="icon" />
+            </div>
+
+        </template>
+        
+        <template v-else>
+
+            <template v-if="'id' in order && order?.orderZones?.length">
+                
+                <template  
+                    v-for="zone in order.orderZones"
+                    :key="zone.id">
+                    
+                    <div>
+
+                        <zone-info :zone="zone" />
+                        
+                        <camping-section :zone="zone" />
+
+                        <ged-detail-image-grid-section 
+                            v-if="zone?.gedDetails" 
+                            :gedDetails="zone.gedDetails" 
+                        />
+
+                        <zone-comments-section 
+                            v-if="zone?.orderZoneComments?.length"
+                            :orderZoneComments="zone.orderZoneComments"
+                        />
+
+                    </div>
+
+                    <order-ouvrages :orderOuvrages="zone.orderOuvrages" />    
+
+                </template>
 
             </template>
 
         </template>
-
 
     </div>
 
@@ -46,7 +84,7 @@
 <script>
 
 import { useStore } from 'vuex'
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 
 import zoneInfo from './zone-info'
 import customerInfo from './customer-info'
@@ -54,9 +92,9 @@ import orderOuvrages from './order-ouvrages.vue'
 import campingSection from './camping-section.vue'
 import signatureSection from './signature-section'
 import gedDetailFiles from './ged-detail-files.vue'
-import { BUILDER_MODULE } from '../../store/types/types'
 import zoneCommentsSection from './zone-comments-section.vue'
 import gedDetailImageGridSection from './ged-detail-image-grid-section.vue'
+import { BUILDER_MODULE } from '../../store/types/types'
 
 export default {
 
@@ -77,7 +115,7 @@ export default {
     setup () {
 
         const store = useStore()
-
+        const fetching = inject('fetching')
         const order = computed(() => store.getters[`${BUILDER_MODULE}/order`])
 
         const getCategoryClassName = (category) => {
@@ -91,6 +129,7 @@ export default {
 
         return {
             order,
+            fetching,
             getCategoryClassName,
         }
     }

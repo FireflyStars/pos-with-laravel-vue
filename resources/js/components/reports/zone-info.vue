@@ -1,5 +1,6 @@
 <template>
     <div class="breadcrumb d-flex align-items-center gap-4">
+
         <Icon name="house" />
         <h4 class="breadcrumb-title">{{ zone.name }}</h4>
         <Icon 
@@ -9,6 +10,7 @@
                 content: `<strong>${ zone.name }</strong>` 
             })"
         />
+
     </div>
 </template>
 

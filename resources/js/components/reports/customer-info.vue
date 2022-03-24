@@ -1,37 +1,65 @@
 <template>
 
     <div class="row mx-0" style="margin-top: 2rem">
-        <div class="col">
-            <div class="d-flex gap-2 align-items-center">
-                <div class="thumbnail"></div>
-                <div class="title-section">
-                    <p>Nom du client</p>
-                    <h4>{{ order?.customer?.firstname || 'Name' }}</h4>
+
+        <template v-if="fetching">
+            <div class="col">
+                <div class="d-flex gap-2 align-items-center">
+                    <loader type="thumbnail" />
+                    <div>
+                        <loader :count="2" />
+                    </div>
+                    <loader type="icon" />    
                 </div>
-                <Icon 
-                    name="circle-plus" 
-                    class="pointer" 
-                    @click.prevent="generateElement('textarea', { 
-                        content: order?.customer?.firstname || 'Name'
-                    })" 
-                />
             </div>
-        </div>
-        <div class="col">
-            <div class="d-flex gap-2 align-items-center">
-                <div class="title-section title-section-right">
-                    <p>Adresse du chantier</p>
-                    <h4>{{ order?.customer?.address?.address1 || 'Customer Address' }}</h4>
+            <div class="col">
+                <div class="d-flex gap-2 align-items-center">
+                    <loader type="thumbnail" />
+                    <div>
+                        <loader :count="2" />
+                    </div>
+                    <loader type="icon" />    
                 </div>
-                <Icon 
-                    name="circle-plus" 
-                    class="pointer"
-                    @click.prevent="generateElement('textarea', { 
-                        content: order?.customer?.address?.address1 || 'Customer Address'
-                    })"
-                />
             </div>
-        </div>
+        </template>
+        
+        <template v-else>
+            
+            <div class="col">
+                <div class="d-flex gap-2 align-items-center">
+                    <div class="thumbnail"></div>
+                    <div class="title-section">
+                        <p>Nom du client</p>
+                        <h4>{{ order?.customer?.firstname || 'Name' }}</h4>
+                    </div>
+                    <Icon 
+                        name="circle-plus" 
+                        class="pointer" 
+                        @click.prevent="generateElement('textarea', { 
+                            content: order?.customer?.firstname || 'Name'
+                        })" 
+                    />
+                </div>
+            </div>
+            
+            <div class="col">
+                <div class="d-flex gap-2 align-items-center">
+                    <div class="title-section title-section-right">
+                        <p>Adresse du chantier</p>
+                        <h4>{{ order?.customer?.address?.address1 || 'Customer Address' }}</h4>
+                    </div>
+                    <Icon 
+                        name="circle-plus" 
+                        class="pointer"
+                        @click.prevent="generateElement('textarea', { 
+                            content: order?.customer?.address?.address1 || 'Customer Address'
+                        })"
+                    />
+                </div>
+            </div>
+
+        </template>
+
     </div>
 
 </template>
@@ -50,7 +78,9 @@ export default {
 
     setup () {
         const generateElement = inject('generateElement')
+        const fetching = inject('fetching')
         return {
+            fetching,
             generateElement
         }
     }

@@ -25,7 +25,7 @@ export default function useElementsGenerator() {
             attributes: {
                 kind,
                 title: 'Button',
-                class: 'draggable',
+                class: 'draggable', 
                 id: generateId(12),
                 style: '',
                 dataName: 'button'

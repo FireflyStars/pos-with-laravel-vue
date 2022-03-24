@@ -186,6 +186,11 @@ export default {
         const template = computed(() => store.getters[`${BUILDER_MODULE}/template`])
         const activePageTemplate = computed(() => store.getters[`${BUILDER_MODULE}/activePageTemplate`])
         const activeTemplate = computed(() => store.getters[`${BUILDER_MODULE}/activeTemplate`])
+
+        const fetching = computed(() => { 
+            const { id, value } = store.getters[`${BUILDER_MODULE}/loading`]
+            return id == 'fetching' && value
+        })
     
         const loadPages = () => {
             store.commit(`${BUILDER_MODULE}/${SAVE_REPORT_PAGES}`)
@@ -327,6 +332,7 @@ export default {
             link.click()
         }
 
+        provide('fetching', fetching)
         provide('promptImage', promptImage)
         provide('generateElement', generateElement)
         provide('generatePrefetchedImage', generatePrefetchedImage)
@@ -336,8 +342,8 @@ export default {
         onMounted(() => {
             nextTick(async () => {
                 showcontainer.value = true
-                await fetchTemplates()
                 await loadPages()
+                await fetchTemplates()
                 getOrderDetails()
             })
         })

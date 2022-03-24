@@ -173,14 +173,27 @@ export const PageBuilder = {
         },
 
         async [GET_ORDER_DETAILS]({ commit }, orderId) {
-            const { data } = await axios.get(`/get-page-order/${orderId}`)
-            commit(SAVE_PAGE_ORDER, data)
+            commit(SET_LOADING, { id: 'fetching' })
+            try {
+                const { data } = await axios.get(`/get-page-order/${orderId}`)
+                commit(SAVE_PAGE_ORDER, data)
+                commit(SET_LOADING, { id: 'fetching', value: false })
+            }
+            catch(e) {
+                commit(SET_LOADING, { id: 'fetching', value: false })
+                throw e
+            }
         },
 
         async [GET_TEMPLATES]({ commit, getters }, orderId) {
-            const { data } = await axios.get(`/get-page-templates/${orderId}`)
-            await commit(SAVE_TEMPLATES, data)
-            if(getters.templates.length) commit(SET_ACTIVE_TEMPLATE)
+            try {
+                const { data } = await axios.get(`/get-page-templates/${orderId}`)
+                await commit(SAVE_TEMPLATES, data)
+                if(getters.templates.length) commit(SET_ACTIVE_TEMPLATE)
+            }
+            catch(e) {
+                throw e
+            }
         }
 
     }
