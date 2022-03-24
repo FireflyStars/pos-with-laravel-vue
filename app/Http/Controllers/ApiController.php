@@ -1162,7 +1162,7 @@ public function SaveEvent(Request $request){
             $customer=Customer::find($Parameters['customer_id']);
             $contact->firstname=$customer->firstname;
             $contact->name=$customer->name;
-            $contact->type='API';
+            $contact->type='Client';
             $contact->comment='created from api';
             $contact->save();
         }
