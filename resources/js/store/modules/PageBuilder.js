@@ -22,7 +22,8 @@ import {
     DELETE_ITEM,
     GENERATE_ELEMENT,
     UPDATE_ELEMENT_STYLES,
-    UPDATE_ELEMENT_CONTENT
+    UPDATE_ELEMENT_CONTENT,
+    UPDATE_ELEMENT_TABLE
 
 } from "../types/types"
 
@@ -126,6 +127,12 @@ export const PageBuilder = {
         },
         [UPDATE_ELEMENT_CONTENT](state, { content, index }) {
             state.pages[state.activePage].elements[index].content = content
+        },
+        [UPDATE_ELEMENT_TABLE](state, { rows, cols, headers, index }) {
+            const attributes = state.pages[state.activePage].elements[index].attributes
+            attributes.rows = rows
+            attributes.cols = cols
+            attributes.headers = headers
         }
     },
 

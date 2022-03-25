@@ -22,6 +22,7 @@ class CreateReportTemplatesTable extends Migration
             $table->string('type');
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('affiliate_id');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

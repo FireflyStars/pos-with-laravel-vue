@@ -10,9 +10,13 @@
 </template>
 
 <script>
+
 import { computed } from 'vue'
+
 export default {
+    
     inheritAttrs: false,
+
     props: { 
         type: {
             required: false,
@@ -62,6 +66,12 @@ export default {
         width: 3.5rem;
         height: 3.5rem;
         border-radius: 5px;
+    }
+
+    .button {
+        width: 7rem;
+        height: 2.25rem;
+        border-radius: 4px;
     }
 
     .thumbnail {

@@ -66,9 +66,25 @@ export default function useElementsGenerator() {
         }
     }
 
+    const generateTable = (attributes) => {
+        return {
+            item: 'reportTable',
+            attributes: {
+                class: `draggable ${attributes.class || ''}`,
+                style: '',
+                dataName: 'table',
+                id: generateId(12),
+                rows: 1,
+                cols: 3
+            },
+            name: 'table'
+        }
+    }
+
     return {
-        generateImage,
         generateIcon,
+        generateTable,
+        generateImage,
         generateButton,
         generateTextarea,
     }

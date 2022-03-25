@@ -3,16 +3,11 @@
     <div class="row mx-0" style="margin-top: 2rem">
 
         <template v-if="fetching">
-            <div class="col">
-                <div class="d-flex gap-2 align-items-center">
-                    <loader type="thumbnail" />
-                    <div>
-                        <loader :count="2" />
-                    </div>
-                    <loader type="icon" />    
-                </div>
-            </div>
-            <div class="col">
+            <div
+                v-for="n in 2"
+                :key="n" 
+                class="col"
+            >
                 <div class="d-flex gap-2 align-items-center">
                     <loader type="thumbnail" />
                     <div>

@@ -1,7 +1,7 @@
 <template>
 
     <div class="d-flex justify-content-between align-items-center margin-bottom">
-                                
+
         <div>
             <h4 class="tile_h1">
                 <Icon name="report" width="32" height="32" />
@@ -13,13 +13,17 @@
             <BaseButton 
                 title="Sauvegarder" 
                 kind="success" 
-                class="me-12 heading-buttons justify-content-center" 
+                class="me-12 heading-buttons justify-content-center"
+                :class="{ 'not-allowed': fetching }"
+                :disabled="fetching" 
             />
             <BaseButton 
                 title="pdf" 
                 kind="danger" 
-                class="text-uppercase heading-buttons heading-buttons-pdf justify-content-center" 
-                @click="$emit('submitPage')" 
+                class="text-uppercase heading-buttons heading-buttons-pdf justify-content-center"
+                :class="{ 'not-allowed': fetching }" 
+                @click="submitPage"
+                :disabled="fetching || loading"  
             >
                 <Icon name="loader" width="30" height="30" v-show="loading" />
             </BaseButton>
@@ -28,6 +32,7 @@
     </div>
 
     <div class="d-flex justify-content-between align-items-center">
+
         <div class="reports-dropdown">
             <select-box
                 v-model="activeTemplate" 
@@ -35,8 +40,8 @@
                 :options="formattedTemplates" 
                 name="template"
                 classnames="reports-dropdown-button"
+                :disabled="fetching"
             />
-
         </div>
 
         <div class="d-flex align-items-center">
@@ -44,17 +49,20 @@
             <div>
 
                 <a 
-                class="orange text d-flex align-items-center gap-half pointer" 
-                @click.prevent="addPage">
+                    class="orange text d-flex align-items-center gap-half" 
+                    :class="[fetching ? 'not-allowed' : 'pointer']"
+                    @click.prevent="addPage"
+                    :disabled="fetching"
+                >
                     <Icon name="plus-circle" />
                     Ajouter Page
                 </a>
 
                 <a 
                 class="text d-flex align-items-center gap-half"
-                :class="[pages.length <= 1 ? 'not-allowed': 'pointer']" 
-                @click.prevent="$emit('deletePage')"
-                :disabled="pages.length <= 1"
+                :class="[pages.length <= 1 || fetching ? 'not-allowed': 'pointer']" 
+                @click.prevent="deletePage"
+                :disabled="pages.length <= 1 || fetching"
                 >
                     <Icon name="bin" />
                     Supprimer Page
@@ -70,12 +78,12 @@
                     :options="formattedPages" 
                     name="page"
                     classnames="reports-dropdown-button"
+                    :disabled="fetching"
                 />
 
             </div>
 
         </div>
-
 
     </div>
 
@@ -83,7 +91,7 @@
 
 <script>
 
-import { ref, computed, watch } from 'vue'
+import { computed, watch, inject } from 'vue'
 import { useStore } from 'vuex'
 import { 
     BUILDER_MODULE,
@@ -98,9 +106,11 @@ export default {
 
     emits: ['submitPage'],
 
-    setup () {
+    setup (_, { emit }) {
         
         const store = useStore()
+
+        const fetching = inject('fetching')
         
         const loading = computed(() => {
             const { id, value } = store.getters[`${BUILDER_MODULE}/loading`]
@@ -157,16 +167,20 @@ export default {
         
     
         const assignTemplateToActivePage = (id) => {
-            store.commit(`${BUILDER_MODULE}/${ASSIGN_TEMPLATE}`, id)
+            if(!fetching.value) store.commit(`${BUILDER_MODULE}/${ASSIGN_TEMPLATE}`, id)
             return Promise.resolve()
         }
 
         const addPage = () => {
-            store.commit(`${BUILDER_MODULE}/${ADD_PAGE}`)
+            if(!fetching.value) store.commit(`${BUILDER_MODULE}/${ADD_PAGE}`)
         }
 
         const deletePage = () => {
-            store.commit(`${BUILDER_MODULE}/${DELETE_PAGE}`)
+            if(!fetching.value) store.commit(`${BUILDER_MODULE}/${DELETE_PAGE}`)
+        }
+
+        const submitPage = () => {
+            if(!fetching.value) emit('submitPage')
         }
 
         watch(activeTemplate, (value) => {
@@ -178,10 +192,12 @@ export default {
             pages,
             addPage,
             loading,
+            fetching,
             pageName,
             template,
             templates,
             deletePage,
+            submitPage,
             activePage,
             activeTemplate,
             formattedPages,

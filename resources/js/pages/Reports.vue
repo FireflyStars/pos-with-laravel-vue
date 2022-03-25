@@ -33,7 +33,9 @@
                                         </div>
 
 
+
                                         <div class="template-body">
+                                            {{ page }}    
                                             <div 
                                                 v-for="(element, index) in page.elements" 
                                                 :key="index"
@@ -51,7 +53,7 @@
                                                 >
 
                                                     <span 
-                                                        v-if="element.name =='textarea'" 
+                                                        v-if="['textarea', 'table'].includes(element.name)" 
                                                         v-html="element.content"
                                                     >
                                                     </span>
@@ -95,7 +97,7 @@
                                         v-bind:draggable="true"
                                         v-bind:scalable="true"
                                         v-bind:rotatable="true"
-                                        :keepRatio="true"
+                                        :keepRatio="false"
                                         @drag="onDrag"
                                         @scale="onScale"
                                         @rotate="onRotate"
@@ -129,6 +131,7 @@
 
 import { useStore } from 'vuex'
 import { onMounted, unref, ref, nextTick, computed, watch, provide } from 'vue'
+
 import { 
     BUILDER_MODULE, 
     SAVE_PAGE,
@@ -138,13 +141,16 @@ import {
     DELETE_ITEM,
     GENERATE_ELEMENT,
     UPDATE_ELEMENT_STYLES,
-    UPDATE_ELEMENT_CONTENT
+    UPDATE_ELEMENT_CONTENT,
+    UPDATE_ELEMENT_TABLE
 } from '../store/types/types'
+
 import Moveable from "vue3-moveable"
 import popup from '../components/reports/popup'
 import adjouterZone from '../components/reports/adjouter-zone'
 import headerSection from '../components/reports/header-section'
 import reportOrderResources from '../components/reports/report-order-resources'
+import reportTable from '../components/reports/report-table'
 
 import useStyles from '../composables/reports/useStyles'
 import useHelpers from '../composables/useHelpers'
@@ -155,6 +161,7 @@ export default {
     components: {
         popup,
         Moveable,
+        reportTable,
         adjouterZone,
         headerSection,
         reportOrderResources
@@ -172,9 +179,15 @@ export default {
         const store = useStore()
         const { getDomElementParent } = useHelpers()
         const { itemAttributes, getStylesOfElement, getComputedStyle } = useStyles()
-        const { generateTextarea, generateIcon, generateButton, generateImage } = useElementsGenerator()
+        const { 
+            generateTextarea, 
+            generateIcon, 
+            generateButton, 
+            generateImage, 
+            generateTable 
+        } = useElementsGenerator()
 
-        const activeItem = ref(null)
+        const activeItem = ref('#myTable')
         const showcontainer = ref(false)
         const activeElement = ref({})
         const openPopup = ref(false)
@@ -250,11 +263,29 @@ export default {
             }
         }
 
-        const updateElementFromPopup = ({ id, textValue }) => {
+        const updateElementTable = ({ index, rows, cols, headers }) => {
+            store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_TABLE}`, {
+                rows,
+                cols,
+                headers,
+                index    
+            })
+        }
+
+        const updateElementFromPopup = ({ id, textValue, table }) => {
             const index = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
             const domElem = document.querySelector(`#${id}`)
             if(textValue != undefined) {
                 updateElementValue({ index, value: unref(textValue) })
+            }
+            if(!_.isEmpty(table)) {
+                console.log(table, table.rows, table.cols)
+                updateElementTable({ 
+                    index, 
+                    rows: table.rows, 
+                    cols: table.cols, 
+                    headers: table.headers 
+                })
             }
             updateElementStyles(id, unref(itemAttributes), getStylesOfElement(domElem))
             openPopup.value = false
@@ -264,9 +295,11 @@ export default {
             const elementMapping = {
                 textarea: generateTextarea,
                 icon: generateIcon,
-                button: generateButton
+                button: generateButton,
+                table: generateTable
             }
             const element = elementMapping[name](attrs)
+            console.log(element)
             store.commit(`${BUILDER_MODULE}/${GENERATE_ELEMENT}`, element)
         }
 
@@ -340,9 +373,9 @@ export default {
         watch(page, () => activeItem.value = null)
 
         onMounted(() => {
+            loadPages()
             nextTick(async () => {
                 showcontainer.value = true
-                await loadPages()
                 await fetchTemplates()
                 getOrderDetails()
             })
@@ -501,7 +534,6 @@ $orange: orange;
     .textarea {
         min-width: 350px;
         min-height: 50px;
-        float: right;
         border: 1px solid #ccc;
         z-index: 99999;
         word-wrap: normal;

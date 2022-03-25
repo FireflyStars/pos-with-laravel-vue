@@ -5,13 +5,12 @@
         <customer-info :order="order" />
 
         <template v-if="fetching">
-            <div class="d-flex gap-2 align-items-center" style="margin-top: 3rem">
-                <loader type="icon-title" />
-                <loader />
-                <loader type="icon" />
-            </div>
-
-            <div class="d-flex gap-2 align-items-center" style="margin-top: 1.75rem">
+            <div 
+                v-for="n in 2"
+                :key="n"
+                class="d-flex gap-2 align-items-center" 
+                :style="n == 1 ? 'margin-top: 3rem' : 'margin-top: 1.75rem'"
+            >
                 <loader type="icon-title" />
                 <loader />
                 <loader type="icon" />

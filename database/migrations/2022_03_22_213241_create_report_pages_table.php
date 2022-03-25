@@ -18,6 +18,7 @@ class CreateReportPagesTable extends Migration
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('affiliate_id');
             $table->json('pages');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

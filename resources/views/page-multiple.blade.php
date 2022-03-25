@@ -166,6 +166,19 @@
             float: none;
             clear: both;
         }
+
+        .table {
+            border-collapse: collapse;
+            width: 350px;
+            height: 50px;
+            z-index: 10000;
+            word-wrap: normal;
+            padding: .5rem;
+        }
+
+        .table, .table th, .table td {
+            border: 1px solid #ccc;
+        }
         
     </style>
 
@@ -230,6 +243,25 @@
                             src="{{ $src }}" 
                             style="{{ $element->attributes->style ?? '' }}" 
                         /> 
+                    @endif
+                    
+                    @if (strtolower($element->name) == 'table')
+
+                        <table :class="$element->attributes->class ?? 'draggable table'">
+                            <tr @if($element->attributes?->headers) @endif>
+                                @for ($i = 1; $i <= $element->attributes->cols; $i++)
+                                    <th>{{ $i }}</th>
+                                @endfor    
+                            </tr>
+                            @for($i = 1; $i <= $element->attributes->rows; $i++)
+                                <tr>
+                                    @for($i = 1; $i <= $element->attributes->cols; $i++)
+                                        <td>{{ $i }}</td>
+                                    @endfor
+                                </tr>
+                            @endfor
+                        </table>
+                        
                     @endif    
             
                 @endforeach

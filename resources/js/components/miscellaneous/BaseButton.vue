@@ -1,6 +1,6 @@
 <template>
     <button 
-        :class="[kind, ...classes.split(',')]"
+        :class="classList"
         :title="$attrs.htmlTitle"
     >
         <div 
@@ -19,8 +19,13 @@
 </template>
 
 <script>
+
+    import { computed } from 'vue'
+    
     export default {
+
         name: "BaseButton",
+
         props: {
             title: {
                 required: true,
@@ -48,11 +53,30 @@
                 default: () => {}
             },
             classes: {
-                type: String,
+                type: [String, Object],
                 default: ''
             }
+        },
+        
+        setup(props) {
+
+            const classList = computed(() => {
+                let classes = []
+                if(typeof props.classes == 'object') {
+                    classes = Object.keys(props.classes)
+                }
+                else classes = props.classes.split(',')
+                return [props.kind, ...classes]
+            })
+
+            return {
+                classList
+            }
+
         }
+
     }
+
 </script>
 
 
