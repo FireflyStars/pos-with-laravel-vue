@@ -1105,6 +1105,9 @@ public function SaveEvent(Request $request){
         if(!$this->validateEmail($Parameters['contact_email'])){
             return $this->response(0,null,'E-mail de contact n\'est pas valide.');
         }
+        $existcontact=Contact::where('email','=',$Parameters['contact_email'])->first();
+        if($existcontact!=null)
+        return $this->response(0,null,'Un contact avec cette adresse e-mail existe déjà');
     }else{
         $contact=Contact::find($Parameters['contact_id']);
         if($contact->customer_id!=$Parameters['customer_id'])
@@ -1126,17 +1129,30 @@ public function SaveEvent(Request $request){
         }
 
         if(!isset($Parameters['address_id'])||$Parameters['address_id']==null){
-                $address=Address::where('customer_id','=',$Parameters['customer_id'])->first();
-                if($address!=null){
-                    $Parameters['address_id']=$address->id;
-                }else{
-                    return $this->response(0,null,'Identifiant d\'adresse utilisateur non valide','L\'adresse n\'existe pas ou n\'appartient pas au client.');
+           if(!isset($Parameters['address'])){
+            return $this->response(0,null,'Une adresse est requis','Aucun identifiant d\'adresse ou adresse specifiée');
+           }else{
+                if(!isset($Parameters['address']['address1'])||$this->isBlank($Parameters['address']['address1'])){
+                    return $this->response(0,null,'Adresse 1 est requis');
                 }
+                if(!isset($Parameters['address']['postcode'])||$this->isBlank($Parameters['address']['postcode'])){
+                    return $this->response(0,null,'Le code postal est requis');
+                }
+                if(!isset($Parameters['address']['city'])||$this->isBlank($Parameters['address']['city'])){
+                    return $this->response(0,null,'La ville est requis');
+                }
+                if(!isset($Parameters['address']['longitude'])||$this->isBlank($Parameters['address']['longitude'])){
+                    return $this->response(0,null,'La longitude est requis');
+                }
+                if(!isset($Parameters['address']['latitude'])||$this->isBlank($Parameters['address']['latitude'])){
+                    return $this->response(0,null,'La latitude est requis');
+                }
+           }
                
         }else{
             $address=Address::where('id','=',$Parameters['address_id'])->first();
             if($address==null||$address->customer_id!=$Parameters['customer_id']){
-                return $this->response(0,null,'Identifiant d\'adresse utilisateur non valide','L\'adresse n\'existe pas ou n\'appartient pas au client.');
+                return $this->response(0,null,'Identifiant d\'adresse non valide','L\'adresse n\'existe pas ou n\'appartient pas au client.');
             }
         }
         $eventstatus=null;
@@ -1152,6 +1168,32 @@ public function SaveEvent(Request $request){
         $event=new Event();
 
         $this->l('API SAVE EVENT',json_encode($Parameters),$lcdtapp_api_instance->user->id);
+
+        if(!isset($Parameters['address_id'])||$Parameters['address_id']==null){
+            if(isset($Parameters['address'])){
+                $this->l('API SAVE EVENT WITH NEW ADDRESS',json_encode($Parameters['address']),$lcdtapp_api_instance->user->id);
+                $address=new Address();
+                $address->address_type_id=2;//chantier
+                $address->country_id=8;	
+                $address->state_id=0;
+                $address->customer_id=$Parameters['customer_id'];	
+                $address->alias='';	
+                if(isset($Parameters['address']['company']))
+                    $address->company=$Parameters['address']['company'];
+                $address->lastname='';	
+                $address->gender='';
+                $address->firstname='';	
+                $address->address1=$Parameters['address']['address1'];
+                $address->address2=isset($Parameters['address']['address2'])?$Parameters['address']['address1']:'';
+                $address->postcode=$Parameters['address']['postcode'];
+                $address->city=$Parameters['address']['city'];
+                $address->latitude=$Parameters['address']['latitude'];
+                $address->longitude=$Parameters['address']['longitude'];
+                $address->save();
+                $Parameters['address_id']=$address->id;
+            }
+        }
+
         $contact=new Contact();
         if(!isset($Parameters['contact_id'])||$this->isBlank($Parameters['contact_id'])){
             $contact->email=$Parameters['contact_email'];
@@ -1162,7 +1204,7 @@ public function SaveEvent(Request $request){
             $customer=Customer::find($Parameters['customer_id']);
             $contact->firstname=$customer->firstname;
             $contact->name=$customer->name;
-            $contact->type='API';
+            $contact->type='Client';
             $contact->comment='created from api';
             $contact->save();
         }
