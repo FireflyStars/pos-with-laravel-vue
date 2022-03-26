@@ -183,6 +183,12 @@
         </path>
     </svg>
 
+    <svg 
+        v-else-if="name == 'loader-new'"
+        class="animate-spin" 
+        viewBox="0 0 24 24">
+    </svg>
+
         
     <img 
         v-else-if="name == 'brush'"
@@ -353,9 +359,23 @@
 </script>
 
 <style lang="scss" scoped>
+
 .editor-icon {
     width: 22px !important;
     height: 22px !important;
     cursor: pointer;
+}
+
+.animation-spin {
+    animation: spin 1s linear infinite;
+
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
 }
 </style>

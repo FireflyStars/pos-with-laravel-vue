@@ -75,7 +75,12 @@ export default function useElementsGenerator() {
                 dataName: 'table',
                 id: generateId(12),
                 rows: 1,
-                cols: 3
+                cols: 3,
+                headers: true
+            },
+            content: {
+                header: {},
+                body: {}
             },
             name: 'table'
         }

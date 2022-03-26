@@ -1,5 +1,8 @@
 <template>
-    <div class="popup">
+    <div 
+        class="popup"
+        :class="{ 'w-35': isTable }"
+    >
         <span @click.prevent="close" class="close">&times;</span>
         <div class="popup-header">
             <h4 class="popup-header-title">Update Zone</h4>
@@ -65,9 +68,11 @@
                             :src="item.attributes?.src"
                             :name="item.attributes?.name"
                             :contenteditable="isTextarea || isTable"
-                            :rows="item.attributes?.rows"
-                            :cols="item.attributes?.cols"
-                            :headers="item.attributes?.headers || true"
+                            :rows="table.rows"
+                            :cols="table.cols"
+                            :headers="table.headers"
+                            :content="table.content"
+                            @update="updateContent"
                         >
                             <p v-html="textValue" v-if="isTextarea"></p>
                         </component>
@@ -217,6 +222,10 @@ export default {
             rows: 1,
             cols: 2,
             headers: true,
+            content: {
+                header: {},
+                body: {}
+            }
         })
 
         const actions = [
@@ -249,8 +258,16 @@ export default {
             emit('update', { 
                 id: props.item.attributes.id, 
                 textValue: isTextarea.value ? document.querySelector('.editable').innerHTML : '',
-                table
+                table,
+                name: props.item.name,
             })
+        }
+
+        const updateContent = ({ row, col, value, type }) => {
+            table.content[type] = {
+                ...table.content[type],
+                [row + '' + col]: value
+            }
         }
 
         const loadDefaultValue = () => {
@@ -260,7 +277,8 @@ export default {
             if(isTable.value) {
                 table.rows = props.item?.attributes?.rows,
                 table.cols = props.item?.attributes?.cols,
-                table.headers = props.item?.attributes?.headers
+                table.headers = props.item?.attributes?.headers || true
+                table.content = _.cloneDeep(props.item?.content) || table.content
             }
         }
 
@@ -283,6 +301,7 @@ export default {
             textValue,
             isTextarea,
             commitAction,
+            updateContent,
             itemAttributes
         }
 
@@ -293,13 +312,16 @@ export default {
 
 <style lang="scss" scoped>
 
+.w-35 {
+    width: 35rem !important;
+}
+
 .popup {
     
     background: #EEEEEE;
     box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 8%) !important;
     z-index: 999999;
     width: 24rem;
-    min-height: 25rem;
     position: relative;
     line-height: 47px;
     padding: 1rem;

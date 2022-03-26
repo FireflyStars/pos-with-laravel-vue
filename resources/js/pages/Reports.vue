@@ -32,10 +32,15 @@
                                             >
                                         </div>
 
-
-
                                         <div class="template-body">
-                                            {{ page }}    
+
+                                            <span 
+                                                v-show="pages.length"
+                                                class="page-number text-muted" 
+                                            >
+                                                {{ +activePage + 1 }}/{{ pages.length }}
+                                            </span>
+
                                             <div 
                                                 v-for="(element, index) in page.elements" 
                                                 :key="index"
@@ -46,7 +51,9 @@
                                                     :is="element.item" 
                                                     v-bind="element.attributes"
                                                     @click.stop="activateItem($event)"
-                                                    @dblclick="openUpdatePopup(element)" 
+                                                    @dblclick="openUpdatePopup(element)"
+                                                    :disabled="element.name == 'table'"
+                                                    :content="element.content"
                                                     :class="{ 
                                                         'active-item': `#${element.attributes.id}` == activeItem 
                                                     }"
@@ -106,7 +113,7 @@
                                 </div>
 
 
-                                <div class="right-page-container">  <!-- Right section -->
+                                <div class="right-page-container">
 
                                     <adjouter-zone />
                                                     
@@ -142,7 +149,8 @@ import {
     GENERATE_ELEMENT,
     UPDATE_ELEMENT_STYLES,
     UPDATE_ELEMENT_CONTENT,
-    UPDATE_ELEMENT_TABLE
+    UPDATE_ELEMENT_TABLE,
+    UPDATE_TABLE_CONTENT
 } from '../store/types/types'
 
 import Moveable from "vue3-moveable"
@@ -254,6 +262,7 @@ export default {
         }
 
         const updateElementValue = ({ item = 'textarea', index, value }) => {
+            console.log(item, index, value)
             const domElements = ['input', 'textarea', 'select']
             if(domElements.includes(item)) {
                 store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_CONTENT}`, {
@@ -263,28 +272,43 @@ export default {
             }
         }
 
-        const updateElementTable = ({ index, rows, cols, headers }) => {
+        const updateElementTable = ({ index, rows, cols, headers, content }) => {
+            console.log("I was called")
             store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_TABLE}`, {
                 rows,
                 cols,
                 headers,
+                content,
                 index    
             })
         }
 
-        const updateElementFromPopup = ({ id, textValue, table }) => {
+        const updateTableValue = ({ type, row, col, value }) => {
+            const index = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == activeElement.value?.attributes?.id)
+            if(index != -1) {
+                store.commit(`${BUILDER_MODULE}/${UPDATE_TABLE_CONTENT}`, {
+                    row,
+                    col,
+                    type,
+                    value,
+                    index    
+                })
+            }
+        }
+
+        const updateElementFromPopup = ({ id, textValue, table, name }) => {
             const index = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
             const domElem = document.querySelector(`#${id}`)
-            if(textValue != undefined) {
+            if(textValue != undefined && name != 'table') {
                 updateElementValue({ index, value: unref(textValue) })
             }
-            if(!_.isEmpty(table)) {
-                console.log(table, table.rows, table.cols)
+            if(!_.isEmpty(table) && name == 'table') {
                 updateElementTable({ 
                     index, 
                     rows: table.rows, 
                     cols: table.cols, 
-                    headers: table.headers 
+                    headers: table.headers,
+                    content: table.content 
                 })
             }
             updateElementStyles(id, unref(itemAttributes), getStylesOfElement(domElem))
@@ -368,6 +392,7 @@ export default {
         provide('fetching', fetching)
         provide('promptImage', promptImage)
         provide('generateElement', generateElement)
+        provide('updateTableValue', updateTableValue)
         provide('generatePrefetchedImage', generatePrefetchedImage)
 
         watch(page, () => activeItem.value = null)
@@ -387,6 +412,7 @@ export default {
             onDrag,
             onScale,
             onRotate,
+            fetching,
             template,
             openPopup,
             activePage,
@@ -400,6 +426,7 @@ export default {
             activeElement,
             activeTemplate,
             openUpdatePopup,
+            updateTableValue,
             activePageTemplate,
             updateElementValue,
             updateElementFromPopup,
@@ -463,26 +490,35 @@ $orange: orange;
     &-body {
         margin-top: 5.75rem;
         img {
-            width: auto;
-            height: auto;
             object-fit: cover;
             width: 25rem;
             height: 25rem;
+            height: auto;
             border: 3px solid $orange;
         }
         span {
             word-break: break-all !important;
+        }
+        .page-number {
+            float: right;
+            font-size: 12px;
+            font-family: inherit;
+            &::after, &::before {
+                float: none;
+                clear: both;
+            }
         }
     }
 }
 
 .builder-container {
     position: relative;
-    min-height: 45rem;
+    min-height: 58rem;
     height: auto;
     background: #fff;
     overflow: hidden;
     padding: 1rem 2rem;
+    margin-bottom: 1rem;
 
     .draggable {
         z-index: 10;

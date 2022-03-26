@@ -23,7 +23,8 @@ import {
     GENERATE_ELEMENT,
     UPDATE_ELEMENT_STYLES,
     UPDATE_ELEMENT_CONTENT,
-    UPDATE_ELEMENT_TABLE
+    UPDATE_ELEMENT_TABLE,
+    UPDATE_TABLE_CONTENT
 
 } from "../types/types"
 
@@ -128,11 +129,22 @@ export const PageBuilder = {
         [UPDATE_ELEMENT_CONTENT](state, { content, index }) {
             state.pages[state.activePage].elements[index].content = content
         },
-        [UPDATE_ELEMENT_TABLE](state, { rows, cols, headers, index }) {
-            const attributes = state.pages[state.activePage].elements[index].attributes
-            attributes.rows = rows
-            attributes.cols = cols
-            attributes.headers = headers
+        [UPDATE_ELEMENT_TABLE](state, { rows, cols, headers, index, content }) {
+            const page = state.pages[state.activePage].elements[index]
+            page.attributes.rows = rows
+            page.attributes.cols = cols
+            page.attributes.headers = headers
+            page.content = {
+                ...page.content, 
+                ...content
+            }
+        },
+        [UPDATE_TABLE_CONTENT](state, { row, col, type, value, index }) {
+            const content = state.pages[state.activePage].elements[index].content
+            content[type] = {
+                ...content[type],
+                [row + '' +col]: value
+            }
         }
     },
 
