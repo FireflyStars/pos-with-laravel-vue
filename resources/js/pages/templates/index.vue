@@ -14,32 +14,37 @@
                     <side-bar />
 
                     <div class="col main-view container">
-                        <h4 class="tile_h1">
+                        <h4 class="tile_h1 flex align-items-center">
                             <Icon name="report" width="32" height="32" />
                             Templates List
                         </h4>
 
 
                         <div class="templates-list bg-white p-3 my-4">
-                            {{ fetching }} is the value of fetching
-                            <template v-if="fetching">
-                                <Icon name="loader" width="30" height="30"  />
-                            </template>
+                         
+                            <table 
+                                class="table"
+                                :class="{ 'table-striped': templates.length }"
+                            >
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Order Id</th>
+                                        <th scope="col">Affilitiate Id</th>
+                                        <th scope="col">Pages</th>
+                                        <th scope="col">Created at</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
 
-                            <template v-else>
-
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Order Id</th>
-                                            <th scope="col">Affilitiate Id</th>
-                                            <th scope="col">Pages</th>
-                                            <th scope="col">Created at</th>
-                                            <th>Actions</th>
+                                    <template v-if="fetching">
+                                        <tr v-for="n in 2" :key="n">
+                                            <td v-for="col in 6" :key="col"><loader /></td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
+                                    </template>
+
+                                    <template v-else>
                                         
                                         <template v-if="templates.length">
                                             
@@ -72,11 +77,11 @@
                                             </tr>
                                         </template>
 
-                                    </tbody>
-                                </table>
+                                    </template>
+                                    
 
-                            </template>
-
+                                </tbody>
+                            </table>
 
                         </div>
 

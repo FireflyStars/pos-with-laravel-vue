@@ -20,7 +20,10 @@
 
                                 <div class="left-page-container">
 
-                                    <header-section @submitPage="submitPage" />
+                                    <header-section 
+                                        @submitPage="submitPage"
+                                        @save="saveTemplate" 
+                                    />
                                     
                                     <div class="shadow-sm builder-container">
 
@@ -150,7 +153,8 @@ import {
     UPDATE_ELEMENT_STYLES,
     UPDATE_ELEMENT_CONTENT,
     UPDATE_ELEMENT_TABLE,
-    UPDATE_TABLE_CONTENT
+    UPDATE_TABLE_CONTENT,
+    SAVE_REPORT_TEMPLATE
 } from '../store/types/types'
 
 import Moveable from "vue3-moveable"
@@ -365,6 +369,13 @@ export default {
             return store.dispatch(`${BUILDER_MODULE}/${GET_ORDER_DETAILS}`, props.id)
         }
 
+        const saveTemplate = () => {
+            store.dispatch(`${[BUILDER_MODULE]}/${[SAVE_REPORT_TEMPLATE]}`, {
+                pages,
+                orderId: props.id
+            })
+        }
+
         const submitPage = async () => {
             try {
                 const data = await store.dispatch(`${[BUILDER_MODULE]}/${[SAVE_PAGE]}`, { 
@@ -417,6 +428,7 @@ export default {
             deleteItem,
             submitPage,
             promptImage,
+            saveTemplate,
             activateItem,
             showcontainer,
             generateElement,

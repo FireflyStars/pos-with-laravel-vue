@@ -19,7 +19,7 @@
                 :textClass="fetching || saving ? 'd-none' : ''"
                 @click="save" 
             >
-                <Icon name="loader" width="30" height="30" v-show="saving" />
+                <Icon name="spinner" v-show="saving" />
             </BaseButton>
             <BaseButton 
                 title="pdf" 
@@ -30,7 +30,7 @@
                 :textClass="loading ? 'd-none' : ''"
                 @click="submitPage"
             >
-                <Icon name="loader" width="30" height="30" v-show="loading" />
+                <Icon name="spinner" v-show="loading" />
             </BaseButton>
         </div>
 

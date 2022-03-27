@@ -168,7 +168,7 @@
         xml:space="preserve"
     >
             <path 
-                fill="#fff" 
+                :fill="$attrs.color || '#fff'" 
                 d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50"
             >
             <animateTransform 
@@ -183,11 +183,14 @@
         </path>
     </svg>
 
-    <svg 
-        v-else-if="name == 'loader-new'"
-        class="animate-spin" 
-        viewBox="0 0 24 24">
-    </svg>
+    <div 
+        v-else-if="name == 'spinner'" 
+        class="spinner-border spinner-border-sm" 
+        role="status" 
+        :class="$attrs.class || ''"
+    >
+        <span class="visually-hidden">Loading...</span>
+    </div>
 
         
     <img 
