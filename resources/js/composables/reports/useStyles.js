@@ -33,7 +33,6 @@ export default function useStyles() {
                     style = camelCase(style).replace(/ /g, '')
                     let parsedValue = value == '' ? '' : parseInt(value)
                     parsedValue =  isNaN(parsedValue) ? '' : parsedValue
-                    console.log(style)
                     if(style == 'transform') itemAttributes[style] = value
                     else itemAttributes[style] = parsedValue
                 })

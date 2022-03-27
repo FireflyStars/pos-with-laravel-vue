@@ -15,9 +15,10 @@ class CreateReportPagesTable extends Migration
     {
         Schema::create('report_pages', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('order_id');
-            $table->unsignedBigInteger('affiliate_id');
+            $table->unsignedBigInteger('order_id')->nullable();
+            $table->unsignedBigInteger('affiliate_id')->nullable();
             $table->json('pages');
+            $table->json('page_files')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

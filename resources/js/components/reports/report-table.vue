@@ -5,22 +5,32 @@
                 v-for="col in cols" 
                 :key="col"
             >
-                <input
-                    :disabled="disabled" 
-                    type="text" 
-                    :value="getRowValue(1, col, 'header')" 
-                    @input="update({ type: 'header', col, row: 1, value: $event.target.value })"
-                >
+                <template v-if="dom == 'input'">
+                    <input
+                        :disabled="disabled" 
+                        type="text" 
+                        :value="getRowValue(1, col, 'header')" 
+                        @input="update({ type: 'header', col, row: 1, value: $event.target.value })"
+                    >
+                </template>
+                <template v-else>
+                    <div> {{ getRowValue(1, col, 'header') }} </div>
+                </template>
             </th>
         </tr>
         <tr v-for="row in rows" :key="row">
             <td v-for="col in cols" :key="col">
-                <input 
-                    :disabled="disabled" 
-                    type="text" 
-                    :value="getRowValue(row, col, 'body')" 
-                    @input="update({ type: 'body', col, row, value: $event.target.value })"
-                >
+                <template v-if="dom == 'input'">
+                    <input 
+                        :disabled="disabled" 
+                        type="text" 
+                        :value="getRowValue(row, col, 'body')" 
+                        @input="update({ type: 'body', col, row, value: $event.target.value })"
+                    >
+                </template>
+                <template v-else>
+                    <div> {{ getRowValue(1, col, 'body') }} </div>
+                </template>
             </td>
         </tr>
     </table>
@@ -54,6 +64,11 @@ export default {
             required: false,
             type: Boolean,
             default: false,
+        },
+        dom: {
+            required: false,
+            type: String,
+            default: 'div'
         }
     },
 
@@ -62,7 +77,7 @@ export default {
     setup(props, { emit }) {
 
         const getRowValue = (row, col, type) => {
-            const content = props.content[type][row + '' + col]
+            const content = props.content[type][`tr-${row}${col}`]
             if(content == undefined) {
                 return type == 'header' ? 'Title ' + col : 'Col ' + col
             }
@@ -70,7 +85,6 @@ export default {
         }
 
         const update = (data) => {
-            console.log(data, " is the data when I emit input event")
             emit('update', data)
         }
 

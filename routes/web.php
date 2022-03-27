@@ -1,14 +1,15 @@
 <?php
 
-use App\Http\Controllers\ApiController;
+use TCG\Voyager\Facades\Voyager;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\CompagneController;
-use TCG\Voyager\Facades\Voyager;
 use App\Http\Controllers\LcdtAdminController;
 use App\Http\Controllers\LcdtFrontController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\PageElementsController;
+use App\Http\Controllers\PageTemplatesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,8 +28,16 @@ Route::group(['prefix' => 'admin'], function () {
 });
 
 Route::post('/save-page-elements', [PageElementsController::class, 'store']);
+
+// Route::resource('/page-template', PageTemplatesController::class);
+
+Route::get('/page-templates', [PageTemplatesController::class, 'index']);
+Route::post('/page-template', [PageTemplatesController::class, 'store']);
+Route::get('/page-template/{report_page}', [PageTemplatesController::class, 'show']);
+Route::post('/page-template/{report_page}', [PageTemplatesController::class, 'update']);
+
 Route::get('/get-page-order/{order}', [PageElementsController::class, 'get_page_order']);
-Route::get('/get-page-templates/{order}', [PageElementsController::class, 'get_page_templates']);
+Route::get('/get-templates', [PageElementsController::class, 'get_page_templates']);
 
 Route::post('/api',[ApiController::class,'index'])->middleware('cors')->name('api');
 

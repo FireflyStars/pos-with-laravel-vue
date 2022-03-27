@@ -68,6 +68,7 @@
                             :src="item.attributes?.src"
                             :name="item.attributes?.name"
                             :contenteditable="isTextarea || isTable"
+                            dom="input"
                             :rows="table.rows"
                             :cols="table.cols"
                             :headers="table.headers"
@@ -266,7 +267,7 @@ export default {
         const updateContent = ({ row, col, value, type }) => {
             table.content[type] = {
                 ...table.content[type],
-                [row + '' + col]: value
+                [`tr-${row}${col}`]: value,
             }
         }
 

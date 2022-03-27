@@ -5,7 +5,7 @@
         <div>
             <h4 class="tile_h1">
                 <Icon name="report" width="32" height="32" />
-                Creation/Edition Report
+                {{ title }}
             </h4>
         </div>
 
@@ -14,16 +14,21 @@
                 title="Sauvegarder" 
                 kind="success" 
                 class="me-12 heading-buttons justify-content-center"
-                :class="{ 'not-allowed': fetching }"
-                :disabled="fetching" 
-            />
+                :class="{ 'not-allowed': fetching || saving }"
+                :disabled="fetching || saving"
+                :textClass="fetching || saving ? 'd-none' : ''"
+                @click="save" 
+            >
+                <Icon name="loader" width="30" height="30" v-show="saving" />
+            </BaseButton>
             <BaseButton 
                 title="pdf" 
                 kind="danger" 
                 class="text-uppercase heading-buttons heading-buttons-pdf justify-content-center"
                 :class="{ 'not-allowed': fetching }" 
+                :disabled="fetching || loading"
+                :textClass="loading ? 'd-none' : ''"
                 @click="submitPage"
-                :disabled="fetching || loading"  
             >
                 <Icon name="loader" width="30" height="30" v-show="loading" />
             </BaseButton>
@@ -104,7 +109,15 @@ import {
 
 export default {
 
-    emits: ['submitPage'],
+    props: {
+        title: {
+            required: false,
+            type: String,
+            default: 'Creation/Edition Report'
+        }
+    },
+
+    emits: ['submitPage', 'save'],
 
     setup (_, { emit }) {
         
@@ -115,6 +128,11 @@ export default {
         const loading = computed(() => {
             const { id, value } = store.getters[`${BUILDER_MODULE}/loading`]
             return id == 'submit' && value
+        })
+
+        const saving = computed(() => {
+            const { id, value } = store.getters[`${BUILDER_MODULE}/loading`]
+            return id == 'save-template' && value
         })
 
         const activeTemplate = computed({
@@ -183,13 +201,19 @@ export default {
             if(!fetching.value) emit('submitPage')
         }
 
+        const save = () => {
+            if(!fetching.value) emit('save')
+        }
+
         watch(activeTemplate, (value) => {
             if(value) assignTemplateToActivePage(value)
         })
         
         return {
+            save,
             page,
             pages,
+            saving,
             addPage,
             loading,
             fetching,

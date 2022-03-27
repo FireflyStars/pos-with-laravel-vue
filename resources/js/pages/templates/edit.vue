@@ -20,7 +20,11 @@
 
                                 <div class="left-page-container">
 
-                                    <header-section @submitPage="submitPage" />
+                                    <header-section 
+                                        title="Creation/Edition Template" 
+                                        @submitPage="submitPage"
+                                        @save="saveTemplate" 
+                                    />
                                     
                                     <div class="shadow-sm builder-container">
 
@@ -33,7 +37,6 @@
                                         </div>
 
                                         <div class="template-body">
-
                                             <span 
                                                 v-show="pages.length"
                                                 class="page-number text-muted" 
@@ -54,6 +57,7 @@
                                                     @dblclick="openUpdatePopup(element)"
                                                     :disabled="element.name == 'table'"
                                                     :content="element.content"
+                                                    contenteditable="false"
                                                     :class="{ 
                                                         'active-item': `#${element.attributes.id}` == activeItem 
                                                     }"
@@ -116,9 +120,10 @@
                                 <div class="right-page-container">
 
                                     <adjouter-zone />
+                                    <div class="d-none">
+                                        <input type="file" id="file" accept="image/*">
+                                    </div>
                                                     
-                                    <report-order-resources />
-
                                 </div>
 
                             </div>
@@ -142,7 +147,6 @@ import { onMounted, unref, ref, nextTick, computed, watch, provide } from 'vue'
 import { 
     BUILDER_MODULE, 
     SAVE_PAGE,
-    GET_ORDER_DETAILS, 
     GET_TEMPLATES,
     SAVE_REPORT_PAGES,
     DELETE_ITEM,
@@ -150,19 +154,20 @@ import {
     UPDATE_ELEMENT_STYLES,
     UPDATE_ELEMENT_CONTENT,
     UPDATE_ELEMENT_TABLE,
-    UPDATE_TABLE_CONTENT
-} from '../store/types/types'
+    UPDATE_REPORT_TEMPLATE,
+    GET_REPORT_TEMPLATE
+} from '../../store/types/types'
 
 import Moveable from "vue3-moveable"
-import popup from '../components/reports/popup'
-import adjouterZone from '../components/reports/adjouter-zone'
-import headerSection from '../components/reports/header-section'
-import reportOrderResources from '../components/reports/report-order-resources'
-import reportTable from '../components/reports/report-table'
+import popup from '../../components/reports/popup'
+import adjouterZone from '../../components/reports/adjouter-zone'
+import headerSection from '../../components/reports/header-section'
+import reportOrderResources from '../../components/reports/report-order-resources'
+import reportTable from '../../components/reports/report-table'
 
-import useStyles from '../composables/reports/useStyles'
-import useHelpers from '../composables/useHelpers'
-import useElementsGenerator from '../composables/reports/useElementsGenerator'
+import useStyles from '../../composables/reports/useStyles'
+import useHelpers from '../../composables/useHelpers'
+import useElementsGenerator from '../../composables/reports/useElementsGenerator'
 
 export default {
 
@@ -213,11 +218,6 @@ export default {
             return id == 'fetching' && value
         })
     
-        const loadPages = () => {
-            store.commit(`${BUILDER_MODULE}/${SAVE_REPORT_PAGES}`)
-            return Promise.resolve()
-        }
-
         const deleteItem = (elem, id) => {
             const elementIndex = page.value.elements.findIndex(page => {
                 return page.attributes.id == id
@@ -281,19 +281,6 @@ export default {
             })
         }
 
-        const updateTableValue = ({ type, row, col, value }) => {
-            const index = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == activeElement.value?.attributes?.id)
-            if(index != -1) {
-                store.commit(`${BUILDER_MODULE}/${UPDATE_TABLE_CONTENT}`, {
-                    row,
-                    col,
-                    type,
-                    value,
-                    index    
-                })
-            }
-        }
-
         const updateElementFromPopup = ({ id, textValue, table, name }) => {
             const index = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
             const domElem = document.querySelector(`#${id}`)
@@ -352,7 +339,7 @@ export default {
         }
 
         const fetchTemplates = () => {
-            return store.dispatch(`${BUILDER_MODULE}/${GET_TEMPLATES}`, props.id)
+            return store.dispatch(`${BUILDER_MODULE}/${GET_TEMPLATES}`)
         }
 
         const openUpdatePopup = (element) => {
@@ -361,8 +348,16 @@ export default {
             activeItem.value = null
         }
 
-        const getOrderDetails = () => {
-            return store.dispatch(`${BUILDER_MODULE}/${GET_ORDER_DETAILS}`, props.id)
+        const saveTemplate = () => {
+            store.dispatch(`${[BUILDER_MODULE]}/${[UPDATE_REPORT_TEMPLATE]}`, {
+                pages,
+                id: props.id
+            })
+        }
+
+        const getPageTemplate = () => {
+            store.dispatch(`${[BUILDER_MODULE]}/${[GET_REPORT_TEMPLATE]}`, props.id)
+            return Promise.resolve()
         }
 
         const submitPage = async () => {
@@ -389,16 +384,14 @@ export default {
         provide('fetching', fetching)
         provide('promptImage', promptImage)
         provide('generateElement', generateElement)
-        provide('updateTableValue', updateTableValue)
         provide('generatePrefetchedImage', generatePrefetchedImage)
 
         watch(page, () => activeItem.value = null)
 
         onMounted(() => {
-            loadPages()
-            getOrderDetails()
             nextTick(async () => {
                 showcontainer.value = true
+                await getPageTemplate()
                 await fetchTemplates()
             })
         })
@@ -417,13 +410,13 @@ export default {
             deleteItem,
             submitPage,
             promptImage,
+            saveTemplate,
             activateItem,
             showcontainer,
             generateElement,
             activeElement,
             activeTemplate,
             openUpdatePopup,
-            updateTableValue,
             activePageTemplate,
             updateElementValue,
             updateElementFromPopup,
