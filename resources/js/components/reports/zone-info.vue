@@ -17,7 +17,7 @@
 <script>
 import { inject } from 'vue'
 export default {
-
+    name: 'zone-info',
     props: {
         zone: {
             required: true,

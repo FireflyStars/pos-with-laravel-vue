@@ -167,6 +167,11 @@
             clear: both;
         }
 
+        .textarea p {
+            margin-bottom: 0 !important;
+            margin-top: 0 !important;
+        }
+
         .table {
             border-collapse: collapse;
             min-width: 350px;

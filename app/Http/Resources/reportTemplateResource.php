@@ -17,6 +17,7 @@ class reportTemplateResource extends JsonResource
     {
         return [
             'id'           => $this->id,
+            'name'         => $this->name,
             'order_id'     => $this->order_id,
             'affiliate_id' => $this->affiliate_id,
             'pages'        => $this->pages,

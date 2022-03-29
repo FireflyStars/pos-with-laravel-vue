@@ -23,6 +23,7 @@ class PageTemplatesController extends Controller
         $pages = gettype($request->pages) == 'string' ? json_decode($request->pages, true) : $request->pages;
 
         report_page::create([
+            'name'         => $request->name, 
             'order_id'     => $request->order_id,
             'affiliate_id' => $request->affiliate_id,
             'pages'        => $pages,

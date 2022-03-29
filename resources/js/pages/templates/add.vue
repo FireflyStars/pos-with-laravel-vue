@@ -141,6 +141,7 @@
 
 <script>
 
+import Swal from 'sweetalert2'
 import { useStore } from 'vuex'
 import { onMounted, unref, ref, nextTick, computed, watch, provide } from 'vue'
 
@@ -346,10 +347,22 @@ export default {
             activeItem.value = null
         }
 
-        const saveTemplate = () => {
-            store.dispatch(`${[BUILDER_MODULE]}/${[SAVE_REPORT_TEMPLATE]}`, {
-                pages
+        const saveTemplate = async () => {
+
+            const { value: name } = await Swal.fire({
+                title: 'Enter Template name',
+                input: 'text',
+                inputLabel: 'Template Name',
+                inputPlaceholder: 'Name of the template',
             })
+
+            if (name) {
+                store.dispatch(`${[BUILDER_MODULE]}/${[SAVE_REPORT_TEMPLATE]}`, {
+                    pages,
+                    name
+                })
+            }
+
         }
 
         const submitPage = async () => {

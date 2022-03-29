@@ -141,6 +141,7 @@
 
 <script>
 
+import Swal from 'sweetalert2'
 import { useStore } from 'vuex'
 import { onMounted, unref, ref, nextTick, computed, watch, provide } from 'vue'
 
@@ -348,7 +349,7 @@ export default {
             activeItem.value = null
         }
 
-        const saveTemplate = () => {
+        const saveTemplate = async () => {
             store.dispatch(`${[BUILDER_MODULE]}/${[UPDATE_REPORT_TEMPLATE]}`, {
                 pages,
                 id: props.id
@@ -430,6 +431,10 @@ export default {
 <style lang="scss" scoped>
 
 $orange: orange;
+
+.swal2-container {
+    z-index: 999999999999;
+}
 
 .active-item {
     cursor: move;

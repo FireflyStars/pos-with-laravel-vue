@@ -3,18 +3,12 @@
     <div class="row mx-0" style="margin-top: 2rem">
 
         <template v-if="fetching">
-            <div
-                v-for="n in 2"
-                :key="n" 
-                class="col"
-            >
-                <div class="d-flex gap-2 align-items-center">
-                    <loader type="thumbnail" />
-                    <div>
-                        <loader :count="2" />
-                    </div>
-                    <loader type="icon" />    
+            <div class="d-flex gap-2 align-items-center">
+                <loader type="thumbnail" />
+                <div>
+                    <loader :count="2" />
                 </div>
+                <loader type="icon" />    
             </div>
         </template>
         
@@ -23,51 +17,27 @@
             <div class="col">
                 <div class="d-flex gap-2 align-items-center">
                     <div class="thumbnail"></div>
-                    <div class="title-section">
-                        <p>Nom du client</p>
-                        <h4>{{ order?.customer?.firstname || 'Name' }}</h4>
+                    <div class="title-section title-section-right">
+                        <p>Contact</p>
+                        <h4>{{ order.contact?.name || 'Contact' }}</h4>
                     </div>
                     <Icon 
                         name="circle-plus" 
                         class="pointer" 
                         @click.prevent="generateElement('textarea', { 
-                            content: `<div>
-                                <h4>Client</h4>
-                                <div>${order.customer?.name || ''}</div>
-                                <div>${order.customer?.firstname || ''}</div>
-                                <div>${order.customer?.compnay || ''}</div>
-                                <div>${order.customer?.signupdate || ''}</div>
-                            </div>`
+                            content: `
+                                <h4 class='title'>Contact</h4>
+                                <div>${order.contact?.name || ''}</div>
+                                <div>${order.contact?.email || ''}</div>
+                                <div>${order.contact?.mobile || ''}</div>
+                                <div>${order.contact?.type || ''}</div>
+                                <div>${order.contact?.comment || ''}</div>
+                            `
                         })" 
                     />
                 </div>
             </div>
             
-            <div class="col">
-                <div class="d-flex gap-2 align-items-center">
-                    <div class="title-section title-section-right">
-                        <p>Adresse du chantier</p>
-                        <h4>{{ order.customer?.address?.address1 || 'Customer Address' }}</h4>
-                    </div>
-                    <Icon 
-                        name="circle-plus" 
-                        class="pointer"
-                        @click.prevent="generateElement('textarea', { 
-                            content: `<div>
-                                <h4>Client Address</h4>
-                                <div>${order.customer?.address?.address1 || ''}</div>
-                                <div>${order.customer?.address?.address2 || ''}</div>
-                                <div>${order.customer?.address?.city || ''}</div>
-                                <div>${order.customer?.address?.phone || ''}</div>
-                                <div>${order.customer?.address?.phone_mobile || ''}</div>
-                                <div>${order.customer?.address?.vat_number || ''}</div>
-                            </div>    
-                            `
-                        })"
-                    />
-                </div>
-            </div>
-
         </template>
 
     </div>
@@ -79,7 +49,7 @@ import { inject } from 'vue'
 
 export default {
 
-    name: 'customer-info',
+    name: 'contact-info',
 
     props: {
         order: {

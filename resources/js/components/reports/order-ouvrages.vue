@@ -63,7 +63,7 @@
 import gedDetailFiles from './ged-detail-files.vue'
 
 export default {
-
+    name: 'order-ouvrage',
     components: {
         gedDetailFiles
     },

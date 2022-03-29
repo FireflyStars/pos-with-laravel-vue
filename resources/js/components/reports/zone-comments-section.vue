@@ -35,7 +35,7 @@
 <script>
 import { inject } from 'vue'
 export default {
-    
+    name: 'zone-comments-section',
     props: {
         orderZoneComments: {
             required: true,

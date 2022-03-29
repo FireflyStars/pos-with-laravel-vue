@@ -29,7 +29,7 @@
                     >
                 </template>
                 <template v-else>
-                    <div> {{ getRowValue(1, col, 'body') }} </div>
+                    <div> {{ getRowValue(row, col, 'body') }} </div>
                 </template>
             </td>
         </tr>
@@ -39,7 +39,7 @@
 <script>
 
 export default {
-
+    name: 'report-table',
     props: {
         headers: {
             required: false,

@@ -25,7 +25,7 @@
                                         @save="saveTemplate" 
                                     />
                                     
-                                    <div class="shadow-sm builder-container">
+                                    <div class="shadow-sm builder-container" @click="activeItem = null">
 
                                         <div class="template-header">
                                             <img 
@@ -38,7 +38,7 @@
                                         <div class="template-body">
 
                                             <span 
-                                                v-show="pages.length"
+                                                v-show="!fetching"
                                                 class="page-number text-muted" 
                                             >
                                                 {{ +activePage + 1 }}/{{ pages.length }}
@@ -62,21 +62,30 @@
                                                     }"
                                                 >
 
-                                                    <span 
+                                                    <div 
+                                                        class="content"
                                                         v-if="['textarea', 'table'].includes(element.name)" 
                                                         v-html="element.content"
                                                     >
-                                                    </span>
+                                                    </div>
 
-                                                    <span 
+                                                    <!-- <span 
                                                     class="close" 
                                                     v-show="`#${element.attributes.id}` == activeItem"
                                                     @click.prevent="deleteItem($event.target, element.attributes.id)"
                                                     >
                                                         &times;
-                                                    </span>
+                                                    </span> -->
 
                                                 </component>
+
+                                                <span 
+                                                class="close" 
+                                                v-show="`#${element.attributes.id}` == activeItem"
+                                                @click.prevent="deleteItem($event.target, element.attributes.id)"
+                                                >
+                                                    &times;
+                                                </span>
                                                 
 
                                             </div>
@@ -227,7 +236,7 @@ export default {
                 return page.attributes.id == id
             })
             if(elementIndex != -1) {
-                elem = getDomElementParent(elem, 'draggable')
+                elem = getDomElementParent(elem, 'item-container')
                 elem.remove()
                 document.querySelector('.moveable').style.display = "none"
                 store.commit(`${BUILDER_MODULE}/${DELETE_ITEM}`, elementIndex)
@@ -236,15 +245,15 @@ export default {
         }
 
         const onDrag = ({ top, left, target }) => {
-            updateElementStyles(target.id, { left, top }, getStylesOfElement(target))
+            updateElementStyles(target, { left, top }, getStylesOfElement(target))
         }
 
         const onScale = ({ target, drag }) => {
-            updateElementStyles(target.id, { transform: drag.transform }, getStylesOfElement(target))
+            updateElementStyles(target, { transform: drag.transform }, getStylesOfElement(target))
         }        
 
         const onRotate = ({ target, drag }) => {
-            updateElementStyles(target.id, { transform: drag.transform }, getStylesOfElement(target))
+            updateElementStyles(target, { transform: drag.transform }, getStylesOfElement(target))
         }
 
         const activateItem = (e) => {
@@ -256,7 +265,13 @@ export default {
             elem.blur()
         }
 
-        const updateElementStyles = (id, styles, elementOldStyles) => {
+        const updateElementStyles = (target, styles, elementOldStyles) => {
+            const { id } = target
+            if(target.parentElement) {
+                const { top,  left } = styles
+                if(top) target.parentElement.style.top = `${top}px`
+                if(left) target.parentElement.style.left = `${left}px`
+            }
             const itemIndex = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
             const computedStyles = getComputedStyle(styles, elementOldStyles)
             store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_STYLES}`, { 
@@ -532,6 +547,13 @@ $orange: orange;
     .draggable {
         z-index: 10;
         position: absolute;
+    }
+
+    .item-container {
+        z-index: 12;
+        position: absolute;
+        width: 20rem;
+        height: auto;
         .close {
             position: absolute;
             top: -100%;

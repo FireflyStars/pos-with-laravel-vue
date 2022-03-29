@@ -4,6 +4,8 @@
                                         
         <customer-info :order="order" />
 
+        <contact-info :order="order" />
+
         <template v-if="fetching">
             <div 
                 v-for="n in 2"
@@ -87,6 +89,7 @@ import { computed, inject } from 'vue'
 
 import zoneInfo from './zone-info'
 import customerInfo from './customer-info'
+import contactInfo from './contact-info'
 import orderOuvrages from './order-ouvrages.vue'
 import campingSection from './camping-section.vue'
 import signatureSection from './signature-section'
@@ -102,6 +105,7 @@ export default {
     components: {
         zoneInfo,
         customerInfo,
+        contactInfo,
         orderOuvrages,
         campingSection,
         gedDetailFiles,
