@@ -3,11 +3,12 @@
 use TCG\Voyager\Facades\Voyager;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CibleController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\CompagneController;
 use App\Http\Controllers\LcdtAdminController;
 use App\Http\Controllers\LcdtFrontController;
-use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\PageElementsController;
 use App\Http\Controllers\PageTemplatesController;
 
@@ -72,6 +73,9 @@ Route::group([
     Route::get('/list',[CompagneController::class, 'list'])->middleware('auth')->name('list');
     Route::get('/getCompgneCibleSelected/{id}',[CompagneController::class, 'getCompgneCibleSelected'])->middleware('auth')->name('getCompgneCibleSelected');
     Route::post('contentform/{id}', [CompagneController::class, 'contentform'])->middleware('auth')->name('contentform');
+
+    Route::get('/cible/load/{campagne_category_id}',[CibleController::class,'initialload'])->middleware('auth')->name('initialload');
+    Route::get('/cible/loadcible/{naf_selection}/{customer_statut_id}',[CibleController::class,'loadcible'])->middleware('auth')->name('loadcible');
 
     Route::put('deleteCompagneCible/', [CompagneController::class, 'deleteCompagneCible'])->middleware('auth')->name('deleteCompagneCible');
     Route::put('insertCompagneCible/', [CompagneController::class, 'insertCompagneCible'])->middleware('auth')->name('insertCompagneCible');

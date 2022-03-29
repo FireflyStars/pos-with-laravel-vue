@@ -1213,6 +1213,8 @@ public function SaveEvent(Request $request){
         $event->contact_id=isset($Parameters['contact_id'])?$Parameters['contact_id']:$contact->id;
         $event->event_type_id=$Parameters['event_type_id'];
         $event->affiliate_id=$lcdtapp_api_instance->user->affiliate->id;
+        if(isset($Parameters['order_id']))
+        $event->order_id=$Parameters['order_id'];
         $event->name=$Parameters['name'];
         $event->description=$Parameters['description'];
         $event->datedebut=$Parameters['date_start'];

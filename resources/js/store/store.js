@@ -19,6 +19,8 @@ import {
     filter as FILTER_MODULE
 } from "./modules/filter";
 
+import {cible as CIBLE_MODULE} from "./modules/cible";
+
 import { toggler as TOGGLER_MODULE } from "./modules/toggler"
 
 import { PageBuilder as BUILDER_MODULE } from "./modules/PageBuilder"
@@ -28,6 +30,7 @@ export default createStore({
     modules: {
         LOADER_MODULE,
         TOASTER_MODULE,
+        CIBLE_MODULE,
         SIDEBAR_MODULE,
         SELECT_MODULE,
         FILTER_MODULE,
