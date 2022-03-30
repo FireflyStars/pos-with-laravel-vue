@@ -16,7 +16,7 @@
                 class="me-12 heading-buttons justify-content-center"
                 :class="{ 'not-allowed': fetching || saving }"
                 :disabled="fetching || saving"
-                :textClass="fetching || saving ? 'd-none' : ''"
+                :textClass="saving ? 'd-none' : ''"
                 @click="save" 
             >
                 <Icon name="spinner" v-show="saving" />
@@ -108,7 +108,7 @@ import {
 } from '../../store/types/types'
 
 export default {
-
+    name: 'header-section',
     props: {
         title: {
             required: false,

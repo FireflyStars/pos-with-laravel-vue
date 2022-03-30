@@ -44,7 +44,7 @@
 <script>
 import { inject } from 'vue'
 export default {
-    
+    name: 'signature-section',
     setup () {
         
         const generateElement = inject('generateElement')

@@ -29,6 +29,7 @@
                                 <thead>
                                     <tr>
                                         <th scope="col">#</th>
+                                        <th scope="col">Name</th>
                                         <th scope="col">Order Id</th>
                                         <th scope="col">Affilitiate Id</th>
                                         <th scope="col">Pages</th>
@@ -40,7 +41,7 @@
 
                                     <template v-if="fetching">
                                         <tr v-for="n in 2" :key="n">
-                                            <td v-for="col in 6" :key="col"><loader /></td>
+                                            <td v-for="col in 7" :key="col"><loader /></td>
                                         </tr>
                                     </template>
 
@@ -50,6 +51,7 @@
                                             
                                             <tr v-for="(template, index) in templates" :key="template.id">
                                                 <td>{{ +index + 1 }}</td>
+                                                <td>{{ template.name }}</td>
                                                 <td>{{ template.order_id || 'Nil' }}</td>
                                                 <td>{{ template.affiliate_id || 'Nil' }}</td>
                                                 <td>{{ template.pages.length }}</td>

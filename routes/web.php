@@ -12,16 +12,7 @@ use App\Http\Controllers\LcdtFrontController;
 use App\Http\Controllers\PageElementsController;
 use App\Http\Controllers\PageTemplatesController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
     Route::post('/update-text-pos',[LcdtAdminController::class,'updateTextPos'])->name('update-text-pos');
@@ -29,8 +20,6 @@ Route::group(['prefix' => 'admin'], function () {
 });
 
 Route::post('/save-page-elements', [PageElementsController::class, 'store']);
-
-// Route::resource('/page-template', PageTemplatesController::class);
 
 Route::get('/page-templates', [PageTemplatesController::class, 'index']);
 Route::post('/page-template', [PageTemplatesController::class, 'store']);

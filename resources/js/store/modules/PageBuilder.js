@@ -207,13 +207,15 @@ export const PageBuilder = {
             }
         },
 
-        async [SAVE_REPORT_TEMPLATE]({ commit }, { pages, orderId }) {
+        async [SAVE_REPORT_TEMPLATE]({ commit }, { pages, orderId, name }) {
 
             commit(SET_LOADING, { id: 'save-template' })
 
             const formData = formatFormData(pages)
 
             if(orderId != null && orderId != undefined) formData.append('order_id', orderId)
+
+            formData.append('name', name)
 
             try {
                 const { data } = await axios.post('/page-template', formData)
@@ -227,11 +229,15 @@ export const PageBuilder = {
 
         },
 
-        async [UPDATE_REPORT_TEMPLATE]({ commit }, { pages, id }) {
+        async [UPDATE_REPORT_TEMPLATE]({ commit }, { pages, id, orderId, name }) {
 
             commit(SET_LOADING, { id: 'save-template' })
 
             const formData = formatFormData(pages)
+
+            if(orderId != null && orderId != undefined) formData.append('order_id', orderId)
+
+            formData.append('name', name)
 
             try {
                 const { data } = await axios.post(`/page-template/${id}`, formData)

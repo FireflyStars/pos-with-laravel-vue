@@ -75,7 +75,7 @@
                             :content="table.content"
                             @update="updateContent"
                         >
-                            <p v-html="textValue" v-if="isTextarea"></p>
+                            <p class="conent-paragraph" v-html="textValue" v-if="isTextarea"></p>
                         </component>
                     </div>
 
@@ -256,9 +256,11 @@ export default {
         const close = () => emit('close')
 
         const submit = () => {
+            const text = document.querySelector('.editable')
+            const textValue = text.querySelector('.conent-paragraph').innerHTML
             emit('update', { 
                 id: props.item.attributes.id, 
-                textValue: isTextarea.value ? document.querySelector('.editable').innerHTML : '',
+                textValue: isTextarea.value ? textValue : '',
                 table,
                 name: props.item.name,
             })

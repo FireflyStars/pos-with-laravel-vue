@@ -15,6 +15,7 @@ class CreateReportPagesTable extends Migration
     {
         Schema::create('report_pages', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->unique();
             $table->unsignedBigInteger('order_id')->nullable();
             $table->unsignedBigInteger('affiliate_id')->nullable();
             $table->json('pages');

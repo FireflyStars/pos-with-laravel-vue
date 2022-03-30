@@ -18,20 +18,40 @@ class reportsResource extends JsonResource
             'id'   => $this->id,
             'lang_id' => $this->lang_id,
             'affiliate_id' => $this->affiliate_id,
-            'customer' => [
-                'id' => $this->customer->id,
-                'taxe_id' => $this->customer->taxe_id,
-                'customer_group_id' => $this->customer->customer_group_id,
-                'gender' => $this->customer->gender,
-                'name' => $this->customer->name,
-                'firstname' => $this->customer->firstname,
-                'company' => $this->customer->company,
-                'signupdate' => $this->customer->signupdate,
-                'active' => $this->customer->active,
-                'address' => $this->get_customer_address($this->events)
-            ],
+            'customer' => $this->get_customer_details(),
+            'contact' => $this->get_contact_details(),
             'orderZones' => $this->get_order_zones($this->orderZones),
             'queryLog' => DB::getQueryLog()
+        ];
+    }
+
+    private function get_contact_details() 
+    {
+        return is_null($this->contact) ? [] : [
+            'name' => $this->contact->name,
+            'firstname' => $this->contact->firstname,
+            'gender' => $this->contact->gender,
+            'email' => $this->contact->email,
+            'mobile' => $this->contact->mobile,
+            'telephone' => $this->contact->telephone,
+            'type' => $this->contact->type,
+            'comment' => $this->contact->comment,
+        ];
+    }
+
+    private function get_customer_details() 
+    {
+        return is_null($this->customer) ? [] : [
+            'id' => $this->customer->id,
+            'taxe_id' => $this->customer->taxe_id,
+            'customer_group_id' => $this->customer->customer_group_id,
+            'gender' => $this->customer->gender,
+            'name' => $this->customer->name,
+            'firstname' => $this->customer->firstname,
+            'company' => $this->customer->company,
+            'signupdate' => $this->customer->signupdate,
+            'active' => $this->customer->active,
+            'address' => $this->get_customer_address($this->events)
         ];
     }
 
