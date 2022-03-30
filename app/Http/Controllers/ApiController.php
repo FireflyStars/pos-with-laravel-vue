@@ -1096,6 +1096,9 @@ public function SaveEvent(Request $request){
     }
 
     if($this->isBlank($Parameters['contact_id'])){
+        if(!isset($Parameters['contact_name'])||$this->isBlank($Parameters['contact_name'])){
+            return $this->response(0,null,'Un nom de contact est requis.');
+        }
         if(!isset($Parameters['contact_phone'])||$this->isBlank($Parameters['contact_phone'])){
             return $this->response(0,null,'Un numéro de téléphone est requis..');
         }
@@ -1203,7 +1206,7 @@ public function SaveEvent(Request $request){
             $contact->address_id=$Parameters['address_id'];
             $customer=Customer::find($Parameters['customer_id']);
             $contact->firstname=$customer->firstname;
-            $contact->name=$customer->name;
+            $contact->name=$Parameters['contact_name'];
             $contact->type='Client';
             $contact->comment='created from api';
             $contact->save();
