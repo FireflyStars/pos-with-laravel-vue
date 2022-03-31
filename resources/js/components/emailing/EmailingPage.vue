@@ -27,6 +27,7 @@
                             params: { id: item.id },
                         }"
                     >
+                    
                         <div
                             class="img_container"
                             v-on:click="getTemplates(item.id)"

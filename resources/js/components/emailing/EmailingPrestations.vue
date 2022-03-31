@@ -27,6 +27,7 @@
                 <h3 class="color margin" v-for="item in title" :key="item.id">
                     <a @click="goToHome()" class="link">Emailing</a> >
                     {{ item.name }}
+                    
                 </h3>
             </div>
 
