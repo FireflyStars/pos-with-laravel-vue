@@ -24,8 +24,8 @@ class PageTemplatesController extends Controller
 
         report_page::create([
             'name'         => $request->name, 
-            'order_id'     => $request->order_id,
-            'affiliate_id' => $request->affiliate_id,
+            'order_id'     => $request->order_id ?? null,
+            'affiliate_id' => $request->user()->id,
             'pages'        => $pages,
             'page_files'   => $page_files,
         ]);  

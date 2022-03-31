@@ -54,12 +54,13 @@
                                                     :is="element.item" 
                                                     v-bind="element.attributes"
                                                     @click.stop="activateItem($event)"
-                                                    @dblclick="openUpdatePopup(element)"
+                                                    @dblclick="openUpdatePopup(element, $event.target)"
                                                     :disabled="element.name == 'table'"
                                                     :content="element.content"
                                                     :class="{ 
                                                         'active-item': `#${element.attributes.id}` == activeItem 
                                                     }"
+                                                    contenteditable="false"
                                                 >
 
                                                     <div 
@@ -91,7 +92,8 @@
                                             </div>
                                             
                                             <popup 
-                                                :item="activeElement" 
+                                                :item="activeElement"
+                                                :dom="activeDomElement" 
                                                 v-if="openPopup"
                                                 @close="openPopup = false"
                                                 @update="updateElementFromPopup"
@@ -109,8 +111,27 @@
 
                                     </div>
 
+                                    <Modal 
+                                        id="report-templates"
+                                        classes="d-flex justify-content-center py-5" 
+                                    >
+                                        <div>
+                                            <h4>Templates List</h4>
+                                            <div class="mt-3">
+                                                <label>Please choose a template from saved templates</label>
+                                                <select-box
+                                                    v-model="activeReportTemplate" 
+                                                    placeholder="Choose a template" 
+                                                    :options="formattedReportTemplates" 
+                                                    name="page"
+                                                    :selectStyles="{ maxHeight: '12rem', overflow: 'auto' }"
+                                                />          
+                                            </div>
+                                        </div>
+                                    </Modal>
+
                                     <Moveable
-                                        v-if="pages.length"
+                                        v-if="showcontainer && pages.length"
                                         className="moveable"
                                         v-bind:target="[activeItem]"
                                         v-bind:draggable="true"
@@ -128,7 +149,6 @@
                                 <div class="right-page-container">
 
                                     <adjouter-zone />
-                                                    
                                     <report-order-resources />
 
                                 </div>
@@ -150,20 +170,21 @@
 
 import { useStore } from 'vuex'
 import { onMounted, unref, ref, nextTick, computed, watch, provide } from 'vue'
+import useModal from '../composables/useModal'
 
 import { 
     BUILDER_MODULE, 
     SAVE_PAGE,
     GET_ORDER_DETAILS, 
     GET_TEMPLATES,
-    SAVE_REPORT_PAGES,
     DELETE_ITEM,
     GENERATE_ELEMENT,
     UPDATE_ELEMENT_STYLES,
     UPDATE_ELEMENT_CONTENT,
     UPDATE_ELEMENT_TABLE,
     UPDATE_TABLE_CONTENT,
-    SAVE_REPORT_TEMPLATE
+    GET_REPORT_TEMPLATE,
+    GET_REPORT_TEMPLATES
 } from '../store/types/types'
 
 import Moveable from "vue3-moveable"
@@ -199,6 +220,7 @@ export default {
 
         const store = useStore()
         const { getDomElementParent } = useHelpers()
+        const { toggleModal } = useModal()
         const { itemAttributes, getStylesOfElement, getComputedStyle } = useStyles()
         const { 
             generateTextarea, 
@@ -208,14 +230,19 @@ export default {
             generateTable 
         } = useElementsGenerator()
 
-        const activeItem = ref('#myTable')
+        const activeItem = ref(null)
         const showcontainer = ref(false)
         const activeElement = ref({})
+        const activeDomElement = ref(null)
         const openPopup = ref(false)
 
         const activePage = computed(() => store.getters[`${BUILDER_MODULE}/activePage`])
         const page = computed(() => store.getters[`${BUILDER_MODULE}/page`])
         const pages = computed(() => store.getters[`${BUILDER_MODULE}/pages`])
+
+        const reportTemplates = computed(() => store.getters[`${BUILDER_MODULE}/reportTemplates`])
+        const formattedReportTemplates = ref([])
+        const activeReportTemplate = ref(0)
 
         const template = computed(() => store.getters[`${BUILDER_MODULE}/template`])
         const activePageTemplate = computed(() => store.getters[`${BUILDER_MODULE}/activePageTemplate`])
@@ -225,11 +252,7 @@ export default {
             const { id, value } = store.getters[`${BUILDER_MODULE}/loading`]
             return id == 'fetching' && value
         })
-    
-        const loadPages = () => {
-            store.commit(`${BUILDER_MODULE}/${SAVE_REPORT_PAGES}`)
-            return Promise.resolve()
-        }
+
 
         const deleteItem = (elem, id) => {
             const elementIndex = page.value.elements.findIndex(page => {
@@ -374,10 +397,11 @@ export default {
             return store.dispatch(`${BUILDER_MODULE}/${GET_TEMPLATES}`, props.id)
         }
 
-        const openUpdatePopup = (element) => {
-            openPopup.value = true
+        const openUpdatePopup = (element, domElement) => {
             activeElement.value = element
             activeItem.value = null
+            activeDomElement.value = getDomElementParent(domElement, 'draggable')
+            openPopup.value = true
         }
 
         const getOrderDetails = () => {
@@ -412,6 +436,23 @@ export default {
             link.click()
         }
 
+        const getReportTemplates = async () => {
+            await store.dispatch(`${[BUILDER_MODULE]}/${[GET_REPORT_TEMPLATES]}`)
+            const templates = reportTemplates.value.map(({ id, name }) => {
+                return {
+                    value: id,
+                    display: name
+                }
+            })
+            formattedReportTemplates.value = templates
+            return Promise.resolve()
+        }
+
+        const getReportTemplate = async (id) => {
+            await store.dispatch(`${[BUILDER_MODULE]}/${[GET_REPORT_TEMPLATE]}`, id)
+            return Promise.resolve()
+        }
+
         provide('fetching', fetching)
         provide('promptImage', promptImage)
         provide('generateElement', generateElement)
@@ -419,13 +460,22 @@ export default {
         provide('generatePrefetchedImage', generatePrefetchedImage)
 
         watch(page, () => activeItem.value = null)
+        watch(activeReportTemplate, (value) => {
+            if(value != 0) {
+                nextTick(() => {
+                    toggleModal('report-templates', false)
+                    getReportTemplate(value)
+                    getOrderDetails()
+                    fetchTemplates()
+                })
+            }
+        })
 
         onMounted(() => {
-            loadPages()
-            getOrderDetails()
             nextTick(async () => {
+                toggleModal('report-templates')
                 showcontainer.value = true
-                await fetchTemplates()
+                await getReportTemplates()
             })
         })
       
@@ -440,6 +490,7 @@ export default {
             openPopup,
             activePage,
             activeItem,
+            toggleModal,
             deleteItem,
             submitPage,
             promptImage,
@@ -450,11 +501,14 @@ export default {
             activeElement,
             activeTemplate,
             openUpdatePopup,
+            activeDomElement,
             updateTableValue,
             activePageTemplate,
+            activeReportTemplate,
             updateElementValue,
             updateElementFromPopup,
             generatePrefetchedImage,
+            formattedReportTemplates,
         }
     },
 }

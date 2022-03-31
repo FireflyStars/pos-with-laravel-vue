@@ -1,6 +1,6 @@
 <template>
 
-    <div class="d-flex justify-content-between align-items-center margin-bottom">
+    <div class="d-flex justify-content-between align-items-center margin-bottom" style="z-index: 99999999999999">
 
         <div>
             <h4 class="tile_h1">
@@ -84,6 +84,7 @@
                     name="page"
                     classnames="reports-dropdown-button"
                     :disabled="fetching"
+                    :selectStyles="{ maxHeight: '10rem', overflow: 'auto' }"
                 />
 
             </div>

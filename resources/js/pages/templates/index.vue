@@ -14,10 +14,20 @@
                     <side-bar />
 
                     <div class="col main-view container">
-                        <h4 class="tile_h1 flex align-items-center">
+                        <h4 class="tile_h1 flex align-items-center gap-2">
                             <Icon name="report" width="32" height="32" />
                             Templates List
                         </h4>
+
+
+                        <BaseButton 
+                            kind="default" 
+                            title="Add New" 
+                            class="mb-2 mt-3"
+                            @click="$router.push({
+                                name: 'templates-add'
+                            })"
+                        />
 
 
                         <div class="templates-list bg-white p-3 my-4">
