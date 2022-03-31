@@ -43,6 +43,12 @@
                             <div>
                                 <p class="card-text">{{ item.text }}</p>
                             </div>
+
+                            <div class="voir-plus" v-on:click="getTemplates(item.id)">
+                                    voir
+                            </div>
+
+
                         </div>
                     </router-link>
                 </div>
@@ -117,18 +123,20 @@ export default {
     font-size: unset;
     font-family: revert;
     cursor: pointer;
+    color: white !important;
+    font-weight: bold;
 }
 .card-title:hover {
     color: orangered;
 }
 .card-text {
     font-size: 10px;
-    margin-top: 15px;
+    margin-top: 29px;
     text-align: center;
     line-height: 13.5px;
 }
 .card {
-    width: 213px;
+    width: 236px;
     padding: 0;
     margin: 7px;
     border: 1px solid rgb(0 0 0 / 34%);
@@ -141,12 +149,18 @@ export default {
 .card-body {
     padding: 12px 20px 15px;
     font-size: 15px;
+    background-color: #f26e26;
+    margin-left: 2px;
+    margin-right: 2px;
+    min-height: 201px;
 }
 .card-img-top.body {
-    width: 100px;
-    height: 166px;
+    width: 232px;
+    height: 326px;
     box-shadow: -46px 0px 23px -10px rgb(97 96 96 / 50%);
     object-fit: cover;
+    border-color: #ee3138 !important;
+    border:solid;
 }
 .img_container {
     text-align: center;
@@ -163,5 +177,17 @@ export default {
 .link:hover {
     color: orangered;
 }
+.voir-plus{
+text-align: center;
+background-color: black;
+margin-top: 18px;
+color: white;
+width: 50%;
+margin-left: 25%;
 
+}
+.voir-plus:hover{
+    background-color: #d22c2c;
+    color: black;
+}
 </style>
