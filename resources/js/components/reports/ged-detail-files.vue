@@ -38,7 +38,7 @@
 import { inject } from 'vue'
 
 export default {
-
+    name: 'ged-detail-files',
     props: {
         gedDetail: {
             type: [Object, Array],

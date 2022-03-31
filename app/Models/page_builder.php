@@ -53,7 +53,6 @@ class page_builder extends Model
     public static function get_svgs() 
     {
         return [
-
             'arrow-top' => '<svg width="20" height="30" viewBox="0 0 20 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M11 29V10" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M1 11L10 1L19 11" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>

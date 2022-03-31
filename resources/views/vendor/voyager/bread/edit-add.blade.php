@@ -603,7 +603,7 @@ setTimeout(function(){
                                
 
                                 switchbtn.classList.toggle("on");
-                                console.log( prop);
+                               
                                 fieldsdef[prop].active=switchbtn.classList.contains("on")?1:0;
                                 renderfields();
                                 }, true);

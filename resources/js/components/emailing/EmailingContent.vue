@@ -14,7 +14,7 @@
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
     >
-        <form class="space-y-6" v-on:submit.prevent="saveCompany" v-if="showcontainer">
+        <form class="space-y-6"  v-if="showcontainer">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-7">
@@ -28,169 +28,75 @@
                         </h3>
 
                         <div class="bg-panel p-4">
-                            <div class="row ">
-                                <div class="col-lg-12 group_input">
-                                    <label class="fix_width" for="expediteur"
-                                        >EXPÉDITEUR :
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id=""
-                                        value="La Compagnie des Toits - Seine-et-Marne"
-                                    />
-
-                                    <label class="fix_width_tiret">-</label>
-                                    <input
-                                        type="text"
-                                        v-model="emailFrom"
-                                        @keyup.prevent="submit"
-                                        name="emailFrom"
-                                        id="emailFrom"
-                                    />
-                                </div>
-
-                                <div class="col-lg-12 group_input">
-                                    <label class="fix_width"
-                                        >RÉPONDRE À :
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id=""
-                                        value="La Compagnie des Toits - Seine-et-Marne"
-                                    />
-                                    <label class="fix_width_tiret">-</label>
-
-                                    <input
-                                        type="text"
-                                        v-model="emailReplyTo"
-                                        @keyup.prevent="submit"
-                                        name="emailReplyTo"
-                                        id="emailReplyTo"
-                                    />
-                                </div>
-
-                                <div class="col-lg-12 group_input">
-                                    <label class="fix_width">OBJET : </label>
-                                    <input
-                                        type="text"
-                                        v-model="subject"
-                                        @keyup.prevent="submit"
-                                        name="subject"
-                                        id="subject"
-                                    />
-
-                                    <span>36/50 caractères</span>
-                                </div>
-                            </div>
-                            <hr />
-                            <div class="row">
-                                <div class="column col-6">
-                                    <div class="group_input text_data">
-                                        <label class="fix_width"
-                                            >AGENCE :</label
-                                        >
-                                        <input
-                                            type="text"
-                                            v-model="input_agence"
-                                            @keyup.prevent="submit"
-                                            name="agence"
-                                        />
+                             <div class="row mb-1">
+                                    <div class="col-3 tname" >
+                                        <b>Objet:</b>
                                     </div>
-
-                                    <div class="group_input"></div>
-                                </div>
-
-                                <div class="column col-6 state">
-                                    <div class="group_input text_data">
-                                        <label class="fix_width_column"
-                                            >TEL :</label
-                                        >
-                                        <input
-                                            type="text"
-                                            id="inputPassword"
-                                            v-model="input_phone"
-                                            @keyup.prevent="submit"
-                                            name="phone"
-                                        />
-                                    </div>
-
-                                    <div class="group_input text_data pt-2">
-                                        <label class="fix_width_column"
-                                            >E-MAIL :</label
-                                        >
-                                        <input
-                                            type="text"
-                                            v-model="input_email"
-                                            @keyup.prevent="submit"
-                                            name="email"
-                                        />
+                                     <div class="col noedit">
+                                        {{subject}}
                                     </div>
                                 </div>
-                            </div>
+                                <div class="row mb-1">
+                                    <div class="col-3 tname" >
+                                        <b>Expéditeur:</b>
+                                    </div>
+                                     <div class="col noedit">
+                                        {{sender}}
+                                    </div>
+                                </div>
+                                 <div class="row mb-1">
+                                    <div class="col-3 tname" >
+                                        <b>Répondre à:</b>
+                                    </div>
+                                     <div class="col noedit">
+                                        {{replyto}}
+                                    </div>
+                                </div>
+                            <template v-for="item,index in fields" :key="index" >
+                                <div class="row mb-1" v-if="index!='Email_agence'&&index!='Telephone_agence'&&item.active==1">
+                                    <div class="col-3 tname" >
+                                        <b>{{item.name}}:</b>
+                                    </div>
+                                     <div class="col noedit">
+                                        {{item.value}}
+                                    </div>
+                                </div>
+          
+                            </template>
+                               
+                                    
+                                    <hr/>
+                                     <div class="row">
+                                        <div class="col group_input" v-if="typeof fields.Email_agence!='undefined'&&fields.Email_agence.active==1">
+                                            <b>{{fields.Email_agence.name}}:</b> <input class="mt-2" type="text" v-model="email_agence"/>
+                                        </div>
+                                        <div class="col group_input"  v-if="typeof fields.Telephone_agence!='undefined'&&fields.Telephone_agence.active==1">
+                                            <b>{{fields.Telephone_agence.name}}:</b> <input class="mt-2" type="text" v-model="phone_agence"/>
+                                        </div> 
+                                    </div>
+                                
                         </div>
                     </div>
                     <div
                         class="col-lg-5 apercu d-table "
-                        style="margin-top: 50px"
+                        style="margin-top: 65px"
                     >
                         <h6>APERÇU</h6>
                         <div style="position: relative; " class="bg-panel" >
-                        <img
-                            :src="`/storage/${vaal}`" />
-
-                        <span
-                            class="position"
-                            :style="
-                                'left: ' +
-                                dataimage1.xfield1 +
-                                'px; top: ' +
-                                dataimage1.yfield1 +
-                                'px; color: ' +
-                                dataimage1.color1 +
-                                ';'
-                            "
-                            id="input_agence"
-                        >
-                            {{ input_agence }}
-                        </span>
-                        <span
-                            class="position"
-                            :style="
-                                'left: ' +
-                                dataimage2.xfield2 +
-                                'px; top: ' +
-                                dataimage2.yfield2 +
-                                'px; color: ' +
-                                dataimage2.color2 +
-                                ';'
-                            "
-                            id="input_email"
-                        >
-                            {{ input_email }}
-                        </span>
-                        <span
-                            class="position"
-                            :style="
-                                'left: ' +
-                                dataimage3.xfield3 +
-                                'px; top: ' +
-                                dataimage3.yfield3 +
-                                'px; color: ' +
-                                dataimage3.color3 +
-                                ';'
-                            "
-                            id="input_phone"
-                        >
-                            {{ input_phone }}
-                        </span>
+                        <img v-if="imageurl!=''"
+                            :src="`/storage/${imageurl}`" />
+                            <template v-for="item,index in fields" :key="index">
+                                <span v-if="item.active==1" v-bind:style="{color:item.color,fontSize:`${item.size}px`,fontFamily:item.font,top:`${item.y}px`,left:`${item.x}px`}"><template v-if="index!='Email_agence'&&index!='Telephone_agence'">{{item.value}}</template><template  v-else-if="index=='Email_agence'">{{email_agence}}</template><template  v-else-if="index=='Telephone_agence'">{{phone_agence}}</template></span>
+                            </template>
+                        
                         </div>
                     </div>
                 </div>
                 <div class="row rigth">
                     <button
                         class="button-valider type"
-                        type="submit"
-                        v-on:click="validate"
+                        type="button"
+                        v-on:click="saveCompany"
                     >
                         VALIDER
                     </button>
@@ -261,72 +167,73 @@ export default {
         const store = useStore();
 
         const my_name = localStorage.getItem("category");
-        const input_agence = ref("Seine-et-Marne");
-        const input_email = ref("contact77@lacompagniedestoits.com");
-        const input_phone = ref("01 60 04 70");
-        const emailFrom = ref("contact77@lacompagniedestoits.com");
-        const emailReplyTo = ref("contact77@lacompagniedestoits.com");
-        const subject = ref("Pourquoi réaliser des audits de toiture ?");
+   
+        
         const idtemplate = localStorage.getItem("imagetemplate");
+        const email_agence=ref('');
+        const phone_agence=ref('');
+        const imageurl=ref('');
+        const sender=ref('La compagnie des toits - ');
+        const replyto=ref('La compagnie des toits - ');
 
-        localStorage.setItem("storedName", input_agence.value);
-        localStorage.setItem("storedEmail", input_email.value);
-        localStorage.setItem("storedPhone", input_phone.value);
-        localStorage.setItem("emailFrom", emailFrom.value);
-        localStorage.setItem("emailReplyTo", emailReplyTo.value);
-        localStorage.setItem("subject", subject.value);
-        localStorage.setItem("emailReplyTo", emailReplyTo.value);
+        const fields=ref({});
+        const subject = ref('');
+
+        const router =useRouter();
 
         const {
             errors,
-            company,
-            contentform,
-            getImgUrl,
-            vaal,
-            getimagefield,
-            dataimage1,
-            dataimage2,
-            dataimage3,
+            company
+    
         } = useCompanies();
 
         const route = useRoute();
-        onMounted(getImgUrl(), getimagefield());
+ 
 
         function saveCompany(e) {
-            console.log(company.value);
-            axios.put("/contentform/" + route.params.cible_id, company.value);
-            console.log("read");
+            
+            
+                axios.post("/contentform/" + route.params.cible_id,{email:email_agence.value,phone:phone_agence.value})
+                    .then((res)=>{
+                        console.log(res.data);
+                    if(res.data.ok==1)
+                    router.push({
+                        name: "envoi",
+                        params: {
+                            cible_id: `${route.params.cible_id}`,
+                            type: route.params.type,
+                        },
+                    });
+        
+                    }).catch((err)=>{
+
+                    }).finally(()=>{
+
+                    });
+       
         }
-        function submit(e) {
-            if (e.target.name == "agence") {
-                input_agence.value = e.target.value;
-                localStorage.setItem("storedName", input_agence.value);
-                console.log("input_agence.value", input_agence.value);
-            } else if (e.target.name == "email") {
-                input_email.value = e.target.value;
-                localStorage.setItem("storedEmail", input_email.value);
-                console.log("input_email.value", input_email.value);
-            } else if (e.target.name == "phone") {
-                input_phone.value = e.target.value;
-                localStorage.setItem("storedPhone", input_phone.value);
-                console.log("input_phone.value", input_phone.value);
-            } else if (e.target.name == "emailFrom") {
-                emailFrom.value = e.target.value;
-                localStorage.setItem("emailFrom", emailFrom.value);
-                console.log("emailFrom.value", emailFrom.value);
-            } else if (e.target.name == "emailReplyTo") {
-                emailReplyTo.value = e.target.value;
-                localStorage.setItem("emailReplyTo", emailReplyTo.value);
-                console.log("input_phone.value", input_phone.value);
-            } else if (e.target.name == "subject") {
-                subject.value = e.target.value;
-                localStorage.setItem("subject", subject.value);
-                console.log("subject.value", subject.value);
-            }
-        }
+       
 
         const showcontainer = ref(false);
         onMounted(() => {
+            
+    
+            axios.get("/fields/" + route.params.cible_id).then(function (response) {
+                    fields.value=response.data.fields;
+                    email_agence.value=response.data.fields.Email_agence.value;
+                    phone_agence.value=response.data.fields.Telephone_agence.value;
+                    imageurl.value=response.data.image;
+                    subject.value=response.data.campagneCategory.objet;
+                    sender.value+=`${response.data.fields.Nom_agence.value} - ${response.data.fields.Email_agence.value}`;
+                    replyto.value+=`${response.data.fields.Nom_agence.value} - ${response.data.fields.Email_agence.value}`;
+                }).catch(function (error) {
+                
+                
+                }).finally(function(){
+
+            });
+            
+            
             nextTick(() => {
                 showcontainer.value = true;
             });
@@ -337,34 +244,22 @@ export default {
             errors,
             company,
             saveCompany,
-            submit,
-            input_agence,
-            input_email,
-            input_phone,
+            sender,
+            replyto,
             my_name,
             subject,
-            emailReplyTo,
-            emailFrom,
+
             idtemplate,
-            getImgUrl,
-            vaal,
-            dataimage1,
-            dataimage2,
-            dataimage3,
+       
+            imageurl,
+            fields,
+            email_agence,
+            phone_agence
         };
     },
 
     methods: {
-        validate() {
-            //
-            this.$router.push({
-                name: "envoi",
-                params: {
-                    cible_id: `${this.$route.params.cible_id}`,
-                    type: this.$route.params.type,
-                },
-            });
-        },
+        
         goToHome() {
             this.$router.push("/emailing");
         },
@@ -383,6 +278,9 @@ export default {
 </script>
 
 <style scoped>
+.bg-panel span{
+    position: absolute;
+}
 .position {
     position: absolute;
     font-size: 14px;
@@ -413,11 +311,12 @@ div.group_input {
     justify-content: space-between;
 }
 div.group_input input {
-    width: 246px;
+    width: 250px;
     background-color: #d3d3d3;
     border: none;
     height: 27px;
     font-size: small;
+    padding: 0 10px;
 }
 div.group_input {
     margin: 7px 0;
@@ -526,5 +425,15 @@ hr {
 }
 .link:hover {
     color: orangered;
+}
+b{
+    font-weight: 600;
+}
+.noedit{
+    background: #EEE;
+color: #aaa;
+}
+.tname{
+    align-self: center;
 }
 </style>

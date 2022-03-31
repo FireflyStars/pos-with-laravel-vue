@@ -1,10 +1,13 @@
 
 import useHelpers from '../../composables/useHelpers'
+import useReports from '../../composables/reports/useReports'
 
 const { generateId } = useHelpers()
+const { formatFormData, getFormattedPages } = useReports()
 
 import { 
     
+    SET_LOADING,
     SAVE_PAGE, 
     ADD_PAGE,
     DELETE_PAGE,
@@ -21,7 +24,14 @@ import {
     DELETE_ITEM,
     GENERATE_ELEMENT,
     UPDATE_ELEMENT_STYLES,
-    UPDATE_ELEMENT_CONTENT
+    UPDATE_ELEMENT_CONTENT,
+    UPDATE_ELEMENT_TABLE,
+    UPDATE_TABLE_CONTENT,
+    SAVE_REPORT_TEMPLATE,
+    SAVE_REPORT_TEMPLATES,
+    UPDATE_REPORT_TEMPLATE,
+    GET_REPORT_TEMPLATE,
+    GET_REPORT_TEMPLATES
 
 } from "../types/types"
 
@@ -36,6 +46,7 @@ export const PageBuilder = {
         pages: [],
         order: {},
         templates: [],
+        reportTemplates: [],
         activeTemplate: -1,
         activePage: 0,
         loading: {
@@ -49,6 +60,7 @@ export const PageBuilder = {
         pages: state => state.pages,
         order: state => state.order,
         templates: state => state.templates,
+        reportTemplates: state => state.reportTemplates,
         activeTemplate: state => state.activeTemplate,
         template: state => {
             return state.templates.length 
@@ -69,6 +81,10 @@ export const PageBuilder = {
     },
 
     mutations: {
+        [SET_LOADING](state, { id, value = true }) {
+            state.loading.id = id
+            state.loading.value = value
+        },
         [SAVE_PAGE_ELEMENTS](state, elements) {
             state.page.elements = elements
         },
@@ -85,7 +101,8 @@ export const PageBuilder = {
         [SET_ACTIVE_PAGE](state, page) {
             state.activePage = page
         },
-        [SAVE_REPORT_PAGES](state) {
+        [SAVE_REPORT_PAGES](state, pages = {}) {
+            if(!_.isEmpty(pages)) return state.pages = pages
             state.pages = [{
                 id: generateId(12),
                 elements: [],
@@ -121,6 +138,26 @@ export const PageBuilder = {
         },
         [UPDATE_ELEMENT_CONTENT](state, { content, index }) {
             state.pages[state.activePage].elements[index].content = content
+        },
+        [UPDATE_ELEMENT_TABLE](state, { rows, cols, headers, index, content }) {
+            const page = state.pages[state.activePage].elements[index]
+            page.attributes.rows = rows
+            page.attributes.cols = cols
+            page.attributes.headers = headers
+            page.content = {
+                ...page.content, 
+                ...content
+            }
+        },
+        [UPDATE_TABLE_CONTENT](state, { row, col, type, value, index }) {
+            const content = state.pages[state.activePage].elements[index].content
+            content[type] = {
+                ...content[type],
+                [row + '' +col]: value
+            }
+        },
+        [SAVE_REPORT_TEMPLATES](state, data) {
+            state.reportTemplates = data
         }
     },
 
@@ -128,51 +165,120 @@ export const PageBuilder = {
 
         async [SAVE_PAGE]({ commit }, { pages, template }) {
 
-            let formData = new FormData()
-            pages = unref(pages)
-            pages.forEach((page) => {
-                
-                const { elements } = page
+            commit(SET_LOADING, { id: 'submit' })
 
-                let fileElements = elements
-                .filter((element) => element.item == 'img')
-                .map(element => {
-                    return {
-                        id: element.attributes.id, 
-                        file: element.dataFile
-                    }
-                })
-
-                fileElements.forEach(element => {
-                    formData.append(`Img#${element.id}`, element.file)
-                })    
-
-            })
-
-            formData.append('pages', JSON.stringify({ ...pages }))
+            const formData = formatFormData(pages)
 
             try {
                 const { data } = await axios.post('/save-page-elements', formData, {  
                     responseType: 'arraybuffer'
                 })
+                commit(SET_LOADING, { id: 'submit', value: false })
                 return data
             }
             catch(e) {
+                commit(SET_LOADING, { id: 'submit', value: false })
                 throw e
             }
 
         },
 
         async [GET_ORDER_DETAILS]({ commit }, orderId) {
-            const { data } = await axios.get(`/get-page-order/${orderId}`)
-            commit(SAVE_PAGE_ORDER, data)
+            commit(SET_LOADING, { id: 'fetching' })
+            try {
+                const { data } = await axios.get(`/get-page-order/${orderId}`)
+                commit(SAVE_PAGE_ORDER, data)
+                commit(SET_LOADING, { id: 'fetching', value: false })
+            }
+            catch(e) {
+                commit(SET_LOADING, { id: 'fetching', value: false })
+                throw e
+            }
         },
 
-        async [GET_TEMPLATES]({ commit, getters }, orderId) {
-            const { data } = await axios.get(`/get-page-templates/${orderId}`)
-            await commit(SAVE_TEMPLATES, data)
-            if(getters.templates.length) commit(SET_ACTIVE_TEMPLATE)
+        async [GET_TEMPLATES]({ commit, getters }) {
+            try {
+                const { data } = await axios.get(`/get-templates`)
+                await commit(SAVE_TEMPLATES, data)
+                if(getters.templates.length) commit(SET_ACTIVE_TEMPLATE)
+            }
+            catch(e) {
+                throw e
+            }
+        },
+
+        async [SAVE_REPORT_TEMPLATE]({ commit }, { pages, orderId, name }) {
+
+            commit(SET_LOADING, { id: 'save-template' })
+
+            const formData = formatFormData(pages)
+
+            if(orderId != null && orderId != undefined) formData.append('order_id', orderId)
+
+            formData.append('name', name)
+
+            try {
+                const { data } = await axios.post('/page-template', formData)
+                commit(SET_LOADING, { id: 'save-template', value: false })
+                return data
+            }
+            catch(e) {
+                commit(SET_LOADING, { id: 'save-template', value: false })
+                throw e
+            }
+
+        },
+
+        async [UPDATE_REPORT_TEMPLATE]({ commit }, { pages, id, orderId, name }) {
+
+            commit(SET_LOADING, { id: 'save-template' })
+
+            const formData = formatFormData(pages)
+
+            if(orderId != null && orderId != undefined) formData.append('order_id', orderId)
+
+            formData.append('name', name)
+
+            try {
+                const { data } = await axios.post(`/page-template/${id}`, formData)
+                commit(SET_LOADING, { id: 'save-template', value: false })
+                return data
+            }
+            catch(e) {
+                commit(SET_LOADING, { id: 'save-template', value: false })
+                throw e
+            }
+
+        },
+
+        async [GET_REPORT_TEMPLATE]({ commit }, id) {
+            try {
+                const { data } = await axios.get(`/page-template/${id}`)
+                if(!_.isEmpty(data)) {
+                    const pages = typeof pages == 'string' ? JSON.parse(data.pages) : data.pages
+                    const formattedPages = getFormattedPages(data)
+                    console.log(formattedPages, formattedPages.length)
+                    commit(SAVE_REPORT_PAGES, formattedPages)
+                }
+            }
+            catch(e) {
+                throw e
+            }
+        },
+
+        async [GET_REPORT_TEMPLATES]({ commit }) {
+            try {
+                commit(SET_LOADING, { id: 'fetching' })
+                const { data } = await axios.get('page-templates')
+                commit(SAVE_REPORT_TEMPLATES, data)
+                commit(SET_LOADING, { id: 'fetching', value: false })
+            }
+            catch(e) {
+                commit(SET_LOADING, { id: 'fetching', value: false })
+                throw e
+            }
         }
+
 
     }
 

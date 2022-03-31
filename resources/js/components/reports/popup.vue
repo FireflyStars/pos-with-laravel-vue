@@ -1,5 +1,8 @@
 <template>
-    <div class="popup almarai_bold_normal">
+    <div 
+        class="popup"
+        :class="{ 'w-35': isTable }"
+    >
         <span @click.prevent="close" class="close">&times;</span>
         <div class="popup-header">
             <h4 class="popup-header-title">Update Zone</h4>
@@ -64,15 +67,44 @@
                             :class="[item.attributes?.class, { 'editable': isTextarea }]"
                             :src="item.attributes?.src"
                             :name="item.attributes?.name"
-                            :contenteditable="isTextarea"
+                            :contenteditable="isTextarea || isTable"
+                            dom="input"
+                            :rows="table.rows"
+                            :cols="table.cols"
+                            :headers="table.headers"
+                            :content="table.content"
+                            @update="updateContent"
                         >
-                            <p v-html="textValue" v-if="isTextarea"></p>
+                            <p class="conent-paragraph" v-html="textValue" v-if="isTextarea"></p>
                         </component>
                     </div>
 
                 </div>
 
                 <div class="popup-body-attributes">
+                    <template v-if="isTable">
+                        <div class="attribute">
+                            <div>Rows:</div>
+                            <div class="d-flex align-items-center gap-1">
+                                <input type="number" v-model="table.rows">
+                            </div>
+                        </div>
+                        <div class="attribute">
+                            <div>Cols:</div>
+                            <div class="d-flex align-items-center gap-1">
+                                <input type="number" v-model="table.cols">
+                            </div>
+                        </div>
+                        <div class="attribute">
+                            <div>Headers:</div>
+                            <div class="d-flex align-items-center gap-1">
+                                <select name="font_family" v-model="table.headers">
+                                    <option :value="true">Enable</option>
+                                    <option :value="false">Disable</option>
+                                </select>
+                            </div>
+                        </div>
+                    </template>
                     <div class="attribute">
                         <div>Width:</div>
                         <div class="d-flex align-items-center gap-1">
@@ -161,12 +193,19 @@
 
 <script>
 
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, reactive } from 'vue'
 import useStyles from '../../composables/reports/useStyles'
+import reportTable from './report-table'
 
 
 export default {
+
     name: 'popup',
+
+    components: {
+        reportTable
+    },
+
     props: {
         item: {
             required: true,
@@ -180,6 +219,16 @@ export default {
 
         const { itemAttributes, loadDefaultStyles } = useStyles()
         const textValue = ref('')
+        const table = reactive({
+            rows: 1,
+            cols: 2,
+            headers: true,
+            content: {
+                header: {},
+                body: {}
+            }
+        })
+
         const actions = [
             'cut',
             'copy',
@@ -202,21 +251,37 @@ export default {
         ]
 
         const isTextarea = computed(() => props.item.name == 'textarea')
+        const isTable = computed(() => props.item.name == 'table')
 
-        const close = () => {
-            emit('close')
-        }
+        const close = () => emit('close')
 
         const submit = () => {
+            const text = document.querySelector('.editable')
+            const textValue = text.querySelector('.conent-paragraph').innerHTML
             emit('update', { 
                 id: props.item.attributes.id, 
-                textValue: isTextarea.value ? document.querySelector('.editable').innerHTML : ''
+                textValue: isTextarea.value ? textValue : '',
+                table,
+                name: props.item.name,
             })
         }
 
+        const updateContent = ({ row, col, value, type }) => {
+            table.content[type] = {
+                ...table.content[type],
+                [`tr-${row}${col}`]: value,
+            }
+        }
+
         const loadDefaultValue = () => {
-            if(props.item.name == 'textarea' && props.item.content != '') {
+            if(isTextarea.value && props.item.content != '') {
                 textValue.value = props.item.content 
+            }
+            if(isTable.value) {
+                table.rows = props.item?.attributes?.rows,
+                table.cols = props.item?.attributes?.cols,
+                table.headers = props.item?.attributes?.headers || true
+                table.content = _.cloneDeep(props.item?.content) || table.content
             }
         }
 
@@ -233,10 +298,13 @@ export default {
         return {
             close,
             submit,
+            table,
+            isTable,
             actions,
             textValue,
             isTextarea,
             commitAction,
+            updateContent,
             itemAttributes
         }
 
@@ -247,13 +315,16 @@ export default {
 
 <style lang="scss" scoped>
 
+.w-35 {
+    width: 35rem !important;
+}
+
 .popup {
     
     background: #EEEEEE;
     box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 8%) !important;
     z-index: 999999;
     width: 24rem;
-    min-height: 25rem;
     position: relative;
     line-height: 47px;
     padding: 1rem;
@@ -316,7 +387,7 @@ export default {
 
             font-size: 16px;
             line-height: 20px;
-            color: #868686;
+            color: #222;
             text-transform: capitalize;
             font-weight: 700;
             letter-spacing: 1px;
@@ -342,12 +413,12 @@ export default {
                 display: grid;
                 justify-items: flex-start;
                 align-content: center;
-                grid-template-columns: 17% 83%;
+                grid-template-columns: 25% 75%;
                 gap: 1rem;
                 margin: .4rem 0;
                 font-size: 16px;
                 line-height: 20px;
-                color: #868686;
+                color: #222;
                 text-transform: capitalize;
                 font-weight: 700;
                 letter-spacing: 1px;
@@ -361,6 +432,12 @@ export default {
     textarea {
         height: 4rem;
         width: 95%;
+        resize: none;
+    }
+
+    table {
+        width: 95% !important;
+        height: auto !important;
         resize: none;
     }
 

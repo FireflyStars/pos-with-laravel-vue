@@ -15,4 +15,7 @@ class Campagne extends Model
         return $this->belongsTo(Affiliate::class);
     }
 
+    public function campagneCategory(){
+        return $this->belongsTo(CampagneCategory::class);
+    }
 }

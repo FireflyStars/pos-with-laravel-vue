@@ -22,7 +22,7 @@ trait Sarbacane
        ])->post(getenv('SARBACANE_APIURL').$path,$data);
     }
 
-    public function addCampagneFieldsAndContacts($id_list,$campagne_id,$agence_coord,$agence_email,$testcontacts=array()){
+    public function addCampagneFieldsAndContacts($id_list,$campagne_id,$testcontacts=array()){
         $campagne=Campagne::find($campagne_id);
         $affiliate=$campagne->affiliate;
         $campagneCibles=CampagneCible::where('campagne_id','=',$campagne_id)->get();
@@ -55,8 +55,8 @@ trait Sarbacane
                 array(
                     "email" => $cible->email,
                     "Nom_agence" => $affiliate->name,
-                    "Telephone_agence" => $agence_coord,
-                    "Email_agence" => $agence_email,
+                    "Telephone_agence" => $campagne->phone,
+                    "Email_agence" => $campagne->email,
                     "Prenom_dirigeant"=>$affiliate->firstnamedirector,
                     "Nom_dirigeant"=>$affiliate->namedirector,
                     "Email_dirigeant"=>$affiliate->email,
@@ -83,8 +83,8 @@ trait Sarbacane
                 array(
                     "email" =>$contact['email'],
                     "Nom_agence" => $affiliate->name,
-                    "Telephone_agence" => $agence_coord,
-                    "Email_agence" => $agence_email,
+                    "Telephone_agence" => $campagne->phone,
+                    "Email_agence" => $campagne->email,
                     "Prenom_dirigeant"=>$affiliate->firstnamedirector,
                     "Nom_dirigeant"=>$affiliate->namedirector,
                     "Email_dirigeant"=>$affiliate->email,

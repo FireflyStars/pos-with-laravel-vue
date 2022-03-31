@@ -30,12 +30,37 @@ const router = createRouter({
         {
             path:'/reports/:id',
             name:'reports',
-            component:()=> import('../pages/Reports'),
+            component: () => import('../pages/Reports'),
             props: true,
             meta:{
-                authenticated:true
+                authenticated: true
             },
 
+        },
+        {
+            path: '/templates',
+            name: 'templates',
+            component: () => import('../pages/templates/index'),
+            meta: {
+                authenticated: true
+            }
+        },
+        {
+            path:'/templates/add',
+            name:'templates-add',
+            component: () => import('../pages/templates/add'),
+            meta:{
+                authenticated: true
+            },
+        },
+        {
+            path:'/templates/:id',
+            name:'templates-edit',
+            component: () => import('../pages/templates/edit'),
+            props: true,
+            meta:{
+                authenticated: true
+            },
         },
         {
             path:'/auth/',

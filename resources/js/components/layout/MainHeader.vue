@@ -2,9 +2,10 @@
     <div class="row main-logo">
         <div class="col-12 p-0">
     <img  @click="slideinMenu"
-            src="./../../images/lcdt-logo.png"
+            src="./../../images/logolcdt.png"
             alt="Lcdt logo"
             class="logo img-fluid"
+         
         />
            <div>
                
@@ -117,6 +118,7 @@
 
     .logo{
         cursor: pointer;
+        height:64px;
     }
     button span{
         vertical-align: middle;

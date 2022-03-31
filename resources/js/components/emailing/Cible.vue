@@ -21,17 +21,98 @@
                 <div>
                     <h3 class="margin">
                         <a @click="goToHome()" class="link">Emailing </a>>
-                        <a
-                            @click="goToPrestation()"
-                            v-if="my_name"
-                            class="link"
-                        >
-                            {{ my_name }} >
-                        </a>
+                        <a key="" @click="goToPrestation()" v-if="my_name" class="link" > {{ my_name }} > </a>
                         Cible
                     </h3>
                 </div>
+<div class="row bg-panel p-4 mb-2">
+<div class="col-lg-8 border-right">
+        <div class="cibletable">
+            <div class="row">
+                <template v-for="(statut, j) in customer_statuts" :key="j" >
+                    <div  class="col nafname" v-if="j==0"></div>
+                    <div  class="col statutname d-flex justify-content-center align-items-center" >{{statut.name}}</div>
+                </template>
+                <div class="col  text-xs grey size emphasized d-flex justify-content-center align-items-center text-center">E-mails sélectionnés</div>
+            </div>
+            <div v-for="(naf, i) in nafs" :key="i" class="row">
+                 
+                        <template v-for="(statut, j) in customer_statuts" :key="j" >
+                       
+                        <div  class="col nafname"  v-if="j==0">{{naf.selection}}</div>
+                        <div  class="col d-flex justify-content-center align-items-center" ><span class="circle" :class="{checked:checkedCible(naf.selection,statut.id,selections)}" @click="toggleCible(naf.selection,statut.id)"></span></div>
+                        </template>
+                        <div  class="col lastcol d-flex justify-content-center align-items-center">{{numcontacts(naf.selection,all_contacts)}}</div>
+            </div>
+            <div class="row"> 
+                 <template v-for="(statut, j) in customer_statuts" :key="j" >
+                    <div  class="col nafname" v-if="j==0"></div>
+                    <div  class="col " ></div>
+                </template>
+                <b  class="col d-flex justify-content-center align-items-center">{{totalsel}}</b> 
+            </div>
+        </div>
+         <div class="d-flex justify-content-end">
+                            <div>
+                                <label class="type data"
+                                    >POUR RETRAVAILLER VOTRE LISTE :</label
+                                >
+                            </div>
+                            <div class="type-click">
+                                <button
+                                    class="button type"
+                                    @click="creatCompagne()"
+                                >
+                                    CLIQUEZ ICI
+                                </button>
+                            </div>
+                        </div>
+</div>
+<div class="col-lg-4">
+  <h2 class="size px-4 py-4 text-center">CHARGER UN PRÉCÉDENT CIBLAGE</h2>
+    <div class="row flex-column justify-content-between">
+        <div class="col p-0">
+        <div class="cibletable">
+        
+            <div class="row" v-for="(campagne,index) in previous_campagnes" :key="index"> 
+                <div class="col d-flex justify-content-center align-items-center"><span class="circle" :class="{checked:checkedCampagne(campagne.id,selections_campagne)}" @click="toggleCampagne(campagne.id)"></span></div>
+                <div class="col campname d-flex justify-content-center align-items-center">{{campagne.name}}</div>
+                <div class="col d-flex justify-content-center align-items-center size-date">{{campagne.formated_date}}</div>
+                <div class="col lastcol d-flex justify-content-center align-items-center">{{campagne.contacts.length}}</div>
+            </div>
+        </div>
+        </div>
+        <div class="col p-0">
+                        <div class="left">
+                            <div class="bloc_count">
+                                <p>
+                                    <strong class="font total">0</strong>
 
+                                    <span class="emphasized size-mail">
+                                        e-mails</span
+                                    >
+                                </p>
+                                <p class="color">
+                                    <strong class="font">{{formatPrice(total_price)}}</strong>
+                                    <span class="emphasized size-mail">
+                                        euros HT</span
+                                    >
+                                </p>
+                            </div>
+
+                            <button
+                                class="button-valider type"
+                                @click="onValide()"
+                            >
+                                VALIDER
+                            </button>
+                        </div>
+        </div>
+    </div>
+</div>
+
+
+</div>
                 <div class="row bg-panel p-4">
                     <div class="col-md-8 border-rigth">
                         <table class="table-borderless">
@@ -215,6 +296,18 @@ import {
     TOASTER_MESSAGE,
     TOASTER_MODULE,
     TOASTER_REMOVE_TOAST,
+    CIBLE_INIT,
+    CIBLE_GET,
+    CIBLE_SET_CAMPAGNE_CATEGORY_ID,
+    CIBLE_MODULE,
+    CIBLE_GET_CUSTOMER_STATUT,
+    CIBLE_GET_NAF,
+    CIBLE_TOGGLE,
+    CIBLE_GET_SELECTION,
+    CIBLE_GET_ALL_CONTACTS,
+    CIBLE_GET_PREVIOUS_CAMPAGNE_LIST,
+    CIBLE_CAMPAGNE_TOGGLE,
+    CIBLE_GET_CAMPAGNE_SELECTION,
 } from "../../store/types/types";
 export default {
     components: {
@@ -242,14 +335,75 @@ export default {
         };
     },
     setup(props) {
+        const store = useStore();
+        const customer_statuts=computed(()=>store.getters[`${CIBLE_MODULE}${CIBLE_GET_CUSTOMER_STATUT}`]);
+        const nafs=computed(()=>store.getters[`${CIBLE_MODULE}${CIBLE_GET_NAF}`]);
+        const previous_campagnes=computed(()=>store.getters[`${CIBLE_MODULE}${CIBLE_GET_PREVIOUS_CAMPAGNE_LIST}`]);
+        const all_contacts=computed(()=>store.getters[`${CIBLE_MODULE}${CIBLE_GET_ALL_CONTACTS}`]);
+        const selections=ref([]);
+        const selections_campagne=ref([]);
+        const totalsel=ref(0);
+        
+         selections.value= computed(()=>store.getters[`${CIBLE_MODULE}${CIBLE_GET_SELECTION}`]);
+        const toggleCible=(naf,statut)=>{
+                store.dispatch(`${CIBLE_MODULE}${CIBLE_TOGGLE}`,{naf:naf,statut:statut});
+        }
+        const toggleCampagne=(campagne_id)=>{
+                  store.dispatch(`${CIBLE_MODULE}${CIBLE_CAMPAGNE_TOGGLE}`,{campagne_id});
+        }
+        const checkedCible=(naf,statut,selections)=>{
+            const checked = selections.value.filter(obj => obj.naf== naf&&obj.statut==statut);
+            if(checked.length===0)
+            return false;
+            return true;
+        }
+        selections_campagne.value= computed(()=>store.getters[`${CIBLE_MODULE}${CIBLE_GET_CAMPAGNE_SELECTION}`]);
+        const checkedCampagne=(id,selections_campagne)=>{
+            const checked_campagne = selections_campagne.value.filter(obj => obj.campagne_id==id);
+            if(checked_campagne.length===0)
+            return false;
+            return true;
+        }
+        const numcontacts=(naf,all_contacts)=>{
+                let c=0;
+
+                let nafcontacts=all_contacts.filter(obj=>{
+                    return obj.naf==naf
+                });
+
+                for (const property in nafcontacts) {
+                    c+=nafcontacts[property].contacts.length;
+                }
+             
+                return c;
+        }
+      
+          watch(() => all_contacts, (currentValue, oldValue) => {
+                    totalsel.value=0
+                    let allcontacts=currentValue.value
+                    for (const k in allcontacts) {
+                    if(typeof allcontacts[k].contacts!="undefined")
+                    totalsel.value+=allcontacts[k].contacts.length;
+                    }   
+            },
+                { deep: true }
+            );
+
+    
         const img_up =ref({});
         const total_price = ref(0);
         const campagne_rate = ref(0);
         const distinct_email_count = ref(0);
-
+        
         onMounted(() => {
+
+                store.dispatch(`${CIBLE_MODULE}${CIBLE_INIT}`,route.params.categ_id);
+                     
+
+            //to remove
             const id = route.params.categ_id;
-            console.log("eeeeeeeee0", id);
+
+            //to remove
             localStorage.setItem("imagetemplate", id);
 
             if (id) {
@@ -280,12 +434,14 @@ export default {
             data: "0",
             data2: "ENTREPRISES & INDUSTRIES",
         });
-        const store = useStore();
+       
         store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [
             true,
             "Chargement en cours..",
         ]);
         const {
+           
+
             string,
             indus_length,
             stat_length,
@@ -538,6 +694,19 @@ export default {
         const count_by_selection = ref({});
 
         return {
+             customer_statuts,
+             nafs,
+             toggleCible,
+             checkedCible,
+             checkedCampagne,
+             selections,
+             selections_campagne,
+             numcontacts,
+             all_contacts,
+             totalsel,
+             previous_campagnes,
+             toggleCampagne,
+
             img_up,
             showcontainer,
             form,
@@ -914,6 +1083,66 @@ export default {
 </script>
 
 <style scoped>
+.cibletable .col{
+ flex:1;
+}
+.cibletable .nafname{
+    padding: 0px;
+    font-size: 12px;
+    text-align: right;
+    padding-right: 10px;
+    line-height: 1.3;
+    text-transform: uppercase;
+    font-weight: bold;
+    flex:2;
+    height: 73px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 100px;
+}
+.cibletable .campname{
+    padding: 0px;
+    font-size: 12px;
+    padding-right: 5px;
+    line-height: 1.3;
+    text-transform: uppercase;
+    font-weight: bold;
+    flex:2;
+    height: 73px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    min-width: 100px;
+}
+.cibletable .statutname{
+
+    font-size: 12px;
+    text-align: center;
+    padding-right: 10px;
+    line-height: 1.3;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+.cibletable .circle{
+    width: 25px;
+    height: 25px;
+    display: block;
+    border-radius: 50%;
+    border:1px solid #ff4500;
+    cursor: pointer;
+    background-color: white;
+    transition: background-color 0.3s ease-in-out;
+}
+.cibletable .circle.checked{
+    background-color:  #ff4500;
+}
+.cibletable .lastcol{
+    background-color: #BBB;
+}
+.size-date {
+    font-size: 12px;
+}
 .margin-align {
     margin-bottom: 40px;
     margin-top: -34px;
@@ -964,9 +1193,7 @@ export default {
 .font {
     font-weight: bold;
 }
-.size-date {
-    font-size: 12px;
-}
+
 .type {
     font-size: x-small;
     font-weight: bold;
@@ -1107,7 +1334,7 @@ input.history[type="checkbox"]:checked:before {
     top: 3px;
     left: -2px;
 }
-.border-rigth {
+.border-right {
     border-right: 1px solid #000;
     padding-right: 40px;
 }

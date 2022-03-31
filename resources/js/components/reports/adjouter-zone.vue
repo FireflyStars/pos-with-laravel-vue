@@ -4,59 +4,94 @@
 
         <div class="row m-0">
 
-            <div class="col-5" >
-                <div 
-                class="pointer" 
-                @click="generateElement('textarea', { 
-                    class: 'title-bar',
-                    content: `VUE D'ENSEMBLE DUE BATIMENT`
-                 })">
-                    <Icon name="file" class="d-inline" />
-                    <p class="d-inline orange text-base" style="margin-left: .7rem;">Ajouter Titre</p>
-                </div>
-                <div 
-                @click="generateElement('textarea')" 
-                class="pointer" style="margin-top: 1rem">
-                    <Icon name="file" class="d-inline" />
-                    <p class="d-inline orange text-base" style="margin-left: .7rem;">Ajouter Zone texts</p>
-                </div>
-            </div>
-
-            <div class="col-7">
-                
-                <div class="d-flex align-items-center gap-6">
-                    <Icon
-                        v-for="icon in libraryIcons"
-                        :key="icon" 
-                        class="library-item"
-                        :name="icon"
-                        height="20"
-                        @click="generateElement('icon', { id: 'Icon', name: icon })"
-                    />
-
-                    <p class="orange text-base self-end">Ajouter Forme</p>
+            <template v-if="fetching && false">
+                <div class="col-5">
+                    <div 
+                        v-for="n in 2"
+                        :key="n"
+                        class="d-flex align-items-center gap-2"
+                    >
+                        <loader type="icon-title" />
+                        <loader />
+                    </div>
                 </div>
 
-                <div class="d-flex align-items-center">
+                <div class="col-7">
+                    <div class="d-flex align-items-center gap-6">
+                        <loader type="icon-title" :count="3" />
+                        <loader />
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center gap-2">
+                        <loader type="button" :count="2" />
+                    </div>
+                </div>
+
+            </template>
+
+            <template v-else>
+                <div class="col-5" >
+                    <div 
+                    class="pointer" 
+                    @click="generateElement('textarea', { 
+                        class: 'title-bar',
+                        content: `VUE D'ENSEMBLE DUE BATIMENT`
+                    })">
+                        <Icon name="file" class="d-inline" />
+                        <p class="d-inline orange text-base" style="margin-left: .7rem;">Ajouter Titre</p>
+                    </div>
+                    <div 
+                    @click="generateElement('textarea')" 
+                    class="pointer" style="margin-top: 1rem">
+                        <Icon name="file" class="d-inline" />
+                        <p 
+                            class="d-inline orange text-base" 
+                            style="margin-left: .7rem"
+                        >
+                            Ajouter Zone text
+                        </p>
+                    </div>
+                </div>
+                <div class="col-7">
                     
-                    <BaseButton 
-                        title="Ajouter Image"
-                        class="image-button"
-                        @click.prevent="promptImage"
-                    />
+                    <div class="d-flex align-items-center gap-6">
+                        <Icon
+                            v-for="icon in libraryIcons"
+                            :key="icon" 
+                            class="library-item"
+                            :name="icon"
+                            height="20"
+                            @click="generateElement('icon', { id: 'Icon', name: icon })"
+                        />
 
-                    <BaseButton 
-                        title="Bank Image"
-                        class="image-button"
-                    />            
+                        <a 
+                            href="#" 
+                            class="orange text text-base self-end"
+                            @click.prevent="generateElement('table')"
+                        >
+                            Ajouter Forme
+                        </a>
+                    </div>
+
+                    <div class="d-flex align-items-center">
+                        
+                        <BaseButton 
+                            title="Ajouter Image"
+                            class="image-button"
+                            @click.prevent="promptImage"
+                        />
+
+                        <BaseButton 
+                            title="Bank Image"
+                            class="image-button"
+                        />            
+
+                    </div>
 
                 </div>
 
-            </div>
+            </template>
 
         </div>
-
-
     </div>
 
 </template>
@@ -68,15 +103,17 @@ import { inject } from 'vue'
 export default {
     
     name: 'adjouter-zone',
-    
-    setup () {
+
+    setup (_, { emit }) {
         
+        const fetching = inject('fetching')
         const promptImage = inject('promptImage')
         const generateElement = inject('generateElement')
 
-        const libraryIcons = ['arrow-top', 'egg', 'plus-o', 'grid']
+        const libraryIcons = ['arrow-top', 'egg', 'plus-o']
 
         return {
+            fetching,
             promptImage,
             libraryIcons,
             generateElement

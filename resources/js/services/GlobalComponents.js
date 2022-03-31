@@ -9,6 +9,7 @@ import Dropdown from '../components/miscellaneous/Dropdown'
 import Modal from '../components/miscellaneous/Modal'
 import MultiSelect from "../components/miscellaneous/MultiSelect.vue"
 import TabPane from "../components/miscellaneous/TabPane.vue"
+import loader from '../components/miscellaneous/Loader'
 
 export default function globalComponents(app) {
     app.component('MultiSelect', MultiSelect)
@@ -22,4 +23,5 @@ export default function globalComponents(app) {
     app.component('SelectBox', SelectBox)
     app.component('Dropdown', Dropdown)
     app.component('Modal', Modal)
+    app.component('loader', loader)
 }

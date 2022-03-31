@@ -21,21 +21,22 @@ class LcdtAdminController extends Controller{
             "Nom_agence",
             "Telephone_agence" ,
             "Email_agence" ,
-            "Prenom_dirigeant",
-            "Nom_dirigeant",
-            "Email_dirigeant",
-            "Portable_dirigeant",
             "Adresse_agence",
             "CP_agence",
             "Ville_agence",
             "Page_agence",
-            "Linkedin_agence"
+            "Linkedin_agence",
+            "Prenom_dirigeant",
+            "Nom_dirigeant",
+            "Email_dirigeant",
+            "Portable_dirigeant"
+            
         );
         $FIELDS_DEF=array();
         foreach($FIELDS as $FIELD){
             $fname=str_replace('_',' ',$FIELD);
            $FIELDS_DEF[$FIELD]=array(
-            'name'=>$fname,
+            'name'=>($fname=='Prenom dirigeant'?'Prénom dirigeant':($fname=='Telephone agence'?'Téléphone agence':$fname)),
             'active'=>isset($F->{$FIELD})?$F->{$FIELD}->active:0,
             'x'=>isset($F->{$FIELD})?$F->{$FIELD}->x:'10',
             'y'=>isset($F->{$FIELD})?$F->{$FIELD}->y:'10',

@@ -1,11 +1,11 @@
 <template>
 
     <div class="d-flex justify-content-between align-items-center margin-bottom">
-                                
+
         <div>
             <h4 class="tile_h1">
                 <Icon name="report" width="32" height="32" />
-                Creation/Edition Report
+                {{ title }}
             </h4>
         </div>
 
@@ -13,19 +13,31 @@
             <BaseButton 
                 title="Sauvegarder" 
                 kind="success" 
-                classes="me-12 heading-buttons" 
-            />
+                class="me-12 heading-buttons justify-content-center"
+                :class="{ 'not-allowed': fetching || saving }"
+                :disabled="fetching || saving"
+                :textClass="saving ? 'd-none' : ''"
+                @click="save" 
+            >
+                <Icon name="spinner" v-show="saving" />
+            </BaseButton>
             <BaseButton 
                 title="pdf" 
                 kind="danger" 
-                class="text-uppercase heading-buttons heading-buttons-pdf" 
-                @click="$emit('submitPage')" 
-            />
+                class="text-uppercase heading-buttons heading-buttons-pdf justify-content-center"
+                :class="{ 'not-allowed': fetching }" 
+                :disabled="fetching || loading"
+                :textClass="loading ? 'd-none' : ''"
+                @click="submitPage"
+            >
+                <Icon name="spinner" v-show="loading" />
+            </BaseButton>
         </div>
 
     </div>
 
     <div class="d-flex justify-content-between align-items-center">
+
         <div class="reports-dropdown">
             <select-box
                 v-model="activeTemplate" 
@@ -33,8 +45,8 @@
                 :options="formattedTemplates" 
                 name="template"
                 classnames="reports-dropdown-button"
+                :disabled="fetching"
             />
-
         </div>
 
         <div class="d-flex align-items-center">
@@ -42,17 +54,20 @@
             <div>
 
                 <a 
-                class="orange text d-flex align-items-center gap-half pointer" 
-                @click.prevent="addPage">
+                    class="orange text d-flex align-items-center gap-half" 
+                    :class="[fetching ? 'not-allowed' : 'pointer']"
+                    @click.prevent="addPage"
+                    :disabled="fetching"
+                >
                     <Icon name="plus-circle" />
                     Ajouter Page
                 </a>
 
                 <a 
                 class="text d-flex align-items-center gap-half"
-                :class="[pages.length <= 1 ? 'not-allowed': 'pointer']" 
-                @click.prevent="$emit('deletePage')"
-                :disabled="pages.length <= 1"
+                :class="[pages.length <= 1 || fetching ? 'not-allowed': 'pointer']" 
+                @click.prevent="deletePage"
+                :disabled="pages.length <= 1 || fetching"
                 >
                     <Icon name="bin" />
                     Supprimer Page
@@ -68,12 +83,12 @@
                     :options="formattedPages" 
                     name="page"
                     classnames="reports-dropdown-button"
+                    :disabled="fetching"
                 />
 
             </div>
 
         </div>
-
 
     </div>
 
@@ -81,7 +96,7 @@
 
 <script>
 
-import { ref, computed, watch } from 'vue'
+import { computed, watch, inject } from 'vue'
 import { useStore } from 'vuex'
 import { 
     BUILDER_MODULE,
@@ -93,13 +108,33 @@ import {
 } from '../../store/types/types'
 
 export default {
+    name: 'header-section',
+    props: {
+        title: {
+            required: false,
+            type: String,
+            default: 'Creation/Edition Report'
+        }
+    },
 
-    emits: ['submitPage'],
+    emits: ['submitPage', 'save'],
 
-    setup () {
+    setup (_, { emit }) {
         
         const store = useStore()
+
+        const fetching = inject('fetching')
         
+        const loading = computed(() => {
+            const { id, value } = store.getters[`${BUILDER_MODULE}/loading`]
+            return id == 'submit' && value
+        })
+
+        const saving = computed(() => {
+            const { id, value } = store.getters[`${BUILDER_MODULE}/loading`]
+            return id == 'save-template' && value
+        })
+
         const activeTemplate = computed({
             set(value) {
                 store.commit(`${BUILDER_MODULE}/${SET_ACTIVE_TEMPLATE}`, value)
@@ -150,16 +185,24 @@ export default {
         
     
         const assignTemplateToActivePage = (id) => {
-            store.commit(`${BUILDER_MODULE}/${ASSIGN_TEMPLATE}`, id)
+            if(!fetching.value) store.commit(`${BUILDER_MODULE}/${ASSIGN_TEMPLATE}`, id)
             return Promise.resolve()
         }
 
         const addPage = () => {
-            store.commit(`${BUILDER_MODULE}/${ADD_PAGE}`)
+            if(!fetching.value) store.commit(`${BUILDER_MODULE}/${ADD_PAGE}`)
         }
 
         const deletePage = () => {
-            store.commit(`${BUILDER_MODULE}/${DELETE_PAGE}`)
+            if(!fetching.value) store.commit(`${BUILDER_MODULE}/${DELETE_PAGE}`)
+        }
+
+        const submitPage = () => {
+            if(!fetching.value) emit('submitPage')
+        }
+
+        const save = () => {
+            if(!fetching.value) emit('save')
         }
 
         watch(activeTemplate, (value) => {
@@ -167,13 +210,18 @@ export default {
         })
         
         return {
+            save,
             page,
             pages,
+            saving,
             addPage,
+            loading,
+            fetching,
             pageName,
             template,
             templates,
             deletePage,
+            submitPage,
             activePage,
             activeTemplate,
             formattedPages,
@@ -221,8 +269,9 @@ export default {
     font-size: 12px;
     line-height: 23px;
     color: #fff !important;
-    width: auto;
+    width: 7.05rem;
     border: none;
+    height: 2.31rem;
 }
 
 .text {

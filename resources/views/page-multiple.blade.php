@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Multiple Pages Reports</title>
+    <title>Pages Report</title>
     
     <style>
         * {
@@ -166,18 +166,38 @@
             float: none;
             clear: both;
         }
+
+        .textarea p {
+            margin-bottom: 0 !important;
+            margin-top: 0 !important;
+        }
+
+        .table {
+            border-collapse: collapse;
+            min-width: 350px;
+            min-height: 50px;
+            z-index: 10000;
+            word-wrap: normal;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .table, .table th, .table td {
+            border: 1px solid #ccc;
+            padding: .5rem;
+        }
         
     </style>
 
 </head>
 
 <body>
-   
+
     @foreach ($pages as $page)
         <?php $break_rule = $loop->last ? 'avoid-page': 'page';  ?>
-        <main style="break-after: {{ $break_rule }}; position: relative;">
+        <main style="break-after: {{ $break_rule }}; position: relative; margin: 1rem;">
 
-            <div class="template-header" style="max-height: 6rem; position: absolute; top: 0; left: 0">
+            <div class="template-header" style="max-height: 6rem; position: absolute; top: 20px; left: 0">
                 <img 
                     v-if="templates.length"
                     src="{{ $builder::get_active_template($page->template_id)['template']['header'] }}" 
@@ -200,8 +220,8 @@
         
                     @if (strtolower($element->name) == 'textarea')
                         <div 
-                        class="{{ $element->attributes->class }}" 
-                        style="{{ $element->attributes->style ?? '' }} position: absolute;"
+                        class="{{ $element->attributes->class }} textarea" 
+                        style="{{ $element->attributes->style ?? '' }} position: absolute; min-height: 50px"
                         >{!! $element->content ?? '' !!}
                         </div>
                     @endif
@@ -230,6 +250,30 @@
                             src="{{ $src }}" 
                             style="{{ $element->attributes->style ?? '' }}" 
                         /> 
+                    @endif
+                    
+                    @if (strtolower($element->name) == 'table')
+
+                        <table 
+                            class="{{ $element->attributes->class ?? 'draggable' }} table"
+                            style="{{ $element->attributes->style ?? '' }}" 
+                        >
+                            <tr @if($element->attributes?->headers ?? true) @endif>
+                                @for ($i = 1; $i <= $element->attributes->cols; $i++)
+                                    <?php $col = '1'.$i; ?>
+                                    <th>{{ ucFirst($element->content->header?->$col ?? 'title ' . $i) }}</th>
+                                @endfor    
+                            </tr>
+                            @for($row = 1; $row <= $element->attributes->rows; $row++)
+                                <tr>
+                                    @for($col = 1; $col <= $element->attributes->cols; $col++)
+                                        <?php $rowValue = $row .''. $col; ?>
+                                        <td>{{ $element->content->body?->$rowValue ?? 'Col '. $col }}</td>
+                                    @endfor
+                                </tr>
+                            @endfor
+                        </table>
+                        
                     @endif    
             
                 @endforeach
@@ -249,4 +293,11 @@
     @endforeach
 
 </body>
+
+<script type="text/php">
+    if ( isset($pdf) ) {
+        $pdf->page_text(550, 10, "{PAGE_NUM}/{PAGE_COUNT}", null, 12, array(0,0,0));
+    }
+</script> 
+
 </html>

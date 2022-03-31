@@ -21,11 +21,12 @@
                                 <div class="left-page-container">
 
                                     <header-section 
+                                        title="Creation/Edition Templates" 
                                         @submitPage="submitPage"
                                         @save="saveTemplate" 
                                     />
                                     
-                                    <div class="shadow-sm builder-container" @click="activeItem = null">
+                                    <div class="shadow-sm builder-container">
 
                                         <div class="template-header">
                                             <img 
@@ -35,10 +36,11 @@
                                             >
                                         </div>
 
-                                        <div class="template-body">
 
+                                        <div class="template-body">
+                                            
                                             <span 
-                                                v-show="!fetching"
+                                                v-show="pages.length"
                                                 class="page-number text-muted" 
                                             >
                                                 {{ +activePage + 1 }}/{{ pages.length }}
@@ -62,31 +64,21 @@
                                                     }"
                                                 >
 
-                                                    <div 
-                                                        class="content"
+                                                    <span 
                                                         v-if="['textarea', 'table'].includes(element.name)" 
                                                         v-html="element.content"
                                                     >
-                                                    </div>
+                                                    </span>
 
-                                                    <!-- <span 
+                                                    <span 
                                                     class="close" 
                                                     v-show="`#${element.attributes.id}` == activeItem"
                                                     @click.prevent="deleteItem($event.target, element.attributes.id)"
                                                     >
                                                         &times;
-                                                    </span> -->
+                                                    </span>
 
                                                 </component>
-
-                                                <span 
-                                                class="close" 
-                                                v-show="`#${element.attributes.id}` == activeItem"
-                                                @click.prevent="deleteItem($event.target, element.attributes.id)"
-                                                >
-                                                    &times;
-                                                </span>
-                                                
 
                                             </div>
                                             
@@ -128,9 +120,10 @@
                                 <div class="right-page-container">
 
                                     <adjouter-zone />
+                                    <div class="d-none">
+                                        <input type="file" id="file" accept="image/*">
+                                    </div>
                                                     
-                                    <report-order-resources />
-
                                 </div>
 
                             </div>
@@ -148,13 +141,13 @@
 
 <script>
 
+import Swal from 'sweetalert2'
 import { useStore } from 'vuex'
 import { onMounted, unref, ref, nextTick, computed, watch, provide } from 'vue'
 
 import { 
     BUILDER_MODULE, 
     SAVE_PAGE,
-    GET_ORDER_DETAILS, 
     GET_TEMPLATES,
     SAVE_REPORT_PAGES,
     DELETE_ITEM,
@@ -162,20 +155,20 @@ import {
     UPDATE_ELEMENT_STYLES,
     UPDATE_ELEMENT_CONTENT,
     UPDATE_ELEMENT_TABLE,
-    UPDATE_TABLE_CONTENT,
-    SAVE_REPORT_TEMPLATE
-} from '../store/types/types'
+    SAVE_TEMPLATES,
+    SAVE_REPORT_TEMPLATE,
+} from '../../store/types/types'
 
 import Moveable from "vue3-moveable"
-import popup from '../components/reports/popup'
-import adjouterZone from '../components/reports/adjouter-zone'
-import headerSection from '../components/reports/header-section'
-import reportOrderResources from '../components/reports/report-order-resources'
-import reportTable from '../components/reports/report-table'
+import popup from '../../components/reports/popup'
+import adjouterZone from '../../components/reports/adjouter-zone'
+import headerSection from '../../components/reports/header-section'
+import reportOrderResources from '../../components/reports/report-order-resources'
+import reportTable from '../../components/reports/report-table'
 
-import useStyles from '../composables/reports/useStyles'
-import useHelpers from '../composables/useHelpers'
-import useElementsGenerator from '../composables/reports/useElementsGenerator'
+import useStyles from '../../composables/reports/useStyles'
+import useHelpers from '../../composables/useHelpers'
+import useElementsGenerator from '../../composables/reports/useElementsGenerator'
 
 export default {
 
@@ -188,14 +181,7 @@ export default {
         reportOrderResources
     },
 
-    props: {
-        id: {
-            required: true,
-            type: [Number, String]
-        }
-    },
-
-    setup(props) {
+    setup() {
 
         const store = useStore()
         const { getDomElementParent } = useHelpers()
@@ -236,7 +222,7 @@ export default {
                 return page.attributes.id == id
             })
             if(elementIndex != -1) {
-                elem = getDomElementParent(elem, 'item-container')
+                elem = getDomElementParent(elem, 'draggable')
                 elem.remove()
                 document.querySelector('.moveable').style.display = "none"
                 store.commit(`${BUILDER_MODULE}/${DELETE_ITEM}`, elementIndex)
@@ -245,15 +231,15 @@ export default {
         }
 
         const onDrag = ({ top, left, target }) => {
-            updateElementStyles(target, { left, top }, getStylesOfElement(target))
+            updateElementStyles(target.id, { left, top }, getStylesOfElement(target))
         }
 
         const onScale = ({ target, drag }) => {
-            updateElementStyles(target, { transform: drag.transform }, getStylesOfElement(target))
+            updateElementStyles(target.id, { transform: drag.transform }, getStylesOfElement(target))
         }        
 
         const onRotate = ({ target, drag }) => {
-            updateElementStyles(target, { transform: drag.transform }, getStylesOfElement(target))
+            updateElementStyles(target.id, { transform: drag.transform }, getStylesOfElement(target))
         }
 
         const activateItem = (e) => {
@@ -265,13 +251,7 @@ export default {
             elem.blur()
         }
 
-        const updateElementStyles = (target, styles, elementOldStyles) => {
-            const { id } = target
-            if(target.parentElement) {
-                const { top,  left } = styles
-                if(top) target.parentElement.style.top = `${top}px`
-                if(left) target.parentElement.style.left = `${left}px`
-            }
+        const updateElementStyles = (id, styles, elementOldStyles) => {
             const itemIndex = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
             const computedStyles = getComputedStyle(styles, elementOldStyles)
             store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_STYLES}`, { 
@@ -298,19 +278,6 @@ export default {
                 content,
                 index    
             })
-        }
-
-        const updateTableValue = ({ type, row, col, value }) => {
-            const index = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == activeElement.value?.attributes?.id)
-            if(index != -1) {
-                store.commit(`${BUILDER_MODULE}/${UPDATE_TABLE_CONTENT}`, {
-                    row,
-                    col,
-                    type,
-                    value,
-                    index    
-                })
-            }
         }
 
         const updateElementFromPopup = ({ id, textValue, table, name }) => {
@@ -371,7 +338,7 @@ export default {
         }
 
         const fetchTemplates = () => {
-            return store.dispatch(`${BUILDER_MODULE}/${GET_TEMPLATES}`, props.id)
+            return store.dispatch(`${BUILDER_MODULE}/${GET_TEMPLATES}`)
         }
 
         const openUpdatePopup = (element) => {
@@ -380,15 +347,22 @@ export default {
             activeItem.value = null
         }
 
-        const getOrderDetails = () => {
-            return store.dispatch(`${BUILDER_MODULE}/${GET_ORDER_DETAILS}`, props.id)
-        }
+        const saveTemplate = async () => {
 
-        const saveTemplate = () => {
-            store.dispatch(`${[BUILDER_MODULE]}/${[SAVE_REPORT_TEMPLATE]}`, {
-                pages,
-                orderId: props.id
+            const { value: name } = await Swal.fire({
+                title: 'Enter Template name',
+                input: 'text',
+                inputLabel: 'Template Name',
+                inputPlaceholder: 'Name of the template',
             })
+
+            if (name) {
+                store.dispatch(`${[BUILDER_MODULE]}/${[SAVE_REPORT_TEMPLATE]}`, {
+                    pages,
+                    name
+                })
+            }
+
         }
 
         const submitPage = async () => {
@@ -415,14 +389,12 @@ export default {
         provide('fetching', fetching)
         provide('promptImage', promptImage)
         provide('generateElement', generateElement)
-        provide('updateTableValue', updateTableValue)
         provide('generatePrefetchedImage', generatePrefetchedImage)
 
         watch(page, () => activeItem.value = null)
 
         onMounted(() => {
             loadPages()
-            getOrderDetails()
             nextTick(async () => {
                 showcontainer.value = true
                 await fetchTemplates()
@@ -450,7 +422,6 @@ export default {
             activeElement,
             activeTemplate,
             openUpdatePopup,
-            updateTableValue,
             activePageTemplate,
             updateElementValue,
             updateElementFromPopup,
@@ -547,13 +518,6 @@ $orange: orange;
     .draggable {
         z-index: 10;
         position: absolute;
-    }
-
-    .item-container {
-        z-index: 12;
-        position: absolute;
-        width: 20rem;
-        height: auto;
         .close {
             position: absolute;
             top: -100%;

@@ -16,7 +16,26 @@ export const TOASTER_REMOVE_TOAST = 'TOASTER_REMOVE_TOAST'; //mutations
 export const TOASTER_MESSAGE = 'TOASTER_MESSAGE'; //action
 export const TOASTER_GET_ALL = 'TOASTER_GET_ALL'; //getters
 
-
+//cible selection module
+export const CIBLE_MODULE='CIBLE_MODULE/'; //namespace
+export const CIBLE_INIT='CIBLE_INIT';//action
+export const CIBLE_SET_CAMPAGNE_CATEGORY_ID='CIBLE_SET_CAMPAGNE_CATEGORY_ID'//mutations
+export const CIBLE_SET_CUSTOMER_STATUT='CIBLE_SET_CUSTOMER_STATUT';//mutations
+export const CIBLE_GET_CUSTOMER_STATUT='CIBLE_GET_CUSTOMER_STATUT';//getters
+export const CIBLE_SET_NAF='CIBLE_SET_NAF';//mutations
+export const CIBLE_GET_NAF='CIBLE_GET_NAF';//getters
+export const CIBLE_TOGGLE='CIBLE_TOGGLE';//action
+export const CIBLE_SET_SELECTION='CIBLE_SET_SELECTION';//mutations
+export const CIBLE_UNSET_SELECTION='CIBLE_UNSET_SELECTION';//mutations
+export const CIBLE_GET_SELECTION='CIBLE_GET_SELECTION';//getters
+export const CIBLE_SET_PREVIOUS_CAMPAGNE_LIST='CIBLE_SET_PREVIOUS_CAMPAGNE_LIST';//mutations
+export const CIBLE_GET_PREVIOUS_CAMPAGNE_LIST='CIBLE_GET_PREVIOUS_CAMPAGNE_LIST';//mutations
+export const CIBLE_ADD_TO_ALL_CONTACTS='CIBLE_ADD_TO_ALL_CONTACTS';//mutations
+export const CIBLE_GET_ALL_CONTACTS='CIBLE_GET_ALL_CONTACTS';//getters
+export const CIBLE_CAMPAGNE_TOGGLE='CIBLE_CAMPAGNE_TOGGLE';//action
+export const CIBLE_SET_CAMPAGNE_SELECTION='CIBLE_SET_CAMPAGNE_SELECTION';//mutations
+export const CIBLE_UNSET_CAMPAGNE_SELECTION='CIBLE_UNSET_CAMPAGNE_SELECTION';//mutations
+export const CIBLE_GET_CAMPAGNE_SELECTION='CIBLE_GET_CAMPAGNE_SELECTION'//getters
 
 export const SIDEBAR_MODULE = 'SIDEBAR_MODULE/' //namespace
 export const SIDEBAR_SET_SLIDEIN = 'SIDEBAR_SET_SLIDEIN' //mutations
@@ -48,6 +67,11 @@ export const GET_ORDER_DETAILS = 'getOrderDetails'
 export const SAVE_PAGE_ORDER = 'savePageOrder'
 export const GET_TEMPLATES = 'getTemplates'
 export const SAVE_TEMPLATES = 'saveTemplates'
+export const SAVE_REPORT_TEMPLATE = 'saveReportTemplate'
+export const SAVE_REPORT_TEMPLATES = 'saveReportTemplates'
+export const UPDATE_REPORT_TEMPLATE = 'updateReportTemplates'
+export const GET_REPORT_TEMPLATE = 'getReportTemplates'
+export const GET_REPORT_TEMPLATES = 'fetchReportTemplates'
 export const SET_ACTIVE_TEMPLATE = 'setActiveTemplate'
 export const LOAD_REPORT_PAGES = 'loadReportPages'
 export const SAVE_REPORT_PAGES = 'saveReportPages'
@@ -57,3 +81,6 @@ export const GENERATE_ELEMENT = 'generateElement'
 export const SET_ACTIVE_PAGE = 'setActivePage'
 export const UPDATE_ELEMENT_STYLES = 'updateElementStyles'
 export const UPDATE_ELEMENT_CONTENT = 'updateElementContent'
+export const UPDATE_ELEMENT_TABLE = 'updateElementTable'
+export const UPDATE_TABLE_CONTENT = 'updateTableContent'
+export const SET_LOADING = 'setLoading'

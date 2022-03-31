@@ -25,7 +25,7 @@ export default function useElementsGenerator() {
             attributes: {
                 kind,
                 title: 'Button',
-                class: 'draggable',
+                class: 'draggable', 
                 id: generateId(12),
                 style: '',
                 dataName: 'button'
@@ -66,9 +66,30 @@ export default function useElementsGenerator() {
         }
     }
 
+    const generateTable = (attributes) => {
+        return {
+            item: 'reportTable',
+            attributes: {
+                class: `draggable ${attributes.class || ''}`,
+                style: '',
+                dataName: 'table',
+                id: generateId(12),
+                rows: 1,
+                cols: 3,
+                headers: true
+            },
+            content: {
+                header: {},
+                body: {}
+            },
+            name: 'table'
+        }
+    }
+
     return {
-        generateImage,
         generateIcon,
+        generateTable,
+        generateImage,
         generateButton,
         generateTextarea,
     }

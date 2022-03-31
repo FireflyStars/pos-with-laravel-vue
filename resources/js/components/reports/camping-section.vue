@@ -26,7 +26,7 @@
 import { inject } from 'vue'
 
 export default {
-
+    name: 'camping-section',
     props: {
         zone: {
             required: true,

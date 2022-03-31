@@ -21,7 +21,7 @@
 import gedDetailFiles from './ged-detail-files.vue'
 
 export default {
-
+    name: 'ged-detail-image-grid-section',
     components: {
         gedDetailFiles
     },

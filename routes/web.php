@@ -1,25 +1,18 @@
 <?php
 
-use App\Http\Controllers\ApiController;
+use TCG\Voyager\Facades\Voyager;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CibleController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\CompagneController;
-use TCG\Voyager\Facades\Voyager;
 use App\Http\Controllers\LcdtAdminController;
 use App\Http\Controllers\LcdtFrontController;
 use App\Http\Controllers\PageElementsController;
+use App\Http\Controllers\PageTemplatesController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
     Route::post('/update-text-pos',[LcdtAdminController::class,'updateTextPos'])->name('update-text-pos');
@@ -27,8 +20,14 @@ Route::group(['prefix' => 'admin'], function () {
 });
 
 Route::post('/save-page-elements', [PageElementsController::class, 'store']);
+
+Route::get('/page-templates', [PageTemplatesController::class, 'index']);
+Route::post('/page-template', [PageTemplatesController::class, 'store']);
+Route::get('/page-template/{report_page}', [PageTemplatesController::class, 'show']);
+Route::post('/page-template/{report_page}', [PageTemplatesController::class, 'update']);
+
 Route::get('/get-page-order/{order}', [PageElementsController::class, 'get_page_order']);
-Route::get('/get-page-templates/{order}', [PageElementsController::class, 'get_page_templates']);
+Route::get('/get-templates', [PageElementsController::class, 'get_page_templates']);
 
 Route::post('/api',[ApiController::class,'index'])->middleware('cors')->name('api');
 
@@ -62,7 +61,10 @@ Route::group([
     Route::get('/SubCategory/{id}',[CompagneController::class, 'SubCategory'])->middleware('auth')->name('SubCategory');
     Route::get('/list',[CompagneController::class, 'list'])->middleware('auth')->name('list');
     Route::get('/getCompgneCibleSelected/{id}',[CompagneController::class, 'getCompgneCibleSelected'])->middleware('auth')->name('getCompgneCibleSelected');
-    Route::put('contentform/{id}', [CompagneController::class, 'contentform'])->middleware('auth')->name('contentform');
+    Route::post('contentform/{id}', [CompagneController::class, 'contentform'])->middleware('auth')->name('contentform');
+
+    Route::get('/cible/load/{campagne_category_id}',[CibleController::class,'initialload'])->middleware('auth')->name('initialload');
+    Route::get('/cible/loadcible/{naf_selection}/{customer_statut_id}',[CibleController::class,'loadcible'])->middleware('auth')->name('loadcible');
 
     Route::put('deleteCompagneCible/', [CompagneController::class, 'deleteCompagneCible'])->middleware('auth')->name('deleteCompagneCible');
     Route::put('insertCompagneCible/', [CompagneController::class, 'insertCompagneCible'])->middleware('auth')->name('insertCompagneCible');
@@ -83,6 +85,7 @@ Route::group([
     Route::get('/getTempname/{id}',[CompagneController::class, 'getTempname'])->middleware('auth')->name('getTempname');
     Route::get('/getContentImage/{id}',[CompagneController::class, 'getContentImage'])->middleware('auth')->name('getContentImage');
     Route::get('/imagefield/{id}',[CompagneController::class, 'imagefield'])->middleware('auth')->name('imagefield');
+    Route::get('/fields/{id}',[CompagneController::class, 'fields'])->middleware('auth')->name('fields');
     Route::get('/lettredata/{id}',[CompagneController::class, 'lettredata'])->middleware('auth')->name('lettredata');
     Route::post('/get-affiliate-detail',[LcdtFrontController::class,'getAffiliateDetail'])->middleware('auth')->name('get-affiliate-detail');
     Route::post('/get-campagne-details',[LcdtFrontController::class, 'getCampagneCategory'])->middleware('auth')->name('get-campagne-details');
