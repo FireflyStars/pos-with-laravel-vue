@@ -6,6 +6,7 @@
                 <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100" >
 
                     <side-bar />
+                    
 
                     <div class="col main-view container">
                             <page-title icon="emailing" name="EMAILING" class="almarai_extrabold_normal_normal"/>
