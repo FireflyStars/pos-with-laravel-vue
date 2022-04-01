@@ -210,6 +210,10 @@ export default {
         item: {
             required: true,
             type: [Object, Array]
+        },
+        dom: {
+            required: true,
+            type: [String, Object]
         }
     },
 
@@ -250,14 +254,15 @@ export default {
             'insertunorderedlist',
         ]
 
+        // console.log(props.dom.offsetWidth, props.dom.offsetHeight, " is offset width and height size", props.dom.style)
+
         const isTextarea = computed(() => props.item.name == 'textarea')
         const isTable = computed(() => props.item.name == 'table')
 
         const close = () => emit('close')
 
         const submit = () => {
-            const text = document.querySelector('.editable')
-            const textValue = text.querySelector('.conent-paragraph').innerHTML
+            const textValue = document.querySelector('.editable')?.innerHTML
             emit('update', { 
                 id: props.item.attributes.id, 
                 textValue: isTextarea.value ? textValue : '',

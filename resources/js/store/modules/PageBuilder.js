@@ -110,7 +110,7 @@ export const PageBuilder = {
             }]
         },
         [ADD_PAGE](state) {
-            state.pages.push({
+            state.pages.splice(+state.activePage + 1, 0, {
                 id: generateId(12),
                 elements: [],
                 template_id: state.activeTemplate
@@ -123,7 +123,7 @@ export const PageBuilder = {
         [DELETE_PAGE](state) {
             if(state.pages.length > 1) {
                 const deletedPageIndex = state.activePage
-                if(activePage.value != 0) state.activePage --
+                if(state.activePage != 0) state.activePage --
                 state.pages.splice(deletedPageIndex, 1)
             }
         },
@@ -269,7 +269,7 @@ export const PageBuilder = {
         async [GET_REPORT_TEMPLATES]({ commit }) {
             try {
                 commit(SET_LOADING, { id: 'fetching' })
-                const { data } = await axios.get('page-templates')
+                const { data } = await axios.get('/page-templates')
                 commit(SAVE_REPORT_TEMPLATES, data)
                 commit(SET_LOADING, { id: 'fetching', value: false })
             }

@@ -59,6 +59,7 @@
                                                     @dblclick="openUpdatePopup(element)"
                                                     :disabled="element.name == 'table'"
                                                     :content="element.content"
+                                                    contenteditable="false"
                                                     :class="{ 
                                                         'active-item': `#${element.attributes.id}` == activeItem 
                                                     }"
@@ -102,7 +103,7 @@
                                     </div>
 
                                     <Moveable
-                                        v-if="pages.length"
+                                        v-if="showcontainer && pages.length"
                                         className="moveable"
                                         v-bind:target="[activeItem]"
                                         v-bind:draggable="true"
@@ -350,10 +351,12 @@ export default {
         const saveTemplate = async () => {
 
             const { value: name } = await Swal.fire({
-                title: 'Enter Template name',
+                title: 'Sauvegarde',
                 input: 'text',
-                inputLabel: 'Template Name',
-                inputPlaceholder: 'Name of the template',
+                inputLabel: 'Voulez vous sauvegarder ce rapport comme template',
+                inputPlaceholder: 'Nom du template',
+                showCancelButton: true,
+                confirmButtonText: 'Sauvegarde',
             })
 
             if (name) {
@@ -435,6 +438,10 @@ export default {
 <style lang="scss" scoped>
 
 $orange: orange;
+
+.swal2-container {
+    z-index: 999999999;
+}
 
 .active-item {
     cursor: move;

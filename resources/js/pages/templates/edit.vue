@@ -102,7 +102,7 @@
                                     </div>
 
                                     <Moveable
-                                        v-if="pages.length"
+                                        v-if="showcontainer && pages.length"
                                         className="moveable"
                                         v-bind:target="[activeItem]"
                                         v-bind:draggable="true"
@@ -391,8 +391,8 @@ export default {
 
         onMounted(() => {
             nextTick(async () => {
-                showcontainer.value = true
                 await getPageTemplate()
+                showcontainer.value = true
                 await fetchTemplates()
             })
         })

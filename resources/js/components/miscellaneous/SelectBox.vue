@@ -29,7 +29,9 @@
             <template v-else>{{ current_display }}</template>
         </span>
         <transition name="trans-select">
-            <div class="select-options" v-if="open">
+            <div class="select-options" v-if="open" :style="{
+                ...selectStyles
+            }">
                 <slot>
                     <div
                         class="opts"
@@ -48,8 +50,8 @@
 
 <script>
 
-import { ref, watch, computed, nextTick, onMounted } from "vue"
 import { useStore } from "vuex"
+import { ref, watch, computed, nextTick, onMounted } from "vue"
 
 import {
     GET_CURRENT_SELECT,
@@ -77,6 +79,11 @@ export default {
         styles: {
             required: false,
             type: Object,
+            default: () => {}
+        },
+        selectStyles: {
+            required: false,
+            type: Object, 
             default: () => {}
         }
     },
