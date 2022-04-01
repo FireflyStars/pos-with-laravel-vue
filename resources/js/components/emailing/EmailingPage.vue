@@ -27,7 +27,7 @@
                             params: { id: item.id },
                         }"
                     >
-                    
+
                         <div
                             class="img_container"
                             v-on:click="getTemplates(item.id)"
@@ -131,10 +131,11 @@ export default {
     color: orangered;
 }
 .card-text {
-    font-size: 10px;
+    font-size: 13px;
     margin-top: 29px;
     text-align: center;
     line-height: 13.5px;
+    color: white;
 }
 .card {
     width: 236px;
@@ -156,12 +157,11 @@ export default {
     min-height: 201px;
 }
 .card-img-top.body {
-    width: 232px;
+    width: 230px;
     height: 326px;
     box-shadow: -46px 0px 23px -10px rgb(97 96 96 / 50%);
     object-fit: cover;
-    border-color: #ee3138 !important;
-    border:solid;
+
 }
 .img_container {
     text-align: center;

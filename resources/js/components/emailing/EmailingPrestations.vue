@@ -185,7 +185,7 @@ export default {
 }
 
 .card-text {
-    font-size: 10px;
+    font-size: 13px;
     margin-top: 29px;
     text-align: center;
     line-height: 13.5px;
@@ -196,6 +196,7 @@ export default {
     margin: 9px;
     border: 1px solid rgb(0 0 0 / 34%);
     border-radius: 0;
+    cursor: pointer;
 }
 .flex_wrap {
     display: flex;
