@@ -6,7 +6,7 @@
                 <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100" >
 
                     <side-bar />
-                    
+
 
                     <div class="col main-view container">
                             <page-title icon="emailing" name="EMAILING" class="almarai_extrabold_normal_normal"/>
@@ -142,7 +142,7 @@ export default {
     width: 236px;
     padding: 0;
     margin: 7px;
-    border: 1px solid rgb(0 0 0 / 34%);
+    border: none;
     border-radius: 0;
 }
 .flex_wrap {
@@ -153,14 +153,12 @@ export default {
     padding: 12px 20px 15px;
     font-size: 15px;
     background-color: #f26e26;
-    margin-left: 2px;
-    margin-right: 2px;
     min-height: 201px;
+    width: 100%;
 }
 .card-img-top.body {
-    width: 230px;
+    width: 100%;
     height: 326px;
-    box-shadow: -46px 0px 23px -10px rgb(97 96 96 / 50%);
     object-fit: cover;
 
 }
@@ -180,12 +178,14 @@ export default {
     color: orangered;
 }
 .voir-plus{
-text-align: center;
-background-color: black;
-margin-top: 18px;
-color: white;
-width: 50%;
-margin-left: 25%;
+
+    text-align: center;
+    background-color: black;
+    color: white;
+    width: 50%;
+    align-self: center;
+    margin-top: auto;
+    margin-bottom: 10px;
 
 }
 .voir-plus:hover{

@@ -192,12 +192,12 @@ export default {
     line-height: 13.5px;
 }
 .card {
-    width: 236px;
+    width: 235px;
     padding: 0;
     margin: 9px;
-    border: 1px solid rgb(0 0 0 / 34%);
     border-radius: 0;
     cursor: pointer;
+    border:none;
 }
 .flex_wrap {
     display: flex;
@@ -208,14 +208,12 @@ export default {
     font-size: 15px;
     min-height: 201px;
     background-color: black;
-    margin-left: 1px;
-    margin-right: 1.5px;
     color: white;
+    width: 100%;
 }
 .card-img-top.body {
-    width: 232px;
+    width: 100%;
     height: 326px;
-    box-shadow: -46px 0px 23px -10px rgb(97 96 96 / 50%);
 }
 .img_container {
     text-align: center;
@@ -241,9 +239,12 @@ background-color:#f26e26;
 margin-top: 42px;
 color: white;
 width: 50%;
-margin-left: 25%;
+align-self: center;
+margin-top: auto;
+margin-bottom: 30px;
 
 }
+
 
 .voir-plus:hover{
     background-color: red;
