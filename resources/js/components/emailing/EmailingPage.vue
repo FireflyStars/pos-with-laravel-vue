@@ -149,7 +149,6 @@ export default {
     display: flex;
     flex-wrap: wrap;
 }
-
 .card-body {
     padding: 12px 20px 15px;
     font-size: 15px;

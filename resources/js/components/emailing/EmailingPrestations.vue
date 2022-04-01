@@ -220,6 +220,7 @@ export default {
     background: #e6e6e6;
 }
 
+
 .card a {
     color: inherit;
     text-decoration: none;
