@@ -1,6 +1,6 @@
 <template>
 
-    <div class="d-flex justify-content-between align-items-center margin-bottom" style="z-index: 99999999999999">
+    <div class="d-flex justify-content-between align-items-center margin-bottom">
 
         <div>
             <h4 class="tile_h1">
@@ -39,13 +39,11 @@
     <div class="d-flex justify-content-between align-items-center">
 
         <div class="reports-dropdown">
-            <select-box
-                v-model="activeTemplate" 
-                :placeholder="template?.name || 'Template'" 
-                :options="formattedTemplates" 
-                name="template"
-                classnames="reports-dropdown-button"
-                :disabled="fetching"
+            <!-- :class="{ 'not-allowed': fetching }"  -->
+                <!-- :disabled="fetching || loading" -->
+            <BaseButton 
+                title="Change Fond"
+                @click="toggleModal('templates-modal', true)"
             />
         </div>
 
@@ -93,12 +91,66 @@
 
     </div>
 
+    <Modal 
+        id="templates-modal"
+        classes="p-5" 
+        size="md"
+    >
+        <div>
+            <h4 class="d-flex align-items-center gap-3">
+                <Icon name="report" width="32" height="32" />
+                Change Fond
+            </h4>
+            <div class="mt-3"> 
+
+                <div class="d-flex align-items-center justify-content-around">
+                    <BaseButton 
+                        title="Votre Image"
+                    />
+
+                    <div class="image-boxes">
+                        <div>
+                            <div class="image-box"></div>
+                            <label>Standard</label>
+                        </div>
+                        <div>
+                            <div class="image-box"></div>
+                            <label>XXXXXXX</label>
+                        </div>
+                        <div>
+                            <div class="image-box"></div>
+                            <label>Vide</label>
+                        </div>
+                        <div>
+                            <div class="image-box"></div>
+                            <label>YYYYYY</label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="d-flex align-items-center justify-content-around mt-5">
+                    <BaseButton 
+                        title="Valider"
+                        kind="green"
+                    />
+                    <BaseButton 
+                        title="Non"
+                    />
+                </div>
+
+            </div>
+        </div>
+    </Modal>
+
 </template>
 
 <script>
 
-import { computed, watch, inject } from 'vue'
 import { useStore } from 'vuex'
+import useModal from '../../composables/useModal'
+import { computed, watch, inject } from 'vue'
+
 import { 
     BUILDER_MODULE,
     ASSIGN_TEMPLATE,
@@ -109,7 +161,9 @@ import {
 } from '../../store/types/types'
 
 export default {
+
     name: 'header-section',
+    
     props: {
         title: {
             required: false,
@@ -123,6 +177,7 @@ export default {
     setup (_, { emit }) {
         
         const store = useStore()
+        const { toggleModal } = useModal()
 
         const fetching = inject('fetching')
         
@@ -224,6 +279,7 @@ export default {
             deletePage,
             submitPage,
             activePage,
+            toggleModal,
             activeTemplate,
             formattedPages,
             formattedTemplates,
@@ -274,6 +330,28 @@ export default {
     border: none;
     height: 2.31rem;
 }
+
+.image-boxes {
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: .5rem;
+    text-align: center;
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
+    color: #000000;
+
+    .image-box {
+        width: 5.93rem;
+        height: 5.625rem;
+        background: #525252;
+        border-radius: 8px;
+    }
+}
+
 
 .text {
     font-family: Poppins;

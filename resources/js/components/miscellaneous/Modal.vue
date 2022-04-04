@@ -4,18 +4,15 @@
     <div 
         :id="id"
         class="popup"
-        :class="{ 'popup__show': isOpenModal(id) || open }" 
+        :class="{ 'popup__show': isOpenModal(id) || open }"
     >
         <div 
             class="popup-inner" 
             :class="['popup-inner' + sizeClasses, classes]"
         >
-            <!-- <div 
-                class="popup__text"
-                :class="'popup__text' + sizeClasses"
-            > -->
-                <slot></slot>
-            <!-- </div>  -->
+            
+            <slot></slot>
+            
             <a 
                 class="popup__close" 
                 href="#" 
@@ -23,6 +20,7 @@
             >
                 &times;
             </a>
+
         </div>
     </div>
 
@@ -123,22 +121,21 @@ $main-color: #9191E9;
   bottom: 0;
   right: 0;
   background-color: rgba(0, 0, 0, .80);
-  z-index: 2;
+  z-index: 99999999999999;
   visibility: hidden;
   opacity: 0;
-  overflow: hiden;
-  transition: .64s ease-in-out;
+  overflow: hidden;
+  transition: .4s ease-in-out;
   &-inner {
     position: relative;
-    bottom: -100vw;
-    right: -100vh;
-    max-width: 700px;
-    max-height: 500px;
+    bottom: 0;
+    right: 0;
+    max-width: 600px;
+    max-height: 450px;
     width: 100%;
     height: 100%;
     background-color: #fff;
-    transform: rotate(32deg);
-    transition: .64s ease-in-out;
+    transition: .4s ease-in-out;
     &__lg {
         max-width: 1000px;
         max-height: 600px;
@@ -176,11 +173,6 @@ $main-color: #9191E9;
   &__show {
     visibility: visible;
     opacity: 1;
-    .popup-inner {
-      bottom: 0;
-      right: 0;
-      transform: rotate(0);
-    }
   }
   &__close {
     position: absolute;
