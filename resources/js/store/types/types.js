@@ -48,6 +48,7 @@ export const CIBLE_GET_PRICE='CIBLE_GET_PRICE';//getters
 export const CIBLE_CREATE_CAMPAGNE='CIBLE_GET_PRICE';//action
 export const CIBLE_SET_CAMPAGNE_CATEGORY='CIBLE_SET_CAMPAGNE_CATEGORY';//mutations
 export const CIBLE_GET_CAMPAGNE_CATEGORY='CIBLE_GET_CAMPAGNE_CATEGORY';//getters
+export const CIBLE_RESET_STATE='CIBLE_RESET_STATE';//mutations
 
 export const SIDEBAR_MODULE = 'SIDEBAR_MODULE/' //namespace
 export const SIDEBAR_SET_SLIDEIN = 'SIDEBAR_SET_SLIDEIN' //mutations

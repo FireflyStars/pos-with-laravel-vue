@@ -206,7 +206,7 @@
 </template>
 
 <script>
-import { Vue, watch, ref, computed, nextTick, onMounted } from "vue";
+import { Vue, watch, ref, computed, nextTick, onMounted, onBeforeMount } from "vue";
 import SideBar from "../layout/SideBar";
 import WaveLoader from "../WaveLoader";
 
@@ -236,6 +236,7 @@ import {
     CIBLE_GET_PRICE,
     CIBLE_CREATE_CAMPAGNE,
     CIBLE_GET_CAMPAGNE_CATEGORY,
+    CIBLE_RESET_STATE,
 } from "../../store/types/types";
 
 import {removeDuplicatesBy,formatPrice} from "../helpers/helpers.js"
@@ -452,7 +453,9 @@ export default {
                 });
             }
        
-        
+        onBeforeMount(()=>{
+                store.commit(`${CIBLE_MODULE}${CIBLE_RESET_STATE}`);
+        });
         onMounted(() => {
 
                 store.dispatch(`${CIBLE_MODULE}${CIBLE_INIT}`,route.params.categ_id);

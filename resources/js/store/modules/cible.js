@@ -3,7 +3,7 @@ import { resolveDirective } from 'vue';
 import {
     TOASTER_MESSAGE,
     TOASTER_GET_ALL,
-    TOASTER_ADD_TOAST, TOASTER_REMOVE_TOAST, CIBLE_SET_CAMPAGNE_CATEGORY_ID, CIBLE_INIT,CIBLE_SET_CUSTOMER_STATUT, CIBLE_SET_NAF, CIBLE_SET_PREVIOUS_CAMPAGNE_LIST, CIBLE_GET_CUSTOMER_STATUT, CIBLE_GET_NAF, CIBLE_TOGGLE, CIBLE_SET_SELECTION, CIBLE_UNSET_SELECTION, CIBLE_GET_SELECTION, HIDE_LOADER, LOADER_MODULE, DISPLAY_LOADER, CIBLE_ADD_TO_ALL_CONTACTS, CIBLE_GET_ALL_CONTACTS, CIBLE_GET_PREVIOUS_CAMPAGNE_LIST, CIBLE_CAMPAGNE_TOGGLE, CIBLE_SET_CAMPAGNE_SELECTION, CIBLE_UNSET_CAMPAGNE_SELECTION, CIBLE_GET_CAMPAGNE_SELECTION, CIBLE_SET_UNIQUE_CONTACTS, CIBLE_GET_UNIQUE_CONTACTS, CIBLE_GET_UNSELECTED_EMAILS, CIBLE_SET_UNSELECTED_EMAIL, CIBLE_UNSET_UNSELECTED_EMAIL, CIBLE_GET_FILTERED_EMAILS, CIBLE_SET_FILTERED_EMAILS, CIBLE_SET_PRICE, CIBLE_GET_PRICE, CIBLE_CREATE_CAMPAGNE, TOASTER_MODULE, CIBLE_SET_CAMPAGNE_CATEGORY, CIBLE_GET_CAMPAGNE_CATEGORY
+    TOASTER_ADD_TOAST, TOASTER_REMOVE_TOAST, CIBLE_SET_CAMPAGNE_CATEGORY_ID, CIBLE_INIT,CIBLE_SET_CUSTOMER_STATUT, CIBLE_SET_NAF, CIBLE_SET_PREVIOUS_CAMPAGNE_LIST, CIBLE_GET_CUSTOMER_STATUT, CIBLE_GET_NAF, CIBLE_TOGGLE, CIBLE_SET_SELECTION, CIBLE_UNSET_SELECTION, CIBLE_GET_SELECTION, HIDE_LOADER, LOADER_MODULE, DISPLAY_LOADER, CIBLE_ADD_TO_ALL_CONTACTS, CIBLE_GET_ALL_CONTACTS, CIBLE_GET_PREVIOUS_CAMPAGNE_LIST, CIBLE_CAMPAGNE_TOGGLE, CIBLE_SET_CAMPAGNE_SELECTION, CIBLE_UNSET_CAMPAGNE_SELECTION, CIBLE_GET_CAMPAGNE_SELECTION, CIBLE_SET_UNIQUE_CONTACTS, CIBLE_GET_UNIQUE_CONTACTS, CIBLE_GET_UNSELECTED_EMAILS, CIBLE_SET_UNSELECTED_EMAIL, CIBLE_UNSET_UNSELECTED_EMAIL, CIBLE_GET_FILTERED_EMAILS, CIBLE_SET_FILTERED_EMAILS, CIBLE_SET_PRICE, CIBLE_GET_PRICE, CIBLE_CREATE_CAMPAGNE, TOASTER_MODULE, CIBLE_SET_CAMPAGNE_CATEGORY, CIBLE_GET_CAMPAGNE_CATEGORY, CIBLE_RESET_STATE
 } from '../types/types';
 
 export const cible= {
@@ -86,6 +86,20 @@ export const cible= {
          [CIBLE_SET_CAMPAGNE_CATEGORY]:(state,campagne_category)=>{
             state.campagne_category=campagne_category;
          },
+         [CIBLE_RESET_STATE]:(state)=>{
+            state.campagne_category={};
+            state.campagne_category_id=0; 
+            state.price=0;
+            state.checked=[]; 
+            state.checkedCampagne=[];
+            state.customer_statut=[];
+            state.naf=[];
+            state.previous_campagne=[];
+            state.all_contacts=[];
+            state.unique_contacts=[];  
+            state.unselected=[];       
+            state.filtered_emails=[];
+         },
        /* [TOASTER_ADD_TOAST]: (state, payload) => {
            // state.toast.unshift(payload);
             state.toast.push(payload);
@@ -97,6 +111,7 @@ export const cible= {
     },
     actions:{
         [CIBLE_CREATE_CAMPAGNE]:async({commit,state,dispatch})=>{
+     
             if(state.filtered_emails.length==0){
                 dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,{message: "Aucun emails dans votre liste.",ttl: 5,type: 'danger'}, {root: true});
             }else{
@@ -116,6 +131,7 @@ export const cible= {
             }
         },
         [CIBLE_INIT]:({commit,state,dispatch},campagne_category_id)=>{
+        
             dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Veuillez patienter. Chargement en cours...'], {root: true});
             commit(CIBLE_SET_CAMPAGNE_CATEGORY_ID,campagne_category_id);  
             axios.get(`/cible/load/${state.campagne_category_id}`).then((response)=>{

@@ -24,7 +24,7 @@ class CibleController extends Controller
             $date=Carbon::createFromTimeString($campagne->created_at);
             $campagne->formated_date=$date->format('d/m/Y');
             $campagne->contacts=CampagneCible::where('campagne_id','=',$campagne->id)
-            ->get(['id as campagne_cible_id','address_id','contact_id','email','customer_id','company','name','firstname','phone','address1','address2','postcode','city','industrie','statut','created_at']);
+            ->get(['id as campagne_cible_id','address_id','contact_id as id','email','customer_id','company','name','firstname','phone as mobile','address1','address2','postcode','city','industrie','statut','created_at']);
             unset($campagne->created_at);
         }
     
