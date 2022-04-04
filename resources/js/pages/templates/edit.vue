@@ -26,7 +26,7 @@
                                         @save="saveTemplate" 
                                     />
                                     
-                                    <div class="shadow-sm builder-container">
+                                    <div class="shadow-sm builder-container" @click="activeItem=null">
 
                                         <div class="template-header">
                                             <img 
@@ -54,7 +54,7 @@
                                                     :is="element.item" 
                                                     v-bind="element.attributes"
                                                     @click.stop="activateItem($event)"
-                                                    @dblclick="openUpdatePopup(element)"
+                                                    @dblclick="openUpdatePopup(element, $event.target)"
                                                     :disabled="element.name == 'table'"
                                                     :content="element.content"
                                                     contenteditable="false"
@@ -83,7 +83,8 @@
                                             </div>
                                             
                                             <popup 
-                                                :item="activeElement" 
+                                                :item="activeElement"
+                                                :domStyles="getStylesOfElement(activeDomElement)" 
                                                 v-if="openPopup"
                                                 @close="openPopup = false"
                                                 @update="updateElementFromPopup"
@@ -204,6 +205,7 @@ export default {
         const activeItem = ref('#myTable')
         const showcontainer = ref(false)
         const activeElement = ref({})
+        const activeDomElement = ref(null)
         const openPopup = ref(false)
 
         const activePage = computed(() => store.getters[`${BUILDER_MODULE}/activePage`])
@@ -233,15 +235,15 @@ export default {
         }
 
         const onDrag = ({ top, left, target }) => {
-            updateElementStyles(target.id, { left, top }, getStylesOfElement(target))
+            updateElementStyles(target, { left, top }, getStylesOfElement(target))
         }
 
         const onScale = ({ target, drag }) => {
-            updateElementStyles(target.id, { transform: drag.transform }, getStylesOfElement(target))
+            updateElementStyles(target, { transform: drag.transform }, getStylesOfElement(target))
         }        
 
         const onRotate = ({ target, drag }) => {
-            updateElementStyles(target.id, { transform: drag.transform }, getStylesOfElement(target))
+            updateElementStyles(target, { transform: drag.transform }, getStylesOfElement(target))
         }
 
         const activateItem = (e) => {
@@ -253,12 +255,16 @@ export default {
             elem.blur()
         }
 
-        const updateElementStyles = (id, styles, elementOldStyles) => {
+        const updateElementStyles = (target, styles, elementOldStyles, item = '') => {
+            const { id } = target
             const itemIndex = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
-            const computedStyles = getComputedStyle(styles, elementOldStyles)
-            store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_STYLES}`, { 
-                styles: computedStyles, 
-                index: itemIndex 
+            const computedStyles = getComputedStyle(styles, elementOldStyles, item)
+            nextTick(() => {
+                target.style = computedStyles
+                store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_STYLES}`, { 
+                    styles: computedStyles, 
+                    index: itemIndex 
+                })
             })
         }
 
@@ -297,7 +303,7 @@ export default {
                     content: table.content 
                 })
             }
-            updateElementStyles(id, unref(itemAttributes), getStylesOfElement(domElem))
+            updateElementStyles(domElem, unref(itemAttributes), getStylesOfElement(domElem), name)
             openPopup.value = false
         }
 
@@ -343,10 +349,11 @@ export default {
             return store.dispatch(`${BUILDER_MODULE}/${GET_TEMPLATES}`)
         }
 
-        const openUpdatePopup = (element) => {
-            openPopup.value = true
+        const openUpdatePopup = (element, domElement) => {
             activeElement.value = element
             activeItem.value = null
+            activeDomElement.value = getDomElementParent(domElement, 'draggable')
+            openPopup.value = true
         }
 
         const saveTemplate = async () => {
@@ -391,8 +398,8 @@ export default {
 
         onMounted(() => {
             nextTick(async () => {
-                await getPageTemplate()
                 showcontainer.value = true
+                await getPageTemplate()
                 await fetchTemplates()
             })
         })
@@ -418,6 +425,8 @@ export default {
             activeElement,
             activeTemplate,
             openUpdatePopup,
+            activeDomElement,
+            getStylesOfElement,
             activePageTemplate,
             updateElementValue,
             updateElementFromPopup,
@@ -433,7 +442,7 @@ export default {
 $orange: orange;
 
 .swal2-container {
-    z-index: 999999999999;
+    z-index: 999999999999 !important;
 }
 
 .active-item {

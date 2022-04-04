@@ -235,7 +235,7 @@
                         <img 
                             class="{{ $element->attributes->class ?? 'draggable' }} svg"
                             src="{{ $src }}" 
-                            style="{{ $element->attributes->style ?? '' }}" 
+                            style="{{ $element->attributes->style ?? '' }} position: absolute;" 
                         /> 
                     @endif    
             
@@ -248,7 +248,7 @@
                         <img 
                             class="{{ $element->attributes->class ?? 'draggable' }}"
                             src="{{ $src }}" 
-                            style="{{ $element->attributes->style ?? '' }}" 
+                            style="{{ $element->attributes->style ?? '' }} position: absolute;" 
                         /> 
                     @endif
                     
@@ -256,7 +256,7 @@
 
                         <table 
                             class="{{ $element->attributes->class ?? 'draggable' }} table"
-                            style="{{ $element->attributes->style ?? '' }}" 
+                            style="{{ $element->attributes->style ?? '' }} position: absolute;" 
                         >
                             <tr @if($element->attributes?->headers ?? true) @endif>
                                 @for ($i = 1; $i <= $element->attributes->cols; $i++)

@@ -115,7 +115,7 @@
                     <div class="attribute">
                         <div>Height:</div>
                         <div class="d-flex align-items-center gap-1">
-                            <input type="text" v-model="itemAttributes.heigth">
+                            <input type="text" v-model="itemAttributes.height">
                             <span class="unit">px</span>
                         </div>
                     </div>
@@ -141,13 +141,13 @@
                             <span class="unit">px</span>
                         </div>
                     </div>
-                    <div class="attribute">
+                    <!-- <div class="attribute">
                         <div>Line heigth:</div>
                         <div class="d-flex align-items-center gap-1">
                             <input type="text" v-model="itemAttributes.lineHeight">
                             <span class="unit"></span>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="attribute">
                         <div>Font family:</div>
                         <div class="d-flex align-items-center gap-1">
@@ -155,6 +155,7 @@
                                 <option value="times">Times</option>
                                 <option value="mullish">Mullish</option>
                                 <option value="poppins">Poppins</option>
+                                <option value="Almarai ExtraBold">Almarai ExtraBold</option>
                             </select>
                         </div>
                     </div>
@@ -178,6 +179,35 @@
                         <div>Z-index:</div>
                         <div class="d-flex align-items-center gap-1">
                             <input type="text" name="zindex" v-model="itemAttributes.zIndex">
+                        </div>
+                    </div>
+                    <div class="attribute">
+                        <div>Border Width:</div>
+                        <div class="d-flex align-items-center gap-1">
+                            <input type="text" name="borderwidth" v-model="itemAttributes.borderWidth">
+                            <span class="unit">px</span>
+                        </div>
+                    </div>
+                    <div class="attribute">
+                        <div>Border Color:</div>
+                        <div class="d-flex align-items-center gap-1">
+                            <input type="color" name="borderColor" v-model="itemAttributes.borderColor" style="width: 5rem">
+                        </div>
+                    </div>
+                     <div class="attribute">
+                        <div>Border Style:</div>
+                        <div class="d-flex align-items-center gap-1">
+                            <select name="text_align" v-model="itemAttributes.borderStyle">
+                                <option value="none">None</option>
+                                <option value="hidden">Hidden</option>
+                                <option value="dashed">Dashed</option>
+                                <option value="solid">Solid</option>
+                                <option value="double">Double</option>
+                                <option value="groove">Groove</option>
+                                <option value="Ridge">Ridge</option>
+                                <option value="inset">Inset</option>
+                                <option value="outset">Outset</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -211,9 +241,9 @@ export default {
             required: true,
             type: [Object, Array]
         },
-        dom: {
+        domStyles: {
             required: true,
-            type: [String, Object]
+            type: [Object, Array]
         }
     },
 
@@ -253,8 +283,6 @@ export default {
             'insertorderedlist',
             'insertunorderedlist',
         ]
-
-        // console.log(props.dom.offsetWidth, props.dom.offsetHeight, " is offset width and height size", props.dom.style)
 
         const isTextarea = computed(() => props.item.name == 'textarea')
         const isTable = computed(() => props.item.name == 'table')
@@ -296,7 +324,7 @@ export default {
         }
 
         onMounted(() => {
-            loadDefaultStyles(props.item)
+            loadDefaultStyles(props.item, props.domStyles)
             loadDefaultValue()
         })
 

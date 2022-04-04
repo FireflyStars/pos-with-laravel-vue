@@ -25,7 +25,7 @@
                                         @save="saveTemplate" 
                                     />
                                     
-                                    <div class="shadow-sm builder-container" @click="activeItem = null">
+                                    <div class="shadow-sm builder-container" @click="activeItem=null">
 
                                         <div class="template-header">
                                             <img 
@@ -93,7 +93,7 @@
                                             
                                             <popup 
                                                 :item="activeElement"
-                                                :dom="activeDomElement" 
+                                                :domStyles="getStylesOfElement(activeDomElement)" 
                                                 v-if="openPopup"
                                                 @close="openPopup = false"
                                                 @update="updateElementFromPopup"
@@ -184,7 +184,8 @@ import {
     UPDATE_ELEMENT_TABLE,
     UPDATE_TABLE_CONTENT,
     GET_REPORT_TEMPLATE,
-    GET_REPORT_TEMPLATES
+    GET_REPORT_TEMPLATES,
+    UPDATE_REPORT_TEMPLATE
 } from '../store/types/types'
 
 import Moveable from "vue3-moveable"
@@ -288,7 +289,7 @@ export default {
             elem.blur()
         }
 
-        const updateElementStyles = (target, styles, elementOldStyles) => {
+        const updateElementStyles = (target, styles, elementOldStyles, item = '') => {
             const { id } = target
             if(target.parentElement) {
                 const { top,  left } = styles
@@ -296,10 +297,13 @@ export default {
                 if(left) target.parentElement.style.left = `${left}px`
             }
             const itemIndex = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
-            const computedStyles = getComputedStyle(styles, elementOldStyles)
-            store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_STYLES}`, { 
-                styles: computedStyles, 
-                index: itemIndex 
+            const computedStyles = getComputedStyle(styles, elementOldStyles, item)
+            nextTick(() => {
+                target.style = computedStyles
+                store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_STYLES}`, { 
+                    styles: computedStyles, 
+                    index: itemIndex 
+                })
             })
         }
 
@@ -337,6 +341,7 @@ export default {
         }
 
         const updateElementFromPopup = ({ id, textValue, table, name }) => {
+
             const index = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
             const domElem = document.querySelector(`#${id}`)
             if(textValue != undefined && name != 'table') {
@@ -351,7 +356,7 @@ export default {
                     content: table.content 
                 })
             }
-            updateElementStyles(id, unref(itemAttributes), getStylesOfElement(domElem))
+            updateElementStyles(domElem, unref(itemAttributes), getStylesOfElement(domElem), name)
             openPopup.value = false
         }
 
@@ -409,7 +414,7 @@ export default {
         }
 
         const saveTemplate = () => {
-            store.dispatch(`${[BUILDER_MODULE]}/${[SAVE_REPORT_TEMPLATE]}`, {
+            store.dispatch(`${[BUILDER_MODULE]}/${[UPDATE_REPORT_TEMPLATE]}`, {
                 pages,
                 orderId: props.id
             })
@@ -504,6 +509,7 @@ export default {
             activeDomElement,
             updateTableValue,
             activePageTemplate,
+            getStylesOfElement,
             activeReportTemplate,
             updateElementValue,
             updateElementFromPopup,
