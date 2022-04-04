@@ -26,3 +26,12 @@ export const formatDate=(date_str,format)=>{
 
     return dateTimeFormat.format(date).replace(',','').toUpperCase();
 }
+//remove duplicate object form array by comparing an attribute value
+export const removeDuplicatesBy=(keyFn, array)=>{
+    var mySet = new Set();
+    return array.filter(function(x) {
+        var key = keyFn(x), isNew = !mySet.has(key);
+        if (isNew) mySet.add(key);
+        return isNew;
+    });
+}

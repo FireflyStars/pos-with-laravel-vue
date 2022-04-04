@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Campagne;
+use App\Models\CampagneCategory;
 use App\Models\CampagneCible;
 use App\Models\Customer;
 use App\Models\CustomerNaf;
@@ -23,7 +24,7 @@ class CibleController extends Controller
             $date=Carbon::createFromTimeString($campagne->created_at);
             $campagne->formated_date=$date->format('d/m/Y');
             $campagne->contacts=CampagneCible::where('campagne_id','=',$campagne->id)
-            ->get(['id as campagne_cible_id','contact_id','email','customer_id','company as Company','name','firstname','phone','address1','address2','postcode','city','created_at']);
+            ->get(['id as campagne_cible_id','address_id','contact_id','email','customer_id','company','name','firstname','phone','address1','address2','postcode','city','industrie','statut','created_at']);
             unset($campagne->created_at);
         }
     
@@ -36,6 +37,7 @@ class CibleController extends Controller
                 'customer_statut'=>CustomerStatut::all()->makeHidden(['created_at','updated_at','deleted_at']),
                 'naf'=>$customer_naf,
                 'campagne_list'=>$lastCmp,
+                'campagne_category'=>CampagneCategory::find($campagne_category_id)
             )
         );
 
@@ -49,7 +51,7 @@ class CibleController extends Controller
       
         $customer_statut=CustomerStatut::find($customer_statut_id);
         $contacts=DB::table('contacts')
-        ->select(['contacts.id','contacts.email','contacts.gender','customers.id as customer_id','customers.Company','contacts.name','contacts.firstname','contacts.mobile','contacts.telephone','customers.siteweb','addresses.address1','addresses.address2','addresses.postcode','addresses.city'])
+        ->select(['contacts.id','contacts.email','contacts.gender','customers.id as customer_id','contacts.address_id','customers.company','contacts.name','contacts.firstname','contacts.mobile','contacts.telephone','customers.siteweb','addresses.address1','addresses.address2','addresses.postcode','addresses.city'])
         ->join('customers',function ($join) use ($user,$nafcodes){
             $join->on('contacts.customer_id', '=', 'customers.id')
             ->where('customers.affiliate_id','=',$user->affiliate_id)
@@ -59,9 +61,83 @@ class CibleController extends Controller
         })
         ->leftJoin('addresses','contacts.address_id','=','addresses.id')
         ->where('contacts.type','=',$customer_statut->name)
+        ->whereNull('contacts.deleted_at')
         ->get();
-
+        foreach($contacts as &$contact){
+            $contact->industrie=$naf_selection;
+            $contact->statut=$customer_statut->name;
+        }
         return response()->json($contacts);
+
+    }
+
+    public function createcampagne(Request $request)
+    {
+        $user = Auth::user();
+      
+
+        $campagne_category_id = $request->post('campagne_category_id');
+        $contacts=$request->post('contacts');
+        $campagne_category = CampagneCategory::find($campagne_category_id);
+     
+
+
+       
+        $name=$campagne_category->name.'-';
+                                            
+        if($campagne_category==null)
+        return response('Campagne category id '.$campagne_category_id.' not found',509);
+       
+        $campagne_id =  DB::table('campagnes')->insertGetId
+        ([
+            'datefinvalidatiom' => date("Y-m-d"),
+            'datelancement' => date("Y-m-d"),
+            'user_id' => $user->id,
+            'affiliate_id' => $user->affiliate->id,
+            'email_template_id' => intval($campagne_category->idapi),
+            'campagne_category_id'=>$campagne_category->id,
+            'address' => $user->affiliate->reponseaddress,
+            'expediteur' =>  $user->affiliate->name,
+            'phone' =>  $user->affiliate->telephone,
+            'lettreaccompagnement' => null,
+            'type' => $campagne_category->type,
+            'run' =>  date("Y-m-d"),
+            'montant' => count($contacts)*$campagne_category->price,
+            'nb' => count($contacts),
+            'name' => $name,
+            'created_at' =>date("Y-m-d"),
+            'updated_at' =>date("Y-m-d"),
+        ]);
+        DB::table('campagnes')->where('id','=',$campagne_id)->update([
+            'name'=>$name.$campagne_id.'_'.date('Ymd')
+        ]);
+   
+       
+
+
+              foreach($contacts as $contact)
+
+                    DB::table('campagne_cible')->insert
+                    ([
+                        'affiliate_id' => $user->affiliate->id,
+                        'cible_statut_id' => 1,
+                        'address_id' => 1,
+                        'customer_id' => $contact['customer_id'],
+                        'contact_id' =>$contact['id'],
+                        'campagne_old_id' => 0,
+                        'campagne_id' => $campagne_id,
+                        'industrie' =>  $contact['industrie'],
+                        'statut' => $contact['statut'],
+                        'phone' => $contact['mobile'],
+                        'email' => $contact['email'],
+                        'created_at' => date("Y-m-d"),
+                        'updated_at' => date("Y-m-d"),
+                    ]);
+
+
+        return response()->json([
+                'campagne_id' => $campagne_id
+            ]);
 
     }
 }

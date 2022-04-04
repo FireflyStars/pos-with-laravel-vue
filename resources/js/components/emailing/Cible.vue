@@ -13,261 +13,188 @@
             enter-active-class="animate__animated animate__fadeIn"
             leave-active-class="animate__animated animate__fadeOut"
         >
-    <form class="space-y-6" @submit.prevent="saveCible" v-if="showcontainer">
+    <form class="space-y-6" @submit.prevent="saveCible" v-if="nafs.length>0">
 
 
-            <div class="container">
+            <div class="container position-relative">
 
                 <div>
                     <h3 class="margin">
                         <a @click="goToHome()" class="link">Emailing </a>>
-                        <a key="" @click="goToPrestation()" v-if="my_name" class="link" > {{ my_name }} > </a>
+                        <a key="" @click="goToPrestation()" v-if="campagne_category.name" class="link" > {{ campagne_category.name }} > </a>
                         Cible
                     </h3>
                 </div>
-<div class="row bg-panel p-4 mb-2">
-<div class="col-lg-8 border-right">
-        <div class="cibletable">
-            <div class="row">
-                <template v-for="(statut, j) in customer_statuts" :key="j" >
-                    <div  class="col nafname" v-if="j==0"></div>
-                    <div  class="col statutname d-flex justify-content-center align-items-center" >{{statut.name}}</div>
-                </template>
-                <div class="col  text-xs grey size emphasized d-flex justify-content-center align-items-center text-center">E-mails sélectionnés</div>
+                  <transition
+            enter-active-class="animate__animated animate__fadeIn"
+            leave-active-class="animate__animated animate__fadeOut"
+    >
+      <div class="position-absolute"  v-if="!retravailler_panel" style="width:100%">
+<div class="row bg-panel p-4 mb-2 " >
+    <div class="col-lg-8 border-right">
+            <div class="cibletable">
+                <div class="row">
+                    <template v-for="(statut, j) in customer_statuts" :key="j" >
+                        <div  class="col nafname" v-if="j==0"></div>
+                        <div  class="col statutname d-flex justify-content-center align-items-center" >{{statut.name}}</div>
+                    </template>
+                    <div class="col  text-xs grey size emphasized d-flex justify-content-center align-items-center text-center">E-mails sélectionnés</div>
+                </div>
+                <div v-for="(naf, i) in nafs" :key="i" class="row">
+                    
+                            <template v-for="(statut, j) in customer_statuts" :key="j" >
+                        
+                            <div  class="col nafname"  v-if="j==0">{{naf.selection}}</div>
+                            <div  class="col d-flex justify-content-center align-items-center" ><span class="circle" :class="{checked:checkedCible(naf.selection,statut.id,selections)}" @click="toggleCible(naf.selection,statut.id)"></span></div>
+                            </template>
+                            <div  class="col lastcol d-flex justify-content-center align-items-center">{{numcontacts(naf.selection,all_contacts)}}</div>
+                </div>
+                <div class="row"> 
+                    <template v-for="(statut, j) in customer_statuts" :key="j" >
+                        <div  class="col nafname" v-if="j==0"></div>
+                        <div  class="col " ></div>
+                    </template>
+                    <b  class="col d-flex justify-content-center align-items-center">{{totalsel}}</b> 
+                </div>
             </div>
-            <div v-for="(naf, i) in nafs" :key="i" class="row">
-                 
-                        <template v-for="(statut, j) in customer_statuts" :key="j" >
-                       
-                        <div  class="col nafname"  v-if="j==0">{{naf.selection}}</div>
-                        <div  class="col d-flex justify-content-center align-items-center" ><span class="circle" :class="{checked:checkedCible(naf.selection,statut.id,selections)}" @click="toggleCible(naf.selection,statut.id)"></span></div>
-                        </template>
-                        <div  class="col lastcol d-flex justify-content-center align-items-center">{{numcontacts(naf.selection,all_contacts)}}</div>
-            </div>
-            <div class="row"> 
-                 <template v-for="(statut, j) in customer_statuts" :key="j" >
-                    <div  class="col nafname" v-if="j==0"></div>
-                    <div  class="col " ></div>
-                </template>
-                <b  class="col d-flex justify-content-center align-items-center">{{totalsel}}</b> 
-            </div>
-        </div>
-         <div class="d-flex justify-content-end">
-                            <div>
-                                <label class="type data"
-                                    >POUR RETRAVAILLER VOTRE LISTE :</label
-                                >
+            <div class="d-flex justify-content-end">
+                                <div>
+                                    <label class="type data"
+                                        >POUR RETRAVAILLER VOTRE LISTE :</label
+                                    >
+                                </div>
+                                <div class="type-click">
+                                    <button
+                                        class="button type"
+                                        @click="retravaillerList()"
+                                    >
+                                        CLIQUEZ ICI
+                                    </button>
+                                </div>
                             </div>
-                            <div class="type-click">
+    </div>
+    <div class="col-lg-4">
+    <h2 class="size px-4 py-4 text-center">CHARGER UN PRÉCÉDENT CIBLAGE</h2>
+        <div class="row flex-column justify-content-between" style="height:100%">
+            <div class="col p-0">
+            <div class="cibletable row">
+                <div class="col">
+                <div class="row" v-for="(campagne,index) in previous_campagnes" :key="index"> 
+                    <div class="col d-flex justify-content-center align-items-center"><span class="circle" :class="{checked:checkedCampagne(campagne.id,selections_campagne)}" @click="toggleCampagne(campagne.id)"></span></div>
+                    <div class="col campname d-flex justify-content-center align-items-center">{{campagne.name}}</div>
+                    <div class="col d-flex justify-content-center align-items-center size-date">{{campagne.formated_date}}</div>
+                    <div class="col lastcol p-0 d-flex justify-content-center align-items-center">{{campagne.contacts.length}}</div>
+                </div>
+                </div>
+            </div>
+            </div>
+            <div class="col p-0 position-relative">
+                <div class="row " >
+                            <div class="left col p-0" style="position: absolute; right: 0; bottom: 72px;">
+                                <div class="bloc_count">
+                                    <p>
+                                        <strong class="font total">{{filtered_emails.length}}</strong>
+
+                                        <span class="emphasized size-mail">
+                                            e-mails</span
+                                        >
+                                    </p>
+                                    <p class="color">
+                                        <strong class="font">{{formatPrice(total_price)}}</strong>
+                                        <span class="emphasized size-mail">
+                                            euros HT</span
+                                        >
+                                    </p>
+                                </div>
+
                                 <button
-                                    class="button type"
-                                    @click="creatCompagne()"
+                                    class="button-valider type"
+                                    @click="createCampagne()"
                                 >
-                                    CLIQUEZ ICI
+                                    VALIDER
                                 </button>
                             </div>
-                        </div>
-</div>
-<div class="col-lg-4">
-  <h2 class="size px-4 py-4 text-center">CHARGER UN PRÉCÉDENT CIBLAGE</h2>
-    <div class="row flex-column justify-content-between">
-        <div class="col p-0">
-        <div class="cibletable">
-        
-            <div class="row" v-for="(campagne,index) in previous_campagnes" :key="index"> 
-                <div class="col d-flex justify-content-center align-items-center"><span class="circle" :class="{checked:checkedCampagne(campagne.id,selections_campagne)}" @click="toggleCampagne(campagne.id)"></span></div>
-                <div class="col campname d-flex justify-content-center align-items-center">{{campagne.name}}</div>
-                <div class="col d-flex justify-content-center align-items-center size-date">{{campagne.formated_date}}</div>
-                <div class="col lastcol d-flex justify-content-center align-items-center">{{campagne.contacts.length}}</div>
+                </div>
             </div>
-        </div>
-        </div>
-        <div class="col p-0">
-                        <div class="left">
-                            <div class="bloc_count">
-                                <p>
-                                    <strong class="font total">0</strong>
-
-                                    <span class="emphasized size-mail">
-                                        e-mails</span
-                                    >
-                                </p>
-                                <p class="color">
-                                    <strong class="font">{{formatPrice(total_price)}}</strong>
-                                    <span class="emphasized size-mail">
-                                        euros HT</span
-                                    >
-                                </p>
-                            </div>
-
-                            <button
-                                class="button-valider type"
-                                @click="onValide()"
-                            >
-                                VALIDER
-                            </button>
-                        </div>
         </div>
     </div>
-</div>
 
 
-</div>
-                <div class="row bg-panel p-4">
-                    <div class="col-md-8 border-rigth">
-                        <table class="table-borderless">
-                            <thead>
-                                <tr>
-                                    <th class="px-5"></th>
-                                    <template   v-if="status">
-                                    <th
-
-                                        class="vertical-name"
-                                        v-for="item in status"
-                                        :key="item.id"
+</div></div>
+                  </transition>
+                    <transition
+            enter-active-class="animate__animated animate__fadeIn"
+            leave-active-class="animate__animated animate__fadeOut"
+    >
+    <div class="position-absolute"  v-if="retravailler_panel" style="width:100%">
+<div class="row bg-panel p-4 mb-2 ">
+        <div class="row">
+            <div class="col mb-2">
+                <label>Filtrer par Société:</label> <input v-model="filtersociete" type="text" >
+            </div>
+        </div> 
+        <div class="row mt-2 theader mb-2 ml-0">
+            <div class="col-1">
+                <span class="circle" :class="{checked:allchecked()}" @click="togglecheckedall()"></span>
+            </div> 
+            <div class="col-2">
+                Email
+            </div>    
+             <div class="col-1">
+                Civilité
+            </div>  
+             <div class="col-1">
+                Prénom
+            </div>  
+             <div class="col-1">
+                Nom
+            </div>  
+             <div class="col-1">
+                Société
+            </div>  
+            <div class="col-1">
+                Téléphone
+            </div>  
+            <div class="col-1">
+                Site web
+            </div>  
+            <div class="col-3">
+                Addrese 1
+            </div>
+        </div>  
+        <div class="ml-0 row tbody" v-for="(contact,index) in uniqueContacts" :key="index">
+            <div class="col-1">  <span class="circle" :class="{checked:emailchecked(contact.email)}" @click="togglecheckedEmail(contact.email)"></span></div>
+            <div class="col-2">{{contact.email}}</div>
+            <div class="col-1">{{contact.gender}}</div>
+            <div class="col-1">{{contact.firstname}}</div>
+            <div class="col-1">{{contact.name}}</div>
+            <div class="col-1">{{contact.company}}</div>
+            <div class="col-1">{{contact.telephone}}</div>
+            <div class="col-1">{{contact.siteweb}}</div>
+            <div class="col-3">{{contact.address1}}<br v-if="contact.address2!=null&&contact.address2.trim()!=''">{{contact.address2}}<br>{{contact.postcode}} {{contact.city}}</div>
+        </div>
+                    <div class="d-flex justify-content-end mt-4 pr-0">
+                                <div class="">
+                                  <button
+                                        class="button type"
+                                        @click="annuler()"
                                     >
-                                        <span class="text-left size">{{
-                                            item
-                                        }}</span>
-                                    </th>
-                                    </template>
-                                    <th class="center">
-                                        <span
-                                            class="text-xs grey size emphasized vertical-name"
-                                            >E-mails sélectionnés</span
-                                        >
-                                    </th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                <tr
-                                    scope="row"
-                                    class="matrice"
-                                    v-for="item in industries"
-                                    :key="item.id"
+                                        ANNULER
+                                    </button>
+                                </div>
+                                <div >
+                                    <button
+                                    class="button-valider type"
+                                    @click="validerSelection()"
                                 >
-                                    <th v-if="item" class="name_vertical">
-                                        {{ item }}
-                                    </th>
-                                    <th
-                                        class="cercle"
-                                        v-for="i in status.length"
-                                    >
-                                        <span>
-                                            <input
-                                                type="checkbox"
-                                                @click="goToCreate()"
-                                                :name="item + '_' + i"
-                                                @change="onChange($event)"
-                                                class="px-6 padding radio cur_cible_radio"
-                                            />
-                                            <span></span>
-                                        </span>
-                                    </th>
-                                    <td
-                                        class="px-4 padding butt-class"
-                                        style="px-4 padding;"
-                                    >
-                                        <span v-if="count_by_selection[item]">{{count_by_selection[item]}}</span>
-                                        <span v-else>0</span>
-                                    </td>
-                                </tr>
-                                <tr class="total">
-                                    <th>
-                                        <label>
-                                            <span id="total_mails">0</span>
-                                            <span>
-                                                <img :style="img_up"
-                                                    id="img_update"
-                                                    src="../../images/circle-arrow-icon-png-clipart.png"
-                                                />
-                                            </span>
-                                        </label>
-                                    </th>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <div class="d-flex retravailler">
-                            <div>
-                                <label class="type data"
-                                    >POUR RETRAVAILLER VOTRE LISTE :</label
-                                >
-                            </div>
-                            <div class="type-click">
-                                <button
-                                    class="button type"
-                                    @click="creatCompagne()"
-                                >
-                                    CLIQUEZ ICI
+                                    VALIDER
                                 </button>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+</div></div>
+                    </transition>
 
-                    <div class="col-md-4 column">
-                        <div>
-                            <h2 class="size px-4 py-4 padding">
-                                CHARGER UN PRÉCÉDENT CIBLAGE
-                            </h2>
-                            <table style="width: 100%">
-                                <tr class="history_ligne" v-for="item in history_compagne" >
-                                    <th class="size">
-                                        <span
-                                            class="close x-btn"
-                                            @click="deleteOldCompagne(item.id)"
-                                            >&#x2718;</span
-                                        >
-                                        <input
-                                            type="checkbox"
-                                            class="radio history"
-                                            @click="goToCreateHis()"
-                                            @change="onChange($event)"
-                                            :name="item.campagne_old_id"
-                                            :value="item.nb"
-                                            :data-campagne-id="item.campagne_id"
-                                        />&nbsp; {{ item.name }}
-                                    </th>
-                                    <td class="px-4 padding size-date">
-                                        {{
-                                            moment(item.created_at).format(
-                                                "DD/MM/YYYY"
-                                            )
-                                        }}
-                                    </td>
-                                    <th class="px-4 padding butt-class">
-                                        {{ item.nb }}
-                                    </th>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="left">
-                            <div class="bloc_count">
-                                <p>
-                                    <strong class="font total">0</strong>
-
-                                    <span class="emphasized size-mail">
-                                        e-mails</span
-                                    >
-                                </p>
-                                <p class="color">
-                                    <strong class="font">{{formatPrice(total_price)}}</strong>
-                                    <span class="emphasized size-mail">
-                                        euros HT</span
-                                    >
-                                </p>
-                            </div>
-
-                            <button
-                                class="button-valider type"
-                                @click="onValide()"
-                            >
-                                VALIDER
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                
             </div>
 
                 </form>
@@ -280,25 +207,16 @@
 
 <script>
 import { Vue, watch, ref, computed, nextTick, onMounted } from "vue";
-import useCompanies from "../../composables/companies";
 import SideBar from "../layout/SideBar";
-import Main from "../Main.vue";
-import moment from "moment";
 import WaveLoader from "../WaveLoader";
-import { reactive } from "vue";
-import { useRouter, RouterView, useRoute } from "vue-router";
+
+import { useRouter, useRoute } from "vue-router";
 import { useStore } from "vuex";
 import {
-    DISPLAY_LOADER,
-    HIDE_LOADER,
-    LOADER_MODULE,
-    TOASTER_GET_ALL,
+
     TOASTER_MESSAGE,
     TOASTER_MODULE,
-    TOASTER_REMOVE_TOAST,
     CIBLE_INIT,
-    CIBLE_GET,
-    CIBLE_SET_CAMPAGNE_CATEGORY_ID,
     CIBLE_MODULE,
     CIBLE_GET_CUSTOMER_STATUT,
     CIBLE_GET_NAF,
@@ -308,10 +226,22 @@ import {
     CIBLE_GET_PREVIOUS_CAMPAGNE_LIST,
     CIBLE_CAMPAGNE_TOGGLE,
     CIBLE_GET_CAMPAGNE_SELECTION,
+    CIBLE_SET_UNIQUE_CONTACTS,
+    CIBLE_GET_UNIQUE_CONTACTS,
+    CIBLE_GET_UNSELECTED_EMAILS,
+    CIBLE_UNSET_UNSELECTED_EMAIL,
+    CIBLE_SET_UNSELECTED_EMAIL,
+    CIBLE_GET_FILTERED_EMAILS,
+    CIBLE_SET_FILTERED_EMAILS,
+    CIBLE_GET_PRICE,
+    CIBLE_CREATE_CAMPAGNE,
+    CIBLE_GET_CAMPAGNE_CATEGORY,
 } from "../../store/types/types";
+
+import {removeDuplicatesBy,formatPrice} from "../helpers/helpers.js"
 export default {
     components: {
-        Main,
+
         SideBar,
         WaveLoader,
     },
@@ -326,23 +256,30 @@ export default {
             },
         },
     },
-    data() {
-        return {
-            moment: moment,
-            posts: [],
-            categ_id: this.$route.params.cible_id,
-            ca_id: this.$route.params.categ_id,
-        };
-    },
+
     setup(props) {
         const store = useStore();
+        const router= useRouter();
+        const route =useRoute();
+        const campagne_category=computed(()=>store.getters[`${CIBLE_MODULE}${CIBLE_GET_CAMPAGNE_CATEGORY}`]);
         const customer_statuts=computed(()=>store.getters[`${CIBLE_MODULE}${CIBLE_GET_CUSTOMER_STATUT}`]);
         const nafs=computed(()=>store.getters[`${CIBLE_MODULE}${CIBLE_GET_NAF}`]);
+        const unique_contacts=computed(()=>store.getters[`${CIBLE_MODULE}${CIBLE_GET_UNIQUE_CONTACTS}`]);
         const previous_campagnes=computed(()=>store.getters[`${CIBLE_MODULE}${CIBLE_GET_PREVIOUS_CAMPAGNE_LIST}`]);
         const all_contacts=computed(()=>store.getters[`${CIBLE_MODULE}${CIBLE_GET_ALL_CONTACTS}`]);
+        const unselected_emails=computed(()=>store.getters[`${CIBLE_MODULE}${CIBLE_GET_UNSELECTED_EMAILS}`]);
+        const filtered_emails=computed(()=>store.getters[`${CIBLE_MODULE}${CIBLE_GET_FILTERED_EMAILS}`]);
+        const price=computed(()=>store.getters[`${CIBLE_MODULE}${CIBLE_GET_PRICE}`]);
+        
         const selections=ref([]);
         const selections_campagne=ref([]);
         const totalsel=ref(0);
+        const allemails=ref([]);
+        const uniqueContacts=ref([]);
+        const unselectedEmails=ref([]);
+        const retravailler_panel=ref(false);
+        const total_price = ref(0);
+        const filtersociete=ref('');
         
          selections.value= computed(()=>store.getters[`${CIBLE_MODULE}${CIBLE_GET_SELECTION}`]);
         const toggleCible=(naf,statut)=>{
@@ -364,6 +301,72 @@ export default {
             return false;
             return true;
         }
+        const allchecked=()=>{
+            if(unselectedEmails.value.length==0)
+            return true;
+
+            return false;
+        }
+        const validerSelection=()=>{
+             for(const i in unique_contacts.value){
+                    store.commit(`${CIBLE_MODULE}${CIBLE_UNSET_UNSELECTED_EMAIL}`,unique_contacts.value[i].email);
+                }
+        
+            for(const i in unselectedEmails.value){
+                      store.commit(`${CIBLE_MODULE}${CIBLE_SET_UNSELECTED_EMAIL}`,unselectedEmails.value[i]);
+                 
+                 }
+             retravailler_panel.value=false;
+             filtersociete.value='';
+        }
+        const retravaillerList=()=>{
+            console.log(unique_contacts.value.length);
+            if(unique_contacts.value.length>0){
+            retravailler_panel.value=true;
+            }else{
+                store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,{message: "Veuillez faire au moins une sélection.",ttl: 5,type: 'danger'});
+            }
+        }
+        const annuler=()=>{
+            unselectedEmails.value=[];
+            for(const i in unselected_emails.value){
+                unselectedEmails.value.push(unselected_emails.value[i]);
+            }
+            retravailler_panel.value=false;
+        }
+        const togglecheckedall=()=>{
+            if(unselectedEmails.value.length==0){
+                for(const i in unique_contacts.value){
+                    unselectedEmails.value.push(unique_contacts.value[i].email);
+                 
+                 
+                }
+            }else{
+                 for(const i in unique_contacts.value){
+                      unselectedEmails.value=unselectedEmails.value.filter(email=>email== unique_contacts.value[i].email);
+                  
+                }
+            }
+        }
+        const togglecheckedEmail=(email)=>{
+            const ischecked=unselectedEmails.value.filter(unselected_email=>unselected_email==email);
+
+            if(ischecked.length==0){
+                unselectedEmails.value.push(email);
+            
+            }else{
+    
+                  unselectedEmails.value=unselectedEmails.value.filter(unselected_email=>unselected_email!=email);
+              
+            }
+        }
+        const emailchecked=(email)=>{
+            const emailfound=unselectedEmails.value.filter(unselected_email=> unselected_email==email);
+            if(emailfound.length>0){
+                return false;
+            }
+            return true;
+        }
         const numcontacts=(naf,all_contacts)=>{
                 let c=0;
 
@@ -377,321 +380,103 @@ export default {
              
                 return c;
         }
-      
+    
           watch(() => all_contacts, (currentValue, oldValue) => {
                     totalsel.value=0
                     let allcontacts=currentValue.value
                     for (const k in allcontacts) {
-                    if(typeof allcontacts[k].contacts!="undefined")
-                    totalsel.value+=allcontacts[k].contacts.length;
-                    }   
+                        if(typeof allcontacts[k].contacts!="undefined"&& typeof allcontacts[k].naf!="undefined")
+                            totalsel.value+=allcontacts[k].contacts.length;
+                    }  
+                    allemails.value=[];
+                    for(const obj in allcontacts){
+
+                        let contacts=allcontacts[obj].contacts;
+
+                        for(const k in contacts){
+                            allemails.value.push(contacts[k]);
+                        }
+                    }
+               
+                    uniqueContacts.value=removeDuplicatesBy(x=>x.email,allemails.value);
+                    store.commit(`${CIBLE_MODULE}${CIBLE_SET_UNIQUE_CONTACTS}`,uniqueContacts.value);
+                   
             },
                 { deep: true }
             );
 
+            const processFinal=()=>{
+
+                const filteredcontacts=unique_contacts.value.filter(contact=>{
+                        if(unselected_emails.value.length==0)
+                        return true;
+                        const emails=unselected_emails.value.filter(email=>contact.email==email);
+                        if(emails.length==0)
+                        return true;
+
+                        return false;
+                });
+                total_price.value=price.value*filteredcontacts.length;
+                store.commit(`${CIBLE_MODULE}${CIBLE_SET_FILTERED_EMAILS}`,filteredcontacts);
+            }
+              watch(() => unique_contacts, (currentValue, oldValue) => {
+                  processFinal(); 
+                   
+            },
+                { deep: true }
+            );
+                 watch(() => unselected_emails, (currentValue, oldValue) => {
+                  processFinal(); 
+                   
+            },
+                { deep: true }
+                );
+            watch(()=>filtersociete.value,(currentValue,oldValue)=>{
     
-        const img_up =ref({});
-        const total_price = ref(0);
-        const campagne_rate = ref(0);
-        const distinct_email_count = ref(0);
+                uniqueContacts.value=unique_contacts.value.filter(uniqueContact=>uniqueContact.company.toLowerCase().includes(currentValue.toLowerCase()));
+            });
+            const createCampagne=()=>{
+                store.dispatch(`${CIBLE_MODULE}${CIBLE_CREATE_CAMPAGNE}`).then((response)=>{
+              
+                    router.push({
+                            name: "content",
+                            params: {
+                                cible_id: response.data.campagne_id,
+                                type: route.params.type,
+                            },
+                        });
+
+                }).catch((error)=>{
+                    if(typeof error.response!="undefined")
+                        store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,{message:`An error has occured: ${error.response.status} ${error.response.statusText}`,ttl:5,type:'danger'});
+                });
+            }
+       
         
         onMounted(() => {
 
                 store.dispatch(`${CIBLE_MODULE}${CIBLE_INIT}`,route.params.categ_id);
-                     
-
-            //to remove
-            const id = route.params.categ_id;
-
-            //to remove
-            localStorage.setItem("imagetemplate", id);
-
-            if (id) {
-                localStorage.setItem("id_category", id);
-                axios.get("/getTempname/" + id).then(function (response) {
-                    my_name.value = response.data;
-
-                    localStorage.setItem("category", my_name.value);
-                });
-
-                axios.post('/get-campagne-details',{id:id})
-                    .then((res)=>{
-                        if(res.data.campagne){
-                            campagne_rate.value = res.data.campagne.price;
-                        }
-                    }).catch((err)=>{
-
-                    }).finally(()=>{
-
-                    });
-
-            } else {
-                my_name.value = localStorage.getItem("category");
-            }
+            
+          
         });
 
-        const form = reactive({
-            data: "0",
-            data2: "ENTREPRISES & INDUSTRIES",
-        });
-       
-        store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [
-            true,
-            "Chargement en cours..",
-        ]);
-        const {
-           
-
-            string,
-            indus_length,
-            stat_length,
-            industries,
-            emails_selected,
-            status,
-            getCible,
-            router,
-            cibleSum,
-            getCompgneCible,
-            history_compagne,
-            getTemplates,
-            title,
-            getTempname,
-            ca_id,
-            my_name,
-        } = useCompanies();
-
-        onMounted(getCible);
-
-         const showcontainer = ref(false);
-        onMounted(() => {
-            nextTick(() => {
-                showcontainer.value = true;
+        
+        const goToHome=()=>{
+            router.push("/emailing");
+        };
+        const goToPrestation=()=>{
+      
+            router.push({
+                name: "emailingprestations",
+                params: {
+                    id: `${route.params.categ_id}`,
+                },
             });
-        });
-        //onMounted(getCompgneCible(props.cible_id));
-        const route = useRoute();
+        };
+       
+       
 
-        onMounted(() => {
-            store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [
-                true,
-                "Chargement en cours..",
-            ]);
-            //let history_compagne;
-            const route = useRoute();
-            //total_cible
-
-            if (route.params.cible_id) {
-
-                //window.top.location.reload();
-
-                let form_send;
-                let count;
-                axios
-                    .get("/getCompgneCibleSelected/" + route.params.cible_id)
-                    .then(function (response) {
-
-                        response.data.cibles.forEach(function (index) {
-                            //hneee
-                            form_send = {
-                                data: parseInt(index.type) - 1,
-                                data2: index.secteur,
-                            };
-                            axios
-                                .post("/ciblesum", form_send)
-                                .then(function (response) {
-
-                                    document
-                                        .querySelector(
-                                            '.matrice input[name="' +
-                                                response.data.index +
-                                                '"]'
-                                        )
-                                        .setAttribute(
-                                            "count",
-                                            response.data.count
-                                        );
-                                    document.querySelector(
-                                        '.matrice input[name="' +
-                                            response.data.index +
-                                            '"]'
-                                    ).checked = true;
-                                    count = response.data.count;
-                                    let elemt_total_mails =
-                                        document.getElementById("total_mails");
-                                    let total_mails = parseInt(
-                                        elemt_total_mails.innerText
-                                    );
-
-                                    let sum;
-                                    let chlidren = document.querySelector(
-                                        '.matrice input[name="' +
-                                            response.data.index +
-                                            '"]'
-                                    ).parentNode.parentNode.parentNode.children;
-
-                                    if (
-                                        chlidren[chlidren.length - 1].innerText
-                                    ) {
-                                        sum = parseInt(
-                                            chlidren[chlidren.length - 1]
-                                                .innerText
-                                        );
-                                        chlidren[
-                                            chlidren.length - 1
-                                        ].innerText = sum + count;
-                                    } else {
-                                        sum = 0;
-                                    }
-
-                                    sum += count;
-                                    elemt_total_mails.innerHTML =
-                                        total_mails + count;
-                                });
-                        });
-                        document.querySelector(".font.total").innerText =
-                            response.data.count[0].nb;
-                        let element_old = JSON.parse(route.params.element_old);
-                        console.log("element_old", element_old);
-                        if (element_old) {
-                            ///window.addEventListener("load", (event) => {
-                            console.log("tloadddd");
-                            setTimeout(() => {
-                                element_old.forEach(function (index) {
-                                    //////////////////
-                                    document.querySelector(
-                                        "[name='" + index + "']"
-                                    ).checked = true;
-                                    // var total_mails_final_el =
-                                    //     document.querySelector(".font.total");
-                                    var total_mails_final_el_total =
-                                        document.getElementById("total_mails");
-
-                                    // let total_mails_f = parseInt(
-                                    //     total_mails_final_el.innerText
-                                    // );
-                                    let total_mails_f_totl = parseInt(
-                                        total_mails_final_el_total.innerText
-                                    );
-
-                                    document.querySelector(
-                                        "[name='" + index + "']"
-                                    ).checked = true;
-                                    // total_mails_final_el.innerHTML =
-                                    //     total_mails_f +
-                                    //     parseInt(
-                                    //         document.querySelector(
-                                    //             "[name='" + index + "']"
-                                    //         ).value
-                                    //     );
-                                    total_mails_final_el_total.innerHTML =
-                                        total_mails_f_totl +
-                                        parseInt(
-                                            document.querySelector(
-                                                "[name='" + index + "']"
-                                            ).value
-                                        );
-                                });
-                            }, 2000);
-                            img_up.value={display:"none"};
-                            //document.getElementById(
-                              //  "img_update"
-                           // ).style.display = "none";
-                            //});
-
-                            document.querySelector(".font.total").innerText =
-                                response.data.count[0].nb;
-                        }
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    })
-                    .finally(() => {
-                        store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
-                    });
-            } else {
-                if (route.params.data) {
-                    //window.top.location.reload();
-                    let data_from_categ = JSON.parse(route.params.data);
-                    let index_ciblage;
-                    let str_ciblage, data_test, input_ciblage;
-
-                    data_from_categ.forEach(function (index) {
-                        index_ciblage = Object.keys(index);
-                        setTimeout(() => {
-                            for (const [key, value] of Object.entries(index)) {
-                                // window.addEventListener("load", function () {
-                                switch (
-                                    key.split(":")[0].trim().toLowerCase()
-                                ) {
-                                    case "cible":
-                                        data_test = 1;
-                                        break;
-                                    case "contact":
-                                        data_test = 2;
-                                        break;
-                                    case "suspect":
-                                        data_test = 3;
-                                        break;
-                                    case "prospect":
-                                        data_test = 4;
-                                        break;
-                                    case "client":
-                                        data_test = 5;
-                                        break;
-                                    case "fiche obsolete":
-                                        data_test = 6;
-                                        break;
-                                    case "fiche doublons":
-                                        data_test = 7;
-                                        break;
-                                }
-
-                                str_ciblage =
-                                    key.split(":")[1].trim() + "_" + data_test;
-
-                                input_ciblage = document.querySelector(
-                                    '.matrice input[name="' + str_ciblage + '"]'
-                                );
-                                document.querySelector(
-                                    '.matrice input[name="' + str_ciblage + '"]'
-                                ).checked = true;
-                                document
-                                    .querySelector(
-                                        '.matrice input[name="' +
-                                            str_ciblage +
-                                            '"]'
-                                    )
-                                    .dispatchEvent(new Event("change"));
-                                // });
-                            }
-                        }, 2000);
-                    });
-                    //;
-                         img_up.value={display:"none"};
-                   // document.getElementById("img_update").style.display =
-                   //     "none";
-                    store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
-                } else {
-                    store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
-                }
-            }
-        });
-
-        var checked_inputs = document.querySelectorAll(
-            '.matrice input[type="checkbox"]:checked'
-        );
-        let element = [];
-        var total = 0;
-        for (let index = 0; index < checked_inputs.length; index++) {
-            total += checked_inputs[index].count;
-        }
-
-        function formatPrice(val){
-            let n = parseFloat(val).toFixed(2);
-            return n.toString().replace(".",",");
-        }
-
-        const count_by_selection = ref({});
+       
 
         return {
              customer_statuts,
@@ -706,383 +491,38 @@ export default {
              totalsel,
              previous_campagnes,
              toggleCampagne,
-
-            img_up,
-            showcontainer,
-            form,
-            status,
-            industries,
-            stat_length,
-            indus_length,
-            total,
-            router,
-            string,
-            history_compagne,
-            title,
-            my_name,
-            total_price,
-            campagne_rate,
-            formatPrice,
-            count_by_selection,
-            distinct_email_count,
+             uniqueContacts,
+             allchecked,
+             emailchecked,
+             togglecheckedall,
+             togglecheckedEmail,
+             validerSelection,
+             annuler,
+             unselectedEmails,
+             retravailler_panel,
+             filtered_emails,
+             total_price,
+             filtersociete,
+             retravaillerList,
+             createCampagne,
+             router,
+             campagne_category,
+             formatPrice,
+             goToHome,
+             goToPrestation
+        
         };
     },
 
-    methods: {
-        onChange(event) {
-            let that = this;
-
-            let old_campagne_ids = [];
-
-            let history = document.querySelectorAll('.history:checked');
-
-            if(history.length > 0){
-                history.forEach(function(v,i){
-                    let campagne_id = v.getAttribute('data-campagne-id');
-                    old_campagne_ids.push(campagne_id);
-                })
-            }
-
-
-            let cur_cibles = document.querySelectorAll('.cur_cible_radio:checked');
-            let cur_cible_to_get = [];
-
-            if(cur_cibles.length > 0){
-                cur_cibles.forEach(function(v,i){
-                    let name = v.getAttribute('name');
-                    cur_cible_to_get.push(name);
-                });
-            }
-
-           let count = 0;
-
-            axios.post('/get-cible-emails',{
-                cibles: JSON.stringify(cur_cible_to_get),
-                old_campagne_ids:JSON.stringify(old_campagne_ids),
-            }).then((res)=>{
-                count = res.data.count;
-
-                that.total_price = parseFloat(count) * parseFloat(that.campagne_rate);
-
-                document.querySelector(".font.total").innerText = count;
-                document.getElementById('total_mails').innerText = res.data.new_emails.length;
-
-                document.querySelector(
-                        "#total_mails +span"
-                    ).style.marginLeft = "0px";
-                         that.img_up={display:"inline-block"};
-
-
-
-                that.count_by_selection = res.data.grouped_by_selection;
-
-                that.distinct_email_count = count;
-
-
-            }).catch((err)=>{
-                console.log(err);
-            }).finally(()=>{
-
-            });
-
-
-
-
-            /*
-            var index = event.target;
-            var string = index.name.split("_");
-            this.state = string[1] - 1;
-            var form = {
-                data: this.state,
-                data2: string[0],
-            };
-            let count;
-            var cible_id = this.$route.params.cible_id;
-            let that=this;
-            var cibleSum = axios
-                .post("/ciblesum", form)
-                .then(function (response) {
-
-                    event.target.setAttribute("count", response.data.count);
-                    count = response.data.count;
-                    let elemt_total_mails =
-                        document.getElementById("total_mails");
-                    let total_mails = parseInt(elemt_total_mails.innerText);
-
-                    let sum;
-                    let chlidren =
-                        event.target.parentNode.parentNode.parentNode.children;
-                    if (chlidren[chlidren.length - 1].innerText) {
-                        sum = parseInt(chlidren[chlidren.length - 1].innerText);
-                    } else {
-                        sum = 0;
-                    }
-                    if (event.target.checked == true) {
-                        sum += count;
-                        elemt_total_mails.innerHTML = total_mails + count;
-                        document.querySelector(".font.total").innerText =
-                            total_mails + count;
-                    } else {
-                        sum -= count;
-                        elemt_total_mails.innerText = total_mails - count;
-                        document.querySelector(".font.total").innerHTML =
-                            total_mails - count;
-                    }
-
-                    //console.log(sum);
-                    that.total_price = parseFloat(sum) * parseFloat(that.campagne_rate);
-
-
-                    chlidren[chlidren.length - 1].innerText = sum;
-                    document.querySelector(
-                        "#total_mails +span"
-                    ).style.marginLeft = "0px";
-                         that.img_up={display:"inline-block"};
-                   // document.getElementById("img_update").style.display =
-                     //   "inline-block";
-                });
-                */
-        },
-
-        goToCreate: function () {},
-        goToCreateHis: function () {},
-
-        onclickHis: function (event) {
-            var index = event.target.value;
-            var total_mails_final_el = document.querySelector(".font.total");
-            var total_mails_final_el_total =
-                document.getElementById("total_mails");
-            //var total_mails_f = total_mails_f_e.innerText;
-            let total_mails_f = parseInt(total_mails_final_el.innerText);
-            let total_mails_f_totl = parseInt(
-                total_mails_final_el_total.innerText
-            );
-
-            if (event.target.checked == true) {
-                total_mails_final_el.innerHTML =
-                    total_mails_f + parseInt(index);
-                total_mails_final_el_total.innerHTML =
-                    total_mails_f_totl + parseInt(index);
-            } else {
-                total_mails_final_el.innerHTML =
-                    total_mails_f - parseInt(index);
-                total_mails_final_el_total.innerHTML =
-                    total_mails_f_totl - parseInt(index);
-            }
-        },
-        validateSelection(){
-            let err = false;
-            let err_txt = "";
-
-             var checked_inputs = document.querySelectorAll(
-                '.matrice input[type="checkbox"]:checked'
-            );
-            var checked_inputs_old = document.querySelectorAll(
-                '.history_ligne input[type="checkbox"]:checked'
-            );
-
-            if(parseInt(checked_inputs.length)+parseInt(checked_inputs_old.length)==0){
-                err = true;
-                err_txt = "Pas d'emails selectionné";
-            }else{
-                if(this.distinct_email_count==0){
-                    err = true;
-                    err_txt = "Cette selection n'a pas d'email";
-                }
-            }
-
-            //console.log(this.distinct_email_count);
-
-            if(err){
-                this.$store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,
-                       {
-                            message: err_txt,
-                            ttl: 3,
-                            type: 'danger'
-                        });
-            }
-
-            return err;
-
-        },
-
-        creatCompagne: function () {
-
-
-             var checked_inputs = document.querySelectorAll(
-                '.matrice input[type="checkbox"]:checked'
-            );
-            var checked_inputs_old = document.querySelectorAll(
-                '.history_ligne input[type="checkbox"]:checked'
-            );
-
-        let err = this.validateSelection();
-
-        if(!err){
-            let element = [];
-            let element_old = [];
-            var string, form;
-            var string_old, form_old;
-            const route = useRoute();
-            let categ_id = this.$route.params.categ_id;
-            for (let index = 0; index < checked_inputs.length; index++) {
-                string = checked_inputs[index].name.split("_");
-                form = {
-                    type: string[1] - 1,
-                    status: string[0],
-                };
-                element.push(form);
-            }
-            for (let index = 0; index < checked_inputs_old.length; index++) {
-                string_old = parseInt(checked_inputs_old[index].name);
-                element_old.push(string_old);
-            }
-            var body = {
-                data: element,
-                data_old: element_old,
-                for_template: categ_id,
-              
-                count: parseInt(
-                    document.getElementById("total_mails").innerText
-                ),
-            };
-            let self = this;
-            var creatCompagne = axios
-                .post("/creatCompagne", body)
-                .then(function (response) {
-                    console.log(response.data.GLOBALS);
-                    self.$router.push({
-                        name: "segmentation",
-                        params: {
-                            cible_id: `${response.data.GLOBALS}`,
-                            type: self.$route.params.type,
-                            element_old: JSON.stringify(element_old),
-                        },
-                    });
-
-                    return self.$router;
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-
-            }
-        },
-        onValide: function () {
-            const route = useRoute();
-
-
-             var checked_inputs = document.querySelectorAll(
-                '.matrice input[type="checkbox"]:checked'
-            );
-            var checked_inputs_old = document.querySelectorAll(
-                '.history_ligne input[type="checkbox"]:checked'
-            );
-
-        let err = this.validateSelection();
-
-        if(!err){
-
-
-
-            let element = [];
-            let element_old = [];
-            var string, form;
-            var string_old, form_old;
-
-            let categ_id = this.$route.params.categ_id;
-            for (let index = 0; index < checked_inputs.length; index++) {
-                string = checked_inputs[index].name.split("_");
-                form = {
-                    type: string[1] - 1,
-                    status: string[0],
-                };
-                element.push(form);
-            }
-            for (let index = 0; index < checked_inputs_old.length; index++) {
-                string_old = parseInt(checked_inputs_old[index].name);
-                element_old.push(string_old);
-            }
-            var body = {
-                data: element,
-                data_old: element_old,
-                for_template: categ_id,
-           
-                count: parseInt(
-                    document.getElementById("total_mails").innerText
-                ),
-            };
-            let self = this;
-            if (this.$route.params.type == "COURRIER") {
-                var creatCompagne = axios
-                    .post("/creatCompagne", body)
-                    .then(function (response) {
-                        console.log(response.data.GLOBALS);
-                        self.$router.push({
-                            name: "mailingContenu",
-                            params: {
-                                cible_id: `${response.data.GLOBALS}`,
-                                type: self.$route.params.type,
-                            },
-                        });
-
-                        return self.$router;
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-            } else {
-                var creatCompagne = axios
-                    .post("/creatCompagne", body)
-                    .then(function (response) {
-                        console.log(response.data.GLOBALS);
-                        self.$router.push({
-                            name: "content",
-                            params: {
-                                cible_id: `${response.data.GLOBALS}`,
-                                type: self.$route.params.type,
-                            },
-                        });
-
-                        return self.$router;
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-            }
-        }
-        },
-        deleteOldCompagne: function (id) {
-            var data_cible = {
-                id: id,
-            };
-            axios
-                .put("/deleteOldCompagne/", data_cible)
-                .then((res) => {
-                    //posts = res.data.oldCompagne;
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-        },
-        goToHome() {
-            this.$router.push("/emailing");
-        },
-        goToPrestation() {
-            let id_category = localStorage.getItem("id_category");
-            //    this.$router.push('/emailing/emailingprestations/'`${id_category}`);
-            this.$router.push({
-                name: "emailingprestations",
-                params: {
-                    id: `${id_category}`,
-                },
-            });
-        },
-    },
+ 
 };
 </script>
 
 <style scoped>
+.cibletable {
+    width: 100%;
+    margin: 0;
+}
 .cibletable .col{
  flex:1;
 }
@@ -1124,7 +564,7 @@ export default {
     text-transform: uppercase;
     font-weight: bold;
 }
-.cibletable .circle{
+ .circle{
     width: 25px;
     height: 25px;
     display: block;
@@ -1134,7 +574,7 @@ export default {
     background-color: white;
     transition: background-color 0.3s ease-in-out;
 }
-.cibletable .circle.checked{
+ .circle.checked{
     background-color:  #ff4500;
 }
 .cibletable .lastcol{
@@ -1143,19 +583,37 @@ export default {
 .size-date {
     font-size: 12px;
 }
+.theader>div{
+    font-size:12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+}
+.tbody>div{
+    font-size: 12px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+
+}
+.tbody:nth-child(odd) {background: #CCC}
+.ml-0{
+    margin-left: 0;
+}
+.pr-0{
+    padding-right:0;
+}
+
 .margin-align {
     margin-bottom: 40px;
     margin-top: -34px;
     font-size: 17px;
     font-weight: bold;
 }
-.margin-ajustement {
-    /*margin-bottom: 75px;*/
-    margin-top: 39px;
-}
-.ajustement {
-    display: flex;
-}
+
+
 
 .container {
     padding-bottom: 100px;
@@ -1198,67 +656,18 @@ export default {
     font-size: x-small;
     font-weight: bold;
 }
-.vl {
-    border-left: 1px solid black;
-    height: 100%;
-    margin-left: 145px;
-}
+
 .emphasized {
     font-style: italic;
     font-weight: 400;
 }
-.radio {
-    --checkbox-color: greenyellow;
-    --checkmark-color: purple;
-}
+
 .radio {
     width: 15px;
     height: 15px;
 }
-input[type="checkbox"] {
-    -moz-appearance: initial;
-}
-input[type="checkbox"]:before {
-    content: "";
-    width: 25px;
-    height: 25px;
-    border-radius: 15px;
-    top: -5px;
-    left: -5px;
-    position: relative;
-    background-color: white;
-    display: inline-block;
-    visibility: visible;
-    border: 1px solid #ff4500;
-    cursor: pointer;
-}
-input[type="checkbox"] {
-    -moz-appearance: initial;
-}
-input[type="checkbox"]:checked:before {
-    width: 25px;
-    height: 25px;
-    border-radius: 15px;
-    top: -5px;
-    left: -5px;
-    position: relative;
-    background-color: #ff4500;
-    content: "";
-    display: inline-block;
-    visibility: visible;
-    border: 1px solid white;
-    border: none !important;
-}
 
-.radio input[type="checkbox"]::checked + label::after {
-    border-color: #ff4500;
-    border: none !important;
-}
-.butt-class {
-    background-color: #d3d3d3;
-    font-weight: normal;
-    text-align: center;
-}
+
 .line {
     border-bottom: 1px;
     border-style: none solid dotted dashed;
@@ -1303,92 +712,28 @@ input[type="checkbox"]:checked:before {
     text-align: center;
     line-height: 1;
 }
-.bord {
-    width: 117px;
-    padding: 10px;
-    border: 1px solid orangered;
-}
-.column {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 328px;
-    padding-left: 40px;
-}
+
 .left {
     text-align: end;
-}
-input.history[type="checkbox"] {
-    width: 5px;
-    height: 15px;
-    margin-right: 9px;
-    border: 2px;
-}
-input[type="checkbox"] {
-    -moz-appearance: initial;
-}
-input.history[type="checkbox"]:before,
-input.history[type="checkbox"]:checked:before {
-    width: 15px;
-    height: 15px;
-    top: 3px;
-    left: -2px;
 }
 .border-right {
     border-right: 1px solid #000;
     padding-right: 40px;
 }
-.vertical-name {
-    line-height: 1;
-    text-align: center;
-    text-transform: uppercase;
-    min-width: 80px;
-}
-tr {
-    height: 73px;
-}
-.history_ligne {
-    border-bottom: 1px dashed;
-}
+
+
 .retravailler {
     margin-top: 60px;
     justify-content: end;
 }
-th.cercle {
-    min-width: 75px;
-    max-width: 75px;
-    text-align: center;
-}
+
 .total {
     height: auto;
     position: relative;
 }
-.total th {
-    position: absolute;
-    right: 0;
-    margin-top: 5px;
-}
 
-.total img {
-    width: 35px;
-}
-.table-borderless tbody th.name_vertical {
-    padding: 0px;
-    font-size: 12px;
-    text-align: right;
-    padding-right: 10px;
-    line-height: 1.3;
-    text-transform: uppercase;
-}
-.table-borderless thead tr {
-    height: 45px;
-}
-.table-borderless thead th span {
-    text-transform: uppercase;
-}
-.table-borderless thead th.center span {
-    text-transform: inherit;
-}
+
+
 .bloc_count {
     width: 150px;
     margin-top: 30px;
@@ -1399,18 +744,9 @@ th.cercle {
 .bloc_count p {
     margin-bottom: 0;
 }
-#total_mails + span {
-    margin-left: 25px;
-}
-#img_update {
-    display: none;
-}
-.close {
-    cursor: pointer;
-}
-@media (min-width: 1200px) .container {
-    max-width: 1200px;
-}
+
+
+
 .link {
     cursor: pointer;
     text-decoration: none;
