@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class reportsResource extends JsonResource
+class ReportsResource extends JsonResource
 {
     
     use GedFileProcessor;
@@ -57,7 +57,7 @@ class reportsResource extends JsonResource
 
     private function get_customer_address($events) 
     {
-        $customer_address = $events?->last()?->address; 
+        $customer_address = optional($events->last())->address; 
         if(!is_null($customer_address)) 
         {
             return $customer_address->first()->only([
@@ -93,15 +93,6 @@ class reportsResource extends JsonResource
     private function get_zone_ouvrages_in_order_category($zone, $id) 
     {
         return $zone->orderOuvrage->where('order_cat_id', $id)->pluck('id')->toArray();
-
-        // ->filter()
-        // ->map(function($ouvrage) { 
-        //     return [
-        //         'id'   => $ouvrage->id,
-        //         'type' => $ouvrage->type,
-        //         'name' => $ouvrage->name
-        //     ];
-        // });
     }
 
     private function get_order_zones($orderZones) 

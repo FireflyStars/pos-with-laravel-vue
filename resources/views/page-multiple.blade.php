@@ -258,17 +258,17 @@
                             class="{{ $element->attributes->class ?? 'draggable' }} table"
                             style="{{ $element->attributes->style ?? '' }} position: absolute;" 
                         >
-                            <tr @if($element->attributes?->headers ?? true) @endif>
+                            <tr @if(optional($element->attributes)->headers ?? true) @endif>
                                 @for ($i = 1; $i <= $element->attributes->cols; $i++)
                                     <?php $col = '1'.$i; ?>
-                                    <th>{{ ucFirst($element->content->header?->$col ?? 'title ' . $i) }}</th>
+                                    <th>{{ optional(ucFirst($element->content->header)->$col ?? 'title ' . $i) }}</th>
                                 @endfor    
                             </tr>
                             @for($row = 1; $row <= $element->attributes->rows; $row++)
                                 <tr>
                                     @for($col = 1; $col <= $element->attributes->cols; $col++)
                                         <?php $rowValue = $row .''. $col; ?>
-                                        <td>{{ $element->content->body?->$rowValue ?? 'Col '. $col }}</td>
+                                        <td>{{ optional($element->content->body)->$rowValue ?? 'Col '. $col }}</td>
                                     @endfor
                                 </tr>
                             @endfor

@@ -95,20 +95,19 @@ import {
                         password: password.value
                     })
                         .then(function (response) {
-               
                             if (response.data.user != null) {
                                 window.sessionStorage.setItem('name', response.data.user.name);
                                 window.sessionStorage.setItem('auth', window.btoa(email.value));
                                 window.sessionStorage.setItem('roles', window.btoa(JSON.stringify(response.data.roles)));
                                 window.sessionStorage.setItem('profile_permissions', window.btoa(JSON.stringify(response.data.profile_permissions)));
                           
-                                /*router.push({
+                                router.replace({
                                    name:'LandingPage',
                                    query: {
                                        ...route.query,
                                    },
-                               })*/
-                                window.location = '/'
+                                })
+                                // window.location = '/'
                             } else {
                                 store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
                                     type: 'danger',

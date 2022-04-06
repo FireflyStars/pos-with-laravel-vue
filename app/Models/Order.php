@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use App\Traits\Tools;
+use App\Models\Report;
 use App\Models\Contact;
-use App\Traits\LcdtLog;
 
+use App\Traits\LcdtLog;
 use App\Models\Customer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
@@ -41,6 +42,11 @@ class Order extends Model
     public function contact() 
     {
         return $this->belongsTo(Contact::class, 'responsable_id');
+    }
+
+    public function report() 
+    {
+        return $this->hasOne(Report::class);
     }
 
     public function updateState($order_state_id,$user_id=null){

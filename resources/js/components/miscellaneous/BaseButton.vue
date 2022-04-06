@@ -55,6 +55,15 @@
             classes: {
                 type: [String, Object],
                 default: ''
+            },
+            size: {
+                required: false,
+                type: String,
+                default: 'md',
+                validator(value) {
+                    return ['sm', 'md', 'lg'].includes(value)
+                },
+                
             }
         },
         
@@ -66,7 +75,7 @@
                     classes = Object.keys(props.classes)
                 }
                 else classes = props.classes.split(',')
-                return [props.kind, ...classes]
+                return [props.kind, 'button-' + props.size, ...classes]
             })
 
             return {
@@ -86,7 +95,6 @@
         display: flex;
         align-items:center;
         gap: 4px;
-        padding: 7px 18px;
         position: relative;
         background: #ECECEC;
         border: 1px solid #47454B;
@@ -96,11 +104,29 @@
         font-family: 'Almarai';
         font-style: normal;
         font-weight: bold;
+        transition: all .1s;
+        padding: 7px 18px;
         font-size: 16px;
         line-height: 140%;
-        transition: all .1s;
+        
         &:hover {
             opacity: 0.9;
+        }
+        &-sm {
+            padding: 5px 12px;
+            font-size: 12px;
+            line-height: 100%;
+            font-weight: 600;
+        }
+        &-md {
+            padding: 7px 18px;
+            font-size: 16px;
+            line-height: 140%;
+        }
+        &-lg {
+            padding: 10px 24px;
+            font-size: 18px;
+            line-height: 160%;
         }
     }
     button.danger {

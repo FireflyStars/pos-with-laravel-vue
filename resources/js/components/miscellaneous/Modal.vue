@@ -17,6 +17,7 @@
                 class="popup__close" 
                 href="#" 
                 @click.prevent="toggleModal(id, false)"
+                v-if="!readonly"
             >
                 &times;
             </a>
@@ -62,7 +63,13 @@ export default {
             required: false,
             type: String,
             default: ''
-        }
+        },
+
+        readonly: {
+            required: false,
+            type: Boolean,
+            default: false
+        },
     },
 
     setup(props) {

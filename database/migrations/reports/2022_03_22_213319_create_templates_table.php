@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateReportTemplatesTable extends Migration
+class CreateTemplatesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,12 @@ class CreateReportTemplatesTable extends Migration
      */
     public function up()
     {
-        Schema::create('report_templates', function (Blueprint $table) {
+        Schema::create('templates', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('header');
-            $table->string('footer');
-            $table->string('storage_path');
-            $table->string('type');
-            $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('affiliate_id');
+            $table->json('pages');
+            $table->json('page_files')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

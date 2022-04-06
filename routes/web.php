@@ -3,14 +3,15 @@
 use TCG\Voyager\Facades\Voyager;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\CibleController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\CibleController;
+use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\CompagneController;
 use App\Http\Controllers\LcdtAdminController;
 use App\Http\Controllers\LcdtFrontController;
+use App\Http\Controllers\TemplatesController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\PageElementsController;
-use App\Http\Controllers\PageTemplatesController;
 
 
 Route::group(['prefix' => 'admin'], function () {
@@ -21,10 +22,16 @@ Route::group(['prefix' => 'admin'], function () {
 
 Route::post('/save-page-elements', [PageElementsController::class, 'store']);
 
-Route::get('/page-templates', [PageTemplatesController::class, 'index']);
-Route::post('/page-template', [PageTemplatesController::class, 'store']);
-Route::get('/page-template/{report_page}', [PageTemplatesController::class, 'show']);
-Route::post('/page-template/{report_page}', [PageTemplatesController::class, 'update']);
+Route::get('/report-templates', [TemplatesController::class, 'index']);
+Route::post('/report-template', [TemplatesController::class, 'store']);
+Route::get('/report-template/{template}', [TemplatesController::class, 'show']);
+Route::post('/report-template/{template}', [TemplatesController::class, 'update']);
+
+Route::get('/page-reports', [ReportsController::class, 'index']);
+Route::post('/page-report', [ReportsController::class, 'store']);
+Route::get('/page-report/{order}', [ReportsController::class, 'show']);
+Route::post('/page-report/{order}', [ReportsController::class, 'update']);
+
 
 Route::get('/get-page-order/{order}', [PageElementsController::class, 'get_page_order']);
 Route::get('/get-templates', [PageElementsController::class, 'get_page_templates']);

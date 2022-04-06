@@ -1,7 +1,17 @@
 
 import { unref } from 'vue'
+import store from '../../store/store'
+
+import {
+    BUILDER_MODULE,
+    SAVE_REPORT,
+    SAVE_REPORT_PAGES,
+    RESET_PAGES
+}
+from '../../store/types/types'
 
 export default function useReports() {
+
     
     const formatFormData = (pages) => {
 
@@ -31,7 +41,6 @@ export default function useReports() {
         return formData
     
     }
-
 
     const getFormattedPages = (data) => {
 
@@ -75,8 +84,31 @@ export default function useReports() {
 
     }
 
+    const saveReportPages = (data) => {
+        if(!_.isEmpty(data)) {
+            const pages = typeof pages == 'string' ? JSON.parse(data.pages) : data.pages
+            console.log(pages.length, !pages.length)
+            if(!pages.length) {
+                resetPages()
+                return
+            }
+            const formattedPages = getFormattedPages(data)
+            store.commit(`${BUILDER_MODULE}/${SAVE_REPORT_PAGES}`, formattedPages)
+        }
+    }
+
+    const resetPages = () => {
+        store.commit(`${BUILDER_MODULE}/${SAVE_REPORT}`, {
+            id: null, 
+            status: 'store' 
+        })
+        store.commit(`${BUILDER_MODULE}/${RESET_PAGES}`, [])
+    }
+
     return {
+        resetPages,
         formatFormData,
+        saveReportPages,
         getFormattedPages
     }
 

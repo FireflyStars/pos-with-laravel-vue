@@ -28,9 +28,19 @@ const router = createRouter({
 
         },
         {
-            path:'/reports/:id',
+            path:'/reports',
             name:'reports',
-            component: () => import('../pages/Reports'),
+            component: () => import('../pages/Reports/Index'),
+            props: true,
+            meta:{
+                authenticated: true
+            },
+
+        },
+        {
+            path:'/reports/:id',
+            name:'report-page',
+            component: () => import('../pages/Reports/Show'),
             props: true,
             meta:{
                 authenticated: true

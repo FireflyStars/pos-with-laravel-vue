@@ -11,7 +11,7 @@ class page_builder extends Model
 
     public static function get_active_template($id) 
     {
-        return self::templates()->where('id', $id)?->first();
+        return optional(self::templates()->where('id', $id))->first();
     }
 
     public static function convert_base64($path) 

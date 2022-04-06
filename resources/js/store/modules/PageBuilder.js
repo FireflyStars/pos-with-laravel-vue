@@ -3,7 +3,7 @@ import useHelpers from '../../composables/useHelpers'
 import useReports from '../../composables/reports/useReports'
 
 const { generateId } = useHelpers()
-const { formatFormData, getFormattedPages } = useReports()
+const { formatFormData, getFormattedPages, saveReportPages } = useReports()
 
 import { 
     
@@ -21,6 +21,7 @@ import {
     SET_ACTIVE_PAGE,
     LOAD_REPORT_PAGES,
     SAVE_REPORT_PAGES,
+    RESET_PAGES,
     DELETE_ITEM,
     GENERATE_ELEMENT,
     UPDATE_ELEMENT_STYLES,
@@ -31,7 +32,11 @@ import {
     SAVE_REPORT_TEMPLATES,
     UPDATE_REPORT_TEMPLATE,
     GET_REPORT_TEMPLATE,
-    GET_REPORT_TEMPLATES
+    GET_REPORT_TEMPLATES,
+    GET_REPORTS,
+    SAVE_REPORTS,
+    SAVE_REPORT,
+    GET_REPORT
 
 } from "../types/types"
 
@@ -46,6 +51,11 @@ export const PageBuilder = {
         pages: [],
         order: {},
         templates: [],
+        reports: [],
+        report: {
+            id: null,
+            status: 'store'
+        },
         reportTemplates: [],
         activeTemplate: -1,
         activePage: 0,
@@ -60,6 +70,8 @@ export const PageBuilder = {
         pages: state => state.pages,
         order: state => state.order,
         templates: state => state.templates,
+        report: state => state.report,
+        reports: state => state.reports,
         reportTemplates: state => state.reportTemplates,
         activeTemplate: state => state.activeTemplate,
         template: state => {
@@ -108,6 +120,9 @@ export const PageBuilder = {
                 elements: [],
                 template_id: state.activeTemplate || -1
             }]
+        },
+        [RESET_PAGES](state) {
+            state.pages = []
         },
         [ADD_PAGE](state) {
             state.pages.splice(+state.activePage + 1, 0, {
@@ -158,6 +173,12 @@ export const PageBuilder = {
         },
         [SAVE_REPORT_TEMPLATES](state, data) {
             state.reportTemplates = data
+        },
+        [SAVE_REPORTS](state, reports) {
+            state.reports = reports
+        },
+        [SAVE_REPORT](state, report) {
+            state.report = report
         }
     },
 
@@ -218,7 +239,7 @@ export const PageBuilder = {
             formData.append('name', name)
 
             try {
-                const { data } = await axios.post('/page-template', formData)
+                const { data } = await axios.post('/report-template', formData)
                 commit(SET_LOADING, { id: 'save-template', value: false })
                 return data
             }
@@ -240,7 +261,7 @@ export const PageBuilder = {
             formData.append('name', name)
 
             try {
-                const { data } = await axios.post(`/page-template/${id}`, formData)
+                const { data } = await axios.post(`/report-template/${id}`, formData)
                 commit(SET_LOADING, { id: 'save-template', value: false })
                 return data
             }
@@ -253,23 +274,58 @@ export const PageBuilder = {
 
         async [GET_REPORT_TEMPLATE]({ commit }, id) {
             try {
-                const { data } = await axios.get(`/page-template/${id}`)
-                if(!_.isEmpty(data)) {
-                    const pages = typeof pages == 'string' ? JSON.parse(data.pages) : data.pages
-                    const formattedPages = getFormattedPages(data)
-                    console.log(formattedPages, formattedPages.length)
-                    commit(SAVE_REPORT_PAGES, formattedPages)
-                }
+                const { data } = await axios.get(`/report-template/${id}`)
+                saveReportPages(data)
             }
             catch(e) {
                 throw e
             }
         },
 
+        async [GET_REPORT]({ commit }, orderId) {
+            try {
+                const { data } = await axios.get(`/page-report/${orderId}`)
+                saveReportPages(data)
+                data.report_id != null ? commit(SAVE_REPORT, {
+                    id: data.report_id, 
+                    status: 'update' 
+                }) : {}
+            }
+            catch(e) {
+                throw e
+            }
+        },
+
+        async [SAVE_REPORT]({ commit, state }, { pages, orderId, templateId }) {
+            
+            let path = '/page-report'
+            if(state.report.status == 'update') path += `/${orderId}`
+
+            try {
+                
+                commit(SET_LOADING, { id: 'save-report' })
+
+                const formData = formatFormData(pages)
+                formData.append('template_id', templateId)
+                formData.append('order_id', orderId)
+                formData.append('report_id', state.report.id)
+
+                await axios.post(path, formData)
+                commit(SET_LOADING, { id: 'save-report', value: false })
+
+            }
+            
+            catch(e) {
+                commit(SET_LOADING, { id: 'save-report', value: false })
+                throw e
+            }
+
+        },
+
         async [GET_REPORT_TEMPLATES]({ commit }) {
             try {
                 commit(SET_LOADING, { id: 'fetching' })
-                const { data } = await axios.get('/page-templates')
+                const { data } = await axios.get('/report-templates')
                 commit(SAVE_REPORT_TEMPLATES, data)
                 commit(SET_LOADING, { id: 'fetching', value: false })
             }
@@ -277,7 +333,20 @@ export const PageBuilder = {
                 commit(SET_LOADING, { id: 'fetching', value: false })
                 throw e
             }
-        }
+        },
+
+        async [GET_REPORTS]({ commit }) {
+            try {
+                commit(SET_LOADING, { id: 'fetching' })
+                const { data } = await axios.get('/page-reports')
+                commit(SAVE_REPORTS, data)
+                commit(SET_LOADING, { id: 'fetching', value: false })
+            }
+            catch(e) {
+                commit(SET_LOADING, { id: 'fetching', value: false })
+                throw e
+            }
+        },
 
 
     }

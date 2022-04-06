@@ -103,7 +103,7 @@
                                     </div>
 
                                     <Moveable
-                                        v-if="showcontainer && pages.length"
+                                        v-if="showcontainer"
                                         className="moveable"
                                         v-bind:target="[activeItem]"
                                         v-bind:draggable="true"
@@ -142,7 +142,6 @@
 
 <script>
 
-import Swal from 'sweetalert2'
 import { useStore } from 'vuex'
 import { onMounted, unref, ref, nextTick, computed, watch, provide } from 'vue'
 
@@ -150,7 +149,6 @@ import {
     BUILDER_MODULE, 
     SAVE_PAGE,
     GET_TEMPLATES,
-    SAVE_REPORT_PAGES,
     DELETE_ITEM,
     GENERATE_ELEMENT,
     UPDATE_ELEMENT_STYLES,
@@ -170,6 +168,8 @@ import reportTable from '../../components/reports/report-table'
 import useStyles from '../../composables/reports/useStyles'
 import useHelpers from '../../composables/useHelpers'
 import useElementsGenerator from '../../composables/reports/useElementsGenerator'
+import useReports from '../../composables/reports/useReports'
+
 
 export default {
 
@@ -201,8 +201,9 @@ export default {
             generateImage, 
             generateTable 
         } = useElementsGenerator()
+        const { resetPages } = useReports()
 
-        const activeItem = ref('#myTable')
+        const activeItem = ref(null)
         const showcontainer = ref(false)
         const activeElement = ref({})
         const activeDomElement = ref(null)
@@ -397,9 +398,10 @@ export default {
         watch(page, () => activeItem.value = null)
 
         onMounted(() => {
+            resetPages()
             nextTick(async () => {
-                showcontainer.value = true
                 await getPageTemplate()
+                showcontainer.value = true
                 await fetchTemplates()
             })
         })

@@ -171,6 +171,8 @@ import reportTable from '../../components/reports/report-table'
 import useStyles from '../../composables/reports/useStyles'
 import useHelpers from '../../composables/useHelpers'
 import useElementsGenerator from '../../composables/reports/useElementsGenerator'
+import useReports from '../../composables/reports/useReports'
+
 
 export default {
 
@@ -196,7 +198,9 @@ export default {
             generateTable 
         } = useElementsGenerator()
 
-        const activeItem = ref('#myTable')
+        const { resetPages } = useReports()
+
+        const activeItem = ref(null)
         const showcontainer = ref(false)
         const activeElement = ref({})
         const activeDomElement = ref(null)
@@ -356,7 +360,7 @@ export default {
         }
 
         const saveTemplate = async () => {
-
+            activeItem.value = null
             const { value: name } = await Swal.fire({
                 title: 'Sauvegarde',
                 input: 'text',
@@ -404,6 +408,7 @@ export default {
         watch(page, () => activeItem.value = null)
 
         onMounted(() => {
+            resetPages()
             loadPages()
             nextTick(async () => {
                 showcontainer.value = true

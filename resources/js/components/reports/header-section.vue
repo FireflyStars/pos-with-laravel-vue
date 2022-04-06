@@ -188,7 +188,7 @@ export default {
 
         const saving = computed(() => {
             const { id, value } = store.getters[`${BUILDER_MODULE}/loading`]
-            return id == 'save-template' && value
+            return ['save-template', 'save-report'].includes(id) && value
         })
 
         const activeTemplate = computed({

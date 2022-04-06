@@ -22,7 +22,7 @@
 
                                     <header-section 
                                         @submitPage="submitPage"
-                                        @save="saveTemplate" 
+                                        @save="saveReport" 
                                     />
                                     
                                     <div class="shadow-sm builder-container" @click="activeItem=null">
@@ -87,7 +87,6 @@
                                                 >
                                                     &times;
                                                 </span>
-                                                
 
                                             </div>
                                             
@@ -114,6 +113,7 @@
                                     <Modal 
                                         id="report-templates"
                                         classes="d-flex justify-content-center py-5" 
+                                        readonly
                                     >
                                         <div>
                                             <h4>Templates List</h4>
@@ -127,6 +127,15 @@
                                                     :selectStyles="{ maxHeight: '12rem', overflow: 'auto' }"
                                                 />          
                                             </div>
+                                            <BaseButton 
+                                                kind="default" 
+                                                title="Add New" 
+                                                class="mb-2 mt-4"
+                                                size="sm"
+                                                @click="$router.push({
+                                                    name: 'templates-add'
+                                                })"
+                                            />
                                         </div>
                                     </Modal>
 
@@ -170,34 +179,36 @@
 
 import { useStore } from 'vuex'
 import { onMounted, unref, ref, nextTick, computed, watch, provide } from 'vue'
-import useModal from '../composables/useModal'
 
 import { 
-    BUILDER_MODULE, 
     SAVE_PAGE,
-    GET_ORDER_DETAILS, 
-    GET_TEMPLATES,
+    GET_REPORT,
+    SAVE_REPORT,
     DELETE_ITEM,
+    GET_TEMPLATES,
+    BUILDER_MODULE, 
     GENERATE_ELEMENT,
-    UPDATE_ELEMENT_STYLES,
-    UPDATE_ELEMENT_CONTENT,
-    UPDATE_ELEMENT_TABLE,
-    UPDATE_TABLE_CONTENT,
+    GET_ORDER_DETAILS, 
     GET_REPORT_TEMPLATE,
     GET_REPORT_TEMPLATES,
-    UPDATE_REPORT_TEMPLATE
-} from '../store/types/types'
+    UPDATE_TABLE_CONTENT,
+    UPDATE_ELEMENT_TABLE,
+    UPDATE_ELEMENT_STYLES,
+    UPDATE_ELEMENT_CONTENT,
+} from '../../store/types/types'
 
 import Moveable from "vue3-moveable"
-import popup from '../components/reports/popup'
-import adjouterZone from '../components/reports/adjouter-zone'
-import headerSection from '../components/reports/header-section'
-import reportOrderResources from '../components/reports/report-order-resources'
-import reportTable from '../components/reports/report-table'
+import popup from '../../components/reports/popup'
+import adjouterZone from '../../components/reports/adjouter-zone'
+import headerSection from '../../components/reports/header-section'
+import reportOrderResources from '../../components/reports/report-order-resources'
+import reportTable from '../../components/reports/report-table'
 
-import useStyles from '../composables/reports/useStyles'
-import useHelpers from '../composables/useHelpers'
-import useElementsGenerator from '../composables/reports/useElementsGenerator'
+import useModal from '../../composables/useModal'
+import useStyles from '../../composables/reports/useStyles'
+import useHelpers from '../../composables/useHelpers'
+import useElementsGenerator from '../../composables/reports/useElementsGenerator'
+import useReports from '../../composables/reports/useReports'
 
 export default {
 
@@ -230,20 +241,21 @@ export default {
             generateImage, 
             generateTable 
         } = useElementsGenerator()
+        const { resetPages } = useReports()
 
         const activeItem = ref(null)
         const showcontainer = ref(false)
         const activeElement = ref({})
         const activeDomElement = ref(null)
         const openPopup = ref(false)
-
+        const formattedReportTemplates = ref([])
+        const activeReportTemplate = ref(0)
+        
         const activePage = computed(() => store.getters[`${BUILDER_MODULE}/activePage`])
         const page = computed(() => store.getters[`${BUILDER_MODULE}/page`])
         const pages = computed(() => store.getters[`${BUILDER_MODULE}/pages`])
 
         const reportTemplates = computed(() => store.getters[`${BUILDER_MODULE}/reportTemplates`])
-        const formattedReportTemplates = ref([])
-        const activeReportTemplate = ref(0)
 
         const template = computed(() => store.getters[`${BUILDER_MODULE}/template`])
         const activePageTemplate = computed(() => store.getters[`${BUILDER_MODULE}/activePageTemplate`])
@@ -413,10 +425,11 @@ export default {
             return store.dispatch(`${BUILDER_MODULE}/${GET_ORDER_DETAILS}`, props.id)
         }
 
-        const saveTemplate = () => {
-            store.dispatch(`${[BUILDER_MODULE]}/${[UPDATE_REPORT_TEMPLATE]}`, {
+        const saveReport = () => {
+            store.dispatch(`${[BUILDER_MODULE]}/${[SAVE_REPORT]}`, {
                 pages,
-                orderId: props.id
+                orderId: props.id,
+                templateId: activeReportTemplate.value
             })
         }
 
@@ -453,6 +466,19 @@ export default {
             return Promise.resolve()
         }
 
+        const getReport = async () => {
+            await store.dispatch(`${BUILDER_MODULE}/${GET_REPORT}`, props.id)
+            if(!pages.value.length) {
+                toggleModal('report-templates')
+                await getReportTemplates()
+            }
+            else {
+                getOrderDetails()
+                fetchTemplates()
+            }
+            return Promise.resolve()
+        }
+
         const getReportTemplate = async (id) => {
             await store.dispatch(`${[BUILDER_MODULE]}/${[GET_REPORT_TEMPLATE]}`, id)
             return Promise.resolve()
@@ -477,10 +503,10 @@ export default {
         })
 
         onMounted(() => {
+            resetPages()
             nextTick(async () => {
-                toggleModal('report-templates')
+                await getReport()
                 showcontainer.value = true
-                await getReportTemplates()
             })
         })
       
@@ -498,8 +524,8 @@ export default {
             toggleModal,
             deleteItem,
             submitPage,
+            saveReport,
             promptImage,
-            saveTemplate,
             activateItem,
             showcontainer,
             generateElement,
