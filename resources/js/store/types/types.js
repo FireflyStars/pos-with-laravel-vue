@@ -102,3 +102,5 @@ export const UPDATE_ELEMENT_CONTENT = 'updateElementContent'
 export const UPDATE_ELEMENT_TABLE = 'updateElementTable'
 export const UPDATE_TABLE_CONTENT = 'updateTableContent'
 export const SET_LOADING = 'setLoading'
+
+export const SAVE_META = 'saveMeta'

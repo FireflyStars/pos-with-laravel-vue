@@ -14,7 +14,7 @@
                     <side-bar />
 
                     <div class="col main-view container">
-                        <h4 class="tile_h1 flex align-items-center gap-2 mt-2">
+                        <h4 class="tile_h1 flex align-items-center gap-3 mt-2">
                             <Icon name="report" width="32" height="32" />
                             Reports List
                         </h4>
@@ -82,6 +82,14 @@
                                 </tbody>
                             </table>
 
+                            <pagination 
+                                v-if="reports.length"
+                                :total="meta.total"
+                                :page="meta.current_page" 
+                                :perPage="meta.per_page"
+                                @change="changePage"
+                            />
+
                         </div>
 
                     </div>
@@ -96,22 +104,28 @@
 
 <script>
 
+import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
-import { onMounted, ref, nextTick, computed } from 'vue'
+import { onMounted, ref, nextTick, computed, watch } from 'vue'
 
 import { 
     BUILDER_MODULE, 
     GET_REPORTS
 } from '../../store/types/types'
 
-
+import pagination from '../../components/miscellaneous/pagination'
 
 export default {
 
+    components: {
+        pagination
+    },
 
     setup() {
 
         const store = useStore()
+        const route = useRoute()
+        const router = useRouter()
 
         const showcontainer = ref(false)
 
@@ -121,21 +135,43 @@ export default {
         })
 
         const reports = computed(() => store.getters[`${BUILDER_MODULE}/reports`])
+        const meta = computed(() => store.getters[`${BUILDER_MODULE}/meta`])
 
-        const getReports = () => {
-            store.dispatch(`${[BUILDER_MODULE]}/${[GET_REPORTS]}`)
+        const changePage = (page) => {
+            router.replace({
+                name: 'reports',
+                query: {
+                    page
+                }
+            })
         }
+
+        const getReports = (page = 1) => {
+            store.dispatch(`${[BUILDER_MODULE]}/${[GET_REPORTS]}`, page)
+        }
+
+        watch(route, (to) => {
+            if(to.query.page == meta.current_page) return
+            getReports(to.query.page)
+        }, {
+            flush: 'pre',
+            immediate: true,
+            deep: true
+        })
 
         onMounted(() => {
             nextTick(() => {
                 showcontainer.value = true
-                getReports()
+                getReports(route.query.page || 1)
             })
         })
       
         return { 
+            meta,
             reports,
             fetching,
+            getReports,
+            changePage,
             showcontainer,
         }
     },

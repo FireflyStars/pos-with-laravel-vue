@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\TemplateFormattedFiles;
 use App\Http\Resources\ReportsCollectionResource;
@@ -14,11 +16,15 @@ class ReportsController extends Controller
     
     public function index() 
     {
-        return response()->json(
-            ReportsCollectionResource::collection(
-                Auth::user()->orders
-            )
-        );
+        try {
+            return ReportsCollectionResource::collection(
+                Auth::user()->affiliate->orders()->paginate()
+            );
+        }
+        catch(Exception $e) {
+            return $e->getMessage();
+        }
+        
     }
 
     public function show(Order $order) 

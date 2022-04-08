@@ -6,7 +6,8 @@ const { generateId } = useHelpers()
 const { formatFormData, getFormattedPages, saveReportPages } = useReports()
 
 import { 
-    
+
+    SAVE_META,
     SET_LOADING,
     SAVE_PAGE, 
     ADD_PAGE,
@@ -62,10 +63,12 @@ export const PageBuilder = {
         loading: {
             id: '',
             value: ''
-        }
+        },
+        meta: {}
     },
 
     getters: {
+        meta: state => state.meta,
         loading: state => state.loading,
         pages: state => state.pages,
         order: state => state.order,
@@ -179,6 +182,9 @@ export const PageBuilder = {
         },
         [SAVE_REPORT](state, report) {
             state.report = report
+        },
+        [SAVE_META](state, meta) {
+            state.meta = meta
         }
     },
 
@@ -335,11 +341,17 @@ export const PageBuilder = {
             }
         },
 
-        async [GET_REPORTS]({ commit }) {
+        async [GET_REPORTS]({ commit }, page = 1) {
             try {
                 commit(SET_LOADING, { id: 'fetching' })
-                const { data } = await axios.get('/page-reports')
-                commit(SAVE_REPORTS, data)
+                commit(SAVE_REPORTS, [])
+                const { data } = await axios.get('/page-reports', {
+                    params: {
+                        page
+                    }
+                })
+                commit(SAVE_REPORTS, data.data)
+                commit(SAVE_META, data.meta)
                 commit(SET_LOADING, { id: 'fetching', value: false })
             }
             catch(e) {
