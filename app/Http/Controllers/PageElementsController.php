@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\App;
 use App\Http\Resources\reportsResource;
+use Illuminate\Support\Facades\Storage;
 
 class PageElementsController extends Controller
 {

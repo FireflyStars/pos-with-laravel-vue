@@ -197,12 +197,12 @@
         <?php $break_rule = $loop->last ? 'avoid-page': 'page';  ?>
         <main style="break-after: {{ $break_rule }}; position: relative; margin: 1rem;">
 
-            <div class="template-header" style="max-height: 6rem; position: absolute; top: 20px; left: 0">
+            <div class="template-header" style="max-height: 6rem; position: absolute; top: 20px; left: 0; margin-bottom: 6rem;">
                 <img 
                     v-if="templates.length"
                     src="{{ $builder::get_active_template($page->template_id)['template']['header'] }}" 
                     alt="Template header"
-                    style="width: 90%; height: 6rem;"  
+                    style="width: 90%; max-height: 6rem !important;"  
                 >
             </div>
         
@@ -260,14 +260,14 @@
                         >
                             <tr @if(optional($element->attributes)->headers ?? true) @endif>
                                 @for ($i = 1; $i <= $element->attributes->cols; $i++)
-                                    <?php $col = '1'.$i; ?>
-                                    <th>{{ optional(ucFirst($element->content->header)->$col ?? 'title ' . $i) }}</th>
+                                    <?php $col = 'tr-1' . $i; ?>
+                                    <th>{{ optional($element->content->header)->$col ?? 'title ' . $i }}</th>
                                 @endfor    
                             </tr>
                             @for($row = 1; $row <= $element->attributes->rows; $row++)
                                 <tr>
                                     @for($col = 1; $col <= $element->attributes->cols; $col++)
-                                        <?php $rowValue = $row .''. $col; ?>
+                                        <?php $rowValue = 'tr-' . $row .''. $col; ?>
                                         <td>{{ optional($element->content->body)->$rowValue ?? 'Col '. $col }}</td>
                                     @endfor
                                 </tr>
@@ -280,11 +280,11 @@
         
             </div>
         
-            <div class="template-footer" style="max-height: 6rem; position: absolute; bottom: 0; left: 0">
+            <div class="template-footer" style="max-height: 6rem; position: absolute; bottom: 0; left: 0; margin-top: 6rem;">
                 <img 
                     src="{{ $builder::get_active_template($page->template_id)['template']['footer'] }}" 
                     alt="Template footer"
-                    style="width: 90%; max-height: 6rem;" 
+                    style="width: 90%; max-height: 6rem !important;" 
                 >
             </div>
 

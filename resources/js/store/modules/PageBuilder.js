@@ -300,7 +300,6 @@ export const PageBuilder = {
             
             let path = '/page-report'
             if(state.report.status == 'update') path += `/${orderId}`
-
             try {
                 
                 commit(SET_LOADING, { id: 'save-report' })
@@ -310,7 +309,8 @@ export const PageBuilder = {
                 formData.append('order_id', orderId)
                 formData.append('report_id', state.report.id)
 
-                await axios.post(path, formData)
+                const { data } = await axios.post(path, formData)
+                commit(SAVE_REPORT, { id: data.id, status: 'update' })
                 commit(SET_LOADING, { id: 'save-report', value: false })
 
             }

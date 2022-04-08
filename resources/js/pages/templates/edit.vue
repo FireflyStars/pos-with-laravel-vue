@@ -577,7 +577,7 @@ $orange: orange;
         min-width: 350px;
         min-height: 50px;
         border: 1px solid #ccc;
-        z-index: 99999;
+        z-index: 13;
         word-wrap: normal;
         &::before,
         &::after {
