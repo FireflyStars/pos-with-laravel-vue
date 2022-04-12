@@ -70,4 +70,8 @@ class Order extends Model
     public function generateReference(){
         $this->reference= strtoupper($this->passwdGen(10,'NO_NUMERIC'));
     }
+
+    public function address(){
+        return $this->belongsTo(Address::class);
+    }
 }

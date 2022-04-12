@@ -915,7 +915,8 @@ public function GetDevis(Request $request){
         if($order==null)  
           return $this->response(0,null,'Aucune cotation trouvée pour cet événement.');
         $order->makeHidden(['created_at','updated_at','deleted_at']);
-        $order->orderZones;   
+        $order->orderZones; 
+        $order->address->makeHidden(['created_at','updated_at','deleted_at']);
         foreach($order->orderZones as &$order_zone){
             $order_zone->makeHidden(['created_at','updated_at','deleted_at']);
             $order_zone->gedDetails->makeHidden(['created_at','updated_at','deleted_at','storage_path','file']);
@@ -969,6 +970,7 @@ public function GetDevisByOrderId(Request $request){
 
         $order->makeHidden(['created_at','updated_at','deleted_at']);
         $order->orderZones;   
+        $order->address->makeHidden(['created_at','updated_at','deleted_at']);
         foreach($order->orderZones as &$order_zone){
             $order_zone->makeHidden(['created_at','updated_at','deleted_at']);
             $order_zone->gedDetails->makeHidden(['created_at','updated_at','deleted_at','storage_path','file']);
@@ -1394,7 +1396,7 @@ if(isset($params['order_zones'])&&is_array($params['order_zones'])){
                 $order=new Order();
                 $order->generateReference();
                 $order->affiliate_id=$lcdtapp_api_instance->user->affiliate->id;
-
+                $order->address_id=$event->address_id;
                 $order->lang_id=!isset($Parameters['lang_id'])?1:$Parameters['lang_id'];
                 $order->customer_id=$event->customer_id;
          
