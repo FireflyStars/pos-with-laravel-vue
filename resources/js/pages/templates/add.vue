@@ -26,7 +26,10 @@
                                         @save="saveTemplate" 
                                     />
                                     
-                                    <div class="shadow-sm builder-container" @click="activeItem=null">
+                                    <div 
+                                        id="builder-container"
+                                        class="shadow-sm builder-container" 
+                                    >
 
                                         <div class="template-header">
                                             <img 
@@ -46,43 +49,37 @@
                                                 {{ +activePage + 1 }}/{{ pages.length }}
                                             </span>
 
-                                            <div 
+                                            <component 
                                                 v-for="(element, index) in page.elements" 
                                                 :key="index"
-                                                class="item-container"
+                                                :is="element.item" 
+                                                v-bind="element.attributes"
+                                                @click.stop="activateItem($event)"
+                                                @dblclick="openUpdatePopup(element, $event.target)"
+                                                :disabled="element.name == 'table'"
+                                                :content="element.content"
+                                                contenteditable="false"
+                                                :class="{ 
+                                                    'active-item': `#${element.attributes.id}` == activeItem 
+                                                }"
                                             >
 
-                                                <component 
-                                                    :is="element.item" 
-                                                    v-bind="element.attributes"
-                                                    @click.stop="activateItem($event)"
-                                                    @dblclick="openUpdatePopup(element, $event.target)"
-                                                    :disabled="element.name == 'table'"
-                                                    :content="element.content"
-                                                    contenteditable="false"
-                                                    :class="{ 
-                                                        'active-item': `#${element.attributes.id}` == activeItem 
-                                                    }"
+                                                <span 
+                                                    v-if="['textarea', 'table'].includes(element.name)" 
+                                                    v-html="element.content"
                                                 >
+                                                </span>
 
-                                                    <span 
-                                                        v-if="['textarea', 'table'].includes(element.name)" 
-                                                        v-html="element.content"
-                                                    >
-                                                    </span>
+                                                <span 
+                                                class="close" 
+                                                v-show="`#${element.attributes.id}` == activeItem"
+                                                @click.prevent="deleteItem($event.target, element.attributes.id)"
+                                                >
+                                                    &times;
+                                                </span>
 
-                                                    <span 
-                                                    class="close" 
-                                                    v-show="`#${element.attributes.id}` == activeItem"
-                                                    @click.prevent="deleteItem($event.target, element.attributes.id)"
-                                                    >
-                                                        &times;
-                                                    </span>
+                                            </component>
 
-                                                </component>
-
-                                            </div>
-                                            
                                             <popup 
                                                 :item="activeElement"
                                                 :domStyles="getStylesOfElement(activeDomElement)" 
@@ -157,7 +154,6 @@ import {
     UPDATE_ELEMENT_STYLES,
     UPDATE_ELEMENT_CONTENT,
     UPDATE_ELEMENT_TABLE,
-    SAVE_TEMPLATES,
     SAVE_REPORT_TEMPLATE,
 } from '../../store/types/types'
 
@@ -261,9 +257,10 @@ export default {
         const updateElementStyles = (target, styles, elementOldStyles, item = '') => {
             const { id } = target
             const itemIndex = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
+            const itemName = pages.value[activePage.value].elements.find(item => item.attributes.id == id).name
+            item = item == '' ? itemName : item
             const computedStyles = getComputedStyle(styles, elementOldStyles, item)
             nextTick(() => {
-                target.style = computedStyles
                 store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_STYLES}`, { 
                     styles: computedStyles, 
                     index: itemIndex 

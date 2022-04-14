@@ -141,13 +141,6 @@
                             <span class="unit">px</span>
                         </div>
                     </div>
-                    <!-- <div class="attribute">
-                        <div>Line heigth:</div>
-                        <div class="d-flex align-items-center gap-1">
-                            <input type="text" v-model="itemAttributes.lineHeight">
-                            <span class="unit"></span>
-                        </div>
-                    </div> -->
                     <div class="attribute">
                         <div>Font family:</div>
                         <div class="d-flex align-items-center gap-1">
@@ -223,9 +216,9 @@
 
 <script>
 
+import reportTable from './report-table'
 import { ref, computed, onMounted, reactive } from 'vue'
 import useStyles from '../../composables/reports/useStyles'
-import reportTable from './report-table'
 
 
 export default {

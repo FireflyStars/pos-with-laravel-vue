@@ -100,6 +100,22 @@
             padding: 1rem;
             object-fit: cover;
         }
+        .template-affiliate {
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            position: absolute;
+            padding: 1rem;
+            font-size: 10px;
+            font-family: inherit;
+            display: grid;
+            grid-template-columns: 10% 90%;
+        }
+        .template-affiliate .page-number {
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
         .template-body {
             margin-top: 6.75rem;
         }
@@ -110,8 +126,8 @@
             width: auto;
             height: auto;
             object-fit: cover;
-            width: 25rem;
-            height: 25rem;
+            max-width: 25rem;
+            max-height: 25rem;
             border: 3px solid orange;
             position: absolute;
         }
@@ -149,6 +165,10 @@
             width: 100%;
             display: flex;
             align-items: center;
+        }
+
+        .title-bar .content {
+            flex-grow: 1;
         }
 
         .textarea {
@@ -197,12 +217,14 @@
         <?php $break_rule = $loop->last ? 'avoid-page': 'page';  ?>
         <main style="break-after: {{ $break_rule }}; position: relative; margin: 1rem;">
 
-            <div class="template-header" style="max-height: 6rem; position: absolute; top: 20px; left: 0; margin-bottom: 6rem;">
+            <div 
+                class="template-header" 
+                style="max-height: 96px; position: absolute; top: 20px; left: 0; margin-bottom: 4rem;"
+            >
                 <img 
-                    v-if="templates.length"
                     src="{{ $builder::get_active_template($page->template_id)['template']['header'] }}" 
                     alt="Template header"
-                    style="width: 90%; max-height: 6rem !important;"  
+                    style="width: 100%; height: auto; max-height: 96px !important;"  
                 >
             </div>
         
@@ -280,12 +302,22 @@
         
             </div>
         
-            <div class="template-footer" style="max-height: 6rem; position: absolute; bottom: 0; left: 0; margin-top: 6rem;">
+            <div 
+                class="template-footer" 
+                style="max-height: 96px; position: absolute; bottom: 60px; left: 0;">
                 <img 
                     src="{{ $builder::get_active_template($page->template_id)['template']['footer'] }}" 
                     alt="Template footer"
-                    style="width: 90%; max-height: 6rem !important;" 
+                    style="width: 100%; height: auto; max-height: 96px;" 
                 >
+            </div>
+
+            <div 
+                class="template-affiliate" 
+                style="display: flex;"
+            >
+                <div class="page-number" style="margin-top: 20px !important;">{{ (int) $loop->index + 1 }}</div>
+                <div class="content" style="margin-left: 20px;">{!! optional($affiliate)->footerreport ?? '' !!}</div>
             </div>
 
         </main>

@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use App\Traits\GedFileProcessor;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ReportsResource extends JsonResource
@@ -17,11 +16,10 @@ class ReportsResource extends JsonResource
         return [
             'id'   => $this->id,
             'lang_id' => $this->lang_id,
-            'affiliate_id' => $this->affiliate_id,
+            'affiliate' => $this->affiliate,
             'customer' => $this->get_customer_details(),
             'contact' => $this->get_contact_details(),
             'orderZones' => $this->get_order_zones($this->orderZones),
-            'queryLog' => DB::getQueryLog()
         ];
     }
 

@@ -39,12 +39,10 @@
     <div class="d-flex justify-content-between align-items-center">
 
         <div class="reports-dropdown">
-            <!-- :class="{ 'not-allowed': fetching }"  -->
-                <!-- :disabled="fetching || loading" -->
-            <BaseButton 
+            <!-- <BaseButton 
                 title="Change Fond"
-                @click="toggleModal('templates-modal', true)"
-            />
+                @click="toggleModal('change-fond', true)"
+            /> -->
         </div>
 
         <div class="d-flex align-items-center">
@@ -82,7 +80,15 @@
                     name="page"
                     classnames="reports-dropdown-button"
                     :disabled="fetching"
-                    :selectStyles="{ maxHeight: '10rem', overflow: 'auto' }"
+                    :styles="{
+                        background: '#C4C4C4',
+                        color: '#000'
+                    }"
+                    :selectStyles="{ 
+                        maxHeight: '10rem', 
+                        overflow: 'auto', 
+                        borderRadius: 0 
+                    }"
                 />
 
             </div>
@@ -92,7 +98,7 @@
     </div>
 
     <Modal 
-        id="templates-modal"
+        id="change-fond"
         classes="p-5" 
         size="md"
     >
@@ -290,6 +296,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.tile_h1 {
+    font-family: 'Almarai';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 22px;
+    line-height: 24px;
+    display: flex;
+    align-items: center;
+    color: #000000;
+    gap: 2rem;
+}
 
 .reports-dropdown {
     position: relative;

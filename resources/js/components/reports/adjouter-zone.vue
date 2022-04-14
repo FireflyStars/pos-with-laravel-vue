@@ -36,13 +36,18 @@
                         class: 'title-bar',
                         content: `VUE D'ENSEMBLE DUE BATIMENT`
                     })">
-                        <Icon name="file" class="d-inline" />
-                        <p class="d-inline orange text-base" style="margin-left: .7rem;">Ajouter Titre</p>
+                        <img src="/images/tag.svg" />
+                        <p 
+                            class="d-inline orange text-base" 
+                            style="margin-left: .7rem;"
+                        >
+                            Ajouter Titre
+                        </p>
                     </div>
                     <div 
                     @click="generateElement('textarea')" 
                     class="pointer" style="margin-top: 1rem">
-                        <Icon name="file" class="d-inline" />
+                        <img src="/images/notepad.svg" />
                         <p 
                             class="d-inline orange text-base" 
                             style="margin-left: .7rem"
@@ -59,10 +64,9 @@
                             :key="icon" 
                             class="library-item"
                             :name="icon"
-                            height="20"
+                            :height="icon == 'report-arrow' ? 30 : 20"
                             @click="generateElement('icon', { id: 'Icon', name: icon })"
                         />
-
                         <a 
                             href="#" 
                             class="orange text text-base self-end"
@@ -104,13 +108,13 @@ export default {
     
     name: 'adjouter-zone',
 
-    setup (_, { emit }) {
+    setup () {
         
         const fetching = inject('fetching')
         const promptImage = inject('promptImage')
         const generateElement = inject('generateElement')
 
-        const libraryIcons = ['arrow-top', 'egg', 'plus-o']
+        const libraryIcons = ['report-arrow', 'egg', 'comment-box']
 
         return {
             fetching,

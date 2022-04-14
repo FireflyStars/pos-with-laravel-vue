@@ -85,7 +85,7 @@ export const PageBuilder = {
         activePage: state => state.activePage,
         page: state => state.pages.length ? state.pages[state.activePage] : {},
         activePageTemplate: (state, getters) => {
-            if(getters.page.template_id != -1 && getters.page.template_id != undefined) {
+            if(getters?.page?.template_id != -1 && getters?.page?.template_id != undefined) {
                 const template = state.templates.find(template => {
                     return template.id == getters.page.template_id
                 })
@@ -128,11 +128,13 @@ export const PageBuilder = {
             state.pages = []
         },
         [ADD_PAGE](state) {
-            state.pages.splice(+state.activePage + 1, 0, {
+            const page = +state.activePage + 1
+            state.pages.splice(page, 0, {
                 id: generateId(12),
                 elements: [],
                 template_id: state.activeTemplate
             })
+            state.activePage = page
         },
         [ASSIGN_TEMPLATE](state, id) {
             if(!state.pages.length && !state.activePage) return
@@ -190,11 +192,12 @@ export const PageBuilder = {
 
     actions: {
 
-        async [SAVE_PAGE]({ commit }, { pages, template }) {
+        async [SAVE_PAGE]({ commit }, { pages, template, orderId }) {
 
             commit(SET_LOADING, { id: 'submit' })
 
             const formData = formatFormData(pages)
+            if(!_.isEmpty(orderId)) formData.append('order_id', orderId)
 
             try {
                 const { data } = await axios.post('/save-page-elements', formData, {  
@@ -332,7 +335,7 @@ export const PageBuilder = {
             try {
                 commit(SET_LOADING, { id: 'fetching' })
                 const { data } = await axios.get('/report-templates')
-                commit(SAVE_REPORT_TEMPLATES, data)
+                commit(SAVE_REPORT_TEMPLATES, data.data || [])
                 commit(SET_LOADING, { id: 'fetching', value: false })
             }
             catch(e) {

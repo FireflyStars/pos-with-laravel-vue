@@ -25,60 +25,44 @@
                                         @save="saveReport" 
                                     />
                                     
-                                    <div class="shadow-sm builder-container" @click="activeItem=null">
+                                    <div class="shadow-sm builder-container">
 
-                                        <div class="template-header">
-                                            <img 
-                                                v-if="'id' in activePageTemplate"
-                                                :src="activePageTemplate.template.header" 
-                                                alt="Template header" 
-                                            >
-                                        </div>
+                                        <report-header :template="activePageTemplate" />
 
-                                        <div class="template-body">
+                                        <div 
+                                            v-if="!fetching" 
+                                            class="template-body"
+                                        >
 
                                             <span 
-                                                v-show="!fetching"
                                                 class="page-number text-muted" 
                                             >
                                                 {{ +activePage + 1 }}/{{ pages.length }}
                                             </span>
 
-                                            <div 
+                                            <!-- {{ page.elements }} -->
+
+                                            <component 
                                                 v-for="(element, index) in page.elements" 
                                                 :key="index"
-                                                class="item-container"
+                                                :is="element.item" 
+                                                v-bind="element.attributes"
+                                                @click.prevent="activateItem($event)"
+                                                @dblclick="openUpdatePopup(element, $event.target)"
+                                                :disabled="element.name == 'table'"
+                                                :content="element.content"
+                                                :class="{ 
+                                                    'active-item': `#${element.attributes.id}` == activeItem 
+                                                }"
+                                                contenteditable="false"
                                             >
 
-                                                <component 
-                                                    :is="element.item" 
-                                                    v-bind="element.attributes"
-                                                    @click.stop="activateItem($event)"
-                                                    @dblclick="openUpdatePopup(element, $event.target)"
-                                                    :disabled="element.name == 'table'"
-                                                    :content="element.content"
-                                                    :class="{ 
-                                                        'active-item': `#${element.attributes.id}` == activeItem 
-                                                    }"
-                                                    contenteditable="false"
+                                                <div 
+                                                    class="content"
+                                                    v-if="['textarea', 'table'].includes(element.name)" 
+                                                    v-html="element.content"
                                                 >
-
-                                                    <div 
-                                                        class="content"
-                                                        v-if="['textarea', 'table'].includes(element.name)" 
-                                                        v-html="element.content"
-                                                    >
-                                                    </div>
-
-                                                    <!-- <span 
-                                                    class="close" 
-                                                    v-show="`#${element.attributes.id}` == activeItem"
-                                                    @click.prevent="deleteItem($event.target, element.attributes.id)"
-                                                    >
-                                                        &times;
-                                                    </span> -->
-
-                                                </component>
+                                                </div>
 
                                                 <span 
                                                 class="close" 
@@ -88,7 +72,8 @@
                                                     &times;
                                                 </span>
 
-                                            </div>
+                                            </component>
+
                                             
                                             <popup 
                                                 :item="activeElement"
@@ -100,13 +85,7 @@
 
                                         </div>
 
-                                        <div class="template-footer">
-                                            <img 
-                                                v-if="'id' in activePageTemplate"
-                                                :src="activePageTemplate.template.footer" 
-                                                alt="Template footer" 
-                                            >
-                                        </div>
+                                        <report-footer :template="activePageTemplate" />
 
                                     </div>
 
@@ -203,6 +182,8 @@ import adjouterZone from '../../components/reports/adjouter-zone'
 import headerSection from '../../components/reports/header-section'
 import reportOrderResources from '../../components/reports/report-order-resources'
 import reportTable from '../../components/reports/report-table'
+import reportHeader from '../../components/reports/report-header'
+import reportFooter from '../../components/reports/report-footer'
 
 import useModal from '../../composables/useModal'
 import useStyles from '../../composables/reports/useStyles'
@@ -218,7 +199,9 @@ export default {
         reportTable,
         adjouterZone,
         headerSection,
-        reportOrderResources
+        reportOrderResources,
+        reportHeader,
+        reportFooter,
     },
 
     props: {
@@ -272,8 +255,6 @@ export default {
                 return page.attributes.id == id
             })
             if(elementIndex != -1) {
-                elem = getDomElementParent(elem, 'item-container')
-                elem.remove()
                 document.querySelector('.moveable').style.display = "none"
                 store.commit(`${BUILDER_MODULE}/${DELETE_ITEM}`, elementIndex)
                 activeItem.value = null
@@ -303,15 +284,11 @@ export default {
 
         const updateElementStyles = (target, styles, elementOldStyles, item = '') => {
             const { id } = target
-            if(target.parentElement) {
-                const { top,  left } = styles
-                if(top) target.parentElement.style.top = `${top}px`
-                if(left) target.parentElement.style.left = `${left}px`
-            }
             const itemIndex = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
+            const itemName = pages.value[activePage.value].elements.find(item => item.attributes.id == id).name
+            item = item == '' ? itemName : item
             const computedStyles = getComputedStyle(styles, elementOldStyles, item)
             nextTick(() => {
-                target.style = computedStyles
                 store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_STYLES}`, { 
                     styles: computedStyles, 
                     index: itemIndex 
@@ -373,6 +350,7 @@ export default {
         }
 
         const generateElement = (name, attrs = {}) => {
+            console.log("I was clicked")
             const elementMapping = {
                 textarea: generateTextarea,
                 icon: generateIcon,
@@ -437,7 +415,8 @@ export default {
             try {
                 const data = await store.dispatch(`${[BUILDER_MODULE]}/${[SAVE_PAGE]}`, { 
                     pages, 
-                    template: template.value 
+                    template: template.value,
+                    orderId: props.id
                 })
                 if(data) generatePDF(data)
             }
@@ -473,8 +452,8 @@ export default {
                 await getReportTemplates()
             }
             else {
-                getOrderDetails()
                 fetchTemplates()
+                getOrderDetails()
             }
             return Promise.resolve()
         }
@@ -496,8 +475,8 @@ export default {
                 nextTick(() => {
                     toggleModal('report-templates', false)
                     getReportTemplate(value)
-                    getOrderDetails()
                     fetchTemplates()
+                    getOrderDetails()
                 })
             }
         })
@@ -528,9 +507,9 @@ export default {
             promptImage,
             activateItem,
             showcontainer,
-            generateElement,
             activeElement,
             activeTemplate,
+            generateElement,
             openUpdatePopup,
             activeDomElement,
             updateTableValue,
@@ -577,26 +556,7 @@ $orange: orange;
 }
 
 .template {
-    &-header {
-        top: 0;
-        max-height: 4.75rem;
-    }
-    &-footer {
-        bottom: 0;
-    }
-    &-header, 
-    &-footer {
-        width: 100%;
-        height: auto;
-        position: absolute;
-        left: 0;
-        img {
-            width: 100%;
-            height: 100%;
-            padding: 1rem;
-            object-fit: cover;
-        }
-    }
+
     &-body {
         margin-top: 5.75rem;
         img {
@@ -633,13 +593,6 @@ $orange: orange;
     .draggable {
         z-index: 10;
         position: absolute;
-    }
-
-    .item-container {
-        z-index: 12;
-        position: absolute;
-        width: 20rem;
-        height: auto;
         .close {
             position: absolute;
             top: -100%;
@@ -660,6 +613,32 @@ $orange: orange;
             }
         }
     }
+
+    // .item-container {
+    //     z-index: 12;
+    //     position: absolute;
+    //     width: 20rem;
+    //     height: auto;
+    //     .close {
+    //         position: absolute;
+    //         top: -100%;
+    //         left: 50%;
+    //         width: 1.2rem;
+    //         height: 1.2rem;
+    //         background: #000;
+    //         color: white;
+    //         transform: translate(-50%, -100%);
+    //         transform-origin: center;
+    //         border-radius: 50%;
+    //         display: flex;
+    //         justify-content: center;
+    //         line-height: 1.08rem;
+    //         cursor: pointer;
+    //         &:hover {
+    //             opacity: .8;
+    //         }
+    //     }
+    // }
 
     .transparent-button {
         background: transparent;
@@ -682,6 +661,10 @@ $orange: orange;
         width: 100%;
         display: flex;
         align-items: center;
+        max-width: 588px;
+        .content {
+            flex-grow: 1;
+        }
     }
 
     .textarea {
