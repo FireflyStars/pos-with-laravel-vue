@@ -969,7 +969,8 @@ public function GetDevisByOrderId(Request $request){
         return $this->response(0,null,'La citation (devis) n\'appartient pas à l\'affilié de l\'utilisateur');
 
         $order->makeHidden(['created_at','updated_at','deleted_at']);
-        $order->orderZones;   
+        $order->orderZones;  
+        $order->customer->makeHidden(['created_at','updated_at','deleted_at']); 
         $order->address->makeHidden(['created_at','updated_at','deleted_at']);
         foreach($order->orderZones as &$order_zone){
             $order_zone->makeHidden(['created_at','updated_at','deleted_at']);
