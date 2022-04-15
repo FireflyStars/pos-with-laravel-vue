@@ -59,6 +59,7 @@
                 <div class="col-7">
                     
                     <div class="d-flex align-items-center gap-6">
+
                         <Icon
                             v-for="icon in libraryIcons"
                             :key="icon" 
@@ -120,7 +121,7 @@ export default {
             fetching,
             promptImage,
             libraryIcons,
-            generateElement
+            generateElement,
         }
     }
 
