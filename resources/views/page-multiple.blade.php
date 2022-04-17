@@ -18,10 +18,10 @@
         }
         main {
             position: relative;
-            width: 90%;
-            margin: 1rem auto;
+            width: 100%;
             min-height: 45rem;
-            max-height: 55rem;
+            height: 90%;
+            overflow: hidden;
         }
         .draggable, .item {
             z-index: 10;
@@ -174,11 +174,12 @@
         .textarea {
             position: absolute !important;
             border: none;
-            min-width: 350px;
-            min-height: 50px;
+            width: auto;
+            height: auto;
             border: 1px solid #ccc;
             z-index: 99999;
             word-wrap: normal;
+            color: #000;
         }
        
         .textarea::before,
@@ -216,17 +217,20 @@
     @foreach ($pages as $page)
         <?php 
             $break_rule = $loop->last ? 'avoid-page': 'page';
-            $background = $builder::get_page_background($page); 
+            $background = $builder::get_page_background($page);
+            $last = $loop->index == count((array) $pages) - 1;
+            $first = $loop->first;
         ?>
         <main 
-            style="break-after: {{ $break_rule }};
-             position: relative; 
-             background-image: url('{{$background}}'); 
-             background-repeat: no-repeat; 
-             background-size: {{ $loop->last || $loop->first ? 'cover' : '100% 90%' }}; 
-             background-position: center;"
+            style="
+            break-after: {{ $break_rule }};
+            position: relative; 
+            background-image: url('{{$background}}'); 
+            background-repeat: no-repeat; 
+            background-size: {{ $last || $first ? 'cover' : '100% 90%' }}; 
+            background-position: center;"
         >
-        
+
             <div class="template-body">
                 
                 @foreach ($page->elements as $element)
@@ -300,13 +304,13 @@
                 @endforeach
         
             </div>
-            
-            @if (!$loop->last && !$loop->first)
+            @if (!$last && !$first)
+
                 <div 
                     class="template-affiliate" 
                     style="display: flex;"
                 >
-                    <div class="page-number" style="margin-top: 20px !important;">{{ (int) $loop->index + 1 }}</div>
+                    <div class="page-number" style="margin-top: 20px !important;">{{ (int) $loop->index }}</div>
                     <div class="content" style="margin-left: 20px;">{!! optional($affiliate)->footerreport ?? '' !!}</div>
                 </div>
             @endif
@@ -317,10 +321,10 @@
 
 </body>
 
-<script type="text/php">
+{{-- <script type="text/php">
     if ( isset($pdf) ) {
         $pdf->page_text(550, 10, "{PAGE_NUM}/{PAGE_COUNT}", null, 12, array(0,0,0));
     }
-</script> 
+</script>  --}}
 
 </html>

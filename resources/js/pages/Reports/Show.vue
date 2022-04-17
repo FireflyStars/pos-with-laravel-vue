@@ -181,7 +181,7 @@ export default {
             let blob = new Blob([data], { type: 'application/pdf' })
             let link = document.createElement('a')
             link.href = window.URL.createObjectURL(blob)
-            link.download = 'test.pdf'
+            link.download = 'Report.pdf'
             link.click()
         }
 

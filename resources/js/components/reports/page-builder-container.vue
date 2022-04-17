@@ -55,16 +55,18 @@
             </component>
 
             <popup 
+                v-if="openPopup"
                 :item="activeElement"
                 :domStyles="getStylesOfElement(activeDomElement)" 
-                v-if="openPopup"
                 @close="openPopup = false"
                 @update="updateElementFromPopup"
             />
 
         </div>
 
-        <report-footer v-if="isReportPage && activePage != 0 && activePage != pages.length - 1" />
+        <report-footer 
+            v-if="isReportPage && activePage != 0 && activePage != pages.length - 1" 
+        />
 
     </div>
 
@@ -282,26 +284,6 @@ $orange: orange;
 }
 
 .template {
-    &-header {
-        top: 0;
-        max-height: 4.75rem;
-    }
-    &-footer {
-        bottom: 0;
-    }
-    &-header, 
-    &-footer {
-        width: 100%;
-        height: auto;
-        position: absolute;
-        left: 0;
-        img {
-            width: 100%;
-            height: 100%;
-            padding: 1rem;
-            object-fit: cover;
-        }
-    }
     &-body {
         margin-top: 5.75rem;
         img {
@@ -383,8 +365,8 @@ $orange: orange;
     }
 
     .textarea {
-        min-width: 350px;
-        min-height: 50px;
+        width: auto;
+        height: auto;
         border: 1px solid #ccc;
         z-index: 13;
         word-wrap: normal;
