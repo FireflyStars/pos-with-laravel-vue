@@ -9,6 +9,32 @@ class page_builder extends Model
 {
     use HasFactory;
 
+    public static function get_page_background($page) 
+    {
+        $page = (array) $page;
+        if(count((array) $page['background'])) 
+        {
+            $background = $page['background'];
+            if($background->prefetched == true) 
+            {
+                $filename = $background->dataFile;
+                if(strpos($filename, 'report-templates') !== false) 
+                {
+                    $src = public_path('\/storage/' . $filename);
+                }
+                else 
+                {
+                    $src = base_path('\/public/') . $filename;
+                }
+            }
+            else 
+            {
+                $src = self::convert_resource_file('BackgroundImage#' . $background->attributes->id);
+            }
+            return self::convert_base64($src);
+        }
+    }
+
     public static function get_active_template($id) 
     {
         return optional(self::templates()->where('id', $id))->first();

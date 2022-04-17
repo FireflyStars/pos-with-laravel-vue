@@ -214,19 +214,18 @@
 <body>
 
     @foreach ($pages as $page)
-        <?php $break_rule = $loop->last ? 'avoid-page': 'page';  ?>
-        <main style="break-after: {{ $break_rule }}; position: relative; margin: 1rem;">
-
-            <div 
-                class="template-header" 
-                style="max-height: 96px; position: absolute; top: 20px; left: 0; margin-bottom: 4rem;"
-            >
-                <img 
-                    src="{{ $builder::get_active_template($page->template_id)['template']['header'] }}" 
-                    alt="Template header"
-                    style="width: 100%; height: auto; max-height: 96px !important;"  
-                >
-            </div>
+        <?php 
+            $break_rule = $loop->last ? 'avoid-page': 'page';
+            $background = $builder::get_page_background($page); 
+        ?>
+        <main 
+            style="break-after: {{ $break_rule }};
+             position: relative; 
+             background-image: url('{{$background}}'); 
+             background-repeat: no-repeat; 
+             background-size: {{ $loop->last || $loop->first ? 'cover' : '100% 90%' }}; 
+             background-position: center;"
+        >
         
             <div class="template-body">
                 
@@ -301,24 +300,16 @@
                 @endforeach
         
             </div>
-        
-            <div 
-                class="template-footer" 
-                style="max-height: 96px; position: absolute; bottom: 60px; left: 0;">
-                <img 
-                    src="{{ $builder::get_active_template($page->template_id)['template']['footer'] }}" 
-                    alt="Template footer"
-                    style="width: 100%; height: auto; max-height: 96px;" 
+            
+            @if (!$loop->last && !$loop->first)
+                <div 
+                    class="template-affiliate" 
+                    style="display: flex;"
                 >
-            </div>
-
-            <div 
-                class="template-affiliate" 
-                style="display: flex;"
-            >
-                <div class="page-number" style="margin-top: 20px !important;">{{ (int) $loop->index + 1 }}</div>
-                <div class="content" style="margin-left: 20px;">{!! optional($affiliate)->footerreport ?? '' !!}</div>
-            </div>
+                    <div class="page-number" style="margin-top: 20px !important;">{{ (int) $loop->index + 1 }}</div>
+                    <div class="content" style="margin-left: 20px;">{!! optional($affiliate)->footerreport ?? '' !!}</div>
+                </div>
+            @endif
 
         </main>
         

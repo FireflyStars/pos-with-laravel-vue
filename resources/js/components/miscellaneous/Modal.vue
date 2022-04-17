@@ -10,8 +10,9 @@
             class="popup-inner" 
             :class="['popup-inner' + sizeClasses, classes]"
         >
-            
-            <slot></slot>
+            <div class="popup-content p-5">
+                <slot></slot>
+            </div>
             
             <a 
                 class="popup__close" 
@@ -152,17 +153,13 @@ $main-color: #9191E9;
         max-height: 250px;
     }
   }
-  &__text {
+
+  &-content {
+
     height: 100%;
-    padding: 3rem;
 
-    &__lg {
-        padding: 4rem;
-    }
-
-    &__sm {
-        padding: 1rem;
-    }
+    overflow-y: auto;
+    overflow-x: hidden;
 
     h1 {
       font-size: 2rem;
@@ -199,4 +196,18 @@ $main-color: #9191E9;
     text-decoration: none;
   }
 }
+
+.popup-content::-webkit-scrollbar {
+    width: 5px;
+}
+ 
+.popup-content::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+ 
+.popup-content::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid rgb(76, 87, 97);
+}
+
 </style>

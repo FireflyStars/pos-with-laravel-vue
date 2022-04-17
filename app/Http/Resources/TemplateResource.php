@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Traits\TemplateFormattedFiles;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TemplateResource extends JsonResource

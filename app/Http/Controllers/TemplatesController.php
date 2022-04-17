@@ -53,7 +53,7 @@ class TemplatesController extends Controller
             'page_files' => $page_files 
         ]);
 
-        return response()->json('Template saved', 201); 
+        return response()->json('Template saved', 200); 
 
     }
 

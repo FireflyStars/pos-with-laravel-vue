@@ -1,16 +1,11 @@
 <template>
-    <div class="template-footer">
-        <img 
-            v-if="'id' in template"
-            :src="template.template.footer" 
-            alt="Template footer" 
+    <div class="template-affiliate">
+        <div style="margin-left: 1rem; font-weight: bold; font-size: 12px;">{{ +activePage + 1 }}</div>
+        <div 
+            v-html="footerreport" 
+            v-show="!fetching"
         >
-    </div>
-    <div 
-        class="template-affiliate" 
-        v-html="footerreport" 
-        v-show="!fetching"
-    >
+        </div>
     </div>
 </template>
 
@@ -24,17 +19,12 @@ export default {
 
     name: 'report-footer',
     
-    props: {
-        template: {
-            required: true,
-            type: Object
-        }
-    },
-
     setup() {
         
         const store = useStore()
         const fetching = inject('fetching')
+        const activePage = computed(() => store.getters[`${BUILDER_MODULE}/activePage`])
+
 
         const activePageTemplate = computed(() => store.getters[`${BUILDER_MODULE}/activePageTemplate`])
         const order = computed(() => store.getters[`${BUILDER_MODULE}/order`])
@@ -45,6 +35,7 @@ export default {
         return {
             order,
             fetching,
+            activePage,
             footerreport,
             activePageTemplate
         }

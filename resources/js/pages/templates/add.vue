@@ -25,20 +25,17 @@
                                         @submitPage="submitPage"
                                         @save="saveTemplate" 
                                     />
-                                    
-                                    <div 
+
+                                    <!-- <div 
                                         id="builder-container"
-                                        class="shadow-sm builder-container" 
+                                        class="shadow-sm builder-container"
+                                        :style="{ 
+                                            backgroundImage: `url('${reportBackground?.attributes?.src}')`,
+                                            backgroundRepeat: 'no-repeat',
+                                            backgroundSize: 'cover',
+                                            backgroundPosition: 'center center' 
+                                        }" 
                                     >
-
-                                        <div class="template-header">
-                                            <img 
-                                                v-if="'id' in activePageTemplate"
-                                                :src="activePageTemplate.template.header" 
-                                                alt="Template header" 
-                                            >
-                                        </div>
-
 
                                         <div class="template-body">
                                             
@@ -90,14 +87,6 @@
 
                                         </div>
 
-                                        <div class="template-footer">
-                                            <img 
-                                                v-if="'id' in activePageTemplate"
-                                                :src="activePageTemplate.template.footer" 
-                                                alt="Template footer" 
-                                            >
-                                        </div>
-
                                     </div>
 
                                     <Moveable
@@ -111,7 +100,12 @@
                                         @drag="onDrag"
                                         @scale="onScale"
                                         @rotate="onRotate"
-                                    />
+                                    /> -->
+
+                                    <page-builder-container 
+                                        :showcontainer="showcontainer"
+                                    />            
+
 
                                 </div>
 
@@ -155,17 +149,19 @@ import {
     UPDATE_ELEMENT_CONTENT,
     UPDATE_ELEMENT_TABLE,
     SAVE_REPORT_TEMPLATE,
+    SET_PAGE_BACKGROUND,
 } from '../../store/types/types'
 
-import Moveable from "vue3-moveable"
-import popup from '../../components/reports/popup'
+// import Moveable from "vue3-moveable"
+// import popup from '../../components/reports/popup'
 import adjouterZone from '../../components/reports/adjouter-zone'
 import headerSection from '../../components/reports/header-section'
 import reportOrderResources from '../../components/reports/report-order-resources'
 import reportTable from '../../components/reports/report-table'
+import pageBuilderContainer from '../../components/reports/page-builder-container'
 
 import useStyles from '../../composables/reports/useStyles'
-import useHelpers from '../../composables/useHelpers'
+// import useHelpers from '../../composables/useHelpers'
 import useElementsGenerator from '../../composables/reports/useElementsGenerator'
 import useReports from '../../composables/reports/useReports'
 
@@ -173,42 +169,43 @@ import useReports from '../../composables/reports/useReports'
 export default {
 
     components: {
-        popup,
-        Moveable,
+        // popup,
+        // Moveable,
         reportTable,
         adjouterZone,
         headerSection,
-        reportOrderResources
+        reportOrderResources,
+        pageBuilderContainer
     },
 
     setup() {
 
         const store = useStore()
-        const { getDomElementParent } = useHelpers()
+        // const { getDomElementParent } = useHelpers()
         const { itemAttributes, getStylesOfElement, getComputedStyle } = useStyles()
+        
         const { 
-            generateTextarea, 
-            generateIcon, 
-            generateButton, 
-            generateImage, 
-            generateTable 
+            promptImage,
+            generateElement,
+            generatePrefetchedImage,
         } = useElementsGenerator()
 
         const { resetPages } = useReports()
 
         const activeItem = ref(null)
         const showcontainer = ref(false)
-        const activeElement = ref({})
-        const activeDomElement = ref(null)
-        const openPopup = ref(false)
+        // const activeElement = ref({})
+        // const activeDomElement = ref(null)
+        // const openPopup = ref(false)
 
-        const activePage = computed(() => store.getters[`${BUILDER_MODULE}/activePage`])
+        // const activePage = computed(() => store.getters[`${BUILDER_MODULE}/activePage`])
         const page = computed(() => store.getters[`${BUILDER_MODULE}/page`])
         const pages = computed(() => store.getters[`${BUILDER_MODULE}/pages`])
 
-        const template = computed(() => store.getters[`${BUILDER_MODULE}/template`])
-        const activePageTemplate = computed(() => store.getters[`${BUILDER_MODULE}/activePageTemplate`])
-        const activeTemplate = computed(() => store.getters[`${BUILDER_MODULE}/activeTemplate`])
+        // const template = computed(() => store.getters[`${BUILDER_MODULE}/template`])
+        // const activePageTemplate = computed(() => store.getters[`${BUILDER_MODULE}/activePageTemplate`])
+        // const activeTemplate = computed(() => store.getters[`${BUILDER_MODULE}/activeTemplate`])
+        // const reportBackground = computed(() => page.value?.background || {})
 
         const fetching = computed(() => { 
             const { id, value } = store.getters[`${BUILDER_MODULE}/loading`]
@@ -220,141 +217,153 @@ export default {
             return Promise.resolve()
         }
 
-        const deleteItem = (elem, id) => {
-            const elementIndex = page.value.elements.findIndex(page => {
-                return page.attributes.id == id
-            })
-            if(elementIndex != -1) {
-                elem = getDomElementParent(elem, 'draggable')
-                elem.remove()
-                document.querySelector('.moveable').style.display = "none"
-                store.commit(`${BUILDER_MODULE}/${DELETE_ITEM}`, elementIndex)
-                activeItem.value = null
-            }
-        }
+        // const deleteItem = (elem, id) => {
+        //     const elementIndex = page.value.elements.findIndex(page => {
+        //         return page.attributes.id == id
+        //     })
+        //     if(elementIndex != -1) {
+        //         elem = getDomElementParent(elem, 'draggable')
+        //         elem.remove()
+        //         document.querySelector('.moveable').style.display = "none"
+        //         store.commit(`${BUILDER_MODULE}/${DELETE_ITEM}`, elementIndex)
+        //         activeItem.value = null
+        //     }
+        // }
 
-        const onDrag = ({ top, left, target }) => {
-            updateElementStyles(target, { left, top }, getStylesOfElement(target))
-        }
+        // const onDrag = ({ top, left, target }) => {
+        //     updateElementStyles(target, { left, top }, getStylesOfElement(target))
+        // }
 
-        const onScale = ({ target, drag }) => {
-            updateElementStyles(target, { transform: drag.transform }, getStylesOfElement(target))
-        }        
+        // const onScale = ({ target, drag }) => {
+        //     updateElementStyles(target, { transform: drag.transform }, getStylesOfElement(target))
+        // }        
 
-        const onRotate = ({ target, drag }) => {
-            updateElementStyles(target, { transform: drag.transform }, getStylesOfElement(target))
-        }
+        // const onRotate = ({ target, drag }) => {
+        //     updateElementStyles(target, { transform: drag.transform }, getStylesOfElement(target))
+        // }
 
-        const activateItem = (e) => {
-            let elem = e.target
-            const dataName = elem.getAttribute('dataName')
-            elem = dataName == 'svg' ? elem : getDomElementParent(e.target, 'draggable')
-            const id = elem.getAttribute('id')
-            activeItem.value = `#${id}`
-            elem.blur()
-        }
+        // const activateItem = (e) => {
+        //     let elem = e.target
+        //     const dataName = elem.getAttribute('dataName')
+        //     elem = dataName == 'svg' ? elem : getDomElementParent(e.target, 'draggable')
+        //     const id = elem.getAttribute('id')
+        //     activeItem.value = `#${id}`
+        //     elem.blur()
+        // }
 
-        const updateElementStyles = (target, styles, elementOldStyles, item = '') => {
-            const { id } = target
-            const itemIndex = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
-            const itemName = pages.value[activePage.value].elements.find(item => item.attributes.id == id).name
-            item = item == '' ? itemName : item
-            const computedStyles = getComputedStyle(styles, elementOldStyles, item)
-            nextTick(() => {
-                store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_STYLES}`, { 
-                    styles: computedStyles, 
-                    index: itemIndex 
-                })
-            })
-        }
+        // const updateElementStyles = (target, styles, elementOldStyles, item = '') => {
+        //     const { id } = target
+        //     const itemIndex = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
+        //     const itemName = pages.value[activePage.value].elements.find(item => item.attributes.id == id).name
+        //     item = item == '' ? itemName : item
+        //     const computedStyles = getComputedStyle(styles, elementOldStyles, item)
+        //     nextTick(() => {
+        //         store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_STYLES}`, { 
+        //             styles: computedStyles, 
+        //             index: itemIndex 
+        //         })
+        //     })
+        // }
 
-        const updateElementValue = ({ item = 'textarea', index, value }) => {
-            const domElements = ['input', 'textarea', 'select']
-            if(domElements.includes(item)) {
-                store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_CONTENT}`, {
-                    content: value,
-                    index    
-                })
-            }
-        }
+        // const updateElementValue = ({ item = 'textarea', index, value }) => {
+        //     const domElements = ['input', 'textarea', 'select']
+        //     if(domElements.includes(item)) {
+        //         store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_CONTENT}`, {
+        //             content: value,
+        //             index    
+        //         })
+        //     }
+        // }
 
-        const updateElementTable = ({ index, rows, cols, headers, content }) => {
-            store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_TABLE}`, {
-                rows,
-                cols,
-                headers,
-                content,
-                index    
-            })
-        }
+        // const updateElementTable = ({ index, rows, cols, headers, content }) => {
+        //     store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_TABLE}`, {
+        //         rows,
+        //         cols,
+        //         headers,
+        //         content,
+        //         index    
+        //     })
+        // }
 
-        const updateElementFromPopup = ({ id, textValue, table, name }) => {
-            const index = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
-            const domElem = document.querySelector(`#${id}`)
-            if(textValue != undefined && name != 'table') {
-                updateElementValue({ index, value: unref(textValue) })
-            }
-            if(!_.isEmpty(table) && name == 'table') {
-                updateElementTable({ 
-                    index, 
-                    rows: table.rows, 
-                    cols: table.cols, 
-                    headers: table.headers,
-                    content: table.content 
-                })
-            }
-            updateElementStyles(domElem, unref(itemAttributes), getStylesOfElement(domElem), name)
-            openPopup.value = false
-        }
+        // const updateElementFromPopup = ({ id, textValue, table, name }) => {
+        //     const index = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
+        //     const domElem = document.querySelector(`#${id}`)
+        //     if(textValue != undefined && name != 'table') {
+        //         updateElementValue({ index, value: unref(textValue) })
+        //     }
+        //     if(!_.isEmpty(table) && name == 'table') {
+        //         updateElementTable({ 
+        //             index, 
+        //             rows: table.rows, 
+        //             cols: table.cols, 
+        //             headers: table.headers,
+        //             content: table.content 
+        //         })
+        //     }
+        //     updateElementStyles(domElem, unref(itemAttributes), getStylesOfElement(domElem), name)
+        //     openPopup.value = false
+        // }
 
-        const generateElement = (name, attrs = {}) => {
-            const elementMapping = {
-                textarea: generateTextarea,
-                icon: generateIcon,
-                button: generateButton,
-                table: generateTable
-            }
-            const element = elementMapping[name](attrs)
-            store.commit(`${BUILDER_MODULE}/${GENERATE_ELEMENT}`, element)
-        }
+        // const generateElement = (name, attrs = {}) => {
+        //     const elementMapping = {
+        //         textarea: generateTextarea,
+        //         icon: generateIcon,
+        //         button: generateButton,
+        //         table: generateTable,
+        //         background: generateBackground
+        //     }
+        //     const element = elementMapping[name](attrs)
+        //     if(name == 'background') {
+        //         store.commit(`${BUILDER_MODULE}/${SET_PAGE_BACKGROUND}`, element)
+        //     }
+        //     else {
+        //         store.commit(`${BUILDER_MODULE}/${GENERATE_ELEMENT}`, element)
+        //     }
+        // }
 
-        const generatePrefetchedImage = (detail) => {
-            store.commit(`${BUILDER_MODULE}/${GENERATE_ELEMENT}`, generateImage({ 
-                filename: detail.urls.original,
-                image: `${detail.storage_path}/${detail.file}.${detail.type}`,
-                prefetched: true
-            }))
-        }
+        // const generatePrefetchedImage = (detail) => {
+        //     store.commit(`${BUILDER_MODULE}/${GENERATE_ELEMENT}`, generateImage({ 
+        //         filename: detail.urls.original,
+        //         image: `${detail.storage_path}/${detail.file}.${detail.type}`,
+        //         prefetched: true
+        //     }))
+        // }
 
-        const promptImage = async () => {
+        // const promptImage = async (background = false) => {
 
-            let image = {}
-            let filename = {}
+        //     let image = {}
+        //     let filename = {}
 
-            let file = document.querySelector('#file')
-            file.click()
+        //     let file = document.querySelector('#file')
+        //     file.click()
 
-            file.onchange = (e) => {
-                image = e.target.files[0]
-                filename = URL.createObjectURL(image)
+        //     file.onchange = (e) => {
+        //         image = e.target.files[0]
+        //         filename = URL.createObjectURL(image)
 
-                store.commit(`${BUILDER_MODULE}/${GENERATE_ELEMENT}`, generateImage({ filename, image }))
+        //         if(background == true) {
+        //             store.commit(`${BUILDER_MODULE}/${SET_PAGE_BACKGROUND}`, 
+        //                 generateImage({ filename, image, prefetched: false })
+        //             )
+        //         }
+        //         else {
+        //             store.commit(`${BUILDER_MODULE}/${GENERATE_ELEMENT}`, 
+        //                 generateImage({ filename, image })
+        //             )
+        //         }
 
-                file.value = ''
-            }
 
-        }
+        //         file.value = ''
+        //     }
 
-        const fetchTemplates = () => {
-            return store.dispatch(`${BUILDER_MODULE}/${GET_TEMPLATES}`)
-        }
+        // }
 
-        const openUpdatePopup = (element, domElement) => {
-            activeElement.value = element
-            activeItem.value = null
-            activeDomElement.value = getDomElementParent(domElement, 'draggable')
-            openPopup.value = true
-        }
+        // const openUpdatePopup = (element, domElement) => {
+        //     activeElement.value = element
+        //     activeItem.value = null
+        //     activeDomElement.value = getDomElementParent(domElement, 'draggable')
+        //     openPopup.value = true
+        // }
 
         const saveTemplate = async () => {
             activeItem.value = null
@@ -409,37 +418,38 @@ export default {
             loadPages()
             nextTick(async () => {
                 showcontainer.value = true
-                await fetchTemplates()
             })
         })
       
         return { 
-            page,
-            pages,
-            onDrag,
-            onScale,
-            onRotate,
+            // page,
+            // pages,
+            // onDrag,
+            // onScale,
+            // onRotate,
             fetching,
-            template,
-            openPopup,
-            activePage,
-            activeItem,
-            deleteItem,
+            // template,
+            // openPopup,
+            // activePage,
+            // activeItem,
+            // deleteItem,
             submitPage,
-            promptImage,
+            // promptImage,
             saveTemplate,
-            activateItem,
+            // activateItem,
             showcontainer,
-            generateElement,
-            activeElement,
-            activeTemplate,
-            openUpdatePopup,
-            activeDomElement,
-            getStylesOfElement,
-            activePageTemplate,
-            updateElementValue,
-            updateElementFromPopup,
-            generatePrefetchedImage,
+            // generateElement,
+            // reportBackground,
+            // activeElement,
+            // activeTemplate,
+            // openUpdatePopup,
+            // activeDomElement,
+            // generateBackground,
+            // getStylesOfElement,
+            // activePageTemplate,
+            // updateElementValue,
+            // updateElementFromPopup,
+            // generatePrefetchedImage,
         }
     },
 }
@@ -452,10 +462,6 @@ $orange: orange;
 
 .swal2-container {
     z-index: 999999999999999999 !important;
-}
-
-.active-item {
-    cursor: move;
 }
 
 .title_h1 {
@@ -478,130 +484,6 @@ $orange: orange;
 .main-view {
     margin-top: 6rem;
 }
-
-.template {
-    &-header {
-        top: 0;
-        max-height: 4.75rem;
-    }
-    &-footer {
-        bottom: 0;
-    }
-    &-header, 
-    &-footer {
-        width: 100%;
-        height: auto;
-        position: absolute;
-        left: 0;
-        img {
-            width: 100%;
-            height: 100%;
-            padding: 1rem;
-            object-fit: cover;
-        }
-    }
-    &-body {
-        margin-top: 5.75rem;
-        img {
-            object-fit: cover;
-            width: 25rem;
-            height: 25rem;
-            height: auto;
-            border: 3px solid $orange;
-        }
-        span {
-            word-break: break-all !important;
-        }
-        .page-number {
-            float: right;
-            font-size: 12px;
-            font-family: inherit;
-            &::after, &::before {
-                float: none;
-                clear: both;
-            }
-        }
-    }
-}
-
-.builder-container {
-    position: relative;
-    min-height: 58rem;
-    height: auto;
-    background: #fff;
-    overflow: hidden;
-    padding: 1rem 2rem;
-    margin-bottom: 1rem;
-
-    .draggable {
-        z-index: 10;
-        position: absolute;
-        .close {
-            position: absolute;
-            top: -100%;
-            left: 50%;
-            width: 1.2rem;
-            height: 1.2rem;
-            background: #000;
-            color: white;
-            transform: translate(-50%, -100%);
-            transform-origin: center;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            line-height: 1.08rem;
-            cursor: pointer;
-            &:hover {
-                opacity: .8;
-            }
-        }
-    }
-
-    .transparent-button {
-        background: transparent;
-        border-radius: 0;
-        border: 2px solid #000;
-        text-transform: uppercase;
-        font-weight: 900;
-        font-family: 'Almarai ExtraBold';
-    }
-
-    .title-bar {
-        background: #797272;
-        color: rgb(243, 243, 243);
-        padding: 5px 1rem;
-        margin: .8rem 0;
-        text-transform: uppercase;
-        font-size: 1.2rem;
-        font-weight: 900;
-        font-family: 'Almarai ExtraBold';
-        width: 92%;
-        display: flex;
-        align-items: center;
-    }
-
-    .textarea {
-        min-width: 350px;
-        min-height: 50px;
-        border: 1px solid #ccc;
-        z-index: 13;
-        word-wrap: normal;
-        &::before,
-        &::after {
-            float: none;
-            clear: both;
-        }
-    }
-
-    .builder-image {
-        width: 200;
-        height: 250px;
-        object-fit: cover;
-        margin: .5rem 0;
-    }
-
-}
-
 
 .text {
     font-family: Poppins;

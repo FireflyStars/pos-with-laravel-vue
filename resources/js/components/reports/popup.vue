@@ -8,7 +8,7 @@
             <h4 class="popup-header-title">Update Zone</h4>
         </div>
         <div class="popup-body almarai_regular_normal">
-            <form @submit.prevent="submit">
+            <form>
 
                 <div class="popup-body-item">
                     
@@ -205,7 +205,11 @@
                     </div>
                 </div>
 
-                <base-button title="Update" class="float-end mt-2" />
+                <base-button 
+                    title="Update" 
+                    class="float-end mt-2"
+                    @click.prevent="submit"
+                />
                 <div class="clearfix"></div>    
 
             </form>

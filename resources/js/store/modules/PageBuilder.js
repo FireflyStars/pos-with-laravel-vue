@@ -28,7 +28,6 @@ import {
     UPDATE_ELEMENT_STYLES,
     UPDATE_ELEMENT_CONTENT,
     UPDATE_ELEMENT_TABLE,
-    UPDATE_TABLE_CONTENT,
     SAVE_REPORT_TEMPLATE,
     SAVE_REPORT_TEMPLATES,
     UPDATE_REPORT_TEMPLATE,
@@ -37,7 +36,8 @@ import {
     GET_REPORTS,
     SAVE_REPORTS,
     SAVE_REPORT,
-    GET_REPORT
+    GET_REPORT,
+    SET_PAGE_BACKGROUND,
 
 } from "../types/types"
 
@@ -121,7 +121,8 @@ export const PageBuilder = {
             state.pages = [{
                 id: generateId(12),
                 elements: [],
-                template_id: state.activeTemplate || -1
+                template_id: state.activeTemplate || -1,
+                background: null,
             }]
         },
         [RESET_PAGES](state) {
@@ -132,7 +133,8 @@ export const PageBuilder = {
             state.pages.splice(page, 0, {
                 id: generateId(12),
                 elements: [],
-                template_id: state.activeTemplate
+                template_id: state.activeTemplate,
+                background: null
             })
             state.activePage = page
         },
@@ -153,6 +155,9 @@ export const PageBuilder = {
         [GENERATE_ELEMENT](state, element) {
             state.pages[state.activePage].elements.push(element)
         },
+        [SET_PAGE_BACKGROUND](state, background) {
+           state.pages[state.activePage].background = background   
+        },
         [UPDATE_ELEMENT_STYLES](state, { styles, index }) {
             state.pages[state.activePage].elements[index].attributes.style = styles
         },
@@ -167,13 +172,6 @@ export const PageBuilder = {
             page.content = {
                 ...page.content, 
                 ...content
-            }
-        },
-        [UPDATE_TABLE_CONTENT](state, { row, col, type, value, index }) {
-            const content = state.pages[state.activePage].elements[index].content
-            content[type] = {
-                ...content[type],
-                [row + '' +col]: value
             }
         },
         [SAVE_REPORT_TEMPLATES](state, data) {

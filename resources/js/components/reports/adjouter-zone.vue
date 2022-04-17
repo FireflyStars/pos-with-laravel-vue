@@ -66,6 +66,7 @@
                             class="library-item"
                             :name="icon"
                             :height="icon == 'report-arrow' ? 30 : 20"
+                            color="black"
                             @click="generateElement('icon', { id: 'Icon', name: icon })"
                         />
                         <a 
