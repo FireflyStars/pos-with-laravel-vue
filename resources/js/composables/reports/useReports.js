@@ -74,7 +74,7 @@ export default function useReports() {
                             ...page.background.attributes,
                             src: findFile(data.page_files, id)?.public_path
                         },
-                        dtaFile: findFile(data.page_files, id)?.file,
+                        dataFile: findFile(data.page_files, id)?.file,
                         prefetched: true,
                     }
                 }
@@ -136,7 +136,7 @@ export default function useReports() {
         try {
             const data = await store.dispatch(`${[BUILDER_MODULE]}/${[GENERATE_PDF]}`, { 
                 pages: pages.value,
-                order_id: orderId 
+                orderId 
             })
             if(data) generatePDF(data)
         }

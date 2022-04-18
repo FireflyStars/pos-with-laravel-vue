@@ -14,7 +14,6 @@
             v-if="!fetching"
             class="template-body"
         >
-
             <component 
                 v-for="(element, index) in page.elements" 
                 :key="index"
