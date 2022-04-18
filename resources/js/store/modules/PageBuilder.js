@@ -9,7 +9,7 @@ import {
 
     SAVE_META,
     SET_LOADING,
-    SAVE_PAGE, 
+    GENERATE_PDF, 
     ADD_PAGE,
     DELETE_PAGE,
     SAVE_PAGE_ELEMENTS, 
@@ -190,7 +190,7 @@ export const PageBuilder = {
 
     actions: {
 
-        async [SAVE_PAGE]({ commit }, { pages, template, orderId }) {
+        async [GENERATE_PDF]({ commit }, { pages, template, orderId }) {
 
             commit(SET_LOADING, { id: 'submit' })
 

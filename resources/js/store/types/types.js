@@ -72,7 +72,7 @@ export const ACTIVE_ITEM = 'ACTIVE_ITEM' //getters
 export const SET_TOGGLER_ITEM = 'SET_TOGGLER_ITEM' //mutations
 
 export const BUILDER_MODULE = 'BUILDER_MODULE'
-export const SAVE_PAGE = 'SAVE_PAGE'
+export const GENERATE_PDF = 'GENERATE_PDF'
 export const ADD_PAGE = 'AddPage'
 export const DELETE_PAGE = 'deletePage'
 export const GET_REPORTS = 'getReports'

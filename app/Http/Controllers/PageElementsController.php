@@ -49,6 +49,8 @@ class PageElementsController extends Controller
         $pdf = App::make('dompdf.wrapper');
 
         $pdf->setOptions([
+            'dpi'                  => 150,
+            'defaultFont'          => 'sans-serif',  
             'enable_php'           => true,
             'isRemoteEnabled'      => true, 
             'isHtml5ParserEnabled' => true, 

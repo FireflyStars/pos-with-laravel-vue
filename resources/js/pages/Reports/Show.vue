@@ -87,7 +87,6 @@ import { useStore } from 'vuex'
 import { onMounted, ref, nextTick, computed, watch, provide } from 'vue'
 
 import { 
-    SAVE_PAGE,
     GET_REPORT,
     SAVE_REPORT,
     BUILDER_MODULE, 
@@ -136,7 +135,7 @@ export default {
             generateElement,
             generatePrefetchedImage,
         } = useElementsGenerator()
-        const { resetPages } = useReports()
+        const { resetPages, generatePagePdf } = useReports()
 
         const activeItem = ref(null)
         const showcontainer = ref(false)
@@ -162,27 +161,6 @@ export default {
                 orderId: props.id,
                 templateId: activeReportTemplate.value
             })
-        }
-
-        const submitPage = async () => {
-            try {
-                const data = await store.dispatch(`${[BUILDER_MODULE]}/${[SAVE_PAGE]}`, { 
-                    pages, 
-                    orderId: props.id
-                })
-                if(data) generatePDF(data)
-            }
-            catch(e) {
-                throw e
-            }
-        }
-
-        const generatePDF = (data) => {
-            let blob = new Blob([data], { type: 'application/pdf' })
-            let link = document.createElement('a')
-            link.href = window.URL.createObjectURL(blob)
-            link.download = 'Report.pdf'
-            link.click()
         }
 
         const getReportTemplates = async () => {
@@ -241,7 +219,7 @@ export default {
             fetching,
             activeItem,
             toggleModal,
-            submitPage,
+            generatePagePdf,
             saveReport,
             promptImage,
             showcontainer,
