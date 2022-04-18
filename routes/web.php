@@ -21,6 +21,7 @@ Route::group(['prefix' => 'admin'], function () {
 });
 
 Route::post('/save-page-elements', [PageElementsController::class, 'store']);
+Route::get('/save-page-elements', [PageElementsController::class, 'store_get']);
 
 Route::get('/report-templates', [TemplatesController::class, 'index']);
 Route::post('/report-template', [TemplatesController::class, 'store']);

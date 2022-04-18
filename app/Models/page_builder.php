@@ -9,6 +9,32 @@ class page_builder extends Model
 {
     use HasFactory;
 
+    public static function get_page_background($page) 
+    {
+        $page = (array) $page;
+        if(count((array) $page['background'])) 
+        {
+            $background = $page['background'];
+            if($background->prefetched == true) 
+            {
+                $filename = $background->dataFile;
+                if(strpos($filename, 'report-templates') !== false) 
+                {
+                    $src = public_path('\/storage/' . $filename);
+                }
+                else 
+                {
+                    $src = base_path('\/public/') . $filename;
+                }
+            }
+            else 
+            {
+                $src = self::convert_resource_file('BackgroundImage#' . $background->attributes->id);
+            }
+            return self::convert_base64($src);
+        }
+    }
+
     public static function get_active_template($id) 
     {
         return optional(self::templates()->where('id', $id))->first();
@@ -53,9 +79,24 @@ class page_builder extends Model
     public static function get_svgs() 
     {
         return [
-            'arrow-top' => '<svg width="20" height="30" viewBox="0 0 20 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M11 29V10" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M1 11L10 1L19 11" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            'report-arrow' => '<svg 
+            version="1.0" 
+            xmlns="http://www.w3.org/2000/svg"
+            width="30" 
+            height="30" 
+            viewBox="0 0 50.000000 50.000000"
+            >
+                <g 
+                    transform="translate(0.000000,50.000000) scale(0.100000,-0.100000)"
+                    fill="#000000" 
+                    stroke="none"
+                >
+                    <path 
+                        d="M95 328 c3 -40 9 -75 11 -77 2 -3 14 5 27 17 l22 21 113 -106 113
+                        -106 25 25 25 25 -112 107 c-104 100 -110 108 -95 125 31 34 20 41 -60 41
+                        l-77 0 8 -72z"
+                    />
+                </g>
             </svg>',
     
             'egg' => '<svg width="35" height="25" viewBox="0 0 35 25" fill="none" xmlns="http://www.w3.org/2000/svg">

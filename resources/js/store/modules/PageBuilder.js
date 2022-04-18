@@ -28,7 +28,6 @@ import {
     UPDATE_ELEMENT_STYLES,
     UPDATE_ELEMENT_CONTENT,
     UPDATE_ELEMENT_TABLE,
-    UPDATE_TABLE_CONTENT,
     SAVE_REPORT_TEMPLATE,
     SAVE_REPORT_TEMPLATES,
     UPDATE_REPORT_TEMPLATE,
@@ -37,7 +36,8 @@ import {
     GET_REPORTS,
     SAVE_REPORTS,
     SAVE_REPORT,
-    GET_REPORT
+    GET_REPORT,
+    SET_PAGE_BACKGROUND,
 
 } from "../types/types"
 
@@ -85,7 +85,7 @@ export const PageBuilder = {
         activePage: state => state.activePage,
         page: state => state.pages.length ? state.pages[state.activePage] : {},
         activePageTemplate: (state, getters) => {
-            if(getters.page.template_id != -1 && getters.page.template_id != undefined) {
+            if(getters?.page?.template_id != -1 && getters?.page?.template_id != undefined) {
                 const template = state.templates.find(template => {
                     return template.id == getters.page.template_id
                 })
@@ -121,18 +121,22 @@ export const PageBuilder = {
             state.pages = [{
                 id: generateId(12),
                 elements: [],
-                template_id: state.activeTemplate || -1
+                template_id: state.activeTemplate || -1,
+                background: null,
             }]
         },
         [RESET_PAGES](state) {
             state.pages = []
         },
         [ADD_PAGE](state) {
-            state.pages.splice(+state.activePage + 1, 0, {
+            const page = +state.activePage + 1
+            state.pages.splice(page, 0, {
                 id: generateId(12),
                 elements: [],
-                template_id: state.activeTemplate
+                template_id: state.activeTemplate,
+                background: null
             })
+            state.activePage = page
         },
         [ASSIGN_TEMPLATE](state, id) {
             if(!state.pages.length && !state.activePage) return
@@ -151,6 +155,9 @@ export const PageBuilder = {
         [GENERATE_ELEMENT](state, element) {
             state.pages[state.activePage].elements.push(element)
         },
+        [SET_PAGE_BACKGROUND](state, background) {
+           state.pages[state.activePage].background = background   
+        },
         [UPDATE_ELEMENT_STYLES](state, { styles, index }) {
             state.pages[state.activePage].elements[index].attributes.style = styles
         },
@@ -165,13 +172,6 @@ export const PageBuilder = {
             page.content = {
                 ...page.content, 
                 ...content
-            }
-        },
-        [UPDATE_TABLE_CONTENT](state, { row, col, type, value, index }) {
-            const content = state.pages[state.activePage].elements[index].content
-            content[type] = {
-                ...content[type],
-                [row + '' +col]: value
             }
         },
         [SAVE_REPORT_TEMPLATES](state, data) {
@@ -190,11 +190,12 @@ export const PageBuilder = {
 
     actions: {
 
-        async [SAVE_PAGE]({ commit }, { pages, template }) {
+        async [SAVE_PAGE]({ commit }, { pages, template, orderId }) {
 
             commit(SET_LOADING, { id: 'submit' })
 
             const formData = formatFormData(pages)
+            if(!_.isEmpty(orderId)) formData.append('order_id', orderId)
 
             try {
                 const { data } = await axios.post('/save-page-elements', formData, {  
@@ -332,7 +333,7 @@ export const PageBuilder = {
             try {
                 commit(SET_LOADING, { id: 'fetching' })
                 const { data } = await axios.get('/report-templates')
-                commit(SAVE_REPORT_TEMPLATES, data)
+                commit(SAVE_REPORT_TEMPLATES, data.data || [])
                 commit(SET_LOADING, { id: 'fetching', value: false })
             }
             catch(e) {

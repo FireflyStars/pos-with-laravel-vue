@@ -8,7 +8,7 @@
             <h4 class="popup-header-title">Update Zone</h4>
         </div>
         <div class="popup-body almarai_regular_normal">
-            <form @submit.prevent="submit">
+            <form>
 
                 <div class="popup-body-item">
                     
@@ -141,13 +141,6 @@
                             <span class="unit">px</span>
                         </div>
                     </div>
-                    <!-- <div class="attribute">
-                        <div>Line heigth:</div>
-                        <div class="d-flex align-items-center gap-1">
-                            <input type="text" v-model="itemAttributes.lineHeight">
-                            <span class="unit"></span>
-                        </div>
-                    </div> -->
                     <div class="attribute">
                         <div>Font family:</div>
                         <div class="d-flex align-items-center gap-1">
@@ -212,7 +205,11 @@
                     </div>
                 </div>
 
-                <base-button title="Update" class="float-end mt-2" />
+                <base-button 
+                    title="Update" 
+                    class="float-end mt-2"
+                    @click.prevent="submit"
+                />
                 <div class="clearfix"></div>    
 
             </form>
@@ -223,9 +220,9 @@
 
 <script>
 
+import reportTable from './report-table'
 import { ref, computed, onMounted, reactive } from 'vue'
 import useStyles from '../../composables/reports/useStyles'
-import reportTable from './report-table'
 
 
 export default {

@@ -8,6 +8,7 @@ use App\Models\Contact;
 
 use App\Traits\LcdtLog;
 use App\Models\Customer;
+use App\Models\Affiliate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -47,6 +48,11 @@ class Order extends Model
     public function report() 
     {
         return $this->hasOne(Report::class);
+    }
+
+    public function affiliate() 
+    {
+        return $this->belongsTo(Affiliate::class);
     }
 
     public function updateState($order_state_id,$user_id=null){

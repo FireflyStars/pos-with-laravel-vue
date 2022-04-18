@@ -17256,3 +17256,7 @@ html .bg-panel {
   line-height: 110%;
   color: #000000;
 }
+
+P {
+  margin-bottom: 0;
+}
