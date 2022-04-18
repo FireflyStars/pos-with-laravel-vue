@@ -8,15 +8,16 @@
                 <main-header />
 
                 <div 
-                class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap reports-page" 
-                style="z-index:100" >
+                    class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap reports-page" 
+                    style="z-index:100" 
+                >
                     
                     <side-bar />
 
-                    <div class="col main-view container">
+                    <div class="col main-view">
                         <div>
 
-                            <div class="d-flex gap-4">
+                            <div class="d-flex gap-2">
 
                                 <div class="left-page-container">
 
@@ -166,6 +167,12 @@ export default {
 
 $orange: orange;
 
+// * {
+//     margin: 0;
+//     padding: 0;
+//     box-sizing: border-box;
+// }
+
 .swal2-container {
     z-index: 999999999999999999 !important;
 }
@@ -180,11 +187,12 @@ $orange: orange;
 }
 
 .left-page-container {
-    width: 55%;
+    width: auto;
+    height: auto;
 }
 
 .right-page-container {
-    width: 45%;
+    width: auto;
 }
 
 .main-view {

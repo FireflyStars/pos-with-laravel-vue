@@ -13,7 +13,7 @@
                     
                     <side-bar />
 
-                    <div class="col main-view container">
+                    <div class="col main-view">
                         <div>
 
                             <div class="d-flex gap-4">
@@ -21,7 +21,7 @@
                                 <div class="left-page-container">
 
                                     <header-section 
-                                        @submitPage="submitPage"
+                                        @submitPage="generatePagePdf(id)"
                                         @save="saveReport" 
                                     />
                                     
@@ -249,11 +249,12 @@ $orange: orange;
 }
 
 .left-page-container {
-    width: 55%;
+    width: auto;
+    height: auto;
 }
 
 .right-page-container {
-    width: 45%;
+    width: auto;
 }
 
 .main-view {

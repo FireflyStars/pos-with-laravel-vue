@@ -62,7 +62,6 @@ import { onMounted, ref, nextTick, computed, provide } from 'vue'
 
 import { 
     BUILDER_MODULE, 
-    SAVE_PAGE,
     UPDATE_REPORT_TEMPLATE,
     GET_REPORT_TEMPLATE
 } from '../../store/types/types'
@@ -107,7 +106,6 @@ export default {
 
         const showcontainer = ref(false)
 
-        const page = computed(() => store.getters[`${BUILDER_MODULE}/page`])
         const pages = computed(() => store.getters[`${BUILDER_MODULE}/pages`])
 
 
@@ -174,11 +172,12 @@ $orange: orange;
 }
 
 .left-page-container {
-    width: 55%;
+    width: auto;
+    height: auto;
 }
 
 .right-page-container {
-    width: 45%;
+    width: auto;
 }
 
 .main-view {

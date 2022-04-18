@@ -84,7 +84,9 @@ class PageElementsController extends Controller
 
     public function get_order_affiliate(Request $request) 
     {
-        return $request->has('order_id') ? optional(Order::find($request->order_id))->affiliate : null;
+        return $request->has('order_id') && !is_null($request->order_id) 
+        ? optional(Order::find($request->order_id))->affiliate 
+        : null;
     }
 
     public function get_page_order(Order $order) 

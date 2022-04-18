@@ -132,10 +132,11 @@ export default function useReports() {
     }
 
 
-    const generatePagePdf = async () => {
+    const generatePagePdf = async (orderId = null) => {
         try {
             const data = await store.dispatch(`${[BUILDER_MODULE]}/${[GENERATE_PDF]}`, { 
-                pages: pages.value, 
+                pages: pages.value,
+                order_id: orderId 
             })
             if(data) generatePDF(data)
         }

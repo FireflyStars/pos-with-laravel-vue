@@ -19,9 +19,7 @@
         main {
             position: relative;
             width: 100%;
-            min-height: 45rem;
-            height: 90%;
-            overflow: hidden;
+            height: 100%;
         }
         .draggable, .item {
             z-index: 10;
@@ -78,30 +76,8 @@
         .order-1 {
             order: 1 !important;
         }
-
-        .template-header {
-            top: 0;
-            max-height: 4.75rem !important;
-        }
-        .template-footer {
-            bottom: 0;
-            max-height: 4.75rem !important;
-        }
-        .template-header,  
-        .template-footer {
-            width: 100%;
-            position: absolute;
-            left: 0;
-        }
-        .template-footer img,
-        .template-footer img {
-            width: 100%;
-            height: 100%;
-            padding: 1rem;
-            object-fit: cover;
-        }
         .template-affiliate {
-            bottom: 0;
+            bottom: 20px;
             left: 0;
             width: 100%;
             position: absolute;
@@ -114,10 +90,6 @@
         .template-affiliate .page-number {
             font-weight: bold;
             font-size: 12px;
-        }
-        
-        .template-body {
-            margin-top: 6.75rem;
         }
         .template-body span {
             word-break: break-all !important;
@@ -227,7 +199,7 @@
             position: relative; 
             background-image: url('{{$background}}'); 
             background-repeat: no-repeat; 
-            background-size: {{ $last || $first ? 'cover' : '100% 90%' }}; 
+            background-size: cover; 
             background-position: center;"
         >
 
@@ -321,10 +293,5 @@
 
 </body>
 
-{{-- <script type="text/php">
-    if ( isset($pdf) ) {
-        $pdf->page_text(550, 10, "{PAGE_NUM}/{PAGE_COUNT}", null, 12, array(0,0,0));
-    }
-</script>  --}}
 
 </html>

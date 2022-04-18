@@ -5,23 +5,15 @@
         :style="{ 
             backgroundImage: `url('${reportBackground?.attributes?.src}')`,
             backgroundRepeat: 'no-repeat',
-            backgroundSize: bgSize,
-            backgroundPosition: 'center center' 
+            backgroundSize: 'cover',
+            backgroundPosition: 'center' 
         }" 
-        @click.prevent="activeItem = ''"
     >
 
         <div 
             v-if="!fetching"
             class="template-body"
         >
-
-            <!-- <span 
-                v-show="pages.length"
-                class="page-number text-muted" 
-            >
-                {{ +activePage + 1 }}/{{ pages.length }}
-            </span> -->
 
             <component 
                 v-for="(element, index) in page.elements" 
@@ -168,6 +160,7 @@ export default {
         const activateItem = (e) => {
             let elem = e.target
             const dataName = elem.getAttribute('dataName')
+            console.log(elem, dataName)
             elem = dataName == 'svg' ? elem : getDomElementParent(e.target, 'draggable')
             const id = elem.getAttribute('id')
             activeItem.value = `#${id}`
@@ -285,7 +278,6 @@ $orange: orange;
 
 .template {
     &-body {
-        margin-top: 5.75rem;
         img {
             object-fit: cover;
             width: 25rem;
@@ -309,12 +301,12 @@ $orange: orange;
 }
 
 .builder-container {
+
     position: relative;
-    min-height: 58rem;
-    height: auto;
+    height: 1122px;
+    width: 793px;
     background: #fff;
     overflow: hidden;
-    padding: 1rem 2rem;
     margin-bottom: 1rem;
 
     .draggable {

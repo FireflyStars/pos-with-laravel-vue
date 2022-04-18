@@ -1,6 +1,6 @@
 <template>
     <div class="template-affiliate">
-        <div style="margin-left: 1rem; font-weight: bold; font-size: 12px;">{{ +activePage + 1 }}</div>
+        <div style="margin-left: 1.5rem; margin-top: -5rem; font-weight: bold; font-size: 12px;">{{ +activePage + 1 }}</div>
         <div 
             v-html="footerreport" 
             v-show="!fetching"
