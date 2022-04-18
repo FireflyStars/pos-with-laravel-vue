@@ -18,10 +18,10 @@
         }
         main {
             position: relative;
-            width: 90%;
-            margin: 1rem auto;
+            width: 100%;
             min-height: 45rem;
-            max-height: 55rem;
+            height: 90%;
+            overflow: hidden;
         }
         .draggable, .item {
             z-index: 10;
@@ -100,6 +100,22 @@
             padding: 1rem;
             object-fit: cover;
         }
+        .template-affiliate {
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            position: absolute;
+            padding: 1rem;
+            font-size: 10px;
+            font-family: inherit;
+            display: grid;
+            grid-template-columns: 10% 90%;
+        }
+        .template-affiliate .page-number {
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
         .template-body {
             margin-top: 6.75rem;
         }
@@ -110,8 +126,8 @@
             width: auto;
             height: auto;
             object-fit: cover;
-            width: 25rem;
-            height: 25rem;
+            max-width: 25rem;
+            max-height: 25rem;
             border: 3px solid orange;
             position: absolute;
         }
@@ -151,14 +167,19 @@
             align-items: center;
         }
 
+        .title-bar .content {
+            flex-grow: 1;
+        }
+
         .textarea {
             position: absolute !important;
             border: none;
-            min-width: 350px;
-            min-height: 50px;
+            width: auto;
+            height: auto;
             border: 1px solid #ccc;
             z-index: 99999;
             word-wrap: normal;
+            color: #000;
         }
        
         .textarea::before,
@@ -194,18 +215,22 @@
 <body>
 
     @foreach ($pages as $page)
-        <?php $break_rule = $loop->last ? 'avoid-page': 'page';  ?>
-        <main style="break-after: {{ $break_rule }}; position: relative; margin: 1rem;">
+        <?php 
+            $break_rule = $loop->last ? 'avoid-page': 'page';
+            $background = $builder::get_page_background($page);
+            $last = $loop->index == count((array) $pages) - 1;
+            $first = $loop->first;
+        ?>
+        <main 
+            style="
+            break-after: {{ $break_rule }};
+            position: relative; 
+            background-image: url('{{$background}}'); 
+            background-repeat: no-repeat; 
+            background-size: {{ $last || $first ? 'cover' : '100% 90%' }}; 
+            background-position: center;"
+        >
 
-            <div class="template-header" style="max-height: 6rem; position: absolute; top: 20px; left: 0; margin-bottom: 6rem;">
-                <img 
-                    v-if="templates.length"
-                    src="{{ $builder::get_active_template($page->template_id)['template']['header'] }}" 
-                    alt="Template header"
-                    style="width: 90%; max-height: 6rem !important;"  
-                >
-            </div>
-        
             <div class="template-body">
                 
                 @foreach ($page->elements as $element)
@@ -279,14 +304,16 @@
                 @endforeach
         
             </div>
-        
-            <div class="template-footer" style="max-height: 6rem; position: absolute; bottom: 0; left: 0; margin-top: 6rem;">
-                <img 
-                    src="{{ $builder::get_active_template($page->template_id)['template']['footer'] }}" 
-                    alt="Template footer"
-                    style="width: 90%; max-height: 6rem !important;" 
+            @if (!$last && !$first)
+
+                <div 
+                    class="template-affiliate" 
+                    style="display: flex;"
                 >
-            </div>
+                    <div class="page-number" style="margin-top: 20px !important;">{{ (int) $loop->index }}</div>
+                    <div class="content" style="margin-left: 20px;">{!! optional($affiliate)->footerreport ?? '' !!}</div>
+                </div>
+            @endif
 
         </main>
         
@@ -294,10 +321,10 @@
 
 </body>
 
-<script type="text/php">
+{{-- <script type="text/php">
     if ( isset($pdf) ) {
         $pdf->page_text(550, 10, "{PAGE_NUM}/{PAGE_COUNT}", null, 12, array(0,0,0));
     }
-</script> 
+</script>  --}}
 
 </html>

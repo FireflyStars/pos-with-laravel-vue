@@ -100,7 +100,7 @@ export const SET_ACTIVE_PAGE = 'setActivePage'
 export const UPDATE_ELEMENT_STYLES = 'updateElementStyles'
 export const UPDATE_ELEMENT_CONTENT = 'updateElementContent'
 export const UPDATE_ELEMENT_TABLE = 'updateElementTable'
-export const UPDATE_TABLE_CONTENT = 'updateTableContent'
+export const SET_PAGE_BACKGROUND = 'setPageBackground'
 export const SET_LOADING = 'setLoading'
 
 export const SAVE_META = 'saveMeta'

@@ -39,11 +39,9 @@
     <div class="d-flex justify-content-between align-items-center">
 
         <div class="reports-dropdown">
-            <!-- :class="{ 'not-allowed': fetching }"  -->
-                <!-- :disabled="fetching || loading" -->
             <BaseButton 
                 title="Change Fond"
-                @click="toggleModal('templates-modal', true)"
+                @click="toggleModal('change-fond', true)"
             />
         </div>
 
@@ -82,7 +80,15 @@
                     name="page"
                     classnames="reports-dropdown-button"
                     :disabled="fetching"
-                    :selectStyles="{ maxHeight: '10rem', overflow: 'auto' }"
+                    :styles="{
+                        background: '#C4C4C4',
+                        color: '#000'
+                    }"
+                    :selectStyles="{ 
+                        maxHeight: '10rem', 
+                        overflow: 'auto', 
+                        borderRadius: 0 
+                    }"
                 />
 
             </div>
@@ -92,8 +98,7 @@
     </div>
 
     <Modal 
-        id="templates-modal"
-        classes="p-5" 
+        id="change-fond"
         size="md"
     >
         <div>
@@ -106,24 +111,28 @@
                 <div class="d-flex align-items-center justify-content-around">
                     <BaseButton 
                         title="Votre Image"
+                        @click="promptImage(true)"
                     />
 
                     <div class="image-boxes">
-                        <div>
-                            <div class="image-box"></div>
-                            <label>Standard</label>
-                        </div>
-                        <div>
-                            <div class="image-box"></div>
-                            <label>XXXXXXX</label>
-                        </div>
-                        <div>
-                            <div class="image-box"></div>
-                            <label>Vide</label>
-                        </div>
-                        <div>
-                            <div class="image-box"></div>
-                            <label>YYYYYY</label>
+                        <div 
+                            v-for="template in reportTemplates"
+                            :key="template"
+                        >
+                            <div 
+                                class="image-box"
+                                @click.prevent="generateElement('background', {
+                                    filename: `/images/${template}`,
+                                    classes: 'page-background',
+                                    image: `/images/${template}`
+                                })"
+                            >
+                                <img 
+                                    :src="`/images/${template}`" 
+                                    alt="Report Template"
+                                >
+                            </div>
+                            <!-- <label>Standard</label> -->
                         </div>
                     </div>
 
@@ -133,9 +142,11 @@
                     <BaseButton 
                         title="Valider"
                         kind="green"
+                        @click="toggleModal('change-fond', false)"
                     />
                     <BaseButton 
                         title="Non"
+                        @click="toggleModal('change-fond', false)"
                     />
                 </div>
 
@@ -180,6 +191,19 @@ export default {
         const { toggleModal } = useModal()
 
         const fetching = inject('fetching')
+        const generateElement = inject('generateElement')
+        const promptImage = inject('promptImage')
+
+        const reportTemplates = computed(() => {
+            return [
+                'page0.jpg',
+                'page1.jpg',
+                'page2.jpg',
+                'page3.jpg',
+                'page4.jpg',
+                'page8.jpg',
+            ]
+        })
         
         const loading = computed(() => {
             const { id, value } = store.getters[`${BUILDER_MODULE}/loading`]
@@ -237,8 +261,7 @@ export default {
                     display: template.name
                 }
             })
-        })
-        
+        })        
     
         const assignTemplateToActivePage = (id) => {
             if(!fetching.value) store.commit(`${BUILDER_MODULE}/${ASSIGN_TEMPLATE}`, id)
@@ -280,6 +303,9 @@ export default {
             submitPage,
             activePage,
             toggleModal,
+            promptImage,
+            generateElement,
+            reportTemplates,
             activeTemplate,
             formattedPages,
             formattedTemplates,
@@ -290,6 +316,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.tile_h1 {
+    font-family: 'Almarai';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 22px;
+    line-height: 24px;
+    display: flex;
+    align-items: center;
+    color: #000000;
+    gap: 2rem;
+}
 
 .reports-dropdown {
     position: relative;
@@ -347,8 +385,14 @@ export default {
     .image-box {
         width: 5.93rem;
         height: 5.625rem;
-        background: #525252;
         border-radius: 8px;
+        padding: 4px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+        img {
+            width: 100%;
+            height: 100%;
+        }
     }
 }
 
