@@ -5802,6 +5802,36 @@ url(/fonts/vendor/bootstrap-icons/bootstrap-icons.woff?c1d7432ee75fa194e49925c1b
   src: local("Almarai Regular"), url(/fonts/Almarai-Regular.ttf?4d8fe12612ad34e16602aa735d84d282) format("truetype");
 }
 @font-face {
+  font-family: "Mulish Bold";
+  font-style: normal;
+  font-weight: bold;
+  src: local("Mulish Bold"), url(/fonts/Mulish-Bold.ttf?14efde3cf96011d61f010bf2dbc865d9) format("truetype");
+}
+.mulish-bold {
+  font-family: "Mulish Bold" !important;
+}
+
+@font-face {
+  font-family: "Mulish ExtraBold";
+  font-style: normal;
+  font-weight: bolder;
+  src: local("Mulish ExtraBold"), url(/fonts/Mulish-ExtraBold.ttf?b6e65dfc31587f1f4419f6e5133bac3c) format("truetype");
+}
+.mulish-extrabold {
+  font-family: "Mulish ExtraBold" !important;
+}
+
+@font-face {
+  font-family: "Mulish SemiBold";
+  font-style: normal;
+  font-weight: 600;
+  src: local("Mulish SemiBold"), url(/fonts/Mulish-SemiBold.ttf?b7a7ba116cfe02e9990f25f6bc715b73) format("truetype");
+}
+.mulish-semibold {
+  font-family: "Mulish SemiBold" !important;
+}
+
+@font-face {
   font-family: "Mulish Regular";
   font-style: normal;
   font-weight: normal;
@@ -5823,6 +5853,43 @@ url(/fonts/vendor/bootstrap-icons/bootstrap-icons.woff?c1d7432ee75fa194e49925c1b
   font-family: "Almarai ExtraBold";
   font-weight: normal;
   font-style: normal;
+}
+
+.font-10 {
+  font-size: 10px !important;
+  line-height: 13px;
+}
+
+.font-12 {
+  font-size: 12px !important;
+  line-height: 140%;
+}
+
+.font-14 {
+  font-size: 14px !important;
+  line-height: 140%;
+}
+
+.font-16 {
+  font-size: 16px !important;
+  line-height: 20px;
+}
+
+.font-18 {
+  font-size: 18px !important;
+  line-height: 23px;
+}
+
+.font-20 {
+  font-size: 20px !important;
+}
+
+.font-22 {
+  font-size: 22px !important;
+}
+
+.font-24 {
+  font-size: 24px !important;
 }
 
 .orange {
@@ -5883,6 +5950,61 @@ url(/fonts/vendor/bootstrap-icons/bootstrap-icons.woff?c1d7432ee75fa194e49925c1b
 .almarai_regular_normal {
   font-family: "Almarai regular";
   font-style: normal;
+}
+
+.edit-icon {
+  display: block;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  background-image: url(/images/edit.svg?9c0bd6c4440803fb5c6c195a3b1b382f);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.call-external {
+  display: block;
+  cursor: pointer;
+  width: 22px;
+  height: 22px;
+  background-image: url(/images/call-external.svg?40b39b03c57723f8a54230be60ff0307);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.home-icon {
+  display: block;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  background-image: url(/images/home-icon.svg?cfa1d63e1b28270777c17949156902ac);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.roof-icon {
+  display: block;
+  cursor: pointer;
+  width: 23px;
+  height: 25px;
+  background-image: url(/images/roof-icon.png?4c38ef0a3e5b65eb20d1c7779ce62c0d);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.camera-icon {
+  display: block;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  background-image: url(/images/camera-icon.png?80c13b270a00e7a3f6c8e6dc5af1f224);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 /*!

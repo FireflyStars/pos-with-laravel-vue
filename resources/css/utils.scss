@@ -54,3 +54,53 @@
     font-family: 'Almarai regular';
     font-style: normal;
 }  
+.edit-icon{
+    display: block;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    background-image: url(../js/images/edit.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.call-external{
+    display: block;
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    background-image: url(../js/images/call-external.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.home-icon{
+    display: block;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    background-image: url(../js/images/home-icon.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.roof-icon{
+    display: block;
+    cursor: pointer;
+    width: 23px;
+    height: 25px;
+    background-image: url(../js/images/roof-icon.png);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.camera-icon{
+    display: block;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    background-image: url(../js/images/camera-icon.png);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
