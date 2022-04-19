@@ -101,12 +101,12 @@
         box-sizing: border-box;
         border-radius: 4px;
         text-align: left;
-        font-family: 'Almarai';
         font-style: normal;
         font-weight: bold;
         transition: all .1s;
         padding: 7px 18px;
         font-size: 16px;
+        color:#47454B;
         line-height: 140%;
         
         &:hover {

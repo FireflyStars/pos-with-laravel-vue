@@ -1,6 +1,6 @@
 <template>
     <div 
-    class="custom-filter-dropdown almarai_bold_normal"
+    class="custom-filter-dropdown "
     :class="classes"
     :styles="{ ...styles }"
     :tabindex="tabindex">
@@ -9,10 +9,12 @@
             <BaseButton 
                 title="Reinitialisation"
                 @click.prevent="resetFilter"
+                :classes="{'almarai_700_bold':true}"
             />
 
             <BaseButton
                 :class="[{ 'colored': isActive }]"
+                 :classes="{'almarai_700_bold':true}"
                 title="Filtre"
                 @click.prevent="toggleActiveItem(id)"
                 :style="{
@@ -51,7 +53,7 @@
                             :checked="option.check"
                             :name="option.value"
                             :title="option.value"
-                            @changed="updateSelectedCheckboxes($event, checkbox.id)"
+                            @change="updateSelectedCheckboxes($event, checkbox.id)"
                             :transformOrigin="$attrs.transformOrigin"
                         />
 
@@ -210,26 +212,6 @@ export default {
     gap: 1rem;
 }
 
-.almarai_bold_normal{
-    font-family: 'Almarai Bold';
-   /* font-weight:700; */
-   font-style:normal;
-}  
-.almarai_extrabold_normal{
-    font-family: 'Almarai ExtraBold';
-   /* font-weight:800; */
-   font-style:normal;
-}  
-.almarai_light_normal{
-    font-family: 'Almarai Light';
-   /* font-weight:300; */
-   font-style:normal;
-}  
-.almarai_regular_normal{
-    font-family: 'Almarai regular';
-   /* font-weight:400; */
-   font-style:normal;
-}  
 .custom-filter-dropdown {
     position: relative;
     text-align: left;
