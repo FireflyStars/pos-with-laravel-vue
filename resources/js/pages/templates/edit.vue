@@ -172,8 +172,8 @@ $orange: orange;
 }
 
 .left-page-container {
-    width: auto;
-    height: auto;
+    width: 793px;
+    height: 1122px;
 }
 
 .right-page-container {
@@ -182,6 +182,7 @@ $orange: orange;
 
 .main-view {
     margin-top: 6rem;
+    padding-left: 85px;
 }
 
 .text {

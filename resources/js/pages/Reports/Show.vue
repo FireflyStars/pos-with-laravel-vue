@@ -16,7 +16,7 @@
                     <div class="col main-view">
                         <div>
 
-                            <div class="d-flex gap-4">
+                            <div class="d-flex gap-3 main-container">
 
                                 <div class="left-page-container">
 
@@ -249,8 +249,8 @@ $orange: orange;
 }
 
 .left-page-container {
-    width: auto;
-    height: auto;
+    width: 793px;
+    height: 1122px;
 }
 
 .right-page-container {
@@ -259,6 +259,7 @@ $orange: orange;
 
 .main-view {
     margin-top: 6rem;
+    padding-left: 85px;
 }
 
 .text {
