@@ -1,5 +1,5 @@
 
-import { unref } from 'vue'
+import { unref, computed } from 'vue'
 import { isEmpty } from 'lodash'
 import store from '../../store/store'
 
@@ -7,11 +7,15 @@ import {
     BUILDER_MODULE,
     SAVE_REPORT,
     SAVE_REPORT_PAGES,
-    RESET_PAGES
+    RESET_PAGES,
+    GENERATE_PDF
 }
 from '../../store/types/types'
 
 export default function useReports() {
+
+    const pages = computed(() => store.getters[`${BUILDER_MODULE}/pages`])
+
 
     const formatFormData = (pages) => {
 
@@ -70,7 +74,7 @@ export default function useReports() {
                             ...page.background.attributes,
                             src: findFile(data.page_files, id)?.public_path
                         },
-                        dtaFile: findFile(data.page_files, id)?.file,
+                        dataFile: findFile(data.page_files, id)?.file,
                         prefetched: true,
                     }
                 }
@@ -127,9 +131,33 @@ export default function useReports() {
         store.commit(`${BUILDER_MODULE}/${RESET_PAGES}`, [])
     }
 
+
+    const generatePagePdf = async (orderId = null) => {
+        try {
+            const data = await store.dispatch(`${[BUILDER_MODULE]}/${[GENERATE_PDF]}`, { 
+                pages: pages.value,
+                orderId 
+            })
+            if(data) generatePDF(data)
+        }
+        catch(e) {
+            throw e
+        }
+    }
+
+    const generatePDF = (data) => {
+        let blob = new Blob([data], { type: 'application/pdf' })
+        let link = document.createElement('a')
+        link.href = window.URL.createObjectURL(blob)
+        link.download = 'Report.pdf'
+        link.click()
+    }
+
     return {
         resetPages,
+        generatePDF,
         formatFormData,
+        generatePagePdf,
         saveReportPages,
         getFormattedPages
     }

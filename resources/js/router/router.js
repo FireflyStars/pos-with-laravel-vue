@@ -28,6 +28,15 @@ const router = createRouter({
 
         },
         {
+            path:'/devis/create',
+            name:'devis',
+            component: () => import('../pages/devis/Create'),
+            meta:{
+                authenticated: true
+            },
+
+        },
+        {
             path:'/ComponentsTest',
             name:'ComponentsTest',
             component:()=> import('../pages/ComponentsTest'),

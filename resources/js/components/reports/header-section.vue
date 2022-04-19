@@ -326,7 +326,7 @@ export default {
     display: flex;
     align-items: center;
     color: #000000;
-    gap: 2rem;
+    gap: 1.5rem;
 }
 
 .reports-dropdown {
