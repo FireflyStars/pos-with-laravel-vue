@@ -51,8 +51,10 @@
                                     <span class="mx-3 fw-bold mulish-extra-bold font-16 text-black">350 000 €</span>
                                   </div>
                               </div>
-                              <div class="zone-section">
-                                
+                              <div class="zone-section px-3 py-2">
+                                <div class="zone-header">
+                                  <span class="home-icon"></span>
+                                </div>
                               </div>
                             </div>
                             <div class="ms-2 right-panel">
