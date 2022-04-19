@@ -989,6 +989,8 @@ public function GetDevisByOrderId(Request $request){
             foreach($order_zone->gedDetails as &$ged_detail){
                 if($ged_detail->type!='description')
                 $ged_detail->urls=$this->getFileUrls($ged_detail);
+                $ged_detail->orderOuvrage;
+                $ged_detail->gedCategory;
             }
         }
         return $this->response(1, $order);
