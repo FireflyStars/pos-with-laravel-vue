@@ -118,6 +118,7 @@ export default function useElementsGenerator() {
     }
 
     const generateElement = (name, attrs = {}) => {
+        console.log("I was called with", name, attrs)
         const elementMapping = {
             textarea: generateTextarea,
             icon: generateIcon,

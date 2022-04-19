@@ -93,12 +93,13 @@
                                 <div class="col">
                                     <h4>Checkbox</h4>
                                     <check-box 
+                                        id="samplecheckbox"
                                         title="Custom attributes checkbox"
                                         name="customCheckbox"
                                         background="blue"
                                         color="orange"
-                                        :checked="customCheckbox"
-                                        @changed="customCheckbox = $event.value"
+                                        :checked="false"
+                                        @change="checkboxUpdated"
                                     />
                                 </div>
                                 
@@ -247,9 +248,12 @@ export default {
         ])
 
         const validateFilters = () => {
+            console.log(filterSelectedOptions)
             console.log('validated')
         }
-
+        const checkboxUpdated = (val) => {
+            console.log(val);
+        }
         return { 
             showcontainer,
             open,
@@ -262,6 +266,7 @@ export default {
             filterSelectOptions,
             filterCheckboxOptions,
             filterSelectedOptions,
+            checkboxUpdated
         }
     },
 }

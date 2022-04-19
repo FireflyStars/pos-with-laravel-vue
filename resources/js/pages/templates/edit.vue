@@ -22,7 +22,7 @@
 
                                     <header-section 
                                         title="Creation/Edition Template" 
-                                        @submitPage="submitPage"
+                                        @submitPage="generatePagePdf"
                                         @save="saveTemplate" 
                                     />
                                     
@@ -58,25 +58,20 @@
 <script>
 
 import { useStore } from 'vuex'
-import { onMounted, unref, ref, nextTick, computed, watch, provide } from 'vue'
+import { onMounted, ref, nextTick, computed, provide } from 'vue'
 
 import { 
     BUILDER_MODULE, 
-    SAVE_PAGE,
     UPDATE_REPORT_TEMPLATE,
     GET_REPORT_TEMPLATE
 } from '../../store/types/types'
 
-// import Moveable from "vue3-moveable"
-// import popup from '../../components/reports/popup'
 import adjouterZone from '../../components/reports/adjouter-zone'
 import headerSection from '../../components/reports/header-section'
 import reportOrderResources from '../../components/reports/report-order-resources'
 import reportTable from '../../components/reports/report-table'
 import pageBuilderContainer from '../../components/reports/page-builder-container'
 
-import useStyles from '../../composables/reports/useStyles'
-// import useHelpers from '../../composables/useHelpers'
 import useElementsGenerator from '../../composables/reports/useElementsGenerator'
 import useReports from '../../composables/reports/useReports'
 
@@ -84,8 +79,6 @@ import useReports from '../../composables/reports/useReports'
 export default {
 
     components: {
-        // popup,
-        // Moveable,
         reportTable,
         adjouterZone,
         headerSection,
@@ -103,167 +96,24 @@ export default {
     setup(props) {
 
         const store = useStore()
-        // const { getDomElementParent } = useHelpers()
-        const { itemAttributes, getStylesOfElement, getComputedStyle } = useStyles()
         const { 
             promptImage,
             generateElement,
             generatePrefetchedImage,
         } = useElementsGenerator()
 
-        const { resetPages } = useReports()
+        const { resetPages, generatePagePdf } = useReports()
 
-        const activeItem = ref(null)
         const showcontainer = ref(false)
-        // const activeElement = ref({})
-        // const activeDomElement = ref(null)
-        // const openPopup = ref(false)
 
-        // const activePage = computed(() => store.getters[`${BUILDER_MODULE}/activePage`])
-        const page = computed(() => store.getters[`${BUILDER_MODULE}/page`])
         const pages = computed(() => store.getters[`${BUILDER_MODULE}/pages`])
 
-        // const template = computed(() => store.getters[`${BUILDER_MODULE}/template`])
-        // const activePageTemplate = computed(() => store.getters[`${BUILDER_MODULE}/activePageTemplate`])
-        // const activeTemplate = computed(() => store.getters[`${BUILDER_MODULE}/activeTemplate`])
 
         const fetching = computed(() => { 
             const { id, value } = store.getters[`${BUILDER_MODULE}/loading`]
             return id == 'fetching' && value
         })
     
-        // const deleteItem = (elem, id) => {
-        //     const elementIndex = page.value.elements.findIndex(page => {
-        //         return page.attributes.id == id
-        //     })
-        //     if(elementIndex != -1) {
-        //         elem = getDomElementParent(elem, 'draggable')
-        //         elem.remove()
-        //         document.querySelector('.moveable').style.display = "none"
-        //         store.commit(`${BUILDER_MODULE}/${DELETE_ITEM}`, elementIndex)
-        //         activeItem.value = null
-        //     }
-        // }
-
-        // const onDrag = ({ top, left, target }) => {
-        //     updateElementStyles(target, { left, top }, getStylesOfElement(target))
-        // }
-
-        // const onScale = ({ target, drag }) => {
-        //     updateElementStyles(target, { transform: drag.transform }, getStylesOfElement(target))
-        // }        
-
-        // const onRotate = ({ target, drag }) => {
-        //     updateElementStyles(target, { transform: drag.transform }, getStylesOfElement(target))
-        // }
-
-        // const activateItem = (e) => {
-        //     let elem = e.target
-        //     const dataName = elem.getAttribute('dataName')
-        //     elem = dataName == 'svg' ? elem : getDomElementParent(e.target, 'draggable')
-        //     const id = elem.getAttribute('id')
-        //     activeItem.value = `#${id}`
-        //     elem.blur()
-        // }
-
-        // const updateElementStyles = (target, styles, elementOldStyles, item = '') => {
-        //     const { id } = target
-        //     const itemIndex = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
-        //     const itemName = pages.value[activePage.value].elements.find(item => item.attributes.id == id).name
-        //     item = item == '' ? itemName : item
-        //     const computedStyles = getComputedStyle(styles, elementOldStyles, item)
-        //     nextTick(() => {
-        //         store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_STYLES}`, { 
-        //             styles: computedStyles, 
-        //             index: itemIndex 
-        //         })
-        //     })
-        // }
-
-        // const updateElementValue = ({ item = 'textarea', index, value }) => {
-        //     const domElements = ['input', 'textarea', 'select']
-        //     if(domElements.includes(item)) {
-        //         store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_CONTENT}`, {
-        //             content: value,
-        //             index    
-        //         })
-        //     }
-        // }
-
-        // const updateElementTable = ({ index, rows, cols, headers, content }) => {
-        //     store.commit(`${BUILDER_MODULE}/${UPDATE_ELEMENT_TABLE}`, {
-        //         rows,
-        //         cols,
-        //         headers,
-        //         content,
-        //         index    
-        //     })
-        // }
-
-        // const updateElementFromPopup = ({ id, textValue, table, name }) => {
-        //     const index = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
-        //     const domElem = document.querySelector(`#${id}`)
-        //     if(textValue != undefined && name != 'table') {
-        //         updateElementValue({ index, value: unref(textValue) })
-        //     }
-        //     if(!_.isEmpty(table) && name == 'table') {
-        //         updateElementTable({ 
-        //             index, 
-        //             rows: table.rows, 
-        //             cols: table.cols, 
-        //             headers: table.headers,
-        //             content: table.content 
-        //         })
-        //     }
-        //     updateElementStyles(domElem, unref(itemAttributes), getStylesOfElement(domElem), name)
-        //     openPopup.value = false
-        // }
-
-        // const generateElement = (name, attrs = {}) => {
-        //     const elementMapping = {
-        //         textarea: generateTextarea,
-        //         icon: generateIcon,
-        //         button: generateButton,
-        //         table: generateTable
-        //     }
-        //     const element = elementMapping[name](attrs)
-        //     store.commit(`${BUILDER_MODULE}/${GENERATE_ELEMENT}`, element)
-        // }
-
-        // const generatePrefetchedImage = (detail) => {
-        //     store.commit(`${BUILDER_MODULE}/${GENERATE_ELEMENT}`, generateImage({ 
-        //         filename: detail.urls.original,
-        //         image: `${detail.storage_path}/${detail.file}.${detail.type}`,
-        //         prefetched: true
-        //     }))
-        // }
-
-        // const promptImage = async () => {
-
-        //     let image = {}
-        //     let filename = {}
-
-        //     let file = document.querySelector('#file')
-        //     file.click()
-
-        //     file.onchange = (e) => {
-        //         image = e.target.files[0]
-        //         filename = URL.createObjectURL(image)
-
-        //         store.commit(`${BUILDER_MODULE}/${GENERATE_ELEMENT}`, generateImage({ filename, image }))
-
-        //         file.value = ''
-        //     }
-
-        // }
-
-        // const openUpdatePopup = (element, domElement) => {
-        //     activeElement.value = element
-        //     activeItem.value = null
-        //     activeDomElement.value = getDomElementParent(domElement, 'draggable')
-        //     openPopup.value = true
-        // }
-
         const saveTemplate = async () => {
             store.dispatch(`${[BUILDER_MODULE]}/${[UPDATE_REPORT_TEMPLATE]}`, {
                 pages,
@@ -274,27 +124,6 @@ export default {
         const getPageTemplate = () => {
             store.dispatch(`${[BUILDER_MODULE]}/${[GET_REPORT_TEMPLATE]}`, props.id)
             return Promise.resolve()
-        }
-
-        const submitPage = async () => {
-            try {
-                const data = await store.dispatch(`${[BUILDER_MODULE]}/${[SAVE_PAGE]}`, { 
-                    pages, 
-                    template: template.value 
-                })
-                if(data) generatePDF(data)
-            }
-            catch(e) {
-                throw e
-            }
-        }
-
-        const generatePDF = (data) => {
-            let blob = new Blob([data], { type: 'application/pdf' })
-            let link = document.createElement('a')
-            link.href = window.URL.createObjectURL(blob)
-            link.download = 'test.pdf'
-            link.click()
         }
 
         provide('fetching', fetching)
@@ -311,32 +140,10 @@ export default {
         })
       
         return { 
-            // page,
-            // pages,
-            // onDrag,
-            // onScale,
-            // onRotate,
             fetching,
-            // template,
-            // openPopup,
-            // activePage,
-            // activeItem,
-            // deleteItem,
-            submitPage,
-            // promptImage,
             saveTemplate,
-            // activateItem,
             showcontainer,
-            // generateElement,
-            // activeElement,
-            // activeTemplate,
-            // openUpdatePopup,
-            // activeDomElement,
-            // getStylesOfElement,
-            // activePageTemplate,
-            // updateElementValue,
-            // updateElementFromPopup,
-            // generatePrefetchedImage,
+            generatePagePdf,
         }
     },
 }
@@ -365,15 +172,17 @@ $orange: orange;
 }
 
 .left-page-container {
-    width: 55%;
+    width: 793px;
+    height: 1122px;
 }
 
 .right-page-container {
-    width: 45%;
+    width: auto;
 }
 
 .main-view {
     margin-top: 6rem;
+    padding-left: 85px;
 }
 
 .text {

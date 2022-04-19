@@ -52,7 +52,7 @@
                                   </div>
                               </div>
                               <div class="zone-section">
-
+                                
                               </div>
                             </div>
                             <div class="ms-2 right-panel">

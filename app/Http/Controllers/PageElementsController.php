@@ -49,6 +49,8 @@ class PageElementsController extends Controller
         $pdf = App::make('dompdf.wrapper');
 
         $pdf->setOptions([
+            'dpi'                  => 150,
+            'defaultFont'          => 'sans-serif',  
             'enable_php'           => true,
             'isRemoteEnabled'      => true, 
             'isHtml5ParserEnabled' => true, 
@@ -82,7 +84,9 @@ class PageElementsController extends Controller
 
     public function get_order_affiliate(Request $request) 
     {
-        return $request->has('order_id') ? optional(Order::find($request->order_id))->affiliate : null;
+        return $request->has('order_id') && !is_null($request->order_id) 
+        ? optional(Order::find($request->order_id))->affiliate 
+        : null;
     }
 
     public function get_page_order(Order $order) 

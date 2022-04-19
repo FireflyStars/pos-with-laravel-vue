@@ -21,6 +21,10 @@ import {
 
 import {cible as CIBLE_MODULE} from "./modules/cible";
 
+import { itemlist as ITEM_LIST_MODULE } from "./modules/component_store/itemlist";
+
+import { devislist as DEVIS_LIST_MODULE } from "./modules/devislist";
+
 import { toggler as TOGGLER_MODULE } from "./modules/toggler"
 
 import { PageBuilder as BUILDER_MODULE } from "./modules/PageBuilder"
@@ -31,10 +35,12 @@ export default createStore({
         LOADER_MODULE,
         TOASTER_MODULE,
         CIBLE_MODULE,
+        ITEM_LIST_MODULE,
+        DEVIS_LIST_MODULE,
         SIDEBAR_MODULE,
         SELECT_MODULE,
         FILTER_MODULE,
         TOGGLER_MODULE,
-        BUILDER_MODULE
+        BUILDER_MODULE,
     }
 });

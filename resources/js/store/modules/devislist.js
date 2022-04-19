@@ -1,38 +1,53 @@
+import {  DEVISLIST_LOAD_TAB, DEVISLIST_SET_LIST, DEVIS_LIST_MODULE, DISPLAY_LOADER, GET_DEVIS_LIST_DEF, HIDE_LOADER, LOADER_MODULE } from "../types/types";
+
 export const devislist= {
     namespaced:true,
     state: {
+      
         table_def: {
-            identifier:"devislist_all",
-            filter:"true",
-            grouped_rows:false,
-            grouped_rows_def:{
-
+            column_filters:[],//required empty array
+            store:{
+              MODULE:DEVIS_LIST_MODULE,//required
+              INIT:DEVISLIST_LOAD_TAB,//required
             },
-            rearrange_columns:true,
+            max_per_page:10,//required          
+            identifier:"devislist_all",//required
+            filter:"true",// required boolean
+            grouped_rows:false,// required boolean
+            grouped_rows_def:{},//required empty object is grouping is not required
+            rearrange_columns:true,// required boolean
             columns_def:[
                 {
-                    id:"numdevis",
+                    id:"id",
                     display_name:"",
                     type:"checkbox",
                     class:"",
+                    header_class:"",
                     event:``,   
                     sort:false,
                     filter:false,
+                    css:{
+                      flex:0.5
+                    },
                   } , 
                {
-                 id:"numdevis",
+                 id:"id",
                  display_name:"No DEVIS",
                  type:"string",
                  class:"",
+                 header_class:"",
                  event:null,   
                  sort:true,
                  filter:true,
+                 table:'orders',
                },     
                {
+                 
                 id:"new",
                 display_name:"",
                 type:"iconsvg",
                 class:"",
+                header_class:"",
                 icons:{
                     0:"",
                     1:""    
@@ -40,39 +55,50 @@ export const devislist= {
                 event:null,
                 sort:true,
                 filter:true,   
+                css:{
+                  flex:0.5
+                },
               } ,    
               {
                 id:"customer",
                 display_name:"CLIENT",
                 type:"string",
                 class:"",
+                header_class:"",
                 event:null,
                 sort:true,
                 filter:true,   
+                having:true
               },
               {
                 id:"contact",
                 display_name:"CONTACT",
                 type:"html",
                 class:"",
+                header_class:"",
                 event:null,
                 sort:true,
                 filter:true,   
+                having:true
               },
               {
                 id:"address",
                 display_name:"CHANTIER",
                 type:"html",
                 class:"",
+                header_class:"",
                 event:null,
                 sort:true,
                 filter:true,   
+                having:true
               },
               {
                 id:"created_at",
                 display_name:"DATE CREATION",
                 type:"date",
+                format:"DD/MM/YY",
                 class:"",
+                header_class:"",
                 event:null,
                 sort:true,
                 filter:true,   
@@ -82,9 +108,11 @@ export const devislist= {
                 display_name:"RESPONSABLE",
                 type:"string",
                 class:"",
+                header_class:"",
                 event:null,
                 sort:true,
                 filter:true,   
+                having:true,
                 filter_options:[]
               },
               {
@@ -92,6 +120,7 @@ export const devislist= {
                 display_name:"STATUS",
                 type:"tag",
                 class:"",
+                header_class:"",
                 event:null,
                 sort:true,
                 filter:true,   
@@ -102,9 +131,11 @@ export const devislist= {
                 display_name:"ACTION CO",
                 type:"html",
                 class:"",
+                header_class:"",
                 event:null,
                 sort:true,
                 filter:true,   
+                having:true
 
               },
               {
@@ -112,16 +143,19 @@ export const devislist= {
                 display_name:"MO",
                 type:"string",
                 class:"",
+                header_class:"",
                 event:null,
                 sort:true,
-                filter:true,   
+                filter:true, 
+                having:true  
  
               },
               {
                 id:"montant",
                 display_name:"MONTANT",
-                type:"string",
-                class:"",
+                type:"price",
+                class:"justify-content-center",
+                header_class:"",
                 event:null,
                 sort:true,
                 filter:true,   
@@ -135,23 +169,26 @@ export const devislist= {
         
     },
     mutations: {
-        //[SET_SHOW_LOADER]: (state, payload) => state.show_loader = payload,
-        //[SET_LOADER_MSG]: (state, payload) => state.loader_msg = payload
+      [DEVISLIST_SET_LIST]:(state,list)=>{
+        state.list=list;
+      }
     },
     actions: {
-        //[DISPLAY_LOADER]: ({commit}, payload) => {
-        //    commit(SET_SHOW_LOADER, payload[0]);
-        //    if (typeof payload[1] != "undefined")
-         //       commit(SET_LOADER_MSG, payload[1]);
-
-      //  },
-      //  [HIDE_LOADER]: ({commit}) => {
-      //      commit(SET_SHOW_LOADER, false);
-      //      commit(SET_LOADER_MSG, 'Chargement en cours, veuillez patienter...');
-      //  }
+      [DEVISLIST_LOAD_TAB]:async({commit,state,dispatch},params)=>{
+        
+        dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Veuillez patienter. Chargement en cours...'], {root: true});
+ 
+        return axios.post(`/get-devis-list`,params).then((response)=>{
+          return  Promise.resolve(response);
+                
+        }).catch((error)=>{
+          return  Promise.resolve(error);
+        }).finally(()=>{
+            dispatch(`${LOADER_MODULE}${HIDE_LOADER}`,{},{root:true});
+        });
+    },
     },
     getters: {
-        [GET_TABLE_DEF]: state => state.table_def,
-      //  [GET_LOADER_MSG]: state => state.loader_msg,
+        [GET_DEVIS_LIST_DEF]: state => state.table_def,
     }
 }

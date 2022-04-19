@@ -65,7 +65,7 @@
                         :checked="item.check"
                         :name="item.value"
                         :title="item.value"
-                        @changed="updateSelectOptions"
+                        @change="updateSelectOptions"
                     />
                 </div>
             </Dropdown>

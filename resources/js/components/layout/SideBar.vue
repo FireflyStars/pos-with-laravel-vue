@@ -1,5 +1,5 @@
 <template>
-    <div class="col-lg-6 col-sm-3 side-bar-wrap d-flex flex-column align-items-center" :class="{slidein:slidesidebar}" v-if="$route.name!='Login'">
+    <div class="col-sm-3 side-bar-wrap d-flex flex-column align-items-center" :class="{slidein:slidesidebar}" v-if="$route.name!='Login'">
 <div class="d-flex flex-column side-bar align-items-center position-fixed">
 
 <!-- :class="{active:route_name=='/'}" -->
