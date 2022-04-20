@@ -101,7 +101,6 @@
                                     <div class="col-3 bg-primary"
                                     :style="{ 'background-image': `url(${previewImage})` }"
                                     >
-
                                     </div>
                                   </div>
                                 </div>
