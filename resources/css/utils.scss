@@ -29,7 +29,9 @@
 .bg-color {
     background: #E5E5E5;
 }
-
+.text-gray{
+    color: #C3C3C3 !important;
+}
 .self-end {
     justify-self: flex-end !important;
 }
@@ -103,4 +105,30 @@
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
+}
+.plus-icon{
+    display: block;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    background-image: url(../js/images/plus-icon.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.cancel-icon{
+    display: block;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    background-image: url(../js/images/cancel-icon.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.cursor-pointer{
+    cursor: pointer;
+}
+.custom-text-danger{
+    color: #E8581B !important;
 }

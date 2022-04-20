@@ -51,9 +51,76 @@
                                     <span class="mx-3 fw-bold mulish-extra-bold font-16 text-black">350 000 €</span>
                                   </div>
                               </div>
-                              <div class="zone-section px-3 py-2">
-                                <div class="zone-header">
+                              <div class="zone-section px-3 py-2" v-for="(zone, index) in form.zones" :key="index">
+                                <div class="zone-header d-flex align-items-center">
                                   <span class="home-icon"></span>
+                                  <div class="zone-name ms-2">
+                                    <input type="text" @blur="zoneEdit = !zoneEdit" v-if="zoneEdit" class="form-control form-control-sm" v-model="zone.name">
+                                    <span class="mulish-extrabold font-18 text-black" @dblclick="zoneEdit = !zoneEdit" v-else>{{ zone.name }}</span>
+                                  </div>
+                                  <div class="add-btn ms-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer">
+                                    <span class="plus-icon me-2"></span> AJOUTER
+                                  </div>
+                                  <div class="remove-btn ms-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer">
+                                    <span class="cancel-icon me-2"></span> RETIRER
+                                  </div>
+                                </div>
+                                <div class="d-flex px-4 mt-4">
+                                  <div class="col-6">
+                                    <div class="roof-access d-flex align-items-end mulish-semibold font-16 custom-text-danger">
+                                      <span class="roof-icon me-2"></span> Accès toiture
+                                    </div>
+                                    <div class="d-flex mt-3 ms-4">
+                                      <SelectBox :label="''" 
+                                          v-model="zone.roofAccess" 
+                                          :options="[ 
+                                              { display:'Intérieur', value: 'Intérieur' }, 
+                                              { display:'Extérieur', value: 'Extérieur' },
+                                              { display:'Pas d’accès', value: 'Pas d’accès' }
+                                          ]"
+                                          :name="'roofAccess'"
+                                          :classnames="'col-5'"
+                                      />
+                                      <SelectBox v-if="zone.roofAccess == 'Pas d’accès'" :label="''" 
+                                          v-model="zone.roofAccess1" 
+                                          :options="[ 
+                                              { display:'Echelle', value: 'Echelle' }, 
+                                              { display:'Echafaudage', value: 'Echafaudage' },
+                                              { display:'Nacelle', value: 'Nacelle' }
+                                          ]"
+                                          :name="'roofAccess_second'"
+                                          :classnames="'col-5 ms-2'"
+                                      />
+                                    </div>
+                                  </div>
+                                  <div class="col-6 px-3 d-flex">
+                                    <div class="col-9 px-5">
+                                      <p class="m-0 almarai-bold font-14 text-gray">Adresse du chantier</p>
+                                      <p class="m-0 almarai-light font-14">43 Lower Sloane Street 31000 Toulouse</p>
+                                    </div>
+                                    <div class="col-3 bg-primary"
+                                    :style="{ 'background-image': `url(${previewImage})` }"
+                                    >
+
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="d-flex px-4 mt-4 flex-wrap">
+                                  <div class="col-6 mb-3" v-for="(gedCat, index) in gedCats" :key="index">
+                                    <div class="ged-cat-header d-flex align-items-end mulish-semibold font-16 custom-text-danger">
+                                      <span class="camera-icon me-2"></span> {{ gedCat.name }} 
+                                      <div class="add-btn ms-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer"
+                                       @click="addFileToGed(gedCat.id)">
+                                        <span class="plus-icon me-2"></span> AJOUTER
+                                      </div>
+                                    </div>
+                                    <div class="ged-cat-content mt-3 mb-3">
+                                      &nbsp;
+                                    </div>
+                                    <div v-if="gedCat.name == 'Vue Exterieur'" class="get-cat-footer almarai-light font-14 mb-3">
+                                      Attention grosse poutre en haut
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -141,15 +208,84 @@
                         </div>
                     </div>
                 </div>
+                <input type="file" @change="previewFile" ref="file" class="d-none">
             </div>
         </transition>
     </router-view>
 </template>
 <script>
+import { ref } from '@vue/reactivity'
+import SelectBox from '../../components/miscellaneous/SelectBox.vue';
 export default {
-    setup() {
-        
-    },
+  components:{
+    SelectBox
+  },
+  setup() {
+    const zoneEdit = ref(false);
+    const formData = new FormData();
+    const file = ref(null);
+    const previewImage = ref('');
+    const getCatId = ref(0);
+    const gedCats = ref([
+      {
+        id: 1,
+        name: 'Environment',
+        items: [
+          {
+            type: 'img',
+            content: null,
+          }
+        ]
+      },
+      {
+        id: 2,
+        name: 'Vue Exterieur'
+      },
+      {
+        id: 3,
+        name: 'Vue Interieur'
+      },
+      {
+        id: 4,
+        name: 'Metre'
+      },
+    ])
+    const addFileToGed = (gedCatId)=>{
+      getCatId.value = gedCatId;
+      file.value.click();
+    }
+    const previewFile = ()=>{
+      let image = file.value.files;
+      if (image && image[0]) {
+        let reader = new FileReader
+        reader.onload = e => {
+          previewImage.value = e.target.result
+        }
+        reader.readAsDataURL(image[0])
+      }      
+    }
+    const form = ref({
+      zones: [
+        {
+          name: 'Usine',
+          roofAccess: 'Intérieur',
+          roofAccess1: 'Echelle',
+          gedCats: [],
+        }
+      ],
+      
+    });
+
+    return {
+      form,
+      zoneEdit,
+      gedCats,
+      file,
+      previewImage,
+      addFileToGed,
+      previewFile
+    }
+  },
 }
 </script>
 <style lang="scss" scoped>

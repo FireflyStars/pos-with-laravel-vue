@@ -1,34 +1,42 @@
 // Fonts
 
 
-@font-face {
+  @font-face {
     font-family: 'Almarai Bold';
     font-style: normal;
     font-weight: normal;
     src: local('Almarai Book'), url('../fonts/Almarai-Bold.ttf') format('truetype');
   }
-  
+  .almarai-bold{
+    font-family: 'Almarai Bold' !important;
+  }
   @font-face {
     font-family: 'Almarai ExtraBold';
     font-style: normal;
     font-weight: normal;
     src: local('Almarai ExtraBold'), url('../fonts/Almarai-Bold.ttf') format('truetype');
   }
-  
+  .almarai-extrabold{
+    font-family: 'Almarai ExtraBold' !important;
+  }  
   @font-face {
     font-family: 'Almarai Light';
     font-style: normal;
     font-weight: normal;
     src: local('Almarai Light'), url('../fonts/Almarai-Light.ttf') format('truetype');
   }
-  
+  .almarai-light{
+    font-family: 'Almarai Light' !important;
+  }    
   @font-face {
     font-family: 'Almarai Regular';
     font-style: normal;
     font-weight: normal;
     src: local('Almarai Regular'), url('../fonts/Almarai-Regular.ttf') format('truetype');
   }
-
+  .almarai-regular{
+    font-family: 'Almarai Regular' !important;
+  }    
   @font-face {
     font-family: 'Mulish Bold';
     font-style: normal;
@@ -67,7 +75,9 @@
     src: local('Mulish Regular'), url('../fonts/Mulish-Regular.ttf') format('truetype');
   }
 
-
+  .nulish-regular{
+    font-family: 'Mulish Regular' !important; 
+  }
   .mulish_400_normal{
       font-family: 'Mulish Regular'!important;
       font-weight: 400!important;

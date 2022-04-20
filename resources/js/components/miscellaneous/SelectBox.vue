@@ -34,7 +34,7 @@
             }">
                 <slot>
                     <div
-                        class="opts"
+                        class="opts text-nowrap"
                         v-for="(item, index) in options"
                         :key="index"
                         @click="select(index)"
