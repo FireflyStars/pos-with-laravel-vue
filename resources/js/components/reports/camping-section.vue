@@ -6,7 +6,7 @@
         </div>
         <div class="col">
             <h4>
-                {{ zone.moyenacces?.name }}
+                {{ zone.hauteur }} M, {{ zone.moyenacces?.name }}
             </h4>
         </div>
         <div class="col">
@@ -14,7 +14,7 @@
                 name="circle-plus" 
                 class="pointer"
                 @click="generateElement('textarea', {
-                    content: zone.moyenacces?.name
+                    content: `${zone.hauteur} M, ${zone.moyenacces?.name}`
                 })"
             />
         </div>
