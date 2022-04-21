@@ -56,6 +56,15 @@
     font-family: 'Almarai regular';
     font-style: normal;
 }  
+.devis-icon{
+    display: block;
+    width: 44px;
+    height: 46px;
+    background-image: url(../js/images/devis-icon.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
 .edit-icon{
     display: block;
     cursor: pointer;
@@ -125,6 +134,39 @@
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
+}
+.installation-icon,
+.securite-icon,
+.prestation-icon{
+    display: block;
+    width: 53px;
+    height: 53px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.installation-icon{
+    background-image: url(../js/images/install-icon.svg);
+}
+.securite-icon{
+    background-image: url(../js/images/securite-icon.svg);
+}
+.prestation-icon{
+    background-image: url(../js/images/prestation-icon.svg);
+}
+.arrow-icon{
+    width: 13px;   
+    height: 13px;
+    display: block;
+    background-image: url(../js/images/left-arrow.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;    
+}
+.ouvrage-section.open{
+    .arrow-icon{
+        background-image: url(../js/images/down-arrow.svg);
+    }   
 }
 .cursor-pointer{
     cursor: pointer;
