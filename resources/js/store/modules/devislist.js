@@ -10,6 +10,18 @@ export const devislist= {
               MODULE:DEVIS_LIST_MODULE,//required
               INIT:DEVISLIST_LOAD_TAB,//required
             },
+            batch_actions:{
+                delete:{
+                    name:"Delete",
+                    route:"DeleteDevis",
+                    type:'button'
+                },
+                status:{
+                    type:"component"
+                }
+
+            },
+            item_route_name:"DevisDetail",// the route to trigger when a line is click 
             max_per_page:10,//required          
             identifier:"devislist_all",//required
             filter:"true",// required boolean
@@ -176,15 +188,13 @@ export const devislist= {
     actions: {
       [DEVISLIST_LOAD_TAB]:async({commit,state,dispatch},params)=>{
         
-        dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Veuillez patienter. Chargement en cours...'], {root: true});
+        
  
         return axios.post(`/get-devis-list`,params).then((response)=>{
           return  Promise.resolve(response);
                 
         }).catch((error)=>{
           return  Promise.resolve(error);
-        }).finally(()=>{
-            dispatch(`${LOADER_MODULE}${HIDE_LOADER}`,{},{root:true});
         });
     },
     },
