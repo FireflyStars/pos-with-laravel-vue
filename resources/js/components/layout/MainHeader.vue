@@ -1,5 +1,5 @@
 <template>
-    <div class="row main-logo" >
+    <div class="row main-logo" style="z-index: 99999">
         <div class="col-12 p-0">
     <img  @click="slideinMenu"
             src="./../../images/logolcdt.png"

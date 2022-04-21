@@ -105,7 +105,7 @@
                             </div>
                         </div>
                     </template>
-                    <div class="attribute">
+                    <!-- <div class="attribute">
                         <div>Width:</div>
                         <div class="d-flex align-items-center gap-1">
                             <input type="text" v-model="itemAttributes.width">
@@ -133,7 +133,7 @@
                             <input type="text" v-model="itemAttributes.left">
                             <span class="unit">px</span>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="attribute">
                         <div>Font size:</div>
                         <div class="d-flex align-items-center gap-1">

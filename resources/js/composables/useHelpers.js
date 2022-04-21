@@ -15,8 +15,9 @@ export default function useHelpers() {
     }
 
     const getDomElementParent = (element, className = 'library-item') => {
-        if(element.className.split(' ').includes(className)) return element.cloneNode(true)
-        return getDomElementParent(element.parentNode, className)
+        // if(element.className.split(' ').includes(className)) return element.cloneNode(true)
+        // return getDomElementParent(element.parentNode, className)
+        return element.closest(`.${className}`)
     }
 
     return {
