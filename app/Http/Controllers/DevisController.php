@@ -13,6 +13,8 @@ class DevisController extends Controller
     public function loadList(Request $request){
 
         $column_filters=$request->post('column_filters');
+        $skip=$request->post('skip');
+        $take=$request->post('take');
   
 
         $orderList=DB::table('orders')
@@ -45,7 +47,7 @@ class DevisController extends Controller
             }
         }
 
-        $orderList=$orderList->groupBy('orders.id')->take($request->get('max_per_page'))->get();
+        $orderList=$orderList->groupBy('orders.id')->skip($skip)->take($take)->get();
         return response()->json($orderList);
     }
 

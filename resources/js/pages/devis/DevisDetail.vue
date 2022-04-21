@@ -1,5 +1,9 @@
 <template>
-<item-detail-panel></item-detail-panel>
+<item-detail-panel>
+<h1>Devis details</h1>
+<p> content from slot</p>
+
+</item-detail-panel>
 </template>
 
 <script>
