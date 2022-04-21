@@ -75,7 +75,10 @@ Route::group([
     Route::get('/cible/load/{campagne_category_id}',[CibleController::class,'initialload'])->middleware('auth')->name('initialload');
     Route::get('/cible/loadcible/{naf_selection}/{customer_statut_id}',[CibleController::class,'loadcible'])->middleware('auth')->name('loadcible');
     Route::post('/cible/createcampagne',[CibleController::class,'createcampagne'])->middleware('auth')->name('createcampagne');
+    // Devis
     Route::post('/get-devis-list',[DevisController::class,'loadList'])->middleware('auth')->name('get-devis-list');
+    Route::post('/get-ged-categories', [DevisController::class,'getGedCategories'])->middleware('auth')->name('get-ged-categories');
+    // End Devis
 
     Route::put('deleteCompagneCible/', [CompagneController::class, 'deleteCompagneCible'])->middleware('auth')->name('deleteCompagneCible');
     Route::put('insertCompagneCible/', [CompagneController::class, 'insertCompagneCible'])->middleware('auth')->name('insertCompagneCible');

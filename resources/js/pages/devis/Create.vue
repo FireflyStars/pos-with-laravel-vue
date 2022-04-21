@@ -51,7 +51,7 @@
                                     <span class="mx-3 fw-bold mulish-extra-bold font-16 text-black">350 000 €</span>
                                   </div>
                               </div>
-                              <div class="zone-section px-3 py-2" v-for="(zone, index) in form.zones" :key="index">
+                              <div class="zone-section px-3 py-2" v-for="(zone, zoneIndex) in form.zones" :key="zoneIndex">
                                 <div class="zone-header d-flex align-items-center">
                                   <span class="home-icon"></span>
                                   <div class="zone-name ms-2">
@@ -98,25 +98,31 @@
                                       <p class="m-0 almarai-bold font-14 text-gray">Adresse du chantier</p>
                                       <p class="m-0 almarai-light font-14">43 Lower Sloane Street 31000 Toulouse</p>
                                     </div>
-                                    <div class="col-3 bg-primary"
-                                    :style="{ 'background-image': `url(${previewImage})` }"
-                                    >
+                                    <div class="col-3 bg-primary">
                                     </div>
                                   </div>
                                 </div>
                                 <div class="d-flex px-4 mt-4 flex-wrap">
-                                  <div class="col-6 mb-3" v-for="(gedCat, index) in gedCats" :key="index">
+                                  <div class="col-6 mb-3" v-for="(gedCat, catIndex) in zone.gedCats" :key="catIndex">
                                     <div class="ged-cat-header d-flex align-items-end mulish-semibold font-16 custom-text-danger">
-                                      <span class="camera-icon me-2"></span> {{ gedCat.name }} 
+                                      <span class="camera-icon me-2"></span> {{ gedCat[0].name }} 
                                       <div class="add-btn ms-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer"
-                                       @click="addFileToGed(gedCat.id)">
+                                       @click="addFileToGed(zoneIndex, gedCat[0].id)">
                                         <span class="plus-icon me-2"></span> AJOUTER
                                       </div>
                                     </div>
-                                    <div class="ged-cat-content mt-3 mb-3">
-                                      &nbsp;
+                                    <div class="ged-cat-content mt-3 mb-3 d-flex flex-wrap">
+                                      <div class="img ms-2 cursor-pointer" v-for="(gedDetail, key) in gedCat[0].items" :key="key">
+                                        <div class="rounded border border-1"
+                                          :style="{ 'background-image': `url(${gedDetail.previewContent})`, 'background-size': 'contain', 'width': '55px', 'height':'55px'}"
+                                          @click="zoomImage(gedDetail.previewContent)"
+                                        >
+                                        <div class="w-100 h-100 image-overlayer">
+                                        </div>
+                                        </div>
+                                      </div>
                                     </div>
-                                    <div v-if="gedCat.name == 'Vue Exterieur'" class="get-cat-footer almarai-light font-14 mb-3">
+                                    <div v-if="gedCat[0].name == 'Vue exterieur'" class="get-cat-footer almarai-light font-14 mb-3">
                                       Attention grosse poutre en haut
                                     </div>
                                   </div>
@@ -208,60 +214,59 @@
                     </div>
                 </div>
                 <input type="file" @change="previewFile" ref="file" class="d-none">
+                <zoom-modal ref="zoomModal"></zoom-modal>
             </div>
         </transition>
     </router-view>
 </template>
 <script>
-import { ref } from '@vue/reactivity'
+import { ref, onMounted } from 'vue';
 import SelectBox from '../../components/miscellaneous/SelectBox.vue';
+import ZoomModal from '../../components/miscellaneous/ZoomModal.vue';
+
+import axios from 'axios';
 export default {
   components:{
-    SelectBox
+    SelectBox,
+    ZoomModal
   },
   setup() {
     const zoneEdit = ref(false);
-    const formData = new FormData();
+    const zoneIndex = ref(0);
+    var formData = new FormData();
     const file = ref(null);
-    const previewImage = ref('');
-    const getCatId = ref(0);
-    const gedCats = ref([
-      {
-        id: 1,
-        name: 'Environment',
-        items: [
-          {
-            type: 'img',
-            content: null,
-          }
-        ]
-      },
-      {
-        id: 2,
-        name: 'Vue Exterieur'
-      },
-      {
-        id: 3,
-        name: 'Vue Interieur'
-      },
-      {
-        id: 4,
-        name: 'Metre'
-      },
-    ])
-    const addFileToGed = (gedCatId)=>{
-      getCatId.value = gedCatId;
+    const zoomModal = ref(null);
+    const gedCatId = ref(0);
+    onMounted(()=>{
+      axios.post('/get-ged-categories').then((res)=>{
+        form.value.zones.forEach(element => {
+          element.gedCats = res.data;
+        });
+      }).catch((error)=>{
+        console.log(error);
+      })
+    })
+    const addFileToGed = (zone, catId)=>{
+      zoneIndex.value = zone;
+      gedCatId.value = catId;
       file.value.click();
     }
     const previewFile = ()=>{
       let image = file.value.files;
+      formData.append('zone['+zoneIndex.value+']["gedCat"]['+ gedCatId.value +']', image[0]);
       if (image && image[0]) {
         let reader = new FileReader
         reader.onload = e => {
-          previewImage.value = e.target.result
+          form.value.zones[zoneIndex.value].gedCats[gedCatId.value][0].items.push({
+            type: 'img',
+            previewContent: e.target.result
+          })
         }
         reader.readAsDataURL(image[0])
-      }      
+      }
+    }
+    const zoomImage = (content)=>{
+      zoomModal.value.openModal(content);
     }
     const form = ref({
       zones: [
@@ -272,17 +277,16 @@ export default {
           gedCats: [],
         }
       ],
-      
     });
 
     return {
       form,
       zoneEdit,
-      gedCats,
       file,
-      previewImage,
+      zoomModal,
       addFileToGed,
-      previewFile
+      previewFile,
+      zoomImage
     }
   },
 }
@@ -325,6 +329,12 @@ export default {
           .customer-pic{
             width: 42px;
             height: 42px;
+          }
+        }
+        .zone-section{
+          .image-overlayer:hover{
+            background: rgba(0, 0, 0, .2);
+            transition: background ease-out .3s;
           }
         }
       }

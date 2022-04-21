@@ -48,4 +48,17 @@ class DevisController extends Controller
         $orderList=$orderList->groupBy('orders.id')->take($request->get('max_per_page'))->get();
         return response()->json($orderList);
     }
+
+    /**
+     * Get Ged categories
+     * 
+     */
+
+    public function getGedCategories(){
+        $categories = DB::table('ged_categories')->select('id', 'name', )->get();
+        foreach ($categories as $key => $item) {
+            $item->items = [];
+        }
+        return response()->json($categories->groupBy('id'));
+    }
 }
