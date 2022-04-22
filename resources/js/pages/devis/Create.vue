@@ -27,7 +27,7 @@
                             </div>
                             <div class="ms-5 customer-edit d-flex align-items-center">
                               <span class="edit-icon me-3"></span>
-                              <span class="call-external"></span>
+                              <!-- <span class="call-external"></span> -->
                             </div>
                           </div>
                           <div class="col-5 me-3 price-section d-flex align-items-end">
