@@ -10,7 +10,10 @@
             class="popup-inner" 
             :class="['popup-inner' + sizeClasses, classes]"
         >
-            <div class="popup-content p-5">
+            <div 
+                class="popup-content p-5" 
+                :class="$attrs.contentClasses || ''"
+            >
                 <slot></slot>
             </div>
             
@@ -138,8 +141,8 @@ $main-color: #9191E9;
     position: relative;
     bottom: 0;
     right: 0;
-    max-width: 600px;
-    max-height: 450px;
+    max-width: 700px;
+    max-height: 530px;
     width: 100%;
     height: 100%;
     background-color: #fff;

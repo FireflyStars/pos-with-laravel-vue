@@ -9,9 +9,13 @@ class page_builder extends Model
 {
     use HasFactory;
 
+    
     public static function get_page_background($page) 
     {
+        
+        $base_path = config('app.url');
         $page = (array) $page;
+
         if(count((array) $page['background'])) 
         {
             $background = $page['background'];
@@ -20,11 +24,11 @@ class page_builder extends Model
                 $filename = $background->dataFile;
                 if(strpos($filename, 'report-templates') !== false) 
                 {
-                    $src = public_path('\/storage/' . $filename);
+                    $src = $base_path . '/' . 'storage/' . $filename;
                 }
                 else 
                 {
-                    $src = base_path('\/public/') . $filename;
+                    $src = $base_path . $filename;
                 }
             }
             else 
@@ -50,30 +54,8 @@ class page_builder extends Model
     public static function convert_resource_file($id) 
     {
         $src = request()->file($id)->store('pdf-images', 'public');
-        $path = public_path('\/storage/' . $src);
+        $path = config('app.url') . '/' . 'storage/' . $src;
         return self::convert_base64($path);
-    }
-
-    public static function templates() 
-    {
-        return collect([
-            [
-                'id' => 'template1',
-                'name' => 'Template1',
-                'template' => [
-                    'header' => self::convert_base64(base_path('/public/images/sample-template.png')),
-                    'footer' => self::convert_base64(base_path('/public/images/sample-footer-template.png'))
-                ]
-            ],
-            [
-                'id' => 'template2',
-                'name' => 'Template2',
-                'template' => [
-                    'header' => self::convert_base64(base_path('/public/images/sample-template-1.png')),
-                    'footer' => self::convert_base64(base_path('/public/images/sample-footer-template-1.png'))
-                ]
-            ],
-        ]);
     }
 
     public static function get_svgs() 

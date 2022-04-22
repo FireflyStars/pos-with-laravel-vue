@@ -20,8 +20,10 @@
         
         <template v-else>
             
-            <div class="col">
-                <div class="d-flex gap-2 align-items-center">
+            <div 
+                :class="showRightContainer ? 'col' : 'col-12 mb-4'"
+            >
+                <div class="d-flex gap-2 flex-wrap align-items-center">
                     <div class="thumbnail"></div>
                     <div class="title-section">
                         <p>Nom du client</p>
@@ -32,7 +34,7 @@
                         class="pointer" 
                         @click.prevent="generateElement('textarea', { 
                             content: `<div>
-                                <h4>Client</h4>
+                                <div class='heading'>Client</div>
                                 <div>${order.customer?.name || ''}</div>
                                 <div>${order.customer?.firstname || ''}</div>
                                 <div>${order.customer?.compnay || ''}</div>
@@ -54,7 +56,7 @@
                         class="pointer"
                         @click.prevent="generateElement('textarea', { 
                             content: `<div>
-                                <h4>Client Address</h4>
+                                <div class='heading'>Client Address</div>
                                 <div>${order.customer?.address?.address1 || ''}</div>
                                 <div>${order.customer?.address?.address2 || ''}</div>
                                 <div>${order.customer?.address?.city || ''}</div>
@@ -91,9 +93,11 @@ export default {
     setup () {
         const generateElement = inject('generateElement')
         const fetching = inject('fetching')
+        const showRightContainer = inject('showRightContainer') || true
         return {
             fetching,
-            generateElement
+            generateElement,
+            showRightContainer
         }
     }
 }
@@ -107,6 +111,7 @@ export default {
     height: 3.15rem;
     border-radius: 50%;
 }
+
 .title-section {
     p {
         font-family: Mulish;

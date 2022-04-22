@@ -149,20 +149,23 @@
             width: auto;
             height: auto;
             border: 1px solid #ccc;
-            z-index: 99999;
+            z-index: 13;
             word-wrap: normal;
             color: #000;
         }
        
-        .textarea::before,
-        .textarea::after {
-            float: none;
-            clear: both;
-        }
-
         .textarea p {
             margin-bottom: 0 !important;
             margin-top: 0 !important;
+        }
+
+        .textarea .heading {
+            font-style: normal;
+            font-family: inherit;
+            font-size: 20px;
+            line-height: 29px;
+            color: #212529;
+            font-weight: 500;
         }
 
         .table {
@@ -218,7 +221,7 @@
                     @if (strtolower($element->name) == 'textarea')
                         <div 
                         class="{{ $element->attributes->class }} textarea" 
-                        style="{{ $element->attributes->style ?? '' }} position: absolute; min-height: 50px"
+                        style="{{ $element->attributes->style ?? '' }} position: absolute; border: 0 !important;"
                         >{!! $element->content ?? '' !!}
                         </div>
                     @endif
@@ -239,7 +242,7 @@
                     @if (strtolower($element->name) == 'img')
                         <?php
                             $src = $element->prefetched 
-                            ? $builder::convert_base64(public_path('\/storage/' . $element->dataFile))
+                            ? $builder::convert_base64(config('app.url') . '/' . 'storage/' . $element->dataFile)
                             : $builder::convert_resource_file("Img#".$element->attributes->id);
                         ?>
                         <img 
@@ -282,7 +285,7 @@
                     class="template-affiliate" 
                     style="display: flex;"
                 >
-                    <div class="page-number" style="margin-top: 20px !important;">{{ (int) $loop->index }}</div>
+                    <div class="page-number" style="margin-top: 20px !important;margin-left: 20px; color: #F45B1F; font-weight: bold;">{{ (int) $loop->index }}/{{ count((array)$pages) }}</div>
                     <div class="content" style="margin-left: 20px;">{!! optional($affiliate)->footerreport ?? '' !!}</div>
                 </div>
             @endif

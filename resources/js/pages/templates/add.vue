@@ -17,7 +17,7 @@
                     <div class="col main-view">
                         <div>
 
-                            <div class="d-flex gap-2">
+                            <div class="d-flex gap-3 main-container">
 
                                 <div class="left-page-container">
 
@@ -35,13 +35,17 @@
                                 </div>
 
 
-                                <div class="right-page-container">
+                                <div 
+                                    class="right-page-container" 
+                                    @mouseenter="showRightContainer=true"
+                                    @mouseleave="showRightContainer=false"
+                                    :class="showRightContainer ? 'right-page-container-visible': ''"
+                                >
 
                                     <adjouter-zone />
                                     <div class="d-none">
                                         <input type="file" id="file" accept="image/*">
                                     </div>
-                                                    
                                 </div>
 
                             </div>
@@ -92,6 +96,7 @@ export default {
     setup() {
 
         const store = useStore()
+        const showRightContainer = ref(false)
         
         const { 
             promptImage,
@@ -141,6 +146,7 @@ export default {
         provide('promptImage', promptImage)
         provide('generateElement', generateElement)
         provide('generatePrefetchedImage', generatePrefetchedImage)
+        provide('showRightContainer', showRightContainer)
 
         watch(page, () => activeItem.value = null)
 
@@ -157,6 +163,7 @@ export default {
             saveTemplate,
             showcontainer,
             generatePagePdf,
+            showRightContainer
         }
     },
 }
@@ -186,18 +193,30 @@ $orange: orange;
     color: #000000;
 }
 
+.main-container {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
 .left-page-container {
     width: 793px;
     height: 1122px;
 }
 
 .right-page-container {
-    width: auto;
+    top: 0;
+    right: 0;
+    width: 300px;
+    z-index: 99;
+    position: absolute;
+    transition: width .2s;
+    &-visible {
+        width: 530px;
+    }
 }
 
 .main-view {
     margin-top: 6rem;
-    padding-left: 85px;
 }
 
 .text {

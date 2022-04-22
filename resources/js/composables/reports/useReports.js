@@ -61,7 +61,6 @@ export default function useReports() {
 
                 let formattedPage = {
                     id: page.id,
-                    template_id: page.template_id,
                     elements: [],
                     background: {}
                 }

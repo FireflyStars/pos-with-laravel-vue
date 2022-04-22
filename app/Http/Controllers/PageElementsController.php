@@ -24,13 +24,12 @@ class PageElementsController extends Controller
             'isHtml5ParserEnabled' => true, 
         ]);
 
-        session()->put('pages', $pages);
-        session()->put('order_id', $request->order_id);
+        // session()->put('pages', $pages);
+        // session()->put('order_id', $request->order_id);
 
         $pdf->loadView(
             'page-multiple', [
                 'pages'     => $pages,
-                'templates' => page_builder::templates(),
                 'svgs'      => page_builder::get_svgs(),
                 'builder'   => (new page_builder),
                 'affiliate' => $this->get_order_affiliate($request)
@@ -41,45 +40,20 @@ class PageElementsController extends Controller
         
     }
 
-    public function store_get(Request $request) 
+    public function store_get() 
     {
-
-        $pages = json_decode($request->pages);
-
-        $pdf = App::make('dompdf.wrapper');
-
-        $pdf->setOptions([
-            'dpi'                  => 150,
-            'defaultFont'          => 'sans-serif',  
-            'enable_php'           => true,
-            'isRemoteEnabled'      => true, 
-            'isHtml5ParserEnabled' => true, 
-        ]);
 
         $affiliate =  optional(Order::find(session('order_id')))->affiliate;
 
         return view(
             'page-multiple', [
-                'pages'     => session('pages'),//$pages,
-                'templates' => page_builder::templates(),
+                'pages'     => session('pages'),
                 'svgs'      => page_builder::get_svgs(),
                 'builder'   => (new page_builder),
-                'affiliate' => $affiliate,//$this->get_order_affiliate($request)
+                'affiliate' => $affiliate,
             ]
         );
 
-        $pdf->loadView(
-            'page-multiple', [
-                'pages'     => $pages,
-                'templates' => page_builder::templates(),
-                'svgs'      => page_builder::get_svgs(),
-                'builder'   => (new page_builder),
-                'affiliate' => $this->get_order_affiliate($request)
-            ]
-        );
-
-        return $pdf->download('page.pdf');
-        
     }
 
     public function get_order_affiliate(Request $request) 

@@ -108,32 +108,39 @@
             </h4>
             <div class="mt-3"> 
 
-                <div class="d-flex align-items-center justify-content-around">
-                    <BaseButton 
-                        title="Votre Image"
-                        @click="promptImage(true)"
-                    />
+                <div class="background-container">
 
-                    <div class="image-boxes">
-                        <div 
-                            v-for="template in reportTemplates"
-                            :key="template"
-                        >
+                    <div class="left">
+                        <BaseButton 
+                            title="Votre Image"
+                            @click="promptImage(true)"
+                        />
+                    </div>
+
+                    <div class="right">
+                        
+                        <div class="background-boxes">
                             <div 
-                                class="image-box"
-                                @click.prevent="generateElement('background', {
-                                    filename: `/images/${template}`,
-                                    classes: 'page-background',
-                                    image: `/images/${template}`
-                                })"
+                                v-for="template in reportTemplates"
+                                :key="template"
                             >
-                                <img 
-                                    :src="`/images/${template}`" 
-                                    alt="Report Template"
+                                <div 
+                                    class="background-box"
+                                    @click.prevent="generateElement('background', {
+                                        filename: `/images/${template}`,
+                                        classes: 'page-background',
+                                        image: `/images/${template}`
+                                    })"
                                 >
+                                    <img 
+                                        :src="`/images/${template}`" 
+                                        alt="Report Template"
+                                    >
+                                </div>
+                                <!-- <label>Standard</label> -->
                             </div>
-                            <!-- <label>Standard</label> -->
                         </div>
+
                     </div>
 
                 </div>
@@ -201,6 +208,7 @@ export default {
                 'page2.jpg',
                 'page3.jpg',
                 'page4.jpg',
+                'page5.jpg',
                 'page8.jpg',
             ]
         })
@@ -369,10 +377,17 @@ export default {
     height: 2.31rem;
 }
 
-.image-boxes {
+.background-container {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    grid-template-columns: 30% 70%; 
+}
+
+.background-boxes {
 
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: .5rem;
     text-align: center;
     font-family: 'Poppins';
@@ -382,9 +397,9 @@ export default {
     line-height: 22px;
     color: #000000;
 
-    .image-box {
-        width: 5.93rem;
-        height: 5.625rem;
+    .background-box {
+        width: 6rem;
+        height: 5.825rem;
         border-radius: 8px;
         padding: 4px;
         border: 1px solid #ccc;

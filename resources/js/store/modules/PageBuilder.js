@@ -121,7 +121,6 @@ export const PageBuilder = {
             state.pages = [{
                 id: generateId(12),
                 elements: [],
-                template_id: state.activeTemplate || -1,
                 background: null,
             }]
         },
@@ -133,7 +132,6 @@ export const PageBuilder = {
             state.pages.splice(page, 0, {
                 id: generateId(12),
                 elements: [],
-                template_id: state.activeTemplate,
                 background: null
             })
             state.activePage = page

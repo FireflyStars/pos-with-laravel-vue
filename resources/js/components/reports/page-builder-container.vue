@@ -36,9 +36,9 @@
                 </span>
 
                 <span 
-                class="close" 
-                v-show="`#${element.attributes.id}` == activeItem"
-                @click.prevent="deleteItem($event.target, element.attributes.id)"
+                    class="close" 
+                    v-show="`#${element.attributes.id}` == activeItem"
+                    @click.prevent="deleteItem($event.target, element.attributes.id)"
                 >
                     &times;
                 </span>
@@ -73,6 +73,7 @@
         @scale="onScale"
         @rotate="onRotate"
     />
+
 </template>
 
 <script>
@@ -131,13 +132,7 @@ export default {
 
 
         const isReportPage = computed(() => route.name == 'report-page')
-
-        const bgSize = computed(() => {
-            if(isReportPage.value && activePage.value != 0 && activePage.value != pages.value.length - 1) {
-                return '100% 90%'
-            }
-            return 'cover'
-        })
+        
         const activePage = computed(() => store.getters[`${BUILDER_MODULE}/activePage`])
         const page = computed(() => store.getters[`${BUILDER_MODULE}/page`])
         const pages = computed(() => store.getters[`${BUILDER_MODULE}/pages`])
@@ -158,9 +153,9 @@ export default {
 
         const activateItem = (e) => {
             let elem = e.target
-            const dataName = elem.getAttribute('dataName')
-            console.log(elem, dataName)
-            elem = dataName == 'svg' ? elem : getDomElementParent(e.target, 'draggable')
+            // const tagName = elem.tagName
+            // elem = tagName == 'svg' ? elem : getDomElementParent(e.target, 'draggable')
+            elem = getDomElementParent(elem, 'draggable')
             const id = elem.getAttribute('id')
             activeItem.value = `#${id}`
             elem.blur()
@@ -244,7 +239,6 @@ export default {
         return {
             page,
             pages,
-            bgSize,
             onDrag,
             onScale,
             onRotate,
@@ -279,8 +273,8 @@ $orange: orange;
     &-body {
         img {
             object-fit: cover;
-            width: 25rem;
-            height: 25rem;
+            width: 20rem;
+            height: 20rem;
             height: auto;
             border: 3px solid $orange;
         }
@@ -361,10 +355,13 @@ $orange: orange;
         border: 1px solid #ccc;
         z-index: 13;
         word-wrap: normal;
-        &::before,
-        &::after {
-            float: none;
-            clear: both;
+        .heading {
+            font-style: normal;
+            font-family: inherit;
+            font-size: 20px;
+            line-height: 29px;
+            color: #212529;
+            font-weight: 500;
         }
     }
 
