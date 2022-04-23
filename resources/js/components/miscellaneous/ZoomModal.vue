@@ -1,6 +1,6 @@
 <template>
     <Teleport to="body">
-        <div class="modal-layer d-flex align-items-center justify-content-center position-absolute" v-if="showModal">
+        <div class="modal-layer d-flex align-items-center justify-content-center position-fixed" v-if="showModal">
             <transition name="list" appear>
                 <div class="modal-panel m-auto bg-white">
                     <div class="rounded h-100 w-100 position-relative"
