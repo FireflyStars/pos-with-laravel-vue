@@ -247,7 +247,10 @@ export default {
             })
         }
 
-        watch(page, () => activeItem.value = null)
+        watch(page, () => {
+            activeItem.value = null
+            document.querySelector('.close').style.display = 'none'
+        })
 
         return {
             page,
