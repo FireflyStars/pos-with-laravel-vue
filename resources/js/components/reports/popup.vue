@@ -1,6 +1,6 @@
 <template>
     <div 
-        class="popup"
+        class="popup m-2"
         :class="{ 'w-35': isTable }"
     >
         <span @click.prevent="close" class="close">&times;</span>
