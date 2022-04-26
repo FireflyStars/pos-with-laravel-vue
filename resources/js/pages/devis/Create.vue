@@ -156,7 +156,6 @@
                             </div>
                           </div>
                           <div class="ouvrage-body ms-5 ps-3 mt-3">
-                            Sécurité
                           </div>
                         </div>
 
@@ -179,7 +178,6 @@
                             </div>
                           </div>
                           <div class="ouvrage-body ms-5 ps-3 mt-3">
-                            Prestations
                           </div>
                         </div>
                       </div>
