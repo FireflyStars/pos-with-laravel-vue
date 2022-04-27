@@ -35,15 +35,15 @@
                 >
                 </span>
 
-                <span 
-                    class="close" 
-                    v-show="`#${element.attributes.id}` == activeItem"
-                    @click.prevent="deleteItem($event.target, element.attributes.id)"
-                >
-                    &times;
-                </span>
-
             </component>
+
+            <span 
+                class="close"
+                style="display: none"
+                @click="deleteItem" 
+            >
+                &times;
+            </span>
 
             <popup 
                 v-if="openPopup"
@@ -140,44 +140,57 @@ export default {
         const reportBackground = computed(() => page.value?.background || {})
 
         const onDrag = ({ top, left, target }) => {
+            updateCloseButtonStyles(target)
             updateElementStyles(target, { left, top }, getStylesOfElement(target))
         }
 
         const onScale = ({ target, drag }) => {
+            updateCloseButtonStyles(target)
             updateElementStyles(target, { transform: drag.transform }, getStylesOfElement(target))
         }        
 
         const onRotate = ({ target, drag }) => {
+            updateCloseButtonStyles(target)
             updateElementStyles(target, { transform: drag.transform }, getStylesOfElement(target))
         }
 
         const activateItem = (e) => {
             let elem = e.target
-            // const tagName = elem.tagName
-            // elem = tagName == 'svg' ? elem : getDomElementParent(e.target, 'draggable')
             elem = getDomElementParent(elem, 'draggable')
+            updateCloseButtonStyles(elem)
             const id = elem.getAttribute('id')
             activeItem.value = `#${id}`
             elem.blur()
         }
 
-         const openUpdatePopup = (element, domElement) => {
+        const updateCloseButtonStyles = (elem) => {
+            const close = document.querySelector('.close')
+            const { width } = elem.getBoundingClientRect()
+            const left = elem.style.left || 0
+            const top = elem.style.top || 0
+            const closeLeft = parseInt(left) + width/2
+            close.style.left = `${closeLeft}px`
+            close.style.top = top != 0 && top != '' ? `${parseInt(top) - 30}px` : 0
+            close.style.display = 'flex'
+        }
+
+        const openUpdatePopup = (element, domElement) => {
             activeElement.value = element
             activeItem.value = null
             activeDomElement.value = getDomElementParent(domElement, 'draggable')
             openPopup.value = true
         }
 
-        const deleteItem = (elem, id) => {
+        const deleteItem = () => {
+            const id = activeItem.value.slice(1)
             const elementIndex = page.value.elements.findIndex(page => {
                 return page.attributes.id == id
             })
             if(elementIndex != -1) {
-                elem = getDomElementParent(elem, 'draggable')
-                elem.remove()
                 document.querySelector('.moveable').style.display = "none"
                 store.commit(`${BUILDER_MODULE}/${DELETE_ITEM}`, elementIndex)
                 activeItem.value = null
+                document.querySelector('.close').style.display = "none"
             }
         }
 
@@ -234,7 +247,10 @@ export default {
             })
         }
 
-        watch(page, () => activeItem.value = null)
+        watch(page, () => {
+            activeItem.value = null
+            document.querySelector('.close').style.display = 'none'
+        })
 
         return {
             page,
@@ -305,24 +321,23 @@ $orange: orange;
     .draggable {
         z-index: 10;
         position: absolute;
-        .close {
-            position: absolute;
-            top: -100%;
-            left: 50%;
-            width: 1.2rem;
-            height: 1.2rem;
-            background: #000;
-            color: white;
-            transform: translate(-50%, -100%);
-            transform-origin: center;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            line-height: 1.08rem;
-            cursor: pointer;
-            &:hover {
-                opacity: .8;
-            }
+    }
+
+    .close {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 1.2rem;
+        height: 1.2rem;
+        background: #000;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        line-height: 1.08rem;
+        cursor: pointer;
+        &:hover {
+            opacity: .8;
         }
     }
 

@@ -78,7 +78,7 @@
                             :key="icon" 
                             class="library-item"
                             :name="icon"
-                            :height="icon == 'report-arrow' ? 30 : 20"
+                            :height="icon == 'arrow-right' ? 30 : 20"
                             color="black"
                             @click="generateElement('icon', { id: 'Icon', name: icon })"
                         />
@@ -133,7 +133,7 @@ export default {
         const generateElement = inject('generateElement')
         const showRightContainer = inject('showRightContainer') || true
 
-        const libraryIcons = ['report-arrow', 'egg', 'comment-box']
+        const libraryIcons = ['arrow-right', 'egg', 'comment-box']
 
         return {
             fetching,

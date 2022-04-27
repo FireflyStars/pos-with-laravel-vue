@@ -49,7 +49,7 @@ export default function useElementsGenerator() {
         }
     }
     
-    const generateIcon = ({ id, name }) => {
+    const generateIcon = ({ id, name, strokeWidth = null, width = null, height = null }) => {
         return {
             item: id,
             attributes: {
@@ -58,6 +58,9 @@ export default function useElementsGenerator() {
                 id: generateId(12),
                 style: '',
                 dataName: 'svg',
+                strokeWidth: strokeWidth || 0.4,
+                width: width || 50,
+                height: height || 50,
             },
             name: 'svg'
         }
@@ -118,7 +121,6 @@ export default function useElementsGenerator() {
     }
 
     const generateElement = (name, attrs = {}) => {
-        console.log("I was called with", name, attrs)
         const elementMapping = {
             textarea: generateTextarea,
             icon: generateIcon,
