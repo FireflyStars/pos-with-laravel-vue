@@ -135,6 +135,16 @@
     background-position: center;
     background-repeat: no-repeat;
 }
+.customer-icon{
+    display: block;
+    cursor: pointer;
+    width: 47px;
+    height: 40px;
+    background-image: url(../js/images/user-fill-icon.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
 .installation-icon,
 .securite-icon,
 .prestation-icon{

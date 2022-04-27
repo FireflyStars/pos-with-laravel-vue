@@ -12,6 +12,7 @@ use App\Http\Controllers\LcdtFrontController;
 use App\Http\Controllers\TemplatesController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DevisController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PageElementsController;
 
 
@@ -49,7 +50,6 @@ Route::post('/auth/login',function () {
 
 
 Route::group([
-
     'middleware' => 'web',
     'namespace'  => 'App\Http\Controllers'
 ], function () {
@@ -80,6 +80,9 @@ Route::group([
     Route::post('/get-ged-categories', [DevisController::class,'getGedCategories'])->middleware('auth')->name('get-ged-categories');
     // End Devis
 
+    // Customer
+    Route::post('/get-list-info-for-customer', [ CustomerController::class, 'geListInfoForCustomer' ])->middleware('auth')->name('get.list.info.for.customer');
+    // End Customer
     Route::put('deleteCompagneCible/', [CompagneController::class, 'deleteCompagneCible'])->middleware('auth')->name('deleteCompagneCible');
     Route::put('insertCompagneCible/', [CompagneController::class, 'insertCompagneCible'])->middleware('auth')->name('insertCompagneCible');
     Route::get('/getCourrier',[CompagneController::class, 'getCourrier'])->middleware('auth')->name('getCourrier');
