@@ -74,6 +74,8 @@
                             :headers="table.headers"
                             :content="table.content"
                             @update="updateContent"
+                            width="50"
+                            height="50"
                         >
                             <p class="conent-paragraph" v-html="textValue" v-if="isTextarea"></p>
                         </component>
@@ -287,7 +289,11 @@ export default {
         const close = () => emit('close')
 
         const submit = () => {
-            const textValue = document.querySelector('.editable')?.innerHTML
+            
+            const editable = document.querySelector('.editable')
+            const textValue = editable ? editable.querySelector('.conent-paragraph')?.innerHTML : ''
+            console.log(textValue, " is the textValue")
+
             emit('update', { 
                 id: props.item.attributes.id, 
                 textValue: isTextarea.value ? textValue : '',
@@ -435,6 +441,11 @@ export default {
                 overflow: auto;
                 p {
                     margin: 0;
+                    font-size: 16px !important;
+                    font-weight: normal !important;
+                    font-style: normal !important;
+                    color: #000;
+                    text-transform: none;
                 }
             }
         }
@@ -443,7 +454,7 @@ export default {
                 display: grid;
                 justify-items: flex-start;
                 align-content: center;
-                grid-template-columns: 25% 75%;
+                grid-template-columns: 35% 65%;
                 gap: 1rem;
                 margin: .4rem 0;
                 font-size: 16px;
@@ -479,6 +490,6 @@ export default {
     select {
         width: 100%;
     }
-    
+
 }
 </style>

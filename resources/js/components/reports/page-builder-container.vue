@@ -14,28 +14,51 @@
             v-if="!fetching"
             class="template-body"
         >
-            <component 
-                v-for="(element, index) in page.elements" 
+            
+            <template 
+                v-for="(element, index) in page.elements"
                 :key="index"
-                :is="element.item" 
-                v-bind="element.attributes"
-                @click.stop="activateItem($event)"
-                @dblclick="openUpdatePopup(element, $event.target)"
-                :disabled="element.name == 'table'"
-                :content="element.content"
-                contenteditable="false"
-                :class="{ 
-                    'active-item': `#${element.attributes.id}` == activeItem 
-                }"
             >
-
-                <span 
-                    v-if="['textarea', 'table'].includes(element.name)" 
-                    v-html="element.content"
+                <component 
+                    v-if="element.name != 'svg'"
+                    :is="element.item" 
+                    v-bind="element.attributes"
+                    @click.stop="activateItem($event)"
+                    @dblclick="openUpdatePopup(element, $event.target)"
+                    :disabled="element.name == 'table'"
+                    :content="element.content"
+                    contenteditable="false"
+                    :class="{ 
+                        'active-item': `#${element.attributes.id}` == activeItem 
+                    }"
                 >
-                </span>
 
-            </component>
+                    <span 
+                        v-if="['textarea', 'table'].includes(element.name)" 
+                        v-html="element.content"
+                    >
+                    </span>
+
+                </component>
+
+                <div 
+                    v-else
+                    v-bind="element.attributes"
+                    @click.stop="activateItem($event)"
+                    @dblclick="openUpdatePopup(element, $event.target)"
+                    :class="{ 
+                        'active-item': `#${element.attributes.id}` == activeItem 
+                    }"
+                >
+                    <Icon 
+                        :name="element.attributes.name"
+                        :width="element.attributes.width"
+                        :height="element.attributes.height"
+                        :strokeWidth="element.attributes.strokeWidth"
+                    />
+                </div>
+
+            </template>
 
             <span 
                 class="close"
@@ -160,6 +183,7 @@ export default {
             updateCloseButtonStyles(elem)
             const id = elem.getAttribute('id')
             activeItem.value = `#${id}`
+            document.querySelector('.moveable').style.display = "inline-block"
             elem.blur()
         }
 
@@ -174,11 +198,16 @@ export default {
             close.style.display = 'flex'
         }
 
+        const hideDrag = () => {
+            document.querySelector('.moveable').style.display = "none"
+            document.querySelector('.close').style.display = "none"
+        }
+
         const openUpdatePopup = (element, domElement) => {
             activeElement.value = element
-            activeItem.value = null
             activeDomElement.value = getDomElementParent(domElement, 'draggable')
             openPopup.value = true
+            hideDrag()
         }
 
         const deleteItem = () => {
@@ -187,10 +216,9 @@ export default {
                 return page.attributes.id == id
             })
             if(elementIndex != -1) {
-                document.querySelector('.moveable').style.display = "none"
+                hideDrag()
                 store.commit(`${BUILDER_MODULE}/${DELETE_ITEM}`, elementIndex)
                 activeItem.value = null
-                document.querySelector('.close').style.display = "none"
             }
         }
 
@@ -262,6 +290,7 @@ export default {
             pages,
             onDrag,
             onScale,
+            hideDrag,
             onRotate,
             fetching,
             openPopup,
@@ -326,6 +355,8 @@ $orange: orange;
     .draggable {
         z-index: 10;
         position: absolute;
+        left: 1rem;
+        top: 1rem;
     }
 
     .close {
