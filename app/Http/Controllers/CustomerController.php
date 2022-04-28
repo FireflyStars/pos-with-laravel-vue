@@ -16,7 +16,7 @@ class CustomerController extends Controller
             'nafs'      => DB::table('customer_naf')->select('code as value', 'name as display')->orderBy('name')->get(),
             'taxs'      => DB::table('taxes')->select('taux as value', 'name as display')->orderBy('name')->get(),
             'addressTypes' => DB::table('address_type')->select('id as value', 'name as display')->orderBy('name')->get(),
-            'contactTypes' => DB::table('contact_type')->select('id as value', 'name as display')->orderBy('name')->get(),
+            'contactTypes' => DB::table('contact_type')->select('id as value', 'name as display')->orderBy('id')->get(),
         ]);
     }
 
