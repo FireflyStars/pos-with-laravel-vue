@@ -408,7 +408,7 @@
                                 </div>
                                 <div class="col-5 ps-4">
                                     <div>
-                                        <label class="text-uppercase">TELEPHONE</label>
+                                        <label class="text-uppercase">TELEPHONE FIXE</label>
                                     </div>
                                     <div class="d-flex justify-content-between">
                                         <div class="phone-country-code">
@@ -420,7 +420,7 @@
                                             </select-box>
                                         </div>
                                         <div class="form-group ms-2">
-                                            <input type="text" v-model="contact.phoneNumber1" class="form-control custom-input">
+                                            <input type="text" placeholder="telephone" v-model="contact.phoneNumber1" class="form-control custom-input">
                                         </div>
                                     </div>
                                 </div>
@@ -434,7 +434,7 @@
                                 </div>
                                 <div class="col-5 ps-4">
                                     <div>
-                                        <label class="text-uppercase">TELEPHONE</label>
+                                        <label class="text-uppercase">TELEPHONE MOBILE</label>
                                     </div>
                                     <div class="d-flex justify-content-between">
                                         <div class="phone-country-code">
@@ -446,7 +446,7 @@
                                             </select-box>
                                         </div>
                                         <div class="form-group ms-2">
-                                            <input type="text" v-model="contact.phoneNumber2" class="form-control custom-input">
+                                            <input type="text" placeholder="mobile" v-model="contact.phoneNumber2" class="form-control custom-input">
                                         </div>
                                     </div>
                                 </div>

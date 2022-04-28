@@ -27,7 +27,7 @@ class CustomerController extends Controller
         $validator = Validator::make($request->all(), [
             'customerNaf'       => 'required',
             'customerStatus'    => 'required',
-            'customerStatus'    => $request->email != '' ? 'required|email' : '',
+            'email'             => $request->email != '' ? 'email' : '',
             'customerTax'       => 'required'
         ]);
  
@@ -48,6 +48,7 @@ class CustomerController extends Controller
                 'raisonsociale'         => $request->nomClient,
                 'raisonsociale2'        => $request->nomClient2,
                 'firstname'             => $request->firstName,
+                'gender'                => $request->gender,
                 'name'                  => $request->firstName.' '.$request->lastName,
                 
                 'libelleadresse'        => $request->address1,
@@ -73,14 +74,46 @@ class CustomerController extends Controller
                 'updated_at'            => now(),
                 
             ];
-            DB::table('customers')->insert($customer);
+            $customerID = DB::table('customers')->insertGetId($customer);
             foreach ($request->addresses as $address) {
                 $newAddress = [
-                    'name'      => $customer['name'],
-                    'gender'    => $customer['gender'],
-                    ''
+                    'address_type_id'       => $address['addressType'],
+                    'country_id'            => 1, // france
+                    'customer_id'           => $customerID, // france
+                    'alias'                 => $address['alias'],
+                    'company'               => $customer['company'],
+                    'lastname'              => $request->lastName,
+                    'gender'                => $customer['gender'],
+                    'firstname'             => $request->firstName,
+                    'address1'              => $address['address1'],
+                    'address2'              => $address['address2'],
+                    'address3'              => $address['address3'],
+                    'postcode'              => $address['postCode'],
+                    'city'                  => $address['city'],
+                    'created_at'            => now(),
+                    'updated_at'            => now(),
                 ];
-                DB::table('address')->insert($newAddress);
+                $addressID = DB::table('addresses')->insertGetId($newAddress);
+            }
+
+            foreach ($request->contacts as $contact) {
+                $newContact = [
+                    'contact_type_id'       => $contact['type'],
+                    'customer_id'           => $customerID,
+                    'address_id'            => $addressID,
+                    'num_contact_gx'        => $contact['numGx'],
+                    'name'                  => $contact['name'],
+                    'firstname'             => $contact['firstName'],
+                    'gender'                => $contact['gender'],
+                    'email'                 => $contact['email'],
+                    'mobile'                => $contact['phoneCountryCode1'].'|'.$contact['phoneNumber1'],
+                    'telephone'             => $contact['phoneCountryCode2'].'|'.$contact['phoneNumber2'],
+                    'type'                  => $contact['phoneCountryCode2'].'|'.$contact['phoneNumber2'],
+                    'comment'               => $contact['note'],
+                    'created_at'            => now(),
+                    'updated_at'            => now(),
+                ];
+                DB::table('contacts')->insert($newContact);
             }
         }
         return response()->json(['success'=> true]);
