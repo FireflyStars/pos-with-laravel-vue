@@ -150,7 +150,7 @@ export default {
     width: 100%;
     height: 100%;
     top: 0;
-    z-index: 30;
+    z-index: 20000;
     background: rgba(0, 0, 0, 0.3);
     .search-panel{
         width: 700px;

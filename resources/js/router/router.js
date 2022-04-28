@@ -37,6 +37,15 @@ const router = createRouter({
 
         },
         {
+            path:'/customer/create',
+            name:'customer-create',
+            component: () => import('../pages/Customer/Create'),
+            meta:{
+                authenticated: true
+            },
+
+        },
+        {
             path:'/ComponentsTest',
             name:'ComponentsTest',
             component:()=> import('../pages/ComponentsTest'),
