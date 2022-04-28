@@ -249,7 +249,12 @@ export default {
 
         watch(page, () => {
             activeItem.value = null
-            document.querySelector('.close').style.display = 'none'
+            nextTick(() => {
+                if(document) {
+                    const close = document.querySelector('.close')
+                    close ? close.style.display = 'none' : ''
+                }
+            })
         })
 
         return {

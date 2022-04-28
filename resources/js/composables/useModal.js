@@ -7,7 +7,7 @@ const modalConfig = reactive({
 
 export default function useModal() {
         
-    const toggleModal = (id, close = false) => {
+    const toggleModal = (id, close = true) => {
         if(close == false) { 
             modalConfig.state = false
             return
