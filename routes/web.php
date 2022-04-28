@@ -82,6 +82,7 @@ Route::group([
 
     // Customer
     Route::post('/get-list-info-for-customer', [ CustomerController::class, 'geListInfoForCustomer' ])->middleware('auth')->name('get.list.info.for.customer');
+    Route::post('/add-customer', [ CustomerController::class, 'storeCustomer' ])->middleware('auth')->name('store.customer');
     // End Customer
     Route::put('deleteCompagneCible/', [CompagneController::class, 'deleteCompagneCible'])->middleware('auth')->name('deleteCompagneCible');
     Route::put('insertCompagneCible/', [CompagneController::class, 'insertCompagneCible'])->middleware('auth')->name('insertCompagneCible');
