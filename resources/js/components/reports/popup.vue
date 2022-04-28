@@ -291,7 +291,8 @@ export default {
         const submit = () => {
             
             const editable = document.querySelector('.editable')
-            const textValue = editable ? editable.querySelector('p.content-paragraph')?.innerHTML : ''
+            const textValue = editable ? editable.querySelector('.conent-paragraph')?.innerHTML : ''
+            console.log(textValue, " is the textValue")
 
             emit('update', { 
                 id: props.item.attributes.id, 
@@ -440,6 +441,11 @@ export default {
                 overflow: auto;
                 p {
                     margin: 0;
+                    font-size: 16px !important;
+                    font-weight: normal !important;
+                    font-style: normal !important;
+                    color: #000;
+                    text-transform: none;
                 }
             }
         }
@@ -484,6 +490,6 @@ export default {
     select {
         width: 100%;
     }
-    
+
 }
 </style>

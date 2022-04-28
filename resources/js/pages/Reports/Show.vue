@@ -278,6 +278,9 @@ $orange: orange;
     z-index: 99;
     position: absolute;
     transition: width .2s;
+    @media only screen and (min-width: 1200px) {
+        width: 530px;
+    }
     &-visible {
         width: 530px;
     }

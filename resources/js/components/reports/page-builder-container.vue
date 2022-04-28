@@ -180,10 +180,10 @@ export default {
         const activateItem = (e) => {
             let elem = e.target
             elem = getDomElementParent(elem, 'draggable')
-            console.log(elem)
             updateCloseButtonStyles(elem)
             const id = elem.getAttribute('id')
             activeItem.value = `#${id}`
+            document.querySelector('.moveable').style.display = "inline-block"
             elem.blur()
         }
 
@@ -198,11 +198,16 @@ export default {
             close.style.display = 'flex'
         }
 
+        const hideDrag = () => {
+            document.querySelector('.moveable').style.display = "none"
+            document.querySelector('.close').style.display = "none"
+        }
+
         const openUpdatePopup = (element, domElement) => {
             activeElement.value = element
-            // activeItem.value = null
             activeDomElement.value = getDomElementParent(domElement, 'draggable')
             openPopup.value = true
+            hideDrag()
         }
 
         const deleteItem = () => {
@@ -211,10 +216,9 @@ export default {
                 return page.attributes.id == id
             })
             if(elementIndex != -1) {
-                document.querySelector('.moveable').style.display = "none"
+                hideDrag()
                 store.commit(`${BUILDER_MODULE}/${DELETE_ITEM}`, elementIndex)
                 activeItem.value = null
-                document.querySelector('.close').style.display = "none"
             }
         }
 
@@ -286,6 +290,7 @@ export default {
             pages,
             onDrag,
             onScale,
+            hideDrag,
             onRotate,
             fetching,
             openPopup,
