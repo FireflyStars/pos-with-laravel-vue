@@ -11,12 +11,12 @@
                   <span class="ms-3 font-22 almarai_extrabold_normal_normal">CREATION / EDITION CLIENT</span>
                 </h1>
                 <ul class="full-nav d-flex p-0 m-0 bg-white">
-                    <li class="full-nav-item title border-right col-4 d-flex align-items-center justify-content-center"
+                    <li class="full-nav-item title border-right col-3 d-flex align-items-center justify-content-center"
                         :class="{ active: step == 'client-detail'}"
                         @click="selectNav('client-detail')"
                     >
                         <svg class="icon" width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg"
-                            v-if="step == 'address' || step == 'information'"
+                            v-if="step == 'address' || step == 'information' || step == 'contact'"
                         >
                             <circle cx="10.9058" cy="10" r="9" stroke="#42A71E" stroke-width="2"/>
                             <g clip-path="url(#clip0_807_2682)">
@@ -28,17 +28,17 @@
                                 </clipPath>
                             </defs>
                         </svg>
-                        <svg v-if="step != 'address' && step != 'information'" class="icon" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg v-if="step != 'address' && step != 'information' && step != 'contact'" class="icon" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="10.9058" cy="10" r="9" stroke="#47454B" stroke-width="2"/>
                         </svg>
                         Détail client
                     </li>
-                    <li class="full-nav-item title border-right col-4 d-flex align-items-center justify-content-center"
-                        :class="{ active: step =='address'}"
+                    <li class="full-nav-item title border-right col-3 d-flex align-items-center justify-content-center"
+                        :class="{ active: step == 'address'}"
                         @click="selectNav('address')"
                     >
                         <svg class="icon" width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg"
-                            v-if="step == 'information'"
+                            v-if="step == 'information' || step == 'contact'"
                         >
                             <circle cx="10.9058" cy="10" r="9" stroke="#42A71E" stroke-width="2"/>
                             <g clip-path="url(#clip0_807_2682)">
@@ -50,19 +50,41 @@
                                 </clipPath>
                             </defs>
                         </svg>
-                        <svg v-if="step != 'information'" class="icon" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg v-if="step != 'information' && step != 'contact'" class="icon" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="10.9058" cy="10" r="9" stroke="#47454B" stroke-width="2"/>
                         </svg>
                         Adresse
                     </li>
-                    <li class="full-nav-item title border-right col-4 d-flex align-items-center justify-content-center"
+                    <li class="full-nav-item title border-right col-3 d-flex align-items-center justify-content-center"
                         :class="{ active: step =='information'}"
                         @click="selectNav('information')"
+                    >
+                        <svg class="icon" width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            v-if="step == 'contact'"
+                        >
+                            <circle cx="10.9058" cy="10" r="9" stroke="#42A71E" stroke-width="2"/>
+                            <g clip-path="url(#clip0_807_2682)">
+                                <path d="M10.6555 15.0751L4.58057 9.07506L6.23053 7.42505L10.6555 11.925L19.5806 2.92505L21.2305 4.57506L10.6555 15.0751Z" fill="#05944F"/>
+                            </g>
+                            <defs>
+                                <clipPath id="clip0_807_2682">
+                                    <rect width="18" height="18" fill="white" transform="translate(3.90576)"/>
+                                </clipPath>
+                            </defs>
+                        </svg>
+                        <svg v-if="step != 'contact'" class="icon" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="10.9058" cy="10" r="9" stroke="#47454B" stroke-width="2"/>
+                        </svg>
+                        Informations
+                    </li>
+                    <li class="full-nav-item title border-right col-3 d-flex align-items-center justify-content-center"
+                        :class="{ active: step =='contact'}"
+                        @click="selectNav('contact')"
                     >
                         <svg class="icon" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="10.9058" cy="10" r="9" stroke="#47454B" stroke-width="2"/>
                         </svg>
-                        Informations
+                        Contact
                     </li>
                 </ul>
                 <transition name="list" appear v-if="step =='client-detail'">
@@ -70,8 +92,9 @@
                         <div class="page-section">
                             <div class="d-flex">
                                 <div class="col-3">
-                                    <h3 class="m-0 mulish-extrabold font-22">FICHE CLIENT</h3>
-                                    <p class="m-0 mulish-light font-14 text-gray">N 897</p>
+                                    <input type="text" v-model="form.company" class="form-control" placeholder="Company">
+                                    <!-- <h3 class="m-0 mulish-extrabold font-22">FICHE CLIENT</h3> -->
+                                    <!-- <p class="m-0 mulish-light font-14 text-gray">N 897</p> -->
                                 </div>
                                 <div class="col-9 d-flex px-2">
                                     <div class="col-4">
@@ -85,13 +108,24 @@
                                 </div>
                             </div>
                             <div class="d-flex mt-3">
-                                <div class="col-3">
-                                    <div class="form-group">
+                                <div class="col-4 d-flex">
+                                    <div class="col-4 form-group">
+                                        <label for="">&nbsp;</label>
+                                        <select-box v-model="form.gender" 
+                                            :options="[
+                                                { value: 'M', display: 'M' },
+                                                { value: 'Mme', display: 'Mme' },
+                                                { value: 'Mlle', display: 'Mlle' },
+                                            ]" 
+                                            :name="'customerType'"
+                                            ></select-box>
+                                    </div>
+                                    <div class="col-8 ps-2 form-group">
                                         <label for="nom-client" class="mulish-medium font-16">NOM CLIENT</label>
                                         <input type="text" class="form-control" v-model="form.nomClient" placeholder="Raison sociale">
                                     </div>
                                 </div>
-                                <div class="col-9 px-2 d-flex">
+                                <div class="col-8 ps-2 d-flex">
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="" class="mulish-medium font-16">NOM CLIENT COMPLEMENTAIRE</label>
@@ -171,10 +205,10 @@
                         <div class="btns d-flex justify-content-end my-3">
                             <button class="custom-btn btn-ok text-uppercase" @click="addAddress">AJOUTER ADRESSE</button>
                         </div>
-                        <div class="page-section" v-for="(address, index) in form.address" :key="index">
+                        <div class="page-section" v-for="(address, index) in form.addresses" :key="index">
                             <div class="d-flex">
                                 <div class="col-4 d-flex align-items-center">
-                                    <h3 class="m-0 mulish-extrabold font-22">Adresse</h3>
+                                    <h3 class="m-0 mulish-extrabold font-22">ADRESSE</h3>
                                 </div>
                                 <div class="col-8 d-flex px-2">
                                     <div class="col-5">
@@ -248,7 +282,7 @@
                 <transition name="list" appear v-if="step == 'information'">
                     <div class="cust-page-content m-auto pt-5">
                         <div class="page-section">
-                            <h3 class="mulish-extrabold font-22">Notes</h3>
+                            <h3 class="mulish-extrabold font-22">NOTES / INFORMATIONS</h3>
                             <div class="d-flex">
                                 <div class="col-8">
                                     <textarea rows="4" class="form-control" v-model="form.note"></textarea>
@@ -327,10 +361,122 @@
                         </div>
                         <div class="btns d-flex justify-content-end">
                             <button class="custom-btn btn-cancel me-3" @click="cancel">Annuler</button>
-                            <button class="custom-btn btn-ok text-uppercase" @click="submit">VALIDATUON</button>
+                            <button class="custom-btn btn-ok text-uppercase" @click="nextStep">Suivant</button>
                         </div>                        
                     </div>
                 </transition>
+                <transition name="list" appear v-if="step =='contact'">
+                    <div class="cust-page-content client-detail m-auto pt-5">
+                        <div class="btns d-flex justify-content-end my-3">
+                            <button class="custom-btn btn-ok text-uppercase" @click="addContact">AJOUTER CONTACT</button>
+                        </div>                        
+                        <div class="page-section" v-for="(contact, index) in form.contacts" :key="index">
+                            <div class="d-flex">
+                                <div class="col-3">
+                                    <h3 class="m-0 mulish-extrabold font-22">CONTACT</h3>
+                                </div>
+                                <div class="col-9 d-flex px-2">
+                                    <div class="col-4">
+                                        <select-box v-model="contact.type" :options="contactTypes" :name="'contactType'+index"></select-box>
+                                    </div>
+                                    <div class="col-4"></div>
+                                    <div class="col-4">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex mt-3">
+                                <div class="col-7 d-flex">
+                                    <div class="col-2 form-group">
+                                        <label for="">&nbsp;</label>
+                                        <select-box v-model="contact.gender" 
+                                            :options="[
+                                                { value: 'M', display: 'M' },
+                                                { value: 'Mme', display: 'Mme' },
+                                                { value: 'Mlle', display: 'Mlle' },
+                                            ]" 
+                                            :name="'customerType'"
+                                            ></select-box>
+                                    </div>
+                                    <div class="col-5 ps-2 form-group">
+                                        <label for="nom-client" class="mulish-medium font-16">PRENOM</label>
+                                        <input type="text" class="form-control" v-model="contact.firstName" placeholder="First Name">
+                                    </div>
+                                    <div class="col-5 ps-2 form-group">
+                                        <label for="" class="mulish-medium font-16">NOM</label>
+                                        <input type="text" v-model="contact.name" placeholder="Name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-5 ps-4">
+                                    <div>
+                                        <label class="text-uppercase">TELEPHONE</label>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <div class="phone-country-code">
+                                            <select-box 
+                                                v-model="contact.phoneCountryCode1" 
+                                                :options="phoneCodesSorted"
+                                                :styles="{ width: '100px'}"
+                                                :name="'phoneCountryCode'">
+                                            </select-box>
+                                        </div>
+                                        <div class="form-group ms-2">
+                                            <input type="text" v-model="contact.phoneNumber1" class="form-control custom-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex mt-3">
+                                <div class="col-7">
+                                    <div class="form-group">
+                                        <label for="" class="mulish-medium font-16">EMAIL</label>
+                                        <input type="text" v-model="contact.email" placeholder="email" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-5 ps-4">
+                                    <div>
+                                        <label class="text-uppercase">TELEPHONE</label>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <div class="phone-country-code">
+                                            <select-box 
+                                                v-model="contact.phoneCountryCode2" 
+                                                :options="phoneCodesSorted"
+                                                :styles="{ width: '100px'}"
+                                                :name="'phoneCountryCode'">
+                                            </select-box>
+                                        </div>
+                                        <div class="form-group ms-2">
+                                            <input type="text" v-model="contact.phoneNumber2" class="form-control custom-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex mt-3">       
+                                <div class="col-7">
+                                    <div class="form-group">
+                                        <label for="">LIBELLE SPECIFIQUE</label>
+                                        <input type="text" v-model="contact.note" placeholder="comment" class="form-control">
+                                    </div>
+                                </div>                                
+                                <div class="col-5 ps-2 d-flex">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="">NUM-GX</label>
+                                            <input type="text" v-model="contact.numGx" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-8 ps-3 d-flex align-items-end justify-content-end">
+                                        <button @click="removeContact(index)" class="custom-btn btn-danger text-nowrap">SUPPRIMER CONTACT</button>
+                                    </div>
+                                </div>                                
+                            </div>
+                        </div>
+                        <div class="btns d-flex justify-content-end">
+                            <button class="custom-btn btn-cancel me-3" @click="cancel">Annuler</button>
+                            <button class="custom-btn btn-ok text-uppercase" @click="submit">VALIDATUON</button>
+                        </div>
+                    </div>
+                </transition>                
             </div>
         </div>
       </div>
@@ -356,13 +502,15 @@ export default {
         const customerNafs    = ref([]);
         const customerTypes   = ref([]);
         const addressTypes     = ref([]);
+        const contactTypes     = ref([]);
         const form = ref({
+            company: '',
             customerStatus: '',
             customerType: '',
             customerNaf: '',
-            customerNaf: '',
             nomClient: '',
             nomClient2: '',
+            gender: 'M',
             firstName: '',
             lastName: '',
             lastName: '',
@@ -380,12 +528,13 @@ export default {
             numLCDT: '',
             trancheEffectif: '',
             trancheCA: '',
+            trancheCommune: '',
             dateCreated: '',
             statusEtablissement: '',
             environment: '',
             zpe: '',
             // address tab
-            address: [
+            addresses: [
                 {
                     addressType: '',
                     alias: '',
@@ -396,7 +545,23 @@ export default {
                     city: '',
                     state: '',
                 }
-            ]
+            ],
+            // contacts
+            contacts: [
+                {
+                    type: '',
+                    gender: 'M',
+                    firstName: '',
+                    name: '',
+                    email: '',
+                    note: '',
+                    numGx: '',
+                    phoneCountryCode1: '+33',
+                    phoneNumber1: '',
+                    phoneCountryCode2: '+33',
+                    phoneNumber2: '',
+                }
+            ],            
         });
 
         const selectNav = (value)=>{
@@ -410,8 +575,8 @@ export default {
                 step.value = 'address';
             }else if( step.value == 'address' ){
                 step.value = 'information';
-            }else{
-
+            }else if(step.value == 'information'){
+                step.value = 'contact';
             }
         }
         const phoneCodesSorted = [...new Map(phoneCodes.map(item =>
@@ -419,7 +584,7 @@ export default {
                 return parseInt(a.value.replace(/\D/g, '')) - parseInt(b.value.replace(/\D/g, ''));
         }); 
         const addAddress = ()=>{
-            form.value.address.push({
+            form.value.addresses.push({
                 addressType: '',
                 alias: '',
                 address1: '',
@@ -430,17 +595,46 @@ export default {
                 state: '',
             });
         }     
+        const addContact = ()=>{
+            form.value.contacts.push({
+                type: '',
+                gender: 'M',
+                firstName: '',
+                name: '',
+                email: '',
+                note: '',
+                numGx: '',
+                phoneCountryCode1: '+33',
+                phoneNumber1: '',
+                phoneCountryCode2: '+33',
+                phoneNumber2: '',                
+            });
+        }     
         const removeAddress = (selectedIndex)=>{
             var tmpAddress = [];
-            for (let index = 0; index < form.value.address.length; index++) {
-                const element = form.value.address[index];
+            for (let index = 0; index < form.value.addresses.length; index++) {
+                const element = form.value.addresses[index];
                 if(selectedIndex != index)
                     tmpAddress.push(element);
             }
-            form.value.address = tmpAddress;
+            form.value.addresses = tmpAddress;
+        }
+
+        const removeContact = (selectedIndex)=>{
+            var tmpAddress = [];
+            for (let index = 0; index < form.value.contacts.length; index++) {
+                const element = form.value.contacts[index];
+                if(selectedIndex != index)
+                    tmpAddress.push(element);
+            }
+            form.value.contacts = tmpAddress;
         }
         const submit = ()=>{
-
+            axios.post('/add-customer', form.value).then((res)=>{
+                
+            }).then((errors)=>{
+                console.log(errors);
+            })
         }
         onMounted(()=>{
             axios.post('/get-list-info-for-customer').then((res)=>{
@@ -449,6 +643,7 @@ export default {
                 customerNafs.value    = res.data.nafs;
                 customerTypes.value   = res.data.types;
                 addressTypes.value    = res.data.addressTypes;
+                contactTypes.value    = res.data.contactTypes;
             }).catch((errors)=>{
                 console.log(errors);
             }).finally(()=>{
@@ -463,9 +658,12 @@ export default {
             customerNafs,
             customerTypes,
             addressTypes,
+            contactTypes,
             phoneCodesSorted,
             addAddress,
+            addContact,
             removeAddress,
+            removeContact,
             selectNav,
             cancel,
             nextStep,
