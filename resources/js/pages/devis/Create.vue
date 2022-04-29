@@ -8,9 +8,21 @@
             <div class="col main-view container">
                 <h1 class="d-flex align-items-center m-0">
                   <span class="devis-icon"></span>
-                  <span class="ms-3 font-22 almarai_extrabold_normal_normal">Creation / Edition  Devis</span>
+                  <span class="ms-3 font-22 almarai_extrabold_normal_normal">Nouveau Devis</span>
                 </h1>
-                <div class="devis-panel d-flex">
+                <ul class="m-0 p-0 breadcrumb mt-3" v-if="breadcrumbs.length">
+                  <li class="breadcrumb-item almarai-extrabold font-18" v-for="(breadcrumb, index) in breadcrumbs" :key="index">{{ breadcrumb }}</li>
+                </ul>
+                <div class="choose-customer-panel d-flex mt-3" v-if="devisCreateStep == 'choose_customer'">
+                  <div class="col-4 bg-white p-3 rounded">
+                    <h2 class="almarai-extrabold font-22">Détail Client <span @click="addNewCustomer" class="ms-3 almarai-bold font-16 cursor-pointer text-decoration-underline" style="color: #42A71E">Nouveau</span></h2>
+                    <SearchCustomer name="search" :droppos="{top:'auto',right:'auto',bottom:'auto',left:'0',transformOrigin:'top right'}" label="Search a customer" hint="disabled till 2021-09-10" ></SearchCustomer>
+                  </div>
+                </div>
+                <div class="choose-address-panel mt-3" v-if="devisCreateStep == 'choose_address'">
+                  choose address
+                </div>
+                <div class="devis-panel d-flex" v-if="devisCreateStep == 'create_devis'">
                     <div class="left-panel">
                       <div class="customer-section px-3 py-2 d-flex bg-white">
                           <div class="col-7 d-flex">
@@ -276,16 +288,19 @@
   </router-view>
 </template>
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch, watchEffect } from 'vue';
 import SelectBox from '../../components/miscellaneous/SelectBox';
+import SearchCustomer from '../../components/miscellaneous/SearchCustomer';
 import ZoomModal from '../../components/miscellaneous/ZoomModal';
 import OuvrageModal from '../../components/miscellaneous/OuvrageModal';
 import PrestationModal from '../../components/miscellaneous/PrestationModal';
 import SupplierModal from '../../components/miscellaneous/SupplierModal';
 
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 export default {
   components:{
+    SearchCustomer,
     SelectBox,
     ZoomModal,
     OuvrageModal,
@@ -293,6 +308,18 @@ export default {
     SupplierModal
   },
   setup() {
+    const router = useRouter();
+    const breadcrumbs = ref(['Choix client']);
+    const devisCreateStep = ref('choose_customer');
+    watchEffect(()=>{
+      if(devisCreateStep.value == 'choose_customer'){
+        breadcrumbs.value = ['Choix client'];
+      }else if(devisCreateStep.value == 'choose_address'){
+        breadcrumbs.value = ['Choix client', 'Choix adresse chantier'];
+      }else{
+        breadcrumbs.value = [];
+      }
+    })
     const zoneEdit = ref(false);
     const zoneIndex = ref(0);
     var formData = new FormData();
@@ -356,7 +383,15 @@ export default {
     const openSupplierModal = ()=>{
       supplierModal.value.openModal();
     }
+        
+    const addNewCustomer = ()=>{
+      router.push({
+        name: "customer-create"
+      })
+    }
     return {
+      breadcrumbs,
+      devisCreateStep,
       form,
       zoneEdit,
       file,
@@ -370,7 +405,8 @@ export default {
       togglePanel,
       openOuvrageModal,
       openPrestationModal,
-      openSupplierModal
+      openSupplierModal,
+      addNewCustomer
     }
   },
 }
@@ -400,6 +436,12 @@ export default {
     font-size: 10px;
     color: rgba(0, 24, 51, 0.22);
     line-height: 12.55px;    
+  }
+  .breadcrumb{
+    .breadcrumb-item + .breadcrumb-item::before{
+      content: '>';
+      color: black;
+    }
   }
   .main-view{
     padding: 60px 10px 0 80px;

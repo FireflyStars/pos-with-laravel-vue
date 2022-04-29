@@ -20,6 +20,7 @@ import {
 } from "./modules/filter";
 
 import {cible as CIBLE_MODULE} from "./modules/cible";
+import {search as CUSTOMERLIST_MODULE } from "./modules/search";
 
 import { itemlist as ITEM_LIST_MODULE } from "./modules/component_store/itemlist";
 
@@ -42,5 +43,6 @@ export default createStore({
         FILTER_MODULE,
         TOGGLER_MODULE,
         BUILDER_MODULE,
+        CUSTOMERLIST_MODULE,
     }
 });

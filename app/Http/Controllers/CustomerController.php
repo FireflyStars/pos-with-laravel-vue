@@ -108,7 +108,7 @@ class CustomerController extends Controller
                     'email'                 => $contact['email'],
                     'mobile'                => $contact['phoneCountryCode1'].'|'.$contact['phoneNumber1'],
                     'telephone'             => $contact['phoneCountryCode2'].'|'.$contact['phoneNumber2'],
-                    'type'                  => $contact['phoneCountryCode2'].'|'.$contact['phoneNumber2'],
+                    'type'                  => 'Suspect',
                     'comment'               => $contact['note'],
                     'created_at'            => now(),
                     'updated_at'            => now(),

@@ -128,3 +128,12 @@ export const SET_PAGE_BACKGROUND = 'setPageBackground'
 export const SET_LOADING = 'setLoading'
 
 export const SAVE_META = 'saveMeta'
+
+// customer module
+export const CUSTOMERLIST_MODULE='CUSTOMERLIST_MODULE/';//namespace
+export const CUSTOMER_SEARCH_LOAD_LIST='CUSTOMER_SEARCH_LOAD_LIST';//action
+export const CUSTOMER_GET_SEARCH_LIST='CUSTOMER_GET_SEARCH_LIST'//getters
+export const CUSTOMER_SET_SEARCH_LIST='CUSTOMER_SET_SEARCH_LIST'//getters
+export const CUSTOMER_GET_SEARCH_COUNT='CUSTOMER_GET_SEARCH_COUNT'//getters
+export const CUSTOMER_SET_SEARCH_COUNT='CUSTOMER_SET_SEARCH_COUNT'//getters
+export const CUSTOMER_SET_LOADER = 'CUSTOMER_SET_LOADER'//getters
