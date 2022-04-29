@@ -65,7 +65,7 @@ export const devislist= {
                     1:""    
                 },
                 event:null,
-                sort:true,
+                sort:false,
                 filter:true,   
                 css:{
                   flex:0.5
@@ -187,8 +187,6 @@ export const devislist= {
     },
     actions: {
       [DEVISLIST_LOAD_TAB]:async({commit,state,dispatch},params)=>{
-        
-        
  
         return axios.post(`/get-devis-list`,params).then((response)=>{
           return  Promise.resolve(response);

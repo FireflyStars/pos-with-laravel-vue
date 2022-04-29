@@ -3,7 +3,7 @@
 <div :id="table_def.identifier">
     <div class="list-header">
         <template v-for="item,index in table_def.columns_def" :key="index">
-            <div class="list-header-col almarai_700_normal" :class="headerClasses(item)" :style="item.css">
+            <div class="list-header-col almarai_700_normal" @click="sortby(item)" @drop="onDrop($event,item)" @dragover="onDragOver($event,item)"  @dragleave="onDragLeave($event,item)" @dragenter="onDragEnter($event,item)" @dragover.prevent  :draggable="isDraggable(item)" @dragstart="startDrag($event,item)" @dragend="endDrag($event,item)" :class="headerClasses(item,sortings)" :style="item.css">
                 <span>{{item.display_name}}</span>
                 <check-box v-if="item.type=='checkbox'" name="checkall" id="checkall" :checked="lists.length==MULTI_CHECKED.length" @change="checkboxallclicked"/>
                 <input  class="mulish_400_normal" v-if="(item.type=='string'||item.type=='html'||item.type=='price')&&item.sort" type="text" @keyup.enter="filterColumn(item,$event.target.value)"/>
@@ -40,7 +40,7 @@
 import { ref, onMounted, nextTick, computed, watch } from 'vue';
 import { useStore } from 'vuex';
 import { formatDate } from '../../helpers/helpers';
-import { DISPLAY_LOADER, HIDE_LOADER, ITEM_LIST_FILTER, ITEM_LIST_GET_COLUMN_FILTERS, ITEM_LIST_GET_CURRENT, ITEM_LIST_GET_LISTS, ITEM_LIST_GET_TABLES, ITEM_LIST_LOAD_MORE, ITEM_LIST_MODULE, ITEM_LIST_MULTI_CHECK, ITEM_LIST_MULTI_CHECK_LISTS, ITEM_LIST_MULTI_UNCHECK, ITEM_LIST_RESET_MULTI_CHECK, ITEM_LIST_SELECT_CURRENT, ITEM_LIST_TABLEDEF, ITEM_LIST_TABLE_RELOAD, LOADER_MODULE } from '../../../store/types/types';
+import { DISPLAY_LOADER, HIDE_LOADER, ITEM_LIST_FILTER, ITEM_LIST_GET_COLUMN_FILTERS, ITEM_LIST_GET_CURRENT, ITEM_LIST_GET_LISTS, ITEM_LIST_GET_SORT, ITEM_LIST_GET_TABLES, ITEM_LIST_LOAD_MORE, ITEM_LIST_MODULE, ITEM_LIST_MULTI_CHECK, ITEM_LIST_MULTI_CHECK_LISTS, ITEM_LIST_MULTI_UNCHECK, ITEM_LIST_RESET_MULTI_CHECK, ITEM_LIST_SELECT_CURRENT, ITEM_LIST_SET_TABLE, ITEM_LIST_SET_TABLEDEF, ITEM_LIST_SORT, ITEM_LIST_TABLEDEF, ITEM_LIST_TABLE_RELOAD, LOADER_MODULE } from '../../../store/types/types';
 import { useRouter } from 'vue-router';
 
 export default {
@@ -64,9 +64,32 @@ export default {
       
 
         onMounted(()=>{
-            let table={
-                table_def:props.table_def
+            let table_def=props.table_def;
+            let sortedcol=[];
+            let sortedcols=window.localStorage.getItem(`sort_${identifier}`);
+            if(sortedcols!=null){
+                let cols=sortedcols.split(',');
+                cols.forEach((col,index)=>{
+                        props.table_def.columns_def.forEach((item,i)=>{
+                            if(item.type!="checkbox"){
+                                if(item.id==col){
+                                    sortedcol.push(item);
+                                }
+                            }else if(index==0){
+                                sortedcol.push(item);
+                            }
+                        });
+                           
+                            
+                        });
+                        table_def.columns_def=sortedcol;
             }
+         
+       
+            let table={
+                table_def:table_def
+            }
+       
                 showLoader('Veuillez patienter. Chargement en cours...');
                 store.dispatch(`${ITEM_LIST_MODULE}${ITEM_LIST_TABLEDEF}`,table).finally(()=>hideLoader());
         
@@ -87,7 +110,13 @@ export default {
 
                 return [];
             });
+        const sortings=computed(()=>{
+            let sort=store.getters[`${ITEM_LIST_MODULE}${ITEM_LIST_GET_SORT}`];
+              if(typeof sort[identifier]!="undefined")
+                return sort[identifier];
 
+                return [];
+        });
         //set a column filter
         const filterColumn=(col,word)=>{
             store.dispatch(`${ITEM_LIST_MODULE}${ITEM_LIST_FILTER}`,{col:col,word:word});
@@ -120,10 +149,20 @@ export default {
             );
          //end watch for any column filter change and send request to server
 
-        const headerClasses=item=>{
+        const headerClasses=(item,sortings)=>{
+     
             let header_class=item.header_class;
             if(item.type=="checkbox")
-            header_class=`${header_class} d-flex justify-content-center`;
+            header_class=`${header_class} d-flex justify-content-center chx noselect`;
+
+            if(typeof item.sort!="undefined" && item.sort==true)
+            header_class+=' sortable';
+
+            let s=sortings.filter(obj=>obj.id==item.id);
+            if(s.length>0)
+            header_class+=` ${s[0].orderby}`;
+            
+
             return header_class;
         }
          const colClasses=(col,row)=>{
@@ -183,6 +222,99 @@ export default {
         const hideLoader=()=>{
             store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
         }
+        //column drag
+        const startDrag=(event,item)=>{
+             if(item.type=="checkbox"){
+                return;
+             }
+            event.dataTransfer.dropEffect='move';
+            event.dataTransfer.effectAllowed='move';
+            event.dataTransfer.setData('ItemID',item.id);
+         
+            event.srcElement.classList.add('dragging');
+        }
+        const endDrag=(event,item)=>{
+                let draggoverel= document.querySelectorAll('.draggedOver');
+                    draggoverel.forEach(node=>{
+                            node.classList.remove('draggedOver');
+                    });
+          
+                event.srcElement.classList.remove('dragging');
+        }
+        const onDrop=(event,dropOverItem)=>{
+            if(dropOverItem.type=="checkbox")
+            return;
+            const ItemID=event.dataTransfer.getData('ItemID');
+         
+            let cols=[];
+            props.table_def.columns_def.forEach((item,index)=>{
+            
+                if(item.type!="checkbox"){
+                    if(item.id==dropOverItem.id){
+                        cols.push(ItemID);
+                        cols.push(item.id);
+                    }else if(item.id!=ItemID){
+                         cols.push(item.id);
+                    }
+                }
+                
+            });
+     
+            window.localStorage.setItem(`sort_${identifier}`,cols);
+            let sortedcol=[];
+          
+         cols.forEach((col,index)=>{
+                         props.table_def.columns_def.forEach((item,i)=>{
+                            if(item.type!="checkbox"){
+                                if(item.id==col){
+                                    sortedcol.push(item);
+                             
+                                }
+                            }else if(index==0){
+                                sortedcol.push(item);
+                               
+                            }
+                        });
+                           
+                            
+                        });
+                    let table_def=props.table_def;
+                     table_def.columns_def=sortedcol;
+                    let table={
+                            table_def:table_def
+                        }
+                      
+                   store.commit(`${ITEM_LIST_MODULE}${ITEM_LIST_SET_TABLE}`,table);
+        }
+         const onDragOver=(event,item)=>{
+          if(item.type=="checkbox")
+            return;
+             event.srcElement.classList.add('draggedOver');
+             event.preventDefault();
+        }
+        const onDragEnter=(event,item)=>{
+            if(item.type=="checkbox")
+            return;
+             event.srcElement.classList.add('draggedOver');
+             event.preventDefault();
+        }
+           const onDragLeave=(event,item)=>{
+            if(item.type=="checkbox")
+            return;
+             event.srcElement.classList.remove('draggedOver');
+    
+        }
+        const isDraggable=(col)=>{
+            if(col.type=="checkbox"||props.table_def.rearrange_columns==false)
+            return false;
+
+            return true;
+        }
+        //end column drag
+
+        const sortby=(col)=>{
+            store.dispatch(`${ITEM_LIST_MODULE}${ITEM_LIST_SORT}`,col);
+        }
       return{
           table_def:props.table_def,
           lists,
@@ -196,7 +328,16 @@ export default {
           ifnull,
           CURRENT_SELECTED,
           loadmore,
-          MULTI_CHECKED
+          MULTI_CHECKED,
+          startDrag,
+          endDrag,
+          onDragEnter,
+          onDragLeave,
+          onDragOver,
+          onDrop,
+          isDraggable,
+          sortby,
+          sortings
       }
 
     }
@@ -240,6 +381,30 @@ export default {
     flex:1;
     font-size: 14px;
     color:#868686;
+        border-left: 2px solid white;
+        
+        &.sortable{
+            & span{
+            transition: color 300ms ease-in-out;
+            cursor:pointer;
+                &::after{
+                    content: url('data:image/svg+xml; utf8, <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 0l8 10h-16l8-10zm8 14h-16l8 10 8-10z"/></svg>');
+                    display: block;
+                    width: 22px;
+                    height: 10px;
+                    margin: 10px 5px 0 10px;
+                }
+            }
+            &:hover span{
+                color:var(--lcdtOrange);
+            }
+        }
+}
+.list-header-col:not(.chx).draggedOver{
+   border-left-color: var(--lcdtOrange);
+}
+.list-header-col.dragging{
+    cursor: move!important;
 }
 .list-row{
     display: flex;
@@ -310,4 +475,13 @@ export default {
             color:var(--lcdtOrange);
         }
     }
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
 </style>
