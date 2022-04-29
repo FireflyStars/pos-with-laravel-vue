@@ -388,7 +388,7 @@ export default {
             transition: color 300ms ease-in-out;
             cursor:pointer;
                 &::after{
-                    content: url('data:image/svg+xml; utf8, <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 0l8 10h-16l8-10zm8 14h-16l8 10 8-10z"/></svg>');
+                  //  content: url('data:image/svg+xml; utf8, <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 0l8 10h-16l8-10zm8 14h-16l8 10 8-10z"/></svg>');
                     display: block;
                     width: 22px;
                     height: 10px;
