@@ -1,4 +1,4 @@
-import { ITEM_LIST_FILTER, ITEM_LIST_GET_COLUMN_FILTERS, ITEM_LIST_GET_CURRENT, ITEM_LIST_GET_LISTS, ITEM_LIST_GET_TABLES, ITEM_LIST_LOAD_MORE, ITEM_LIST_SET_PAGINATION, ITEM_LIST_SELECT_CURRENT, ITEM_LIST_SET_CURRENT, ITEM_LIST_SET_LIST, ITEM_LIST_SET_TABLEDEF, ITEM_LIST_TABLEDEF, ITEM_LIST_TABLE_RELOAD, ITEM_LIST_UPDATE_FILTER, ITEM_LIST_GET_IDENTIFIER, ITEM_LIST_MULTI_CHECK, ITEM_LIST_MULTI_UNCHECK, ITEM_LIST_RESET_MULTI_CHECK, ITEM_LIST_MULTI_CHECK_LISTS } from "../../types/types";
+import { ITEM_LIST_FILTER, ITEM_LIST_GET_COLUMN_FILTERS, ITEM_LIST_GET_CURRENT, ITEM_LIST_GET_LISTS, ITEM_LIST_GET_TABLES, ITEM_LIST_LOAD_MORE, ITEM_LIST_SET_PAGINATION, ITEM_LIST_SELECT_CURRENT, ITEM_LIST_SET_CURRENT, ITEM_LIST_SET_LIST, ITEM_LIST_SET_TABLEDEF, ITEM_LIST_TABLEDEF, ITEM_LIST_TABLE_RELOAD, ITEM_LIST_UPDATE_FILTER, ITEM_LIST_GET_IDENTIFIER, ITEM_LIST_MULTI_CHECK, ITEM_LIST_MULTI_UNCHECK, ITEM_LIST_RESET_MULTI_CHECK, ITEM_LIST_MULTI_CHECK_LISTS, ITEM_LIST_SET_TABLE, ITEM_LIST_SORT, ITEM_LIST_SET_SORT, ITEM_LIST_GET_SORT } from "../../types/types";
 
 export const itemlist= {
     namespaced:true,
@@ -9,9 +9,9 @@ export const itemlist= {
         column_filters:{},
         filters:{},
         paginations:{},
-        sortings:{},
+        sortby:{},
         currentchecked:{},
-        multichecked:{}
+        multichecked:{},
     },
     mutations: {
       [ITEM_LIST_UPDATE_FILTER]:(state,params)=>{
@@ -25,6 +25,11 @@ export const itemlist= {
 
             if(params.filter.word=='')
             state.column_filters[state.current_table_identifier]=state.column_filters[state.current_table_identifier].filter(obj=>obj.id!=params.filter.id);
+      },
+      [ITEM_LIST_SET_TABLE]:(state,table)=>{
+    
+        state.tables[ state.current_table_identifier]=table;
+  
       }, 
       [ITEM_LIST_SET_TABLEDEF]:(state,table)=>{
           state.current_table_identifier=table.table_def.identifier;
@@ -55,6 +60,24 @@ export const itemlist= {
       },
       [ITEM_LIST_RESET_MULTI_CHECK]:(state)=>{
         state.multichecked[state.current_table_identifier]=[];
+      },
+      [ITEM_LIST_SET_SORT]:(state,col)=>{
+        if(typeof state.sortby[state.current_table_identifier]=="undefined")
+        state.sortby[state.current_table_identifier]=[];
+
+        let c=state.sortby[state.current_table_identifier].filter(obj=>obj.id==col.id);
+
+        if(c.length==0){
+            state.sortby[state.current_table_identifier].push({id:col.id,orderby:'asc'});
+        }else if (c[0].orderby=='asc'){
+            c[0].orderby='desc';
+        }else if (c[0].orderby=='desc'){
+            
+            state.sortby[state.current_table_identifier]=state.sortby[state.current_table_identifier].filter(obj=>obj.id!=col.id);
+        }
+
+       
+
       }
     },
     actions: {
@@ -116,6 +139,9 @@ export const itemlist= {
                     window.scrollTo({ left: 0, top: document.body.scrollHeight, behavior: "smooth" });
             });
         },
+        [ITEM_LIST_SORT]:({commit,state,dispatch},col)=>{
+            commit(`${ITEM_LIST_SET_SORT}`,col)
+        }
     },
     getters: {
         [ITEM_LIST_GET_TABLES]:state=>state.tables,
@@ -124,5 +150,6 @@ export const itemlist= {
         [ITEM_LIST_GET_CURRENT]:state=>state.currentchecked,
         [ITEM_LIST_GET_IDENTIFIER]:state=>state.current_table_identifier,
         [ITEM_LIST_MULTI_CHECK_LISTS]:state=>state.multichecked,
+        [ITEM_LIST_GET_SORT]:state=>state.sortby,
     }
 }
