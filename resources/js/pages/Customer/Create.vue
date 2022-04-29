@@ -218,10 +218,18 @@
                                 </div>
                             </div>
                             <div class="d-flex mt-3">
-                                <div class="col-6">
-                                    <div class="form-group">
-                                        <label for="">Alias Adresse</label>
-                                        <input type="text" v-model="address.alias" placeholder="Alias" class="form-control">
+                                <div class="col-6 d-flex">
+                                    <div class="col-7">
+                                        <div class="form-group">
+                                            <label for="">PRENOM / NOM BATIMENT</label>
+                                            <input type="text" v-model="address.firstName" placeholder="Alias" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-5 ps-3">
+                                        <div class="form-group">
+                                            <label for="">NOM</label>
+                                            <input type="text" v-model="address.lastName" placeholder="Alias" class="form-control">
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-6 ps-3">

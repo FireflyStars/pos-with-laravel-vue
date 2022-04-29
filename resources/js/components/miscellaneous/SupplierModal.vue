@@ -108,9 +108,6 @@ export default {
         const showModal = ref(false);
         const openModal = ()=>{
             showModal.value = !showModal.value;
-            nextTick(()=>{
-                queryElement.value.focus();
-            })
         }  
         const selectSupplier = (index)=>{
             showModal.value = false;

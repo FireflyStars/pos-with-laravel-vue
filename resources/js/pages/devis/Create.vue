@@ -14,13 +14,72 @@
                   <li class="breadcrumb-item almarai-extrabold font-18" v-for="(breadcrumb, index) in breadcrumbs" :key="index">{{ breadcrumb }}</li>
                 </ul>
                 <div class="choose-customer-panel d-flex mt-3" v-if="devisCreateStep == 'choose_customer'">
-                  <div class="col-4 bg-white p-3 rounded">
-                    <h2 class="almarai-extrabold font-22">Détail Client <span @click="addNewCustomer" class="ms-3 almarai-bold font-16 cursor-pointer text-decoration-underline" style="color: #42A71E">Nouveau</span></h2>
-                    <SearchCustomer name="search" :droppos="{top:'auto',right:'auto',bottom:'auto',left:'0',transformOrigin:'top right'}" label="Search a customer" hint="disabled till 2021-09-10" ></SearchCustomer>
+                  <div class="col-5 bg-white p-3 rounded">
+                    <h2 class="almarai-extrabold font-22">Détail Client <span @click="addNewCustomer" class="ms-3 almarai-bold font-16 cursor-pointer text-decoration-underline text-custom-success">Nouveau</span></h2>
+                    <SearchCustomer name="search" @selected="selectedCustomer" :droppos="{top:'auto',right:'auto',bottom:'auto',left:'0',transformOrigin:'top right'}" label="Search a customer" hint="disabled till 2021-09-10" ></SearchCustomer>
                   </div>
                 </div>
                 <div class="choose-address-panel mt-3" v-if="devisCreateStep == 'choose_address'">
-                  choose address
+                  <div class="col-5 p-3 bg-white rounded">
+                    <div class="d-flex">
+                      <div class="col-6">
+                        <h2 class="almarai-extrabold font-22">{{ customer.company }}</h2>
+                        <p class="text-gray font-16 almarai-bold">{{ customer.raisonsocial }}</p>
+                      </div>
+                      <div class="col-6 d-flex align-items-center justify-content-end">
+                        <p @click="chooseOtherCustomer" class="text-custom-success font-16 almarai-bold text-decoration-underline">Autre client</p>
+                      </div>
+                    </div>
+                    <div class="d-flex mt-3">
+                      <div class="col-4">
+                        <label for="" class="text-gray font-16 almarai-bold">GROUPE</label>
+                        <p class="font-16 almarai-bold">{{ customer.group }}</p>
+                      </div>
+                      <div class="col-4">
+                        <label for="" class="text-gray font-16 almarai-bold">CONTACT</label>
+                        <p class="font-16 almarai-bold">{{ customer.contact }}</p>
+                      </div>
+                      <div class="col-4">
+                        <label for="" class="text-gray font-16 almarai-bold">TELEPHONE</label>
+                        <p class="font-16 almarai-bold">{{ customer.telephone }}</p>
+                      </div>
+                    </div>
+                    <div class="d-flex mt-3">
+                      <div class="col-4">
+                        <label for="" class="text-gray font-16 almarai-bold">TVA</label>
+                        <p class="font-16 almarai-bold">{{ customer.tax }}</p>
+                      </div>
+                      <div class="col-4">
+                        <label for="" class="text-gray font-16 almarai-bold">NAF</label>
+                        <p class="font-16 almarai-bold">{{ customer.naf }}</p>
+                      </div>
+                      <div class="col-4">
+                        <label for="" class="text-gray font-16 almarai-bold">SIRET</label>
+                        <p class="font-16 almarai-bold">{{ customer.siret }}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-5 p-3 mt-3 rounded bg-white">
+                    <h2 class="almarai-extrabold font-22">Choix adresse Chantier <span @click="addNewAddress" class="ms-3 almarai-bold font-16 cursor-pointer text-decoration-underline text-custom-success">Nouvelle adresse</span></h2>
+                    <div class="mt-3 customer-addresses">
+                      <div class="px-4 py-3 bg-gray mt-2 address-item rounded cursor-pointer" 
+                        @click="chooseCustomerAddress">
+                        <div class="d-flex">
+                          <div class="col-8">
+                            <h3 class="almarai-bold font-16">Batiment XXX</h3>
+                          </div>
+                          <div class="col-4">
+                            <p class="almarai-bold font-16 text-gray">Facturation</p>
+                          </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="col-4 almarai-bold text-gray">31 rue des la truc</div>
+                            <div class="col-4 almarai-bold text-gray">5eme etage</div>
+                            <div class="col-4 almarai-bold text-gray">31000 toulouse</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div class="devis-panel d-flex" v-if="devisCreateStep == 'create_devis'">
                     <div class="left-panel">
@@ -283,6 +342,7 @@
         <OuvrageModal ref="ouvrageModal"></OuvrageModal>
         <PrestationModal ref="prestationModal"></PrestationModal>
         <SupplierModal ref="supplierModal"></SupplierModal>
+        <AddressModal ref="addressModal"></AddressModal>
       </div>
     </transition>
   </router-view>
@@ -295,6 +355,7 @@ import ZoomModal from '../../components/miscellaneous/ZoomModal';
 import OuvrageModal from '../../components/miscellaneous/OuvrageModal';
 import PrestationModal from '../../components/miscellaneous/PrestationModal';
 import SupplierModal from '../../components/miscellaneous/SupplierModal';
+import AddressModal from '../../components/miscellaneous/AddressModal';
 
 import axios from 'axios';
 import { useRouter } from 'vue-router';
@@ -305,7 +366,8 @@ export default {
     ZoomModal,
     OuvrageModal,
     PrestationModal,
-    SupplierModal
+    SupplierModal,
+    AddressModal,
   },
   setup() {
     const router = useRouter();
@@ -321,6 +383,18 @@ export default {
       }
     })
     const zoneEdit = ref(false);
+    const customer = ref({
+      id: '',
+      company: 'La boulangerie',
+      raisonsocial: 'de la plangne',
+      group: 'Lagardere',
+      contact: 'Thierry Gavois',
+      telephone: '58 58 74 58 44',
+      tax: '10%',
+      naf: 'Boulangerie',
+      siret: '4654654646546546',
+    });
+    const customerAddresses = ref([]);
     const zoneIndex = ref(0);
     var formData = new FormData();
     const file = ref(null);
@@ -328,6 +402,7 @@ export default {
     const ouvrageModal = ref(null);
     const prestationModal = ref(null);
     const supplierModal = ref(null);
+    const addressModal = ref(null);
     const gedCatId = ref(0);
     const form = ref({
       zones: [
@@ -389,8 +464,27 @@ export default {
         name: "customer-create"
       })
     }
+
+    const addNewAddress = ()=>{
+      addressModal.value.openModal(customer.value.id)
+    }
+    
+    const selectedCustomer = (data)=>{
+      customer.value = data;
+      devisCreateStep.value = 'choose_address';
+    }
+    
+    const chooseOtherCustomer = ()=>{
+      devisCreateStep.value = 'choose_customer';
+    }
+
+    const chooseCustomerAddress = (data)=>{
+      devisCreateStep.value = 'create_devis';
+    }
     return {
       breadcrumbs,
+      customer,
+      customerAddresses,
       devisCreateStep,
       form,
       zoneEdit,
@@ -399,6 +493,7 @@ export default {
       ouvrageModal,
       prestationModal,
       supplierModal,
+      addressModal,
       addFileToGed,
       previewFile,
       zoomImage,
@@ -406,7 +501,11 @@ export default {
       openOuvrageModal,
       openPrestationModal,
       openSupplierModal,
-      addNewCustomer
+      addNewCustomer,
+      selectedCustomer,
+      chooseOtherCustomer,
+      chooseCustomerAddress,
+      addNewAddress
     }
   },
 }
