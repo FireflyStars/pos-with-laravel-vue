@@ -2,6 +2,7 @@
 import { unref, computed } from 'vue'
 import { isEmpty } from 'lodash'
 import store from '../../store/store'
+import useElementsGenerator from './useElementsGenerator'
 
 import {
     BUILDER_MODULE,
@@ -16,6 +17,7 @@ export default function useReports() {
 
     const pages = computed(() => store.getters[`${BUILDER_MODULE}/pages`])
 
+    const { generateElement } = useElementsGenerator()
 
     const formatFormData = (pages) => {
 
@@ -152,13 +154,56 @@ export default function useReports() {
         link.click()
     }
 
+    const generateCustomerInfo = (tag) => {
+        const order = store.getters[`${BUILDER_MODULE}/order`]
+        tag = tag?.toString()?.trim()
+
+        switch (tag) {
+            case 'customer-name': generateElement('textarea', { 
+                content: `<div>
+                    <div class='heading'>Client</div>
+                    <div>${order?.customer?.name || ''}</div>
+                    <div>${order?.customer?.firstname || ''}</div>
+                    <div>${order?.customer?.compnay || ''}</div>
+                    <div>${order?.customer?.signupdate || ''}</div>
+                </div>`
+            })
+            break
+            case 'customer-contact': generateElement('textarea', { 
+                content: `
+                    <h4 class='title'>Contact</h4>
+                    <div>${order.contact?.name || ''}</div>
+                    <div>${order.contact?.email || ''}</div>
+                    <div>${order.contact?.mobile || ''}</div>
+                    <div>${order.contact?.type || ''}</div>
+                    <div>${order.contact?.comment || ''}</div>
+                `
+            })
+            break
+            case 'customer-address': generateElement('textarea', { 
+                content: `<div>
+                    <div class='heading'>Client Address</div>
+                    <div>${order?.customer?.address?.address1 || ''}</div>
+                    <div>${order?.customer?.address?.address2 || ''}</div>
+                    <div>${order?.customer?.address?.city || ''}</div>
+                    <div>${order?.customer?.address?.phone || ''}</div>
+                    <div>${order?.customer?.address?.phone_mobile || ''}</div>
+                    <div>${order?.customer?.address?.vat_number || ''}</div>
+                </div>    
+                `
+            })
+            break
+        }
+    }
+
     return {
         resetPages,
         generatePDF,
         formatFormData,
         generatePagePdf,
         saveReportPages,
-        getFormattedPages
+        getFormattedPages,
+        generateCustomerInfo
     }
 
 }

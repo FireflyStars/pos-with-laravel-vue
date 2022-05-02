@@ -130,6 +130,7 @@ export const UPDATE_ELEMENT_CONTENT = 'updateElementContent'
 export const UPDATE_ELEMENT_TABLE = 'updateElementTable'
 export const SET_PAGE_BACKGROUND = 'setPageBackground'
 export const SET_LOADING = 'setLoading'
+export const UPDATE_SVG = 'updateSvg'
 
 export const SAVE_META = 'saveMeta'
 

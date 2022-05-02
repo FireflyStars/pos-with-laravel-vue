@@ -50,11 +50,13 @@
                         'active-item': `#${element.attributes.id}` == activeItem 
                     }"
                 >
+                {{ element.attributes }}
                     <Icon 
                         :name="element.attributes.name"
                         :width="element.attributes.width"
                         :height="element.attributes.height"
                         :strokeWidth="element.attributes.strokeWidth"
+                        :stroke="element.attributes.stroke"
                     />
                 </div>
 
@@ -105,6 +107,7 @@ import { useRoute } from 'vue-router'
 import { ref, unref, computed, inject, watch, nextTick } from 'vue'
 
 import { 
+    UPDATE_SVG,
     DELETE_ITEM,
     BUILDER_MODULE, 
     UPDATE_ELEMENT_CONTENT,
@@ -119,6 +122,7 @@ import reportFooter from '../../components/reports/report-footer'
 
 import useStyles from '../../composables/reports/useStyles'
 import useHelpers from '../../composables/useHelpers'
+import useReports from '../../composables/reports/useReports'
 
 export default {
     
@@ -150,6 +154,7 @@ export default {
 
         const fetching = inject('fetching')
 
+        const { generateCustomerInfo } = useReports()
         const { getDomElementParent } = useHelpers()
         const { itemAttributes, getStylesOfElement, getComputedStyle } = useStyles()
 
@@ -215,18 +220,25 @@ export default {
             const elementIndex = page.value.elements.findIndex(page => {
                 return page.attributes.id == id
             })
-            if(elementIndex != -1) {
-                hideDrag()
-                store.commit(`${BUILDER_MODULE}/${DELETE_ITEM}`, elementIndex)
-                activeItem.value = null
-            }
+            if(elementIndex != -1) deleteAndRemove(elementIndex)
         }
 
-        const updateElementFromPopup = ({ id, textValue, table, name }) => {
+        const deleteAndRemove = (elementIndex) => {
+            hideDrag()
+            store.commit(`${BUILDER_MODULE}/${DELETE_ITEM}`, elementIndex)
+            activeItem.value = null
+        }
+
+        const updateElementFromPopup = ({ id, textValue, table, name, stroke="#000", strokeWidth="0.4" }) => {
             const index = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
             const domElem = document.querySelector(`#${id}`)
-            if(textValue != undefined && name != 'table') {
-                updateElementValue({ index, value: unref(textValue) })
+            if(textValue != undefined && name != 'table' && name == 'textarea') {
+                if(generateTags(textValue)) {
+                    deleteAndRemove(index)
+                    openPopup.value = false
+                    return
+                }
+                else updateElementValue({ index, value: unref(textValue) })
             }
             if(!_.isEmpty(table) && name == 'table') {
                 updateElementTable({ 
@@ -237,8 +249,15 @@ export default {
                     content: table.content 
                 })
             }
+            if(name == 'svg') {
+                updateSvg({ index, stroke: itemAttributes.svg.stroke, strokeWidth: itemAttributes.svg.strokeWidth })
+            }
             updateElementStyles(domElem, unref(itemAttributes), getStylesOfElement(domElem), name)
             openPopup.value = false
+        }
+
+        const updateSvg = ({ index, stroke, strokeWidth }) => {
+            store.commit(`${BUILDER_MODULE}/${UPDATE_SVG}`, { index, stroke, strokeWidth })
         }
 
         const updateElementStyles = (target, styles, elementOldStyles, item = '') => {
@@ -273,6 +292,14 @@ export default {
                 content,
                 index    
             })
+        }
+
+        const generateTags = (textValue) => {
+            var result = textValue.match(/\[(.*?)\]/g).map(function(val){
+                return val.replace(/\[/g,'').replace(/\]/g, '')
+            })
+            result.forEach((tag) => generateCustomerInfo(tag))
+            return result.length
         }
 
         watch(page, () => {

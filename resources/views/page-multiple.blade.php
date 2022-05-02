@@ -235,7 +235,7 @@
                         <img 
                             class="{{ $element->attributes->class ?? 'draggable' }} svg"
                             src="{{ $src }}" 
-                            style="{{ $element->attributes->style ?? '' }} position: absolute;" 
+                            style="{{ $element->attributes->style ?? '' }} position: absolute; background: {{ optional($element->attributes)->stroke }};" 
                         /> 
                     @endif    
             

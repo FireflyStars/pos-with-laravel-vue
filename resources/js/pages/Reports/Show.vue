@@ -278,7 +278,7 @@ $orange: orange;
     z-index: 99;
     position: absolute;
     transition: width .2s;
-    @media only screen and (min-width: 1200px) {
+    @media only screen and (max-width: 1280px) {
         width: 530px;
     }
     &-visible {

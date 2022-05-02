@@ -15,7 +15,11 @@ const itemAttributes = reactive({
     zIndex: 0,
     borderColor: '',
     borderWidth: 0,
-    borderStyle: 'solid'
+    borderStyle: 'solid',
+    svg: {
+        stroke: null,
+        strokeWidth: 0.4
+    }
 })
 
 export default function useStyles() {
@@ -47,6 +51,11 @@ export default function useStyles() {
             }
 
         }
+    }
+
+    const loadSvgAttributes = ({ stroke = '#000', strokeWidth = 0.4 }) => {
+        itemAttributes.svg.stroke = stroke
+        itemAttributes.svg.strokeWidth = strokeWidth
     }
 
     const getComputedAttributeValue = (style, value) => {
@@ -83,6 +92,8 @@ export default function useStyles() {
         itemAttributes.borderColor = '',
         itemAttributes.borderWidth = 0,
         itemAttributes.borderStyle = 'solid'
+        itemAttributes.svg.stroke = null
+        itemAttributes.svg.strokeWidth = null
     }
 
     const getStylesOfElement = (element) => {
@@ -155,6 +166,7 @@ export default function useStyles() {
     return {
         itemAttributes,
         getComputedStyle,
+        loadSvgAttributes,
         loadDefaultStyles,
         getStylesOfElement,
     }

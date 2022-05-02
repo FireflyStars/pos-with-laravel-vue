@@ -8,6 +8,7 @@ const { formatFormData, getFormattedPages, saveReportPages } = useReports()
 import { 
 
     SAVE_META,
+    UPDATE_SVG,
     SET_LOADING,
     GENERATE_PDF, 
     ADD_PAGE,
@@ -161,6 +162,14 @@ export const PageBuilder = {
         },
         [UPDATE_ELEMENT_CONTENT](state, { content, index }) {
             state.pages[state.activePage].elements[index].content = content
+        },
+        [UPDATE_SVG](state, { index, stroke, strokeWidth }) {
+            const element = state.pages[state.activePage].elements[index]
+            element.attributes = { 
+                ...element.attributes,
+                stroke, 
+                strokeWidth
+            }
         },
         [UPDATE_ELEMENT_TABLE](state, { rows, cols, headers, index, content }) {
             const page = state.pages[state.activePage].elements[index]

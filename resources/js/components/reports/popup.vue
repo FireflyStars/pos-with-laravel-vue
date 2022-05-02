@@ -61,24 +61,49 @@
                                 :title="action"
                             />
                         </div>
+                        
+                        <component 
+                            v-if="isTextarea"
+                            :is="'div'"
+                            :class="[item.attributes?.class, { 'editable': isTextarea }]"
+                            :contenteditable="isTextarea || isTable"
+                            dom="input"
+                            v-html="textValue"
+                            spellcheck="false"
+                            autocomplete="false"
+                            @keyup="updateTextValue($event.target)"
+                        >
+                        </component>
 
                         <component 
-                            :is="isTextarea ? 'div' : item.item"
-                            :class="[item.attributes?.class, { 'editable': isTextarea }]"
+                            v-else
+                            :is="item.item"
+                            :class="[item.attributes?.class]"
                             :src="item.attributes?.src"
                             :name="item.attributes?.name"
                             :contenteditable="isTextarea || isTable"
-                            dom="input"
                             :rows="table.rows"
                             :cols="table.cols"
                             :headers="table.headers"
                             :content="table.content"
-                            @update="updateContent"
                             width="50"
-                            height="50"
+                            height="30"
+                            @update="updateContent"
                         >
-                            <p class="conent-paragraph" v-html="textValue" v-if="isTextarea"></p>
                         </component>
+
+                        <div class="report-variables" v-if="isTextarea">
+                            <a 
+                                href="#" 
+                                v-for="(variable, index) in reportVariables" 
+                                :key="index"
+                                @click.prevent="insertVariable(variable)"
+                            >
+                                {{ variable }}
+                            </a>
+                        </div>
+
+
                     </div>
 
                 </div>
@@ -107,6 +132,27 @@
                             </div>
                         </div>
                     </template>
+
+                    <template v-if="isSvg">
+                        <div class="attribute">
+                            <div>Stroke:</div>
+                            <div class="d-flex align-items-center gap-1">
+                                <input 
+                                    type="color" 
+                                    name="stroke-width" 
+                                    v-model="itemAttributes.svg.stroke"
+                                    style="width: 5rem"
+                                >
+                            </div>
+                        </div>
+                        <div class="attribute">
+                            <div>Stroke width:</div>
+                            <div class="d-flex align-items-center gap-1">
+                                <input type="text" name="stroke" v-model="itemAttributes.svg.strokeWidth">
+                            </div>
+                        </div>
+                    </template>
+
                     <!-- <div class="attribute">
                         <div>Width:</div>
                         <div class="d-flex align-items-center gap-1">
@@ -136,75 +182,82 @@
                             <span class="unit">px</span>
                         </div>
                     </div> -->
-                    <div class="attribute">
-                        <div>Font size:</div>
-                        <div class="d-flex align-items-center gap-1">
-                            <input type="text" v-model="itemAttributes.fontSize">
-                            <span class="unit">px</span>
+                    
+                    <template v-if="!isSvg">
+
+                        <div class="attribute">
+                            <div>Font size:</div>
+                            <div class="d-flex align-items-center gap-1">
+                                <input type="text" v-model="itemAttributes.fontSize">
+                                <span class="unit">px</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="attribute">
-                        <div>Font family:</div>
-                        <div class="d-flex align-items-center gap-1">
-                            <select name="font_family" v-model="itemAttributes.fontFamily">
-                                <option value="times">Times</option>
-                                <option value="mullish">Mullish</option>
-                                <option value="poppins">Poppins</option>
-                                <option value="Almarai ExtraBold">Almarai ExtraBold</option>
-                            </select>
+                        <div class="attribute">
+                            <div>Font family:</div>
+                            <div class="d-flex align-items-center gap-1">
+                                <select name="font_family" v-model="itemAttributes.fontFamily">
+                                    <option value="times">Times</option>
+                                    <option value="mullish">Mullish</option>
+                                    <option value="poppins">Poppins</option>
+                                    <option value="Almarai ExtraBold">Almarai ExtraBold</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="attribute" v-if="!isTextarea">
-                        <div>Color:</div>
-                        <div class="d-flex align-items-center gap-1">
-                            <input type="color" name="color" v-model="itemAttributes.color" style="width: 5rem">
+                        <div class="attribute" v-if="!isTextarea">
+                            <div>Color:</div>
+                            <div class="d-flex align-items-center gap-1">
+                                <input type="color" name="color" v-model="itemAttributes.color" style="width: 5rem">
+                            </div>
                         </div>
-                    </div>
-                    <div class="attribute">
-                        <div>Text align:</div>
-                        <div class="d-flex align-items-center gap-1">
-                            <select name="text_align" v-model="itemAttributes.textAlign">
-                                <option value="left">Left</option>
-                                <option value="right">Right</option>
-                                <option value="center">Center</option>
-                            </select>
+                        <div class="attribute">
+                            <div>Text align:</div>
+                            <div class="d-flex align-items-center gap-1">
+                                <select name="text_align" v-model="itemAttributes.textAlign">
+                                    <option value="left">Left</option>
+                                    <option value="right">Right</option>
+                                    <option value="center">Center</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="attribute">
-                        <div>Z-index:</div>
-                        <div class="d-flex align-items-center gap-1">
-                            <input type="text" name="zindex" v-model="itemAttributes.zIndex">
+                        <div class="attribute">
+                            <div>Z-index:</div>
+                            <div class="d-flex align-items-center gap-1">
+                                <input type="text" name="zindex" v-model="itemAttributes.zIndex">
+                            </div>
                         </div>
-                    </div>
-                    <div class="attribute">
-                        <div>Border Width:</div>
-                        <div class="d-flex align-items-center gap-1">
-                            <input type="text" name="borderwidth" v-model="itemAttributes.borderWidth">
-                            <span class="unit">px</span>
+                        <div class="attribute">
+                            <div>Border Width:</div>
+                            <div class="d-flex align-items-center gap-1">
+                                <input type="text" name="borderwidth" v-model="itemAttributes.borderWidth">
+                                <span class="unit">px</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="attribute">
-                        <div>Border Color:</div>
-                        <div class="d-flex align-items-center gap-1">
-                            <input type="color" name="borderColor" v-model="itemAttributes.borderColor" style="width: 5rem">
+                        <div class="attribute">
+                            <div>Border Color:</div>
+                            <div class="d-flex align-items-center gap-1">
+                                <input type="color" name="borderColor" v-model="itemAttributes.borderColor" style="width: 5rem">
+                            </div>
                         </div>
-                    </div>
-                     <div class="attribute">
-                        <div>Border Style:</div>
-                        <div class="d-flex align-items-center gap-1">
-                            <select name="text_align" v-model="itemAttributes.borderStyle">
-                                <option value="none">None</option>
-                                <option value="hidden">Hidden</option>
-                                <option value="dashed">Dashed</option>
-                                <option value="solid">Solid</option>
-                                <option value="double">Double</option>
-                                <option value="groove">Groove</option>
-                                <option value="Ridge">Ridge</option>
-                                <option value="inset">Inset</option>
-                                <option value="outset">Outset</option>
-                            </select>
+                        <div class="attribute">
+                            <div>Border Style:</div>
+                            <div class="d-flex align-items-center gap-1">
+                                <select name="text_align" v-model="itemAttributes.borderStyle">
+                                    <option value="none">None</option>
+                                    <option value="hidden">Hidden</option>
+                                    <option value="dashed">Dashed</option>
+                                    <option value="solid">Solid</option>
+                                    <option value="double">Double</option>
+                                    <option value="groove">Groove</option>
+                                    <option value="Ridge">Ridge</option>
+                                    <option value="inset">Inset</option>
+                                    <option value="outset">Outset</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
+
+                    </template>
+
+
                 </div>
 
                 <base-button 
@@ -222,6 +275,7 @@
 
 <script>
 
+import { isEmpty } from 'lodash'
 import reportTable from './report-table'
 import { ref, computed, onMounted, reactive } from 'vue'
 import useStyles from '../../composables/reports/useStyles'
@@ -250,7 +304,7 @@ export default {
     
     setup (props, { emit }) {
 
-        const { itemAttributes, loadDefaultStyles } = useStyles()
+        const { itemAttributes, loadDefaultStyles, loadSvgAttributes } = useStyles()
         const textValue = ref('')
         const table = reactive({
             rows: 1,
@@ -261,6 +315,19 @@ export default {
                 body: {}
             }
         })
+
+        const hasVariables = ref(false)
+
+        const reportVariables = ref([
+            'customer-name',
+            'customer-address',
+            'customer-contact'
+        ])
+
+        const insertVariable = (variable) => {
+            textValue.value += `[${variable}]`
+            hasVariables.value = true
+        }
 
         const actions = [
             'cut',
@@ -285,14 +352,13 @@ export default {
 
         const isTextarea = computed(() => props.item.name == 'textarea')
         const isTable = computed(() => props.item.name == 'table')
+        const isSvg = computed(() => props.item.name == 'svg')
 
         const close = () => emit('close')
 
         const submit = () => {
             
-            const editable = document.querySelector('.editable')
-            const textValue = editable ? editable.querySelector('.conent-paragraph')?.innerHTML : ''
-            console.log(textValue, " is the textValue")
+            const textValue = document.querySelector('.editable')?.innerHTML
 
             emit('update', { 
                 id: props.item.attributes.id, 
@@ -300,6 +366,15 @@ export default {
                 table,
                 name: props.item.name,
             })
+
+        }
+
+        const updateTextValue = (target) => {
+            const value = target.innerHTML
+            if(isEmpty(value)) {
+                textValue.value = ''
+                hasVariables.value = false
+            }
         }
 
         const updateContent = ({ row, col, value, type }) => {
@@ -329,19 +404,25 @@ export default {
         onMounted(() => {
             loadDefaultStyles(props.item, props.domStyles)
             loadDefaultValue()
+            if(isSvg.value) loadSvgAttributes(props.item.attributes)
         })
 
         return {
             close,
             submit,
             table,
+            isSvg,
             isTable,
             actions,
             textValue,
             isTextarea,
             commitAction,
             updateContent,
-            itemAttributes
+            insertVariable,
+            itemAttributes,
+            reportVariables,
+            updateTextValue,
+            hasVariables,
         }
 
     }
@@ -439,6 +520,7 @@ export default {
                 height: 6rem;
                 background: white;
                 overflow: auto;
+                text-transform: none;
                 p {
                     margin: 0;
                     font-size: 16px !important;
@@ -489,6 +571,18 @@ export default {
 
     select {
         width: 100%;
+    }
+
+    .report-variables {
+        display: flex;
+        align-items: center;
+        gap: .2rem;
+        flex-wrap: wrap;
+        a {
+            color: #47454B;
+            font-size: 12px;
+            text-transform: lowercase;
+        }
     }
 
 }

@@ -49,7 +49,7 @@ export default function useElementsGenerator() {
         }
     }
     
-    const generateIcon = ({ id, name, strokeWidth = null, width = null, height = null }) => {
+    const generateIcon = ({ id, name, strokeWidth = null, width = null, height = null, stroke = '#000' }) => {
         return {
             item: id,
             attributes: {
@@ -59,6 +59,7 @@ export default function useElementsGenerator() {
                 style: '',
                 dataName: 'svg',
                 strokeWidth: strokeWidth || 0.4,
+                stroke,
                 width: width || 50,
                 height: height || 50,
             },
