@@ -50,7 +50,6 @@
                         'active-item': `#${element.attributes.id}` == activeItem 
                     }"
                 >
-                {{ element.attributes }}
                     <Icon 
                         :name="element.attributes.name"
                         :width="element.attributes.width"
