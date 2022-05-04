@@ -222,13 +222,13 @@
                                     <div class="col-7">
                                         <div class="form-group">
                                             <label for="">PRENOM / NOM BATIMENT</label>
-                                            <input type="text" v-model="address.firstName" placeholder="Alias" class="form-control">
+                                            <input type="text" v-model="address.firstName" placeholder="FirstName" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-5 ps-3">
                                         <div class="form-group">
                                             <label for="">NOM</label>
-                                            <input type="text" v-model="address.lastName" placeholder="Alias" class="form-control">
+                                            <input type="text" v-model="address.lastName" placeholder="Name" class="form-control">
                                         </div>
                                     </div>
                                 </div>
@@ -270,10 +270,6 @@
                                 </div>                                
                                 <div class="col-6 ps-3 d-flex">
                                     <div class="col-5">
-                                        <div class="form-group">
-                                            <label for="">CODE COMMUNE</label>
-                                            <input type="text" v-model="address.state" class="form-control">
-                                        </div>
                                     </div>
                                     <div class="col-7 ps-3 d-flex align-items-end justify-content-end">
                                         <button @click="removeAddress(index)" class="custom-btn btn-danger text-nowrap">SUPPRIMER ADRESSE</button>
@@ -496,14 +492,25 @@ import { ref, onMounted } from 'vue';
 import SelectBox from '../../components/miscellaneous/SelectBox';
 import CheckBox from '../../components/miscellaneous/CheckBox';
 import { phoneCountryCode as phoneCodes } from '../../static/PhoneCountryCodes';
-
+import {     
+  DISPLAY_LOADER,
+  HIDE_LOADER,
+  LOADER_MODULE, 
+  TOASTER_MESSAGE, 
+  TOASTER_MODULE
+  } from '../../store/types/types';
+  
 import axios from 'axios';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 export default {
     components:{
         SelectBox,
         CheckBox
     },
     setup() {
+        const store = useStore();
+        const router = useRouter();
         const step = ref('client-detail');
         const customerStatus  = ref([]);
         const customerTaxs    = ref([]);
@@ -638,10 +645,23 @@ export default {
             form.value.contacts = tmpAddress;
         }
         const submit = ()=>{
+            store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Creating a new customer ...']);
             axios.post('/add-customer', form.value).then((res)=>{
-                
-            }).then((errors)=>{
+                if(res.data.success){
+                    router.push({ name: 'LandingPage' });
+                }else{
+                    Object.values(res.data.errors).forEach(item => {
+                        store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
+                            type: 'danger',
+                            message: item[0],
+                            ttl: 5,
+                        });
+                    });
+                }
+            }).catch((errors)=>{
                 console.log(errors);
+            }).finally(()=>{
+                store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
             })
         }
         onMounted(()=>{

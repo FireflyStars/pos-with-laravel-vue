@@ -32,7 +32,7 @@ class CustomerController extends Controller
         ]);
  
         if ($validator->fails()) {
-            return response()->json(['errors'=> $validator->$validator->errors(), 'success'=> false]);
+            return response()->json(['errors'=> $validator->errors(), 'success'=> false]);
         }else{
             $customer = [
                 'affiliate_id'          => auth()->user()->affiliate_id,
