@@ -26,9 +26,9 @@
                                             <span class="prestation-icon me-3"></span> Type de toit
                                         </div>
                                         <div class="d-flex flex-wrap justify-content-between align-items-center px-4">
-                                            <div class="roof mt-3 cursor-pointer" v-for="(item, index) in 9" :key="index" @click="selectRoof($event, item)">
-                                                <div class="roof-image rounded bg-primary"></div>
-                                                <div class="roof-desc almarai-light font-14 mt-2">Plaques Fibres Ciment Amiantée (Spécifique)</div>
+                                            <div class="roof mt-3 cursor-pointer" v-for="(toit, index) in toits" :key="index" @click="selectRoof($event, toit)">
+                                                <div class="roof-image rounded" :style="{ 'backgroundImage': 'url(https://lcdt-dev.vpc-direct-service.com/storage/'+ toit.image+')'}"></div>
+                                                <div class="roof-desc almarai-light font-14 mt-2 text-nowrap text-center">{{ toit.name }}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -39,8 +39,8 @@
                                 </div>
                             </div>
                             <div class="second-step" v-if="step == 2">
-                                <div class="filter-bar d-flex px-3" v-if="selectedRoofType != ''">
-                                    <div class="mulish-bold font-16">{{ selectedRoofType }}</div>
+                                <div class="filter-bar d-flex px-3" v-if="selectedRoofType.name != ''">
+                                    <div class="mulish-bold font-16">{{ selectedRoofType.name }}</div>
                                     <div class="ms-auto reset-btn mulish-regular font-14 d-flex align-items-center cursor-pointer" 
                                         @click="resetRoofFilter">
                                         Remise à zéro 
@@ -49,20 +49,22 @@
                                         </svg>
                                     </div>
                                 </div>
-                                <div class="ouvrage-wrap border-bottom" v-for="(item, index) in 5" :key="index" :class="{ 'border-top': index == 0 }">
+                                <div class="ouvrage-wrap border-bottom" v-for="(item, index) in prestations" :key="index" :class="{ 'border-top': index == 0 }">
                                     <div class="ouvrage-item d-flex">
-                                        <div class="installation-icon col-1"></div>
+                                        <div class="prestation-icon col-1"></div>
                                         <div class="ouvrage-item-content col-11 ps-3 position-relative">
-                                            <p class="mt-3 mulish-extrabold font-16">Sur Couverture Pour toiture FC (Onduclair)</p>
-                                            <div class="my-2 ps-2 almarai-light font-14">
-                                                Mise en place d'un complexe de sur toiture de type ONDUCLAIR RENOV FC avec isolation comprenant nettoyage du support, mise en place isolation polystyrène 50mm et plaque polystyrène opaque compris fixation
+                                            <p class="mt-3 mulish-extrabold font-16">{{ item.name }}</p>
+                                            <div class="my-2 ps-2 almarai-light font-14 text-justify">
+                                                {{ item.textchargeaffaire }}
                                             </div>
                                             <div class="d-flex justify-content-between ps-2">
-                                                <div class="custom-text-danger almarai-light font-14">Partie courante</div>
-                                                <div class="custom-text-danger almarai-light font-14">Sécurisation Permanente de Toiture</div>
-                                                <div class="custom-text-danger almarai-light font-14">Tous les toits</div>
+                                                <div class="custom-text-danger almarai-light font-14">{{ item.type }}</div>
+                                                <div class="custom-text-danger almarai-light font-14">{{ item.metier }}</div>
+                                                <div class="custom-text-danger almarai-light font-14">{{ item.toit }}</div>
                                             </div>
-                                            <div class="add-ouvrage-btn d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer position-absolute">
+                                            <div class="add-ouvrage-btn d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer position-absolute"
+                                                @click="selectOuvrage(item)"
+                                            >
                                                 <span class="plus-icon me-2"></span> AJOUTER CET OUVRAGE
                                             </div>
                                         </div>
@@ -78,7 +80,7 @@
 </template>
 <script>
 
-import {nextTick, ref} from 'vue';
+import {nextTick, ref, onMounted} from 'vue';
 import axios from 'axios';
 import {
     LOADER_MODULE,
@@ -98,7 +100,12 @@ export default {
     setup(props, { emit }){
         const store = useStore();
         const step = ref(1);
-        const selectedRoofType = ref('');
+        const selectedRoofType = ref({
+            id: 0,
+            name: '',
+        });
+        const toits = ref([]);
+        const prestations = ref([]);
         const query = ref('');
         const queryElement = ref(null);
         const closeModal = ()=>{
@@ -124,23 +131,40 @@ export default {
                 queryElement.value.focus();
             })
         }  
-        const selectCustomer = (index)=>{
-            showModal.value = false;
+        const selectOuvrage = (index)=>{
             emit('selectedPrestation', customers.value[index]);
+            showModal.value = false;
         }
         const nextStep = ()=>{
             step.value = 2;
+            axios.post('/get-prestation-ouvrages', { toit: selectedRoofType.value.id }).then((res)=>{
+                prestations.value = res.data;
+            }).catch((error)=>{
+                console.log(error);
+            }).finally(()=>{
+
+            })
         }
         const resetRoofFilter = ()=>{
-            selectedRoofType.value = '';
+            selectedRoofType.value.id = 0;
+            selectedRoofType.value.name = '';
         }
-        const selectRoof = (e, value)=>{
+        const selectRoof = (e, toit)=>{
             document.querySelectorAll('.roof').forEach((item)=>{
                 item.classList.remove('select');
             })
             e.target.classList.add('select');
-            selectedRoofType.value = value;
+            selectedRoofType.value = toit;
         }
+        onMounted(()=>{
+            axios.post('/get-all-toits').then((res)=>{
+                toits.value = res.data;
+            }).catch((error)=>{
+                console.log(error);
+            }).finally(()=>{
+
+            });
+        })
         return {
             step,
             query,
@@ -150,10 +174,12 @@ export default {
             searchOuvrage,
             closeModal,
             openModal,
-            selectCustomer,
+            selectOuvrage,
             nextStep,
             resetRoofFilter,
-            selectRoof
+            selectRoof,
+            toits,
+            prestations
         }
     }
 
@@ -206,7 +232,7 @@ export default {
     width: 100%;
     height: 100%;
     top: 0;
-    z-index: 20000;
+    z-index: 20000000000;
     background: rgba(0, 0, 0, 0.3);
     .search-panel{
         width: 700px;
@@ -236,6 +262,9 @@ export default {
                         width: 100%;
                         height: 74px;
                         pointer-events: none;
+                        background-size: contain;
+                        background-position: center;
+                        background-repeat: no-repeat;
                     }
                     .roof-desc{
                         pointer-events: none;

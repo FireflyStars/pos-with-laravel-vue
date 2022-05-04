@@ -93,11 +93,11 @@
                                 Nom du client
                               </div>
                               <div class="mulish-extrabold font-16 w-100">
-                                M. Marcus Pinnochio
+                                {{ form.customer.contact }}
                               </div>
                             </div>
                             <div class="ms-5 customer-edit d-flex align-items-center">
-                              <span class="edit-icon me-3"></span>
+                              <!-- <span class="edit-icon me-3"></span> -->
                               <!-- <span class="call-external"></span> -->
                             </div>
                           </div>
@@ -153,7 +153,7 @@
                             <div class="col-6 px-3 d-flex">
                               <div class="col-9 px-5">
                                 <p class="m-0 almarai-bold font-14 text-gray">Adresse du chantier</p>
-                                <p class="m-0 almarai-light font-14">43 Lower Sloane Street 31000 Toulouse</p>
+                                <p class="m-0 almarai-light font-14">{{ form.address.address1 }} {{ form.address.address1 }} {{ form.address.postCode }} {{ form.address.city }}</p>
                               </div>
                               <div class="col-3 bg-primary">
                               </div>
@@ -378,7 +378,7 @@ export default {
     const store = useStore();
     const router = useRouter();
     const breadcrumbs = ref(['Choix client']);
-    const devisCreateStep = ref('choose_customer');
+    const devisCreateStep = ref('create_devis');
     watchEffect(()=>{
       if(devisCreateStep.value == 'choose_customer'){
         breadcrumbs.value = ['Choix client'];
@@ -400,29 +400,29 @@ export default {
     const addressModal = ref(null);
     const gedCatId = ref(0);
     const form = ref({
+      customer: {
+        id: '',
+        company: 'La boulangerie',
+        raisonsocial: 'de la plangne',
+        group: 'Lagardere',
+        contact: 'Thierry Gavois',
+        telephone: '58 58 74 58 44',
+        tax: '10%',
+        naf: 'Boulangerie',
+        siret: '4654654646546546',
+      },
+      address: {
+        id: '',
+        name: '',
+        address1: '',
+        address2: '',
+        postcode: '',
+        city: '',
+        addressType: '',
+      },
       zones: [
         {
           name: 'Usine',
-          customer: {
-            id: '',
-            company: 'La boulangerie',
-            raisonsocial: 'de la plangne',
-            group: 'Lagardere',
-            contact: 'Thierry Gavois',
-            telephone: '58 58 74 58 44',
-            tax: '10%',
-            naf: 'Boulangerie',
-            siret: '4654654646546546',
-          },
-          address: {
-            id: '',
-            name: '',
-            address1: '',
-            address2: '',
-            postcode: '',
-            city: '',
-            addressType: '',
-          },
           roofAccess: 'Intérieur',
           roofAccess1: 'Echelle',
           gedCats: [],

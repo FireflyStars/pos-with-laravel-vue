@@ -63,4 +63,34 @@ class DevisController extends Controller
         }
         return response()->json($categories->groupBy('id'));
     }
+
+    /**
+     * Get all toits
+     * 
+     */
+
+    public function getAllToits(){
+        return response()->json(DB::table('ouvrage_toit')->select('id', 'name', 'image')->get());
+    }
+
+    /**
+     * Get all prestation ouvrages
+     * 
+     */
+
+    public function getPrestationOuvrages(Request $request){
+        $query = DB::table('ouvrages')
+                ->join('ouvrage_toit', 'ouvrage_toit.id', '=', 'ouvrages.ouvrage_toit_id')
+                ->join('ouvrage_metier', 'ouvrage_metier.id', '=', 'ouvrages.ouvrage_metier_id')
+                ->where('type', 'PRESTATION')
+                ->where('ouvrage_toit_id', $request->toit == 0 ? '!=' : '=',$request->toit);
+        
+        return response()->json(
+            $query->select(
+                'ouvrages.id', 'ouvrages.name',
+                'ouvrages.textchargeaffaire', 'ouvrage_metier.name as metier', 
+                'ouvrage_toit.name as toit', 'ouvrages.type'
+            )->get()
+        );
+    }
 }
