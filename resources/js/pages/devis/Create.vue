@@ -23,39 +23,39 @@
                   <div class="col-5 p-3 bg-white rounded">
                     <div class="d-flex">
                       <div class="col-6">
-                        <h2 class="almarai-extrabold font-22">{{ customer.company }}</h2>
-                        <p class="text-gray font-16 almarai-bold">{{ customer.raisonsocial }}</p>
+                        <h2 class="almarai-extrabold font-22">{{ form.customer.company }}</h2>
+                        <p class="text-gray font-16 almarai-bold">{{ form.customer.raisonsocial }}</p>
                       </div>
                       <div class="col-6 d-flex align-items-center justify-content-end">
-                        <p @click="chooseOtherCustomer" class="text-custom-success font-16 almarai-bold text-decoration-underline">Autre client</p>
+                        <p @click="chooseOtherCustomer" class="text-custom-success font-16 almarai-bold text-decoration-underline cursor-pointer">Autre client</p>
                       </div>
                     </div>
                     <div class="d-flex mt-3">
                       <div class="col-4">
                         <label for="" class="text-gray font-16 almarai-bold">GROUPE</label>
-                        <p class="font-16 almarai-bold">{{ customer.group }}</p>
+                        <p class="font-16 almarai-bold">{{ form.customer.group }}</p>
                       </div>
                       <div class="col-4">
                         <label for="" class="text-gray font-16 almarai-bold">CONTACT</label>
-                        <p class="font-16 almarai-bold">{{ customer.contact }}</p>
+                        <p class="font-16 almarai-bold">{{ form.customer.contact }}</p>
                       </div>
                       <div class="col-4">
                         <label for="" class="text-gray font-16 almarai-bold">TELEPHONE</label>
-                        <p class="font-16 almarai-bold">{{ customer.telephone }}</p>
+                        <p class="font-16 almarai-bold">{{ form.customer.telephone }}</p>
                       </div>
                     </div>
                     <div class="d-flex mt-3">
                       <div class="col-4">
                         <label for="" class="text-gray font-16 almarai-bold">TVA</label>
-                        <p class="font-16 almarai-bold">{{ customer.tax }}</p>
+                        <p class="font-16 almarai-bold">{{ form.customer.tax }}</p>
                       </div>
                       <div class="col-4">
                         <label for="" class="text-gray font-16 almarai-bold">NAF</label>
-                        <p class="font-16 almarai-bold">{{ customer.naf }}</p>
+                        <p class="font-16 almarai-bold">{{ form.customer.naf }}</p>
                       </div>
                       <div class="col-4">
                         <label for="" class="text-gray font-16 almarai-bold">SIRET</label>
-                        <p class="font-16 almarai-bold">{{ customer.siret }}</p>
+                        <p class="font-16 almarai-bold">{{ form.customer.siret }}</p>
                       </div>
                     </div>
                   </div>
@@ -63,19 +63,19 @@
                     <h2 class="almarai-extrabold font-22">Choix adresse Chantier <span @click="addNewAddress" class="ms-3 almarai-bold font-16 cursor-pointer text-decoration-underline text-custom-success">Nouvelle adresse</span></h2>
                     <div class="mt-3 customer-addresses">
                       <div class="px-4 py-3 bg-gray mt-2 address-item rounded cursor-pointer" 
-                        @click="chooseCustomerAddress">
+                        @click="chooseCustomerAddress(address)" v-for="(address, index) in customerAddresses" :key="index">
                         <div class="d-flex">
-                          <div class="col-8">
-                            <h3 class="almarai-bold font-16">Batiment XXX</h3>
+                          <div class="col-7">
+                            <h3 class="almarai-bold font-16">{{ address.name }}</h3>
                           </div>
-                          <div class="col-4">
-                            <p class="almarai-bold font-16 text-gray">Facturation</p>
+                          <div class="col-5">
+                            <p class="almarai-bold font-16 text-gray">{{ address.addressType }}</p>
                           </div>
                         </div>
                         <div class="d-flex">
-                            <div class="col-4 almarai-bold text-gray">31 rue des la truc</div>
-                            <div class="col-4 almarai-bold text-gray">5eme etage</div>
-                            <div class="col-4 almarai-bold text-gray">31000 toulouse</div>
+                            <div class="col-6 almarai-bold text-gray">{{ address.address1 }}</div>
+                            <div class="col-1 almarai-bold text-gray">{{ address.address2 }}</div>
+                            <div class="col-5 almarai-bold text-gray">{{ address.postcode }} {{ address.city }}</div>
                         </div>
                       </div>
                     </div>
@@ -342,7 +342,7 @@
         <OuvrageModal ref="ouvrageModal"></OuvrageModal>
         <PrestationModal ref="prestationModal"></PrestationModal>
         <SupplierModal ref="supplierModal"></SupplierModal>
-        <AddressModal ref="addressModal"></AddressModal>
+        <AddressModal ref="addressModal" @addedNewAddress="addedNewAddress"></AddressModal>
       </div>
     </transition>
   </router-view>
@@ -356,9 +356,14 @@ import OuvrageModal from '../../components/miscellaneous/OuvrageModal';
 import PrestationModal from '../../components/miscellaneous/PrestationModal';
 import SupplierModal from '../../components/miscellaneous/SupplierModal';
 import AddressModal from '../../components/miscellaneous/AddressModal';
-
+import {     
+  DISPLAY_LOADER,
+  HIDE_LOADER,
+  LOADER_MODULE 
+  } from '../../store/types/types';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 export default {
   components:{
     SearchCustomer,
@@ -370,6 +375,7 @@ export default {
     AddressModal,
   },
   setup() {
+    const store = useStore();
     const router = useRouter();
     const breadcrumbs = ref(['Choix client']);
     const devisCreateStep = ref('choose_customer');
@@ -383,17 +389,6 @@ export default {
       }
     })
     const zoneEdit = ref(false);
-    const customer = ref({
-      id: '',
-      company: 'La boulangerie',
-      raisonsocial: 'de la plangne',
-      group: 'Lagardere',
-      contact: 'Thierry Gavois',
-      telephone: '58 58 74 58 44',
-      tax: '10%',
-      naf: 'Boulangerie',
-      siret: '4654654646546546',
-    });
     const customerAddresses = ref([]);
     const zoneIndex = ref(0);
     var formData = new FormData();
@@ -408,6 +403,26 @@ export default {
       zones: [
         {
           name: 'Usine',
+          customer: {
+            id: '',
+            company: 'La boulangerie',
+            raisonsocial: 'de la plangne',
+            group: 'Lagardere',
+            contact: 'Thierry Gavois',
+            telephone: '58 58 74 58 44',
+            tax: '10%',
+            naf: 'Boulangerie',
+            siret: '4654654646546546',
+          },
+          address: {
+            id: '',
+            name: '',
+            address1: '',
+            address2: '',
+            postcode: '',
+            city: '',
+            addressType: '',
+          },
           roofAccess: 'Intérieur',
           roofAccess1: 'Echelle',
           gedCats: [],
@@ -466,24 +481,40 @@ export default {
     }
 
     const addNewAddress = ()=>{
-      addressModal.value.openModal(customer.value.id)
+      addressModal.value.openModal(form.value.customer.id)
+    }
+
+    const addedNewAddress = (data)=>{
+      customerAddresses.value.push(data);
     }
     
     const selectedCustomer = (data)=>{
-      customer.value = data;
+      // move on to "addess choose step"
       devisCreateStep.value = 'choose_address';
+      // set customer value to devis form
+      form.value.customer = data;
+
+      // loading customer addresses
+      store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Loading customer addresses..']);
+      axios.post('/get-customer-addresses', { customer_id: data.id }).then((res)=>{
+        customerAddresses.value = res.data;
+      }).catch((error)=>{
+        console.log(error);
+      }).finally(()=>{
+        store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
+      })
     }
-    
+    // handler to choose other customer
     const chooseOtherCustomer = ()=>{
       devisCreateStep.value = 'choose_customer';
     }
-
+    // handler to choose a customer address
     const chooseCustomerAddress = (data)=>{
       devisCreateStep.value = 'create_devis';
+      form.value.address = data;
     }
     return {
       breadcrumbs,
-      customer,
       customerAddresses,
       devisCreateStep,
       form,
@@ -503,14 +534,28 @@ export default {
       openSupplierModal,
       addNewCustomer,
       selectedCustomer,
-      chooseOtherCustomer,
-      chooseCustomerAddress,
-      addNewAddress
+      chooseOtherCustomer, // handler to choose other customer
+      chooseCustomerAddress, // handler to choose customer addess
+      addNewAddress, // handler to add a new address
+      addedNewAddress, // address modal emits
     }
   },
 }
 </script>
 <style lang="scss" scoped>
+  /* width */
+  ::-webkit-scrollbar {
+    width: 9px;
+  }
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #E0E0E0; 
+  }
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #47454B; 
+    border-radius: 6px;
+  }
   .bold-title{
     font-family: "Mulish ExtraBold";
     font-weight: 800;
@@ -541,6 +586,10 @@ export default {
       content: '>';
       color: black;
     }
+  }
+  .customer-addresses{
+    height: 400px;
+    overflow-y: auto;
   }
   .main-view{
     padding: 60px 10px 0 80px;

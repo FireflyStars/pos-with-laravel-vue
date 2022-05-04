@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator;
 class CustomerController extends Controller
 {
     //
-    public function geListInfoForCustomer(){
+    public function getListInfoForCustomer(){
         return response()->json([
             'status'    => DB::table('customer_statut')->select('id as value', 'name as display')->orderBy('name')->get(),
             'types'     => DB::table('customer_categories')->select('id as value', 'name as display')->orderBy('name')->get(),
@@ -21,7 +21,7 @@ class CustomerController extends Controller
     }
 
     /**
-     * 
+     * add a customer
      */
     public function storeCustomer(Request $request){
         $validator = Validator::make($request->all(), [
@@ -80,11 +80,11 @@ class CustomerController extends Controller
                     'address_type_id'       => $address['addressType'],
                     'country_id'            => 1, // france
                     'customer_id'           => $customerID, // france
-                    'alias'                 => $address['alias'],
+                    // 'alias'                 => $address['alias'],
                     'company'               => $customer['company'],
                     'lastname'              => $request->lastName,
-                    'gender'                => $customer['gender'],
                     'firstname'             => $request->firstName,
+                    'gender'                => $customer['gender'],
                     'address1'              => $address['address1'],
                     'address2'              => $address['address2'],
                     'address3'              => $address['address3'],
@@ -100,7 +100,7 @@ class CustomerController extends Controller
                 $newContact = [
                     'contact_type_id'       => $contact['type'],
                     'customer_id'           => $customerID,
-                    'address_id'            => $addressID,
+                    'address_id'            => 0,
                     'num_contact_gx'        => $contact['numGx'],
                     'name'                  => $contact['name'],
                     'firstname'             => $contact['firstName'],
@@ -108,7 +108,7 @@ class CustomerController extends Controller
                     'email'                 => $contact['email'],
                     'mobile'                => $contact['phoneCountryCode1'].'|'.$contact['phoneNumber1'],
                     'telephone'             => $contact['phoneCountryCode2'].'|'.$contact['phoneNumber2'],
-                    'type'                  => 'Suspect',
+                    'type'                  => DB::table('contact_type')->find($contact['type'])->name,
                     'comment'               => $contact['note'],
                     'created_at'            => now(),
                     'updated_at'            => now(),
@@ -117,5 +117,63 @@ class CustomerController extends Controller
             }
         }
         return response()->json(['success'=> true]);
+    }
+
+    /**
+     * Adding a new customer
+     */
+    public function searchCustomer(Request $request){
+        $query = DB::table('customers')
+                    ->leftJoin('group', 'customers.group_id', '=', 'group.id')
+                    ->leftJoin('taxes', 'customers.taxe_id', '=', 'taxes.id')
+                    ->select( 'customers.company', 'customers.raisonsociale', 'group.Name as group',
+                        DB::raw('CONCAT(customers.firstname, " ", customers.name) as contact'),
+                        'customers.telephone', 'customers.email', 'customers.naf', 'customers.siret',
+                        'taxes.taux as tax', 'customers.id'
+                    )->where('customers.firstname', 'like', '%'.$request->search.'%')->orWhere('customers.name', 'like', '%'.$request->search.'%');
+
+        return response()->json([
+            'data'  => $request->has('showmore') ? $query->get() : $query->take(5)->get(),
+            'total' => $query->count()
+        ]);
+    }
+
+    /**
+     * get customer addresses
+     */
+    public function getCustomerAddresses(Request $request){
+        $addresses = DB::table('addresses')->join('address_type', 'addresses.address_type_id', '=', 'address_type.id')
+                    ->select( 
+                        DB::raw('CONCAT(addresses.firstname, " ", addresses.lastname) as name'), 'addresses.address1', 'addresses.address2',
+                        'addresses.postcode', 'addresses.city', 'address_type.name as addressType', 'addresses.id'
+                    )
+                    ->where('customer_id', $request->customer_id)
+                    ->get();
+        return response()->json($addresses);
+    }
+
+    /**
+     * Add customer address
+     */
+    public function addCustomerAddress(Request $request){
+        $newAddress = [
+            'address_type_id'       => $request->addressType,
+            'country_id'            => 1, // france
+            'customer_id'           => $request->customerID, // france
+            'lastname'              => $request->lastName,
+            'firstname'             => $request->firstName,
+            'address1'              => $request->address1,
+            'address2'              => $request->address2,
+            'address3'              => $request->address3,
+            'postcode'              => $request->postCode,
+            'city'                  => $request->city,
+            'created_at'            => now(),
+            'updated_at'            => now(),
+        ];
+        $addressID = DB::table('addresses')->insertGetId($newAddress);
+        return response()->json([
+            'id' => $addressID,
+            'addressType' => DB::table('address_type')->find($request->addressType)->name,
+        ]);
     }
 }

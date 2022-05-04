@@ -23,29 +23,18 @@ export const search= {
     },
     actions: {
         [CUSTOMER_SEARCH_LOAD_LIST]:async ({commit,state}, payload )=>{
-            commit(CUSTOMER_SET_LOADER,'animate40');
-
-            if(typeof payload != "undefined" && payload.showmore)
-            {
-                state.PerPage = parseInt(state.PerPage) + 10;
-            }else{
-                state.PerPage = '4';
-            }
-            
-            return axios.post('/SearchByCustomer', {
-                query: payload.query,
-            })
+            return axios.post('/search-customer', payload)
             .then( (response)=>{
                 if(response.data!=null){
                     commit(CUSTOMER_SET_SEARCH_LIST ,response.data.data);
-                    commit(CUSTOMER_SET_SEARCH_COUNT ,(response.data.total - state.PerPage));
+                    commit(CUSTOMER_SET_SEARCH_COUNT , ( response.data.total - 5 ) );
                 }
                 return Promise.resolve(response);
             })
             .catch((error)=>{
                 return Promise.reject(error);
             }).finally(()=>{
-                commit(CUSTOMER_SET_LOADER,'animate40 animate100');
+
             });
         }
     },

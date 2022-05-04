@@ -22,11 +22,11 @@
                         <div class="container">
                             <div class="row" @click="selectCustomer(customer)">
                                 <div class="col" style="padding:0">
-                                    <span class="body_medium">{{customer.Name.replace(',','').toLowerCase()}}</span>
+                                    <span class="body_medium text-capitalize">{{customer.contact.replace(',','').toLowerCase()}}</span>
                                     <div>
-                                        <div v-if="customer.Phone!=''&&customer.Phone!=null">
-                                            <div v-for="phone in customer.Phone.slice(0,1)" :key="phone">
-                                                <b class ="body_regular">+{{phone.replace('|',' ')}}</b>
+                                        <div v-if="customer.telephone !=''">
+                                            <div>
+                                                <b class ="body_regular">+ {{ customer.telephone.replace('|',' ')}}</b>
                                             </div>
                                         </div>
                                         <div v-else>
@@ -35,7 +35,7 @@
                                     </div>
                                 </div>   
                                 <div class="col-6" style="padding-top:24px">
-                                    <b class ="email body_regular">{{customer.EmailAddress.toLowerCase()}}</b>   
+                                    <b class ="email body_regular">{{ customer.email.toLowerCase()}}</b>   
                                 </div>
                                 <div class="col-2" style="text-align: end; padding:0">
                                 </div>
@@ -96,7 +96,7 @@ export default({
             timeout.value = setTimeout(function(){
                 show_loader.value= true;
                 nextTick(() => {
-                    store.dispatch(`${CUSTOMERLIST_MODULE}${CUSTOMER_SEARCH_LOAD_LIST}`,{query:e.target.value})
+                    store.dispatch(`${CUSTOMERLIST_MODULE}${CUSTOMER_SEARCH_LOAD_LIST}`,{ showmore:1, search: e.target.value })
                     .then((response)=>{
                         if(e.target.value){
                             showSearch.value = true;
@@ -108,11 +108,11 @@ export default({
                     }).catch((error)=>{});
                 });
             }  
-            , 500)
+            , 200)
         };
 
         function loadMore(){
-            store.dispatch(`${CUSTOMERLIST_MODULE}${CUSTOMER_SEARCH_LOAD_LIST}`,{ showmore:1, query:search.value})
+            store.dispatch(`${CUSTOMERLIST_MODULE}${CUSTOMER_SEARCH_LOAD_LIST}`,{ showmore:1, search:search.value})
             .finally(()=>{});
         }
 

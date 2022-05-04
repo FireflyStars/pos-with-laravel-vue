@@ -26,13 +26,13 @@
                                     <div class="col-7">
                                         <div class="form-group">
                                             <label for="">PRENOM / NOM BATIMENT</label>
-                                            <input type="text" v-model="address.firstName" placeholder="Alias" class="form-control">
+                                            <input type="text" v-model="address.firstName" placeholder="FirstName" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-5 ps-3">
                                         <div class="form-group">
                                             <label for="">NOM</label>
-                                            <input type="text" v-model="address.lastName" placeholder="Alias" class="form-control">
+                                            <input type="text" v-model="address.lastName" placeholder="Name" class="form-control">
                                         </div>
                                     </div>
                                 </div>
@@ -73,12 +73,6 @@
                                     </div>
                                 </div>                                
                                 <div class="col-6 ps-3 d-flex">
-                                    <div class="col-5">
-                                        <div class="form-group">
-                                            <label for="">CODE COMMUNE</label>
-                                            <input type="text" v-model="address.state" class="form-control">
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>                        
@@ -97,7 +91,13 @@
 import {onMounted, ref} from 'vue';
 import axios from 'axios';
 import SelectBox from '../../components/miscellaneous/SelectBox';
-
+import {     
+  DISPLAY_LOADER,
+  HIDE_LOADER,
+  LOADER_MODULE 
+  } from '../../store/types/types';
+import { useStore } from 'vuex';
+  
 export default {
     name: 'AddressModal',
     props: {
@@ -108,18 +108,20 @@ export default {
         SelectBox
     },
     setup(props, { emit }){
-        const customerID = ref(null);
+        const store = useStore();
         const addressTypes = ref([]);
         const address = ref(
             {
+                id: '',
+                customerID: '',
                 addressType: '',
                 firstName: '',
                 lastName: '',
                 address1: '',
                 address2: '',
-                postCode: '',
+                address3: '',
+                postcode: '',
                 city: '',
-                state: '',
             }
         );
         onMounted(()=>{
@@ -136,12 +138,28 @@ export default {
         }
         const showModal = ref(false);
         const openModal = (id)=>{
-            customerID.value = id;
+            address.value.customerID = id;
             showModal.value = !showModal.value;
         }  
-        const addNewAddress = (index)=>{
-            showModal.value = false;
-            emit('addedNewAddress', );
+        const addNewAddress = ()=>{
+            // loading customer addresses
+            store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'creating customer addresses..']);
+            axios.post('/add-customer-address', address.value).then((res)=>{
+                emit('addedNewAddress', {
+                    id: res.data.id,
+                    name: address.value.firstName + " " + address.value.lastName,
+                    address1: address.value.address1,
+                    address2: address.value.address2,
+                    addressType: res.data.addressType,
+                    postcode: address.value.postCode,
+                    city: address.value.city,
+                });
+                showModal.value = false;                
+            }).catch((error)=>{
+                console.log(error);
+            }).finally(()=>{
+                store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
+            })            
         }
         return {
             showModal,
