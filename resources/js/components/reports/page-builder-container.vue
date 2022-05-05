@@ -294,11 +294,18 @@ export default {
         }
 
         const generateTags = (textValue) => {
-            var result = textValue.match(/\[(.*?)\]/g).map(function(val){
-                return val.replace(/\[/g,'').replace(/\]/g, '')
-            })
-            result.forEach((tag) => generateCustomerInfo(tag))
-            return result.length
+            var result = textValue.match(/\[(.*?)\]/g)
+            if(result?.length) {
+                result = result.map(function(val){
+                    return val.replace(/\[/g,'').replace(/\]/g, '')
+                })
+                if(result.length) {
+                    result.forEach((tag) => generateCustomerInfo(tag))
+                    return result.length
+                }
+                return false
+            }
+            return false
         }
 
         watch(page, () => {

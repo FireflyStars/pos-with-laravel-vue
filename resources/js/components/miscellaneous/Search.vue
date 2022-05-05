@@ -211,7 +211,7 @@
     visibility: visible;
 }
 .search-enter-active {
-    transition: all ease 0.4s;
+    transition: opacity ease 0.2s, visibility ease 0.2s, height ease 0.6s;
     transform-origin: top;
 }
 .search-leave-from {
