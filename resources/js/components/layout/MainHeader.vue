@@ -1,15 +1,15 @@
 <template>
-    <div class="row main-logo" style="z-index: 9999999999999">
+    <div class="row main-logo" style="z-index: 9999999999999; position: relative;">
         <div class="col-12 p-0">
-    <img  @click="slideinMenu"
-            src="./../../images/logolcdt.png"
-            alt="Lcdt logo"
-            class="logo img-fluid"
-         
-        />
+            <img  @click="slideinMenu"
+                src="./../../images/logolcdt.png"
+                alt="Lcdt logo"
+                class="logo img-fluid"
+            
+            />
            <div>
                
-             <search></search>  
+                <search></search>  
 
                 <base-button
                     prepend
@@ -76,13 +76,13 @@
 </script>
 
 <style scoped>
-.main-logo{
-    background-color:#070113;
-    position: fixed;
-    width: 100%;
-    z-index: 10;
-    box-shadow: 0px 0px 4px rgba(80, 80, 80, 0.2);
-}
+    .main-logo {
+        background-color:#070113;
+        position: fixed;
+        width: 100%;
+        z-index: 10;
+        box-shadow: 0px 0px 4px rgba(80, 80, 80, 0.2);
+    }
     .btn-newrdv {
         background: rgba(232, 88, 27, 0.7);
         margin-right:7px;
