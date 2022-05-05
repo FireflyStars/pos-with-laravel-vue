@@ -26,7 +26,7 @@
                                             <span class="prestation-icon me-3"></span> Type de toit
                                         </div>
                                         <div class="d-flex flex-wrap justify-content-between align-items-center px-4">
-                                            <div class="roof mt-3 cursor-pointer" v-for="(toit, index) in toits" :key="index" @click="selectRoof($event, toit)">
+                                            <div class="roof mt-3 p-1 cursor-pointer" v-for="(toit, index) in toits" :key="index" @click="selectRoof($event, toit)">
                                                 <div class="roof-image rounded" :style="{ 'backgroundImage': 'url(https://lcdt-dev.vpc-direct-service.com/storage/'+ toit.image+')'}"></div>
                                                 <div class="roof-desc almarai-light font-14 mt-2 text-nowrap text-center">{{ toit.name }}</div>
                                             </div>
@@ -63,7 +63,7 @@
                                                 <div class="custom-text-danger almarai-light font-14">{{ item.toit }}</div>
                                             </div>
                                             <div class="add-ouvrage-btn d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer position-absolute"
-                                                @click="selectOuvrage(item)"
+                                                @click="selectOuvrage(item.id)"
                                             >
                                                 <span class="plus-icon me-2"></span> AJOUTER CET OUVRAGE
                                             </div>
@@ -94,12 +94,13 @@ export default {
     props: {
         modelValue: Object
     },
-    emits: ['selectedPrestation'],
+    emits: ['selectedOuvrage'],
     components:{
     },
     setup(props, { emit }){
         const store = useStore();
         const step = ref(1);
+        const zoneIndex = ref(null);
         const selectedRoofType = ref({
             id: 0,
             name: '',
@@ -124,7 +125,8 @@ export default {
             })
         }
         const showModal = ref(false);
-        const openModal = ()=>{
+        const openModal = (index)=>{
+            zoneIndex.value = index;
             step.value = 1;
             showModal.value = !showModal.value;
             nextTick(()=>{
@@ -132,8 +134,8 @@ export default {
             })
         }  
         const selectOuvrage = (index)=>{
-            emit('selectedPrestation', customers.value[index]);
             showModal.value = false;
+            emit('selectedOuvrage', { customer: customers.value[index], zoneIndex: zoneIndex.value });
         }
         const nextStep = ()=>{
             step.value = 2;

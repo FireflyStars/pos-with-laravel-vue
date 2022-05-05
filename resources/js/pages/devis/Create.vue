@@ -115,10 +115,10 @@
                               <input type="text" @blur="zoneEdit = !zoneEdit" v-if="zoneEdit" class="form-control form-control-sm" v-model="zone.name">
                               <span class="mulish-extrabold font-18 text-black" @dblclick="zoneEdit = !zoneEdit" v-else>{{ zone.name }}</span>
                             </div>
-                            <div class="add-btn ms-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer">
+                            <div v-if="zoneIndex == 0" @click="addZone(zoneIndex)" class="add-btn ms-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer">
                               <span class="plus-icon me-2"></span> AJOUTER
                             </div>
-                            <div class="remove-btn ms-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer">
+                            <div @click="removeZone(zoneIndex)" class="remove-btn ms-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer">
                               <span class="cancel-icon me-2"></span> RETIRER
                             </div>
                           </div>
@@ -193,14 +193,15 @@
                                 <span class="me-4">Installation</span>
                                 <span class="arrow-icon ms-auto"></span>
                               </div>
-                              <div class="add-btn ms-5 ps-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openOuvrageModal('Installation')">
+                              <div class="add-btn ms-5 ps-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" 
+                                @click="openOuvrageModal('Installation', zoneIndex)">
                                 <span class="plus-icon me-2"></span> AJOUTER UN OUVRAGE
                               </div>
                             </div>
                             <div class="col-5 d-flex align-items-center">
-                              <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">2 hr</div>
-                              <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">15 000 €</div>
-                              <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">350 000 €</div>
+                              <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.installOuvrage.totalHour }} hr</div>
+                              <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.installOuvrage.unitPrice }} €</div>
+                              <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.installOuvrage.totalPrice }} €</div>
                             </div>
                           </div>
                           <div class="ouvrage-body ms-5 ps-3 mt-3">
@@ -216,14 +217,15 @@
                                 <span class="me-4">Sécurité</span>
                                 <span class="arrow-icon ms-auto"></span>
                               </div>
-                              <div class="add-btn ms-5 ps-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openOuvrageModal('Sécurité')">
+                              <div class="add-btn ms-5 ps-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" 
+                                @click="openOuvrageModal('Sécurité', zoneIndex)">
                                 <span class="plus-icon me-2"></span> AJOUTER UN OUVRAGE
                               </div>
                             </div>
                             <div class="col-5 d-flex align-items-center">
-                              <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">2 hr</div>
-                              <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">15 000 €</div>
-                              <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">350 000 €</div>
+                              <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.securityOuvrage.totalHour }} hr</div>
+                              <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.securityOuvrage.unitPrice }} €</div>
+                              <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.securityOuvrage.totalPrice }} €</div>
                             </div>
                           </div>
                           <div class="ouvrage-body ms-5 ps-3 mt-3">
@@ -238,17 +240,126 @@
                                 <span class="me-4">Prestations</span>
                                 <span class="arrow-icon ms-auto"></span>
                               </div>
-                              <div class="add-btn ms-5 ps-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openPrestationModal">
+                              <div class="add-btn ms-5 ps-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" 
+                              @click="openPrestationModal(zoneIndex)">
                                 <span class="plus-icon me-2"></span> AJOUTER UN OUVRAGE
                               </div>
                             </div>
                             <div class="col-5 d-flex align-items-center">
-                              <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">2 hr</div>
-                              <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">15 000 €</div>
-                              <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">350 000 €</div>
+                              <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.prestationOuvrage.totalHour }} hr</div>
+                              <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.prestationOuvrage.unitPrice }} €</div>
+                              <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.prestationOuvrage.totalPrice }} €</div>
                             </div>
                           </div>
                           <div class="ouvrage-body ms-5 ps-3 mt-3">
+                            <div class="ouvrage-list d-flex">
+                              <div class="col-4">
+                                <ul class="nav flex-column">
+                                  <li class="nav-item">
+                                    <a class="nav-link d-flex align-items-center px-0 active" data-id="home" href="javascript:;"
+                                      @click="activeItem"
+                                    >
+                                      <span class="option-icon me-2"><span class="option-icon-dot"></span></span> Ouvrage Securite
+                                    </a>
+                                  </li>
+                                  <li class="nav-item">
+                                    <a class="nav-link d-flex align-items-center px-0" data-id="menu1" href="javascript:;"
+                                      @click="activeItem"
+                                    >
+                                      <span class="option-icon me-2"><span class="option-icon-dot"></span></span>Narcelle 30 mm
+                                    </a>
+                                  </li>
+                                  <li class="nav-item">
+                                    <a class="nav-link d-flex align-items-center px-0" data-id="menu2" href="javascript:;"
+                                      @click="activeItem">
+                                      <span class="option-icon me-2"><span class="option-icon-dot"></span></span>Ouvrage Secu1
+                                    </a>
+                                  </li>
+                                </ul>
+                              </div>
+                              <div class="col-8">
+                                <table class="table table-hover table-bordered" style="margin-top: -40px">
+                                  <tbody>
+                                    <tr>
+                                      <td>2</td>
+                                      <td>UN</td>
+                                      <td>0 hr</td>
+                                      <td></td>
+                                      <td>2 000 €</td>
+                                      <td>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M17 6H22V8H20V21C20 21.2652 19.8946 21.5196 19.7071 21.7071C19.5196 21.8946 19.2652 22 19 22H5C4.73478 22 4.48043 21.8946 4.29289 21.7071C4.10536 21.5196 4 21.2652 4 21V8H2V6H7V3C7 2.73478 7.10536 2.48043 7.29289 2.29289C7.48043 2.10536 7.73478 2 8 2H16C16.2652 2 16.5196 2.10536 16.7071 2.29289C16.8946 2.48043 17 2.73478 17 3V6ZM18 8H6V20H18V8ZM13.414 14L15.182 15.768L13.768 17.182L12 15.414L10.232 17.182L8.818 15.768L10.586 14L8.818 12.232L10.232 10.818L12 12.586L13.768 10.818L15.182 12.232L13.414 14ZM9 4V6H15V4H9Z" fill="black"/>
+                                        </svg>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>2</td>
+                                      <td>UN</td>
+                                      <td>0 hr</td>
+                                      <td></td>
+                                      <td>2 000 €</td>
+                                      <td>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M17 6H22V8H20V21C20 21.2652 19.8946 21.5196 19.7071 21.7071C19.5196 21.8946 19.2652 22 19 22H5C4.73478 22 4.48043 21.8946 4.29289 21.7071C4.10536 21.5196 4 21.2652 4 21V8H2V6H7V3C7 2.73478 7.10536 2.48043 7.29289 2.29289C7.48043 2.10536 7.73478 2 8 2H16C16.2652 2 16.5196 2.10536 16.7071 2.29289C16.8946 2.48043 17 2.73478 17 3V6ZM18 8H6V20H18V8ZM13.414 14L15.182 15.768L13.768 17.182L12 15.414L10.232 17.182L8.818 15.768L10.586 14L8.818 12.232L10.232 10.818L12 12.586L13.768 10.818L15.182 12.232L13.414 14ZM9 4V6H15V4H9Z" fill="black"/>
+                                        </svg>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>2</td>
+                                      <td>UN</td>
+                                      <td>0 hr</td>
+                                      <td></td>
+                                      <td>2 000 €</td>
+                                      <td>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M17 6H22V8H20V21C20 21.2652 19.8946 21.5196 19.7071 21.7071C19.5196 21.8946 19.2652 22 19 22H5C4.73478 22 4.48043 21.8946 4.29289 21.7071C4.10536 21.5196 4 21.2652 4 21V8H2V6H7V3C7 2.73478 7.10536 2.48043 7.29289 2.29289C7.48043 2.10536 7.73478 2 8 2H16C16.2652 2 16.5196 2.10536 16.7071 2.29289C16.8946 2.48043 17 2.73478 17 3V6ZM18 8H6V20H18V8ZM13.414 14L15.182 15.768L13.768 17.182L12 15.414L10.232 17.182L8.818 15.768L10.586 14L8.818 12.232L10.232 10.818L12 12.586L13.768 10.818L15.182 12.232L13.414 14ZM9 4V6H15V4H9Z" fill="black"/>
+                                        </svg>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>2</td>
+                                      <td>UN</td>
+                                      <td>0 hr</td>
+                                      <td></td>
+                                      <td>2 000 €</td>
+                                      <td>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M17 6H22V8H20V21C20 21.2652 19.8946 21.5196 19.7071 21.7071C19.5196 21.8946 19.2652 22 19 22H5C4.73478 22 4.48043 21.8946 4.29289 21.7071C4.10536 21.5196 4 21.2652 4 21V8H2V6H7V3C7 2.73478 7.10536 2.48043 7.29289 2.29289C7.48043 2.10536 7.73478 2 8 2H16C16.2652 2 16.5196 2.10536 16.7071 2.29289C16.8946 2.48043 17 2.73478 17 3V6ZM18 8H6V20H18V8ZM13.414 14L15.182 15.768L13.768 17.182L12 15.414L10.232 17.182L8.818 15.768L10.586 14L8.818 12.232L10.232 10.818L12 12.586L13.768 10.818L15.182 12.232L13.414 14ZM9 4V6H15V4H9Z" fill="black"/>
+                                        </svg>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                              <div class="tab-pane active ps-3" id="home">
+                                <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
+                                <ul class="ps-3">
+                                  <li class="mulish-regular font-10">Kindly note that we will only accept POS payment option on delivery</li>
+                                  <li class="mulish-regular font-10">You have to make payment before opening package</li>
+                                  <li class="mulish-regular font-10">Once the seal is broken, item can only be returned if damaged or defective </li>
+                                </ul>
+                                <h3 class="mt-3 mulish-light fw-light text-custom-success font-14">TEXTE POUR CLIENTS</h3>
+                                <ul class="ps-3">
+                                  <li class="mulish-regular font-10 custom-text-danger">Kindly note that we will only accept POS payment option on delivery</li>
+                                  <li class="mulish-regular font-10 custom-text-danger">You have to make payment before opening package</li>
+                                </ul>                                
+                              </div>
+                              <div class="tab-pane ps-3" id="menu1">
+                                <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
+                                <ul class="ps-3">
+                                  <li class="mulish-regular font-10">Kindly note that we will only accept POS payment option on delivery</li>
+                                  <li class="mulish-regular font-10">You have to make payment before opening package</li>
+                                  <li class="mulish-regular font-10">Once the seal is broken, item can only be returned if damaged or defective </li>
+                                </ul>
+                                <h3 class="mt-3 mulish-light fw-light text-custom-success font-14">TEXTE POUR CLIENTS</h3>
+                              </div>
+                              <div class="tab-pane ps-3" id="menu2">
+                                <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -339,8 +450,8 @@
         </div>
         <input type="file" @change="previewFile" ref="file" class="d-none">
         <zoom-modal ref="zoomModal"></zoom-modal>
-        <OuvrageModal ref="ouvrageModal"></OuvrageModal>
-        <PrestationModal ref="prestationModal"></PrestationModal>
+        <OuvrageModal ref="ouvrageModal" @selectedOuvrage="selectedOuvrage"></OuvrageModal>
+        <PrestationModal ref="prestationModal" @selectedOuvrage="selectedOuvrage"></PrestationModal>
         <SupplierModal ref="supplierModal"></SupplierModal>
         <AddressModal ref="addressModal" @addedNewAddress="addedNewAddress"></AddressModal>
       </div>
@@ -399,6 +510,7 @@ export default {
     const supplierModal = ref(null);
     const addressModal = ref(null);
     const gedCatId = ref(0);
+    const gedCats = ref([]);
     const form = ref({
       customer: {
         id: '',
@@ -422,15 +534,67 @@ export default {
       },
       zones: [
         {
-          name: 'Usine',
+          name: 'Zone 1',
           roofAccess: 'Intérieur',
           roofAccess1: 'Echelle',
           gedCats: [],
+          installOuvrage: {
+            totalHour: 0,
+            unitPrice: 0,
+            totalPrice: 0,
+            ouvrages: [
+              {
+                id: '',
+                name: '',
+                techText: '',
+                customerText: '',
+                qty: '',
+                unit: '',
+                totalHour: '',
+                toalQty: '',
+                tasks:[
+                  {
+                    id: '',
+                    name: '',
+                    techText: '',
+                    customerText: '',                    
+                    details:[
+                      {
+                        id: '',
+                        name: '',
+                        qtyOuvrage: '',
+                        qty: '',
+                        unit: '',
+                        numberH: '',
+                        unitPrice: '',
+                        marge: '',
+                        totalPrice: '',
+                        tax: '',
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          securityOuvrage: {
+            totalHour: 0,
+            unitPrice: 0,
+            totalPrice: 0,
+            ouvrages: []
+          },
+          prestationOuvrage: {
+            totalHour: 0,
+            unitPrice: 0,
+            totalPrice: 0,
+            ouvrages: []
+          },          
         }
       ],
     });    
     onMounted(()=>{
       // axios.post('/get-ged-categories').then((res)=>{
+      //   gedCats.value = res.data;
       //   form.value.zones.forEach(element => {
       //     element.gedCats = res.data;
       //   });
@@ -467,8 +631,8 @@ export default {
     const openOuvrageModal = (title)=>{
       ouvrageModal.value.openModal(title);
     }
-    const openPrestationModal = ()=>{
-      prestationModal.value.openModal();
+    const openPrestationModal = (zoneIndex)=>{
+      prestationModal.value.openModal(zoneIndex);
     }
     const openSupplierModal = ()=>{
       supplierModal.value.openModal();
@@ -513,6 +677,65 @@ export default {
       devisCreateStep.value = 'create_devis';
       form.value.address = data;
     }
+
+    const selectedOuvrage = (ouvrageId)=>{
+      axios.post('/get-ouvrage', { id: ouvrageId }).then((res)=>{
+
+      }).catch((error)=>{
+
+      }).finally(()=>{
+
+      });
+    }
+    const addZone = (index)=>{
+      form.value.zones.push(
+        {
+          name: 'zone '+ (form.value.zones.length+1),
+          roofAccess: 'Intérieur',
+          roofAccess1: 'Echelle',
+          gedCats: gedCats.value,
+          installOuvrage: {
+            totalHour: 0,
+            unitPrice: 0,
+            totalPrice: 0,
+            tasks: []
+          },
+          securityOuvrage: {
+            totalHour: 0,
+            unitPrice: 0,
+            totalPrice: 0,
+            tasks: []
+          },
+          prestationOuvrage: {
+            totalHour: 0,
+            unitPrice: 0,
+            totalPrice: 0,
+            tasks: []
+          },
+        } 
+      );
+    }
+
+    const removeZone = (index)=>{
+      var zones = [];
+      form.value.zones.forEach((element, i) => {
+        if(index != i){
+          zones.push(element);
+        }   
+      });
+      form.value.zones = zones;
+    }
+
+    const activeItem = (event)=>{
+      document.querySelectorAll('.nav-link').forEach((item)=>{
+        item.classList.remove('active');
+      })
+      document.querySelectorAll('.tab-pane').forEach((item)=>{
+        item.classList.remove('active');
+      })
+      event.target.classList.add('active');
+      document.getElementById(event.target.getAttribute('data-id')).classList.add('active');
+    }
     return {
       breadcrumbs,
       customerAddresses,
@@ -538,6 +761,10 @@ export default {
       chooseCustomerAddress, // handler to choose customer addess
       addNewAddress, // handler to add a new address
       addedNewAddress, // address modal emits
+      selectedOuvrage, // Ouvrage was choosed
+      addZone,
+      removeZone,
+      activeItem,
     }
   },
 }
@@ -590,6 +817,30 @@ export default {
   .customer-addresses{
     height: 400px;
     overflow-y: auto;
+  }
+  .nav-link {
+    .option-icon{
+      display: block;
+      width: 13px;
+      height: 13px;
+      padding: 3px;
+      border-radius: 50%;
+      border: solid 1px #E8581B;
+      .option-icon-dot{
+        display: block;
+        height: 100%;
+        border-radius: 50%;
+        background-color: transparent;
+      }
+    }
+    &.active{
+      .option-icon-dot{
+        background-color: #E8581B;
+      }      
+    }
+    *{
+      pointer-events: none;
+    }
   }
   .main-view{
     padding: 60px 10px 0 80px;
