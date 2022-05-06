@@ -52,7 +52,7 @@
 
                         </div>
                         
-                        <div class="display-block" v-if="isTextarea" >
+                        <div class="display-block" v-if="isTextarea">
                             <Icon
                                 v-for="action in actions"
                                 :key="action"
