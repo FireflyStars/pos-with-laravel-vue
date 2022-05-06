@@ -135,7 +135,7 @@ export default {
         }  
         const selectOuvrage = (index)=>{
             showModal.value = false;
-            emit('selectedOuvrage', { customer: customers.value[index], zoneIndex: zoneIndex.value });
+            emit('selectedOuvrage', { ouvrageId: prestations.value[index].id, zoneIndex: zoneIndex.value });
         }
         const nextStep = ()=>{
             step.value = 2;
