@@ -29,6 +29,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use stdClass;
 
 class ApiController extends Controller
 {
@@ -992,6 +993,146 @@ public function GetDevisByOrderId(Request $request){
                 $ged_detail->orderOuvrage;
                 $ged_detail->gedCategory;
             }
+        }
+        return $this->response(1, $order);
+    }else{
+        return $isLoggedIn;
+    }
+}
+
+public function GetTechnicianDevisDetails(Request $request){
+    $Parameters=$request->post('Parameters');
+    $SessionID=$request->post('SessionID');
+    $AccountKey=$request->post('AccountKey');
+ 
+
+    $valid=$this->isValidAccountKeySessionID($request);
+    if($valid!==true)return $valid;
+    $isLoggedIn=$this->checkLogin($request);
+    if(!isset($Parameters['order_id'])||$this->isBlank($Parameters['order_id'])){
+        return $this->response(0,null,'Missing order_id.');
+    }
+
+
+
+    if($isLoggedIn===true){
+        $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
+      
+        $order=Order::find($Parameters['order_id']);
+        if($order==null)  
+          return $this->response(0,null,'Aucune cotation(devis) trouvée');
+
+        if($lcdtapp_api_instance->user->affiliate->id!=$order->affiliate_id) 
+        return $this->response(0,null,'La citation (devis) n\'appartient pas à l\'affilié de l\'utilisateur');
+
+        $order->makeHidden(['created_at','updated_at','deleted_at']);
+        $order->orderZones;  
+        $order->customer->makeHidden(['created_at','updated_at','deleted_at']); 
+        $order->address->makeHidden(['created_at','updated_at','deleted_at']);
+        $additional_works=[];
+        foreach($order->orderZones as &$order_zone){
+
+            $order_zone->makeHidden(['created_at','updated_at','deleted_at']);
+          
+          
+            $gedDetails= $order_zone->gedDetails()->get();
+
+            if(!isset($order_zone->satellite_view))
+            $order_zone->satellite_view=[];
+            foreach($gedDetails as $gedDetail){
+                if($gedDetail->order_ouvrage_id==0&&$gedDetail->ged_category_id==0&&$gedDetail->additional_work==0){
+                    $gedDetail->makeHidden(['created_at','updated_at','deleted_at','additional_work','storage_path']);
+                    $gedDetail->urls=$this->getFileUrls($gedDetail);
+                    $order_zone->satellite_view = array_merge($order_zone->satellite_view, [$gedDetail]);
+                }
+
+             
+            }
+            $orderCategories=$order_zone->orderCategories()->get();
+            if(!isset($order_zone->order_categories))
+            $order_zone->order_categories=[];
+            foreach($orderCategories as $orderCategory){
+                $list_ouvrages=$orderCategory->orderOuvrages()->get();
+              // dd($list_ouvrages);
+                $o=new stdClass();
+                $o->name=$orderCategory->name;
+                $o->list_ouvrages=[];
+                foreach ( $list_ouvrages as &$order_ouvrage){
+                    $order_ouvrage->makeHidden(['created_at','updated_at','deleted_at']);
+   
+
+                    if(!isset($order_ouvrage->Avant))
+                    $order_ouvrage->Avant=[];   
+                    if(!isset($order_ouvrage->Apres))
+                        $order_ouvrage->Apres=[];
+
+                        foreach($gedDetails as $gedDetail){
+                            if($gedDetail->order_ouvrage_id==$order_ouvrage->id&&$gedDetail->additional_work==0){
+                                $gedDetail->makeHidden(['created_at','updated_at','deleted_at','additional_work','storage_path']);
+                                $gedDetail->urls=$this->getFileUrls($gedDetail);
+
+                                if($gedDetail->timeline=='AVANT'){
+                                $order_ouvrage->Avant=array_merge($order_ouvrage->Avant,[$gedDetail]);
+
+                                }else if($gedDetail->timeline=='APRES'){
+                                    $order_ouvrage->Apres=array_merge($order_ouvrage->Apres,[$gedDetail]);
+                                }
+                            }
+                        }
+                  
+                }
+                $o->list_ouvrages= $list_ouvrages;
+                //$o->list_ouvrages[]=
+                $order_zone->order_categories=array_merge($order_zone->order_categories,[$o]);
+            }
+            $additionalWorks= $order_zone->gedDetails()->where('additional_work','=',1)->get();
+            foreach($additionalWorks as $a)
+            $additional_works[]=$a;
+            
+
+            $order_zone->orderZoneComments->makeHidden(['updated_at','deleted_at','user_id','order_zone_id']);
+     
+            foreach($order_zone->orderZoneComments as &$orderZoneComment){
+                $orderZoneComment->user->makeHidden([
+                    "email_verified_at",
+                    "settings",
+                    "created_at",
+                    "updated_at",
+                    "affiliate_id"
+            ]);
+            }
+            // foreach($order_zone->gedDetails as &$ged_detail){
+            //     if($ged_detail->type!='description')
+            //     $ged_detail->urls=$this->getFileUrls($ged_detail);
+            //     $ged_detail->orderOuvrage;
+            //     $ged_detail->gedCategory;
+            // }
+        }
+
+        $order->travaux_supplementaire=[];
+        $gedCats=[];
+        foreach($order->orderZones as &$order_zone){
+            foreach($additional_works as $additional_work){
+                $additional_work->urls=$this->getFileUrls($additional_work);
+                $a=$additional_work->makeHidden(['created_at','updated_at','deleted_at','additional_work','storage_path'])->toArray();
+             
+                $gedCategory=$additional_work->gedCategory;
+          
+                if(!key_exists($gedCategory->name,$gedCats)){
+                $gedCats[$gedCategory->name][]=$a;
+                
+                
+                }
+            }
+        }
+
+        if(!empty($gedCats))
+        foreach($gedCats as $gedCatName=>$gedCat){
+            $o=new stdClass;
+            $o->name= $gedCatName;
+            $o->ged_details=$gedCats[$gedCatName];
+            $order->travaux_supplementaire=array_merge( $order->travaux_supplementaire,[$o]); 
+            continue;
         }
         return $this->response(1, $order);
     }else{
