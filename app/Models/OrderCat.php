@@ -17,7 +17,10 @@ class OrderCat extends Model
     {
         return $this->hasMany(OrderOuvrage::class);
     }
-
+    public function orderOuvrages() 
+    {
+        return $this->hasMany(OrderOuvrage::class);
+    }
     public function orderZones() 
     {
         return $this->belongsTo(OrderZone::class);

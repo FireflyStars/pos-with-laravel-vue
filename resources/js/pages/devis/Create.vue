@@ -280,50 +280,14 @@
                               <div class="col-8">
                                 <table class="table table-hover table-bordered" style="margin-top: -40px">
                                   <tbody>
-                                    <tr>
-                                      <td>2</td>
-                                      <td>UN</td>
-                                      <td>0 hr</td>
-                                      <td></td>
-                                      <td>2 000 €</td>
-                                      <td>
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M17 6H22V8H20V21C20 21.2652 19.8946 21.5196 19.7071 21.7071C19.5196 21.8946 19.2652 22 19 22H5C4.73478 22 4.48043 21.8946 4.29289 21.7071C4.10536 21.5196 4 21.2652 4 21V8H2V6H7V3C7 2.73478 7.10536 2.48043 7.29289 2.29289C7.48043 2.10536 7.73478 2 8 2H16C16.2652 2 16.5196 2.10536 16.7071 2.29289C16.8946 2.48043 17 2.73478 17 3V6ZM18 8H6V20H18V8ZM13.414 14L15.182 15.768L13.768 17.182L12 15.414L10.232 17.182L8.818 15.768L10.586 14L8.818 12.232L10.232 10.818L12 12.586L13.768 10.818L15.182 12.232L13.414 14ZM9 4V6H15V4H9Z" fill="black"/>
-                                        </svg>
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td>2</td>
-                                      <td>UN</td>
-                                      <td>0 hr</td>
-                                      <td></td>
-                                      <td>2 000 €</td>
-                                      <td>
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M17 6H22V8H20V21C20 21.2652 19.8946 21.5196 19.7071 21.7071C19.5196 21.8946 19.2652 22 19 22H5C4.73478 22 4.48043 21.8946 4.29289 21.7071C4.10536 21.5196 4 21.2652 4 21V8H2V6H7V3C7 2.73478 7.10536 2.48043 7.29289 2.29289C7.48043 2.10536 7.73478 2 8 2H16C16.2652 2 16.5196 2.10536 16.7071 2.29289C16.8946 2.48043 17 2.73478 17 3V6ZM18 8H6V20H18V8ZM13.414 14L15.182 15.768L13.768 17.182L12 15.414L10.232 17.182L8.818 15.768L10.586 14L8.818 12.232L10.232 10.818L12 12.586L13.768 10.818L15.182 12.232L13.414 14ZM9 4V6H15V4H9Z" fill="black"/>
-                                        </svg>
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td>2</td>
-                                      <td>UN</td>
-                                      <td>0 hr</td>
-                                      <td></td>
-                                      <td>2 000 €</td>
-                                      <td>
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M17 6H22V8H20V21C20 21.2652 19.8946 21.5196 19.7071 21.7071C19.5196 21.8946 19.2652 22 19 22H5C4.73478 22 4.48043 21.8946 4.29289 21.7071C4.10536 21.5196 4 21.2652 4 21V8H2V6H7V3C7 2.73478 7.10536 2.48043 7.29289 2.29289C7.48043 2.10536 7.73478 2 8 2H16C16.2652 2 16.5196 2.10536 16.7071 2.29289C16.8946 2.48043 17 2.73478 17 3V6ZM18 8H6V20H18V8ZM13.414 14L15.182 15.768L13.768 17.182L12 15.414L10.232 17.182L8.818 15.768L10.586 14L8.818 12.232L10.232 10.818L12 12.586L13.768 10.818L15.182 12.232L13.414 14ZM9 4V6H15V4H9Z" fill="black"/>
-                                        </svg>
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td>2</td>
-                                      <td>UN</td>
-                                      <td>0 hr</td>
-                                      <td></td>
-                                      <td>2 000 €</td>
-                                      <td>
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <tr v-for="(item, index) in 5" :key="index">
+                                      <td class="text-center">2</td>
+                                      <td class="text-center">UN</td>
+                                      <td class="text-center">0 hr</td>
+                                      <td class="text-center"></td>
+                                      <td class="text-center">2 000 €</td>
+                                      <td class="text-center">
+                                        <svg @click="removeOuvrage(index)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M17 6H22V8H20V21C20 21.2652 19.8946 21.5196 19.7071 21.7071C19.5196 21.8946 19.2652 22 19 22H5C4.73478 22 4.48043 21.8946 4.29289 21.7071C4.10536 21.5196 4 21.2652 4 21V8H2V6H7V3C7 2.73478 7.10536 2.48043 7.29289 2.29289C7.48043 2.10536 7.73478 2 8 2H16C16.2652 2 16.5196 2.10536 16.7071 2.29289C16.8946 2.48043 17 2.73478 17 3V6ZM18 8H6V20H18V8ZM13.414 14L15.182 15.768L13.768 17.182L12 15.414L10.232 17.182L8.818 15.768L10.586 14L8.818 12.232L10.232 10.818L12 12.586L13.768 10.818L15.182 12.232L13.414 14ZM9 4V6H15V4H9Z" fill="black"/>
                                         </svg>
                                       </td>
@@ -489,7 +453,7 @@ export default {
     const store = useStore();
     const router = useRouter();
     const breadcrumbs = ref(['Choix client']);
-    const devisCreateStep = ref('create_devis');
+    const devisCreateStep = ref('choose_customer');
     watchEffect(()=>{
       if(devisCreateStep.value == 'choose_customer'){
         breadcrumbs.value = ['Choix client'];
@@ -546,7 +510,7 @@ export default {
               {
                 id: '',
                 name: '',
-                techText: '',
+                // techText: '',
                 customerText: '',
                 qty: '',
                 unit: '',
@@ -678,8 +642,8 @@ export default {
       form.value.address = data;
     }
 
-    const selectedOuvrage = (ouvrageId)=>{
-      axios.post('/get-ouvrage', { id: ouvrageId }).then((res)=>{
+    const selectedOuvrage = (data)=>{
+      axios.post('/get-ouvrage', { id: data.ouvrageId }).then((res)=>{
 
       }).catch((error)=>{
 
