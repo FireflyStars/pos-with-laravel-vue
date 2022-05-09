@@ -99,6 +99,8 @@ export const TOGGLER_MODULE = 'TOGGLER_MODULE'
 export const ACTIVE_ITEM = 'ACTIVE_ITEM' //getters
 export const SET_TOGGLER_ITEM = 'SET_TOGGLER_ITEM' //mutations
 
+//Reports module
+
 export const BUILDER_MODULE = 'BUILDER_MODULE'
 export const GENERATE_PDF = 'GENERATE_PDF'
 export const ADD_PAGE = 'AddPage'
@@ -142,3 +144,9 @@ export const CUSTOMER_SET_SEARCH_LIST='CUSTOMER_SET_SEARCH_LIST'//getters
 export const CUSTOMER_GET_SEARCH_COUNT='CUSTOMER_GET_SEARCH_COUNT'//getters
 export const CUSTOMER_SET_SEARCH_COUNT='CUSTOMER_SET_SEARCH_COUNT'//getters
 export const CUSTOMER_SET_LOADER = 'CUSTOMER_SET_LOADER'//getters
+
+
+//search module
+export const SEARCH_MODULE = 'SEARCH_MODULE'
+export const GET_SEARCH_RESULTS = 'get_search_results'
+export const SET_SEARCH_RESULTS = 'set_search_results'

@@ -40,6 +40,10 @@ class Order extends Model
         return $this->belongsTo(OrderState::class);
     }
 
+    public function geds(){
+        return $this->hasMany(Ged::class);
+    }
+
     public function contact() 
     {
         return $this->belongsTo(Contact::class, 'responsable_id');

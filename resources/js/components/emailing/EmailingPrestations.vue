@@ -14,8 +14,7 @@
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
     >
-        <div class="container" :class="{'niveau3' :item && item.niveau == 3}"  v-if="showcontainer">
-                
+        <div class="container" v-if="showcontainer">
 
             <div v-if="myvar == true">
                 <h3 class="margin" v-for="data in campagnedata" :key="data.id">
@@ -89,7 +88,7 @@ export default {
     props: {
         id: {
             // This is the param that we are putting in our url
-            type: Number,
+            type: String,
             default() {
                 return 0;
             },

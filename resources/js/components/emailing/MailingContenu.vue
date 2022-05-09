@@ -41,8 +41,9 @@
                                     Personnalisable
                                 </p>
 
-                                <p class="card-text">
-                                    Format A4 - Impression recto - 80g/m²
+                                <p class="card-text cardtext2">
+                                    <!-- Format A4 - Impression recto - 80g/m² -->
+                                    {{textlettre}}
                                 </p>
                                 <p>
                                     <button
@@ -72,13 +73,14 @@
                                     Personnalisable
                                 </p>
 
-                                <p class="card-text">
-                                    Format A4 - Impression recto/verso - 180g/m²
+                                <p class="card-text cardtext2">
+                                    <!-- Format A4 - Impression recto/verso - 180g/m² -->
+                                    {{textflyer}}
                                 </p>
                                 <p>
                                     <button
                                         class="button type"
-                                        v-on:click="personnaliser('flayer')"
+                                        v-on:click="personnaliserflyer('flayer')"
                                     >
                                         PERSONNALISER
                                     </button>
@@ -103,19 +105,22 @@
                                     Non Personnalisable
                                 </p>
 
-                                <p class="card-text">
-                                    Format fermé A5 - Impression recto/verso - 3
-                                    volets - 120g/m²
+                                <p class="card-text cardtext2">
+                                    <!-- Format fermé A5 - Impression recto/verso - 3
+                                    volets - 120g/m² -->
+                                    {{textedepliant}}
+                                    
+                                    
                                 </p>
                                 <p>
                                     <button
                                         class="button type"
-                                        v-on:click="voir"
+                                        v-on:click="voirdepliant"
                                     >
                                         VOIR
                                     </button>
                                 </p>
-                            </div>
+                            </div> 
                         </div>
                     </div>
                     <div class="card shadow-sm mb-4">
@@ -128,21 +133,22 @@
                         </div>
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title text-uppercase card-title">
-                                NVELOPPE PORTEUSE
+                                ENVELOPPE PORTEUSE
                             </h5>
                             <div>
                                 <p class="card-text" style="color: orangered">
                                     Non Personnalisable
                                 </p>
 
-                                <p class="card-text">
-                                    Format 162x229 - Impression recto - 3 volets
-                                    - 80g/m²
+                                <p class="card-text cardtext2">
+                                    <!-- Format 162x229 - Impression recto - 3 volets
+                                    - 80g/m²  -->
+                                    {{texteenveloppe}}
                                 </p>
                                 <p>
                                     <button
                                         class="button type"
-                                        v-on:click="voir"
+                                       v-on:click="voirenveloppe"
                                     >
                                         VOIR
                                     </button>
@@ -159,10 +165,25 @@
                     <p class="p-text">
                         L’impression et le façonnage La mise sous pli
                         L’affranchissement Le dépôt Poste
+                        
                     </p>
+                    <div>
+
+                                                                    <button
+                                        class="button type"
+                                        v-on:click="voir"
+                                    >
+                                        VALIDER
+                                    </button>
+                    </div>
                 </div>
+
             </div>
+
+                
+
         </div>
+        
             </transition>
                     </div>
                 </div>
@@ -171,10 +192,12 @@
 </template>
 
 <script>
+
 import { ref, onMounted, nextTick } from "vue";
 import SideBar from "../layout/SideBar";
 import Main from "../Main.vue";
 import useCompanies from "../../composables/companies";
+import { useRoute } from 'vue-router';
 
 export default {
     components: {
@@ -184,7 +207,7 @@ export default {
 
     props: {
         cible_id: {
-            type: Number,
+            type: String,
         },
         type: {
             type: String,
@@ -195,7 +218,12 @@ export default {
     },
     setup() {
         const my_name = localStorage.getItem("category");
-
+         const textedepliant = ref('');
+         const texteenveloppe = ref('');
+         const textlettre = ref('');
+         const textflyer = ref ('');
+         
+        const route=useRoute();
         const {
             courrier,
             courrier_lettre,
@@ -212,6 +240,33 @@ export default {
         });
         // onMounted(getCourrier);
         onMounted(() => {
+
+//--
+            axios.get("/fields/" + route.params.cible_id).then(function (response) {
+                    
+                    textedepliant.value=response.data.campagneCategory.textedepliant;
+                    texteenveloppe.value=response.data.campagneCategory.texteenveloppe;
+                    textlettre.value=response.data.campagneCategory.textlettre;
+                    textflyer.value=response.data.campagneCategory.texteflyer;
+                    
+                
+            
+                }).catch(function (error) {
+                
+                
+                }).finally(function(){
+
+            });
+            
+            
+            nextTick(() => {
+                showcontainer.value = true;
+            });
+//---
+
+
+
+            
             //     let response = axios.get("/getCourrier").then(function (response) {
             //         console.log(response);
             //         courrier.value = response.data.data;
@@ -227,13 +282,29 @@ export default {
             //     });
         });
 
+        const voirdepliant=()=>{
+              window.open("/download?path=campagne-category/April2022/irN4f7owwoqFLUivFC2j.pdf&filename=DÉPLIANT.pdf");
+           
+            
+        }
+
+        const voirenveloppe=()=>{
+            window.open("/download?path=campagne-category/May2022/FA1DfuHAlDGU0CG0pRpi.pdf&filename=ENVELOPPE PORTEUSE.pdf")
+        }
+
         return {
             showcontainer,
             check_name,
             courrier,
             courrier_lettre,
             courrier_autre,
+            textedepliant,
+            texteenveloppe,
+            textflyer,
+            textlettre,
             my_name,
+            voirdepliant,
+            voirenveloppe
         };
     },
     methods: {
@@ -243,12 +314,14 @@ export default {
         //         console.log(this.singleData);
         //     });
         // },
-        voir() {
-            this.$router.push({
-                name: "envoi",
+        
+        personnaliserflyer(e){
+                this.$router.push({
+                name: "personnaliserflyer",
                 params: {
                     cible_id: `${this.$route.params.cible_id}`,
                     type: this.$route.params.type,
+                    show: e,
                 },
             });
         },
@@ -317,6 +390,7 @@ export default {
     font-size: unset;
     font-family: revert;
     cursor: pointer;
+    min-height: 36px;
 }
 .card-title:hover {
     color: orangered;
@@ -375,5 +449,8 @@ export default {
 }
 .link:hover {
     color: orangered;
+}
+.cardtext2 {
+ min-height: 80px;
 }
 </style>

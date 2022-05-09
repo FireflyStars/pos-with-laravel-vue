@@ -39,4 +39,8 @@ class GedDetail extends Model
 
         return parent::save($options);
     }
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
 }

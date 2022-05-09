@@ -229,13 +229,12 @@
                     @if (strtolower($element->name) == 'svg')
                         <?php 
                             
-                            $name = $svgs[$element->attributes->name];
-                            $src = 'data:image/svg+xml;base64,' . base64_encode($name);
+                            $src = $builder::svg_base64_encode($element->attributes);
                         ?>
                         <img 
                             class="{{ $element->attributes->class ?? 'draggable' }} svg"
                             src="{{ $src }}" 
-                            style="{{ $element->attributes->style ?? '' }} position: absolute; background: {{ optional($element->attributes)->stroke }};" 
+                            style="{{ $element->attributes->style ?? '' }} position: absolute;" 
                         /> 
                     @endif    
             

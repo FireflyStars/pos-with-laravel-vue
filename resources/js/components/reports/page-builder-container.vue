@@ -121,7 +121,7 @@ import reportFooter from '../../components/reports/report-footer'
 
 import useStyles from '../../composables/reports/useStyles'
 import useHelpers from '../../composables/useHelpers'
-import useReports from '../../composables/reports/useReports'
+import useElementsGenerator from '../../composables/reports/useElementsGenerator'
 
 export default {
     
@@ -153,7 +153,7 @@ export default {
 
         const fetching = inject('fetching')
 
-        const { generateCustomerInfo } = useReports()
+        const { generateTags } = useElementsGenerator()
         const { getDomElementParent } = useHelpers()
         const { itemAttributes, getStylesOfElement, getComputedStyle } = useStyles()
 
@@ -228,10 +228,17 @@ export default {
             activeItem.value = null
         }
 
-        const updateElementFromPopup = ({ id, textValue, table, name, stroke="#000", strokeWidth="0.4" }) => {
+        const updateElementFromPopup = ({ id, textValue, table, name }) => {
             const index = pages.value[activePage.value].elements.findIndex(item => item.attributes.id == id)
             const domElem = document.querySelector(`#${id}`)
             if(textValue != undefined && name != 'table' && name == 'textarea') {
+
+                if(['templates-add', 'templates-edit'].includes(route.name)) {
+                    updateElementValue({ index, value: unref(textValue) })
+                    openPopup.value = false
+                    return 
+                }
+
                 if(generateTags(textValue)) {
                     deleteAndRemove(index)
                     openPopup.value = false
@@ -291,21 +298,6 @@ export default {
                 content,
                 index    
             })
-        }
-
-        const generateTags = (textValue) => {
-            var result = textValue.match(/\[(.*?)\]/g)
-            if(result?.length) {
-                result = result.map(function(val){
-                    return val.replace(/\[/g,'').replace(/\]/g, '')
-                })
-                if(result.length) {
-                    result.forEach((tag) => generateCustomerInfo(tag))
-                    return result.length
-                }
-                return false
-            }
-            return false
         }
 
         watch(page, () => {

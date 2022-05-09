@@ -35,6 +35,7 @@
                                         v-model="input_expediteur"
                                         @keyup.prevent="submit"
                                         name="expediteur"
+                                       
                                     />
 
                                     <label class="fix_width_tiret">-</label>
@@ -100,6 +101,7 @@
                                     name="lettre"
                                     :options="state.editorOption"
                                     :disabled="state.disabled"
+                             
                                 />
                             </div>
                         </div>
@@ -123,8 +125,16 @@
                             class="button-valider type"
                             @click="exportToPDF()"
                         >
-                            VALIDER
+                            ENREGISTRER
                         </button>
+
+                    <button
+                        class="button-valider type extravalidbtn"
+                        type="button"
+                        @click="$router.go(-1)">
+                         VALIDER
+                    </button>
+
                     </div>
                 </div>
             </div>
@@ -281,10 +291,7 @@ export default {
         TemplateFlyer,
     },
     props: {
-        id: {
-            required: true,
-            type: String,
-        },
+      
         show: {
             type: Boolean,
             default: false,
@@ -295,9 +302,10 @@ export default {
     }),
 
     setup(props) {
+        
         const my_name = localStorage.getItem("category");
 
-        const input_expediteur = ref("La Compagnie des Toits");
+        const input_expediteur = ref("La Compagnie des Toitsxxx");
         const input_adresse = ref("1 Rue Jean-Baptiste Colbert");
         const input_coord = ref("01 60 65 04 70");
         const input_expediteur2 = ref("Agence Seine-et-Marne");
@@ -313,7 +321,7 @@ export default {
 
         const { type, router, errors, company, contentform } = useCompanies();
         const route = useRoute();
-
+      
         let show = route.params.show;
         const showcontainer = ref(false);
         onMounted(() => {
@@ -322,10 +330,11 @@ export default {
             });
         });
         onMounted(() => {
-            const id = localStorage.getItem("id_category");
+          
+          const campagne_id=route.params.cible_id;
 
             axios
-                .get("/lettredata/" + localStorage.getItem("id_category"))
+                .get("/lettredata/" + campagne_id)
                 .then((res) => {
                     input_content.value = res.data.content;
                          console.log(input_content.value);
@@ -466,7 +475,7 @@ export default {
                 },
             });
             return router;
-        }
+        }console.log('ok');
         return {
             errors,
             company,
@@ -659,5 +668,8 @@ hr {
 }
 .link:hover {
     color: orangered;
+}
+.extravalidbtn{
+    margin-left: 20px;
 }
 </style>

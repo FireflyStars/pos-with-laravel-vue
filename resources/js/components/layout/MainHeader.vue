@@ -1,7 +1,7 @@
 <template>
     <div class="row main-logo" >
         <div class="col-12 p-0">
-            <img  @click="slideinMenu"
+            <img @click="slideinMenu"
                 src="./../../images/logolcdt.png"
                 alt="Lcdt logo"
                 class="logo img-fluid"
@@ -78,7 +78,7 @@
 <style scoped>
     .main-logo {
         background-color:#070113;
-        position: fixed;
+        position: relative;
         width: 100%;
         z-index: 10;
         box-shadow: 0px 0px 4px rgba(80, 80, 80, 0.2);

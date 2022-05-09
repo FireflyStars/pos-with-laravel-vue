@@ -5,14 +5,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\CibleController;
+use App\Http\Controllers\DevisController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\CompagneController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\LcdtAdminController;
 use App\Http\Controllers\LcdtFrontController;
 use App\Http\Controllers\TemplatesController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\DevisController;
-use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PageElementsController;
 
 
@@ -38,6 +39,8 @@ Route::post('/page-report/{order}', [ReportsController::class, 'update']);
 
 Route::get('/get-page-order/{order}', [PageElementsController::class, 'get_page_order']);
 Route::get('/get-templates', [PageElementsController::class, 'get_page_templates']);
+
+Route::get('/search', [SearchController::class, 'search']);
 
 Route::post('/api',[ApiController::class,'index'])->middleware('cors')->name('api');
 
@@ -113,6 +116,7 @@ Route::group([
     Route::get('/getContentImage/{id}',[CompagneController::class, 'getContentImage'])->middleware('auth')->name('getContentImage');
     Route::get('/imagefield/{id}',[CompagneController::class, 'imagefield'])->middleware('auth')->name('imagefield');
     Route::get('/fields/{id}',[CompagneController::class, 'fields'])->middleware('auth')->name('fields');
+    Route::get('/download',[CompagneController::class, 'downloadPdfFile'])->middleware('auth')->name('downloadPdfFile');
     Route::get('/lettredata/{id}',[CompagneController::class, 'lettredata'])->middleware('auth')->name('lettredata');
     Route::post('/get-affiliate-detail',[LcdtFrontController::class,'getAffiliateDetail'])->middleware('auth')->name('get-affiliate-detail');
     Route::post('/get-campagne-details',[LcdtFrontController::class, 'getCampagneCategory'])->middleware('auth')->name('get-campagne-details');
@@ -120,7 +124,7 @@ Route::group([
 });
 
 Route::get('{any}', function () {
-    return view('welcome');
+    return view('welcome'); 
 })->where('any','.*');
 
 

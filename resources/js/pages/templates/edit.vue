@@ -143,6 +143,9 @@ export default {
             nextTick(async () => {
                 await getPageTemplate()
                 showcontainer.value = true
+                if(window?.screen && window?.screen?.width >= 1500) {
+                    showRightContainer.value = true
+                }
             })
         })
       
@@ -193,9 +196,12 @@ $orange: orange;
     top: 0;
     right: 0;
     width: 300px;
-    z-index: 99;
+    z-index: 1;
     position: absolute;
     transition: width .2s;
+    @media only screen and (min-width: 1500px) {
+        width: 530px;
+    }
     &-visible {
         width: 530px;
     }

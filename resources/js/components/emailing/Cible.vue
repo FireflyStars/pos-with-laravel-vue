@@ -438,7 +438,7 @@ export default {
             });
             const createCampagne=()=>{
                 store.dispatch(`${CIBLE_MODULE}${CIBLE_CREATE_CAMPAGNE}`).then((response)=>{
-              
+                    if(route.params.type=='Email'){
                     router.push({
                             name: "content",
                             params: {
@@ -446,6 +446,15 @@ export default {
                                 type: route.params.type,
                             },
                         });
+                    }else if(route.params.type=='Courrier'){
+                        router.push({
+                            name: "mailingContenu",
+                            params: {
+                                cible_id: response.data.campagne_id,
+                                type: route.params.type,
+                            },
+                        });
+                    }
 
                 }).catch((error)=>{
                     if(typeof error.response!="undefined")

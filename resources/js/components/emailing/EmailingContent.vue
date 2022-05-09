@@ -44,7 +44,7 @@
                                         {{sender}}
                                     </div>
                                 </div>
-                                 <div class="row mb-1">
+                                 <div class="row mb-1"> 
                                     <div class="col-3 tname" >
                                         <b>Répondre à:</b>
                                     </div>
@@ -71,7 +71,7 @@
                                             <b>{{fields.Email_agence.name}}:</b> <input class="mt-2" type="text" v-model="email_agence"/>
                                         </div>
                                         <div class="col group_input"  v-if="typeof fields.Telephone_agence!='undefined'&&fields.Telephone_agence.active==1">
-                                            <b>{{fields.Telephone_agence.name}}:</b> <input class="mt-2" type="text" v-model="phone_agence"/>
+                                            <b>{{fields.Telephone_agence.name}}</b> <input class="mt-2" type="text" v-model="phone_agence"/>
                                         </div> 
                                     </div>
                                 
@@ -98,7 +98,14 @@
                         type="button"
                         v-on:click="saveCompany"
                     >
-                        VALIDER
+                        ENREGISTRER
+                    </button>
+
+                    <button
+                        class="button-valider type extravalidbtn"
+                        type="button"
+                        @click="$router.go(-1)">
+                         VALIDER
                     </button>
                 </div>
             </div>
@@ -148,7 +155,7 @@ export default {
     // }),
     props: {
         cible_id: {
-            type: Number,
+            type: String,
         },
         type: {
             type: String,
@@ -164,6 +171,8 @@ export default {
         };
     },
     setup(props) {
+
+
         const store = useStore();
 
         const my_name = localStorage.getItem("category");
@@ -255,6 +264,7 @@ export default {
             fields,
             email_agence,
             phone_agence
+            
         };
     },
 
@@ -435,5 +445,8 @@ color: #aaa;
 }
 .tname{
     align-self: center;
+}
+.extravalidbtn{
+margin-left: 20px;
 }
 </style>

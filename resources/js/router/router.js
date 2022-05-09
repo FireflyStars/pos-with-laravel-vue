@@ -213,6 +213,16 @@ const router = createRouter({
             },
         },
         {
+            path: "/emailing/display/:type/:cible_id/:show",
+            name: "personnaliserflyer",
+            props: true,
+            component: () =>
+                import("../components/emailing/EmailingContent.vue"),
+            meta: {
+                authenticated: true,
+            },
+        },
+        {
             path: "/emailing/envoi/:type/:cible_id",
             name: "envoi",
             props: true,
