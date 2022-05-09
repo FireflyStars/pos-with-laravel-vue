@@ -1029,6 +1029,18 @@ public function GetTechnicianDevisDetails(Request $request){
         $order->orderZones;  
         $order->customer->makeHidden(['created_at','updated_at','deleted_at']); 
         $order->address->makeHidden(['created_at','updated_at','deleted_at']);
+        $order->signatures=[];
+        $geds=$order->geds()->get();
+        foreach($geds as $ged){
+            $gedDetails=$ged->gedDetails()->where('signature','=',1)->get();
+            foreach($gedDetails as $gedDetail){
+                $gedDetail->makeHidden(['created_at','updated_at','deleted_at','additional_work','storage_path','signature']);
+                $gedDetail->urls=$this->getFileUrls($gedDetail);
+                $order->signatures=array_merge( $order->signatures,[$gedDetail]);
+
+            }
+           
+        }
         $additional_works=[];
         foreach($order->orderZones as &$order_zone){
 
@@ -1101,20 +1113,15 @@ public function GetTechnicianDevisDetails(Request $request){
                     "affiliate_id"
             ]);
             }
-            // foreach($order_zone->gedDetails as &$ged_detail){
-            //     if($ged_detail->type!='description')
-            //     $ged_detail->urls=$this->getFileUrls($ged_detail);
-            //     $ged_detail->orderOuvrage;
-            //     $ged_detail->gedCategory;
-            // }
-        }
 
+        }
+        $order1=Order::find($Parameters['order_id']);
         $order->travaux_supplementaire=[];
         $gedCats=[];
-        foreach($order->orderZones as &$order_zone){
+        foreach($order1->orderZones as $order_zone){
             foreach($additional_works as $additional_work){
                 $additional_work->urls=$this->getFileUrls($additional_work);
-                $a=$additional_work->makeHidden(['created_at','updated_at','deleted_at','additional_work','storage_path'])->toArray();
+                $a=$additional_work->makeHidden(['created_at','updated_at','deleted_at','additional_work','storage_path','signature','timeline'])->toArray();
              
                 $gedCategory=$additional_work->gedCategory;
           
@@ -1127,12 +1134,24 @@ public function GetTechnicianDevisDetails(Request $request){
         }
 
         if(!empty($gedCats))
-        foreach($gedCats as $gedCatName=>$gedCat){
-            $o=new stdClass;
-            $o->name= $gedCatName;
-            $o->ged_details=$gedCats[$gedCatName];
-            $order->travaux_supplementaire=array_merge( $order->travaux_supplementaire,[$o]); 
-            continue;
+        foreach($gedCats as $gedCatName=>$gedDetails){
+
+            foreach($order1->orderZones as $order_zone){
+                $order_zone->makeHidden(['created_at','updated_at','deleted_at']);
+                foreach($gedDetails as $gedDetail ){
+            
+                    if($order_zone->id==$gedDetail['order_zone_id']){
+                        $order_zone->ged_details=new stdClass;
+                        $order_zone->ged_details->name=$gedCatName;
+                        if(empty( $order_zone->ged_details->list))
+                        $order_zone->ged_details->list=[];
+                        $order_zone->ged_details->list[]=$gedDetail;   
+                    }
+                }
+                $order->travaux_supplementaire=array_merge( $order->travaux_supplementaire,[$order_zone]); 
+            }
+         
+      
         }
         return $this->response(1, $order);
     }else{
@@ -1632,6 +1651,146 @@ if(isset($params['order_zones'])&&is_array($params['order_zones'])){
     }else{
         return $isLoggedIn;
     }
+}
+public function SaveDevisTechnician(Request $request){
+    $Parameters=$request->post('Parameters');
+    $SessionID=$request->post('SessionID');
+    $AccountKey=$request->post('AccountKey');
+    dd($Parameters);
+
+    //start validation
+    $valid=$this->isValidAccountKeySessionID($request);
+    if($valid!==true)return $valid;
+    $isLoggedIn=$this->checkLogin($request);
+
+    if($isLoggedIn===true){
+    if(!isset($Parameters['order_id'])||$this->isBlank($Parameters['order_id'])){
+        return $this->response(0,null,'	ID order manquant');
+    }
+
+    if(isset($Parameters['order_zones'])&&is_array($Parameters['order_zones'])){
+      
+       if(!empty($Parameters['order_zones'])){
+           //order zones
+           foreach($Parameters['order_zones'] as $order_zone){
+            if(!isset($order_zone['latitude'])||$this->isBlank($order_zone['latitude'])){
+                return $this->response(0,null,'La latitude de la zone est requise.');
+            }
+            if(!isset($order_zone['longitude'])||$this->isBlank($order_zone['longitude'])){
+                return $this->response(0,null,'La longitude de la zone est requise.');
+            }
+       
+            if(!isset($order_zone['name'])||$this->isBlank($order_zone['name'])){
+                return $this->response(0,null,'Le nom de la zone est requis.');
+            }
+     
+            //ged details
+
+                if(isset($order_zone['ged_details'])&&is_array($order_zone['ged_details'])){
+                    //ged details
+                    foreach($order_zone['ged_details'] as $ged_detail){
+                        if((!isset($ged_detail['description'])||$this->isBlank($ged_detail['description']))&&(!isset($ged_detail['data'])||$this->isBlank($ged_detail['data']))){
+                            return $this->response(0,null,'Détails ged non valides','Au moins une donnée de fichier ou une description est requise.');
+                        }
+
+                        if(isset($ged_detail['data'])&&!$this->isBlank($ged_detail['data']))
+                            if(!isset($ged_detail['human_readable_filename'])||$this->isBlank($ged_detail['human_readable_filename'])){
+                                return $this->response(0,null,'	Le nom du fichier de détails Ged est requis.');
+                            }
+                        if(!isset($ged_detail['latitude'])||$this->isBlank($ged_detail['latitude'])){
+                            return $this->response(0,null,'La latitude de détail Ged est requise.');
+                        }
+                        if(!isset($ged_detail['longitude'])||$this->isBlank($ged_detail['longitude'])){
+                            return $this->response(0,null,'La longitude de détail Ged est requise.');
+                        }
+    
+                    }
+                }
+            
+
+           }
+       }
+    }
+
+
+
+
+  
+        $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
+        $event=Event::find($Parameters['event_id']);
+        $order=null;
+        if(isset($Parameters['order_id'])&&$Parameters['order_id']!=null){
+            $order=Order::where('id','=',$Parameters['order_id'])->where('affiliate_id','=',$lcdtapp_api_instance->user->affiliate->id)->first();
+            if($order==null)
+                return $this->response(0,null,'Commande introuvable.');
+    
+            if($event->affiliate_id!=$lcdtapp_api_instance->user->affiliate->id){
+                return $this->response(0,null,'Impossible de sauvegarder', 'événement non affecté à la franchise de l\'utilisateur actuel.');
+            }
+           
+        }
+
+ //remove logo data before saving log       
+$params=$Parameters;
+if(isset($params['order_zones'])&&is_array($params['order_zones'])){
+    if(!empty($params['order_zones'])){
+        foreach($params['order_zones'] as &$order_zone){
+            if(isset($order_zone['ged_details'])){
+                foreach($order_zone['ged_details'] as &$ged_detail){
+                    $ged_detail['data']='REMOVED FOR LCDTLOG..';
+                }
+            }
+        }
+    }
+}
+
+ $this->l('API SAVE DEVIS TECHNICIAN',json_encode($params),$lcdtapp_api_instance->user->id);
+
+
+
+        if(isset($Parameters['order_zones'])&&is_array($Parameters['order_zones'])){
+            if(!empty($Parameters['order_zones'])){
+                //order zones
+                foreach($Parameters['order_zones'] as $order_zone){
+                    if(!isset($order_zone['id'])||$order_zone['id']==null){
+                        $orderZone=new OrderZone();
+                    }else{
+                        $orderZone=OrderZone::find($order_zone['id']);
+                        if($orderZone==null){
+                            return $this->response(0,null,'Impossible de sauvegarder ', 'Order zone id '.$order_zone['id'].' pas trouvé.');
+                        }
+
+                        if($order!=null&&$order->id>0 && $orderZone->order_id!=$order->id){
+                            return $this->response(0,null,'Impossible de sauvegarder ', 'Order zone id '.$orderZone->id.' non lié à la commande '.$order->id.'.');
+                        }
+                    }
+        
+              
+                
+                    if(isset($order_zone['ged_details'])){
+                       
+                        foreach($order_zone['ged_details'] as $ged_detail){
+                        
+                            if($ged_detail['id']>0){
+                                    $gedDetails=GedDetail::find($ged_detail['id']);
+                                    if($gedDetails==null)
+                                        return $this->response(0,null,'Impossible de sauvegarder', 'Détail Ged avec identifiant '.$ged_detail['id'].' pas trouvé.');
+                                    $ged=Ged::find($gedDetails->ged_id);
+                                    if($order!=null&&$order->id>0 && $ged->order_id!=$order->id)
+                                        return $this->response(0,null,'Impossible de sauvegarder', 'Détail Ged avec identifiant '.$ged_detail['id'].' non lié à la commande '.$order->id.'.');
+                            }
+
+                            if(isset($ged_detail['order_ouvrage_id'])&&!$this->isBlank($ged_detail['order_ouvrage_id'])){
+                                if(!isset($ged_detail['timeline'])||!in_array($ged_detail['timeline'],['AVANT','APRES']))
+                                return $this->response(0,null,'Impossible de sauvegarder', 'Veuillez spécifier un calendrier valide pour l\'identifiant de l\'ouvrage de commande '.$ged_detail['order_ouvrage_id'].'.');
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+}
 }
 public function GetZones(Request $request){
     $SessionID=$request->post('SessionID');
