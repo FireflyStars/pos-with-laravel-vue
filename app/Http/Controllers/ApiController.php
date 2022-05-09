@@ -1034,7 +1034,8 @@ public function GetTechnicianDevisDetails(Request $request){
         foreach($geds as $ged){
             $gedDetails=$ged->gedDetails()->where('signature','=',1)->get();
             foreach($gedDetails as $gedDetail){
-                $gedDetail->makeHidden(['created_at','updated_at','deleted_at','additional_work','storage_path','signature']);
+                $gedDetail->user->makeHidden(['created_at','updated_at','deleted_at']);
+                $gedDetail->makeHidden(['updated_at','deleted_at','additional_work','storage_path','signature']);
                 $gedDetail->urls=$this->getFileUrls($gedDetail);
                 $order->signatures=array_merge( $order->signatures,[$gedDetail]);
 
@@ -1656,7 +1657,7 @@ public function SaveDevisTechnician(Request $request){
     $Parameters=$request->post('Parameters');
     $SessionID=$request->post('SessionID');
     $AccountKey=$request->post('AccountKey');
-    dd($Parameters);
+    
 
     //start validation
     $valid=$this->isValidAccountKeySessionID($request);
@@ -1664,57 +1665,84 @@ public function SaveDevisTechnician(Request $request){
     $isLoggedIn=$this->checkLogin($request);
 
     if($isLoggedIn===true){
-    if(!isset($Parameters['order_id'])||$this->isBlank($Parameters['order_id'])){
-        return $this->response(0,null,'	ID order manquant');
-    }
+        if(!isset($Parameters['order_id'])||$this->isBlank($Parameters['order_id'])){
+            return $this->response(0,null,'ID order manquant');
+        }
 
-    if(isset($Parameters['order_zones'])&&is_array($Parameters['order_zones'])){
-      
-       if(!empty($Parameters['order_zones'])){
-           //order zones
-           foreach($Parameters['order_zones'] as $order_zone){
-            if(!isset($order_zone['latitude'])||$this->isBlank($order_zone['latitude'])){
-                return $this->response(0,null,'La latitude de la zone est requise.');
-            }
-            if(!isset($order_zone['longitude'])||$this->isBlank($order_zone['longitude'])){
-                return $this->response(0,null,'La longitude de la zone est requise.');
-            }
-       
-            if(!isset($order_zone['name'])||$this->isBlank($order_zone['name'])){
-                return $this->response(0,null,'Le nom de la zone est requis.');
-            }
-     
-            //ged details
+        //VERIFY SIGNATURE
+        if(isset($Parameters['signature'])){
+            if(!isset($Parameters['signature']['data'])||$this->isBlank($Parameters['signature']['data'])||!isset($Parameters['signature']['human_readable_filename'])||$this->isBlank($Parameters['signature']['human_readable_filename'])){
 
-                if(isset($order_zone['ged_details'])&&is_array($order_zone['ged_details'])){
-                    //ged details
-                    foreach($order_zone['ged_details'] as $ged_detail){
-                        if((!isset($ged_detail['description'])||$this->isBlank($ged_detail['description']))&&(!isset($ged_detail['data'])||$this->isBlank($ged_detail['data']))){
-                            return $this->response(0,null,'Détails ged non valides','Au moins une donnée de fichier ou une description est requise.');
-                        }
+            }
 
-                        if(isset($ged_detail['data'])&&!$this->isBlank($ged_detail['data']))
-                            if(!isset($ged_detail['human_readable_filename'])||$this->isBlank($ged_detail['human_readable_filename'])){
-                                return $this->response(0,null,'	Le nom du fichier de détails Ged est requis.');
-                            }
-                        if(!isset($ged_detail['latitude'])||$this->isBlank($ged_detail['latitude'])){
-                            return $this->response(0,null,'La latitude de détail Ged est requise.');
-                        }
-                        if(!isset($ged_detail['longitude'])||$this->isBlank($ged_detail['longitude'])){
-                            return $this->response(0,null,'La longitude de détail Ged est requise.');
-                        }
-    
+        }
+        //VERIFY ORDER ZONE
+        if(isset($Parameters['order_zones'])&&is_array($Parameters['order_zones'])){
+        
+        if(!empty($Parameters['order_zones'])){
+            //order zones
+            foreach($Parameters['order_zones'] as $order_zone){
+                    if(!isset($order_zone['order_zone_id'])||$this->isBlank($order_zone['order_zone_id'])){
+                        return $this->response(0,null,'order_zone_id est requis.');
                     }
+                    //verify that order zone id belongs to order
+                    if(isset($order_zone['order_categories'])&&!empty($order_zone['order_categories'])){
+                       
+                        foreach($order_zone['order_categories'] as $order_cat){
+                            if(!isset($order_cat['order_cat_id'])||$this->isBlank($order_cat['order_cat_id'])){
+                                return $this->response(0,null,'order_cat_id est requis.');
+                            }
+                            //verify that order cat id belongs to order zone
+                            if(isset($order_cat['list_ouvrages'])&&!empty($order_cat['list_ouvrages'])){
+                                foreach($order_cat['list_ouvrages'] as  $list_ouvrage){
+                                    if(!isset($list_ouvrage['order_ouvrage_id'])||$this->isBlank($list_ouvrage['order_ouvrage_id'])){
+                                        return $this->response(0,null,'order_ouvrage_id est requis.');
+                                    }
+                                    //verify that order ouvrage belongs to order zone
+
+                                    if(isset($list_ouvrage['Avant'])&&!empty($list_ouvrage['Avant'])){
+                                        
+                                        foreach($list_ouvrage['Avant'] as $ged_detail){
+                                        
+                                            //ged details
+                                
+                                                if((!isset($ged_detail['description'])||$this->isBlank($ged_detail['description']))&&(!isset($ged_detail['data'])||$this->isBlank($ged_detail['data']))){
+                                                    return $this->response(0,null,'Détails ged non valides','Au moins une donnée de fichier ou une description est requise.');
+                                                }
+
+                                                if(isset($ged_detail['data'])&&!$this->isBlank($ged_detail['data']))
+                                                    if(!isset($ged_detail['human_readable_filename'])||$this->isBlank($ged_detail['human_readable_filename'])){
+                                                        return $this->response(0,null,'	Le nom du fichier de détails Ged est requis.');
+                                                    }
+                                                if(!isset($ged_detail['latitude'])||$this->isBlank($ged_detail['latitude'])){
+                                                    return $this->response(0,null,'La latitude de détail Ged est requise.');
+                                                }
+                                                if(!isset($ged_detail['longitude'])||$this->isBlank($ged_detail['longitude'])){
+                                                    return $this->response(0,null,'La longitude de détail Ged est requise.');
+                                                }
+                                                if(!isset($ged_detail['ged_category_id'])||$this->isBlank($ged_detail['ged_category_id'])){
+                                                    return $this->response(0,null,'ged_category_id est requise.');
+                                                }
+                                            
+                
+                                        }
+
+                                    }
+                                }
+                            }
+
+                        }
+
+                
+                    }
+        
                 }
-            
+            }
 
-           }
-       }
-    }
-
-
-
-
+        }
+     
+        dd($Parameters);
+/*
   
         $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
         $event=Event::find($Parameters['event_id']);
@@ -1790,7 +1818,12 @@ if(isset($params['order_zones'])&&is_array($params['order_zones'])){
                 }
             }
         }
+}*/
+
+}else{
+    return $isLoggedIn;
 }
+
 }
 public function GetZones(Request $request){
     $SessionID=$request->post('SessionID');
