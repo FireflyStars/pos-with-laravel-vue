@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
 use App\Models\Affiliate;
@@ -1382,10 +1383,11 @@ class CompagneController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function lettredata($id){
+        $campagne=Campagne::find($id);
 
-        $lettre = DB::table('campagne_category')->select(['lettreaccompagnement'])->where('id',"=", $id)->get();
+        $campagne_category=CampagneCategory::find($campagne->campagne_category_id);
         return response()->json([
-                'content' =>$lettre[0]->lettreaccompagnement,
+                'content' =>$campagne_category->lettreaccompagnement,
             ]);
 
     }
@@ -1409,10 +1411,20 @@ class CompagneController extends Controller
         $fields->Ville_agence->value=$affiliate->city;
         $fields->Page_agence->value=$affiliate->urlagence;
         $fields->Linkedin_agence->value=$affiliate->linkedin;
+        $filedepliant=json_decode($cc->filedepliant);
+        $fields->file_depliant=$filedepliant;
+      
+       
     
         return response()->json(array('fields'=>$fields,'image'=>$cc->imagetemplate,'campagneCategory'=>$cc));
     }
 
     
 
+
+    public function downloadPdfFile(Request $request){
+        $path=$request->get('path');
+        $filename=$request->get('filename');
+        return response()->download(Storage::path('public/'.$path), $filename);
+    }
 }
