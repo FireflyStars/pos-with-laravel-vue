@@ -14,8 +14,8 @@ class TemplatesController extends Controller
     
     public function index() 
     {
-        return response()->json(
-            TemplateResource::collection(Template::all())
+        return TemplateResource::collection(
+            Template::where('affiliate_id', Auth::user()->id)->get()
         );
     }
     
@@ -26,7 +26,7 @@ class TemplatesController extends Controller
 
         Template::create([
             'name'         => $request->name, 
-            'affiliate_id' => optional(Auth::user())->id,
+            'affiliate_id' => Auth::user()->id,
             'pages'        => $pages,
             'page_files'   => $page_files,
         ]);  
@@ -53,7 +53,7 @@ class TemplatesController extends Controller
             'page_files' => $page_files 
         ]);
 
-        return response()->json('Template saved', 201); 
+        return response()->json('Template saved', 200); 
 
     }
 

@@ -12,9 +12,36 @@ const router = createRouter({
             path:'',
             name:'LandingPage',
             component:()=> import('../pages/devis/Devis.vue'),//import('../Pages/Index'),
-
+            children:[
+                {
+                    path:'/devis/detail/:id',
+                    name:'DevisDetail',
+                    component:()=> import('../pages/devis/DevisDetail.vue'),
+                    meta:{
+                        authenticated:false
+                    }
+                },
+            ],
             meta:{
                 authenticated:true
+            },
+
+        },
+        {
+            path:'/devis/create',
+            name:'devis',
+            component: () => import('../pages/devis/Create'),
+            meta:{
+                authenticated: true
+            },
+
+        },
+        {
+            path:'/customer/create',
+            name:'customer-create',
+            component: () => import('../pages/Customer/Create'),
+            meta:{
+                authenticated: true
             },
 
         },

@@ -11,6 +11,8 @@ use App\Http\Controllers\LcdtAdminController;
 use App\Http\Controllers\LcdtFrontController;
 use App\Http\Controllers\TemplatesController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DevisController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PageElementsController;
 
 
@@ -21,13 +23,14 @@ Route::group(['prefix' => 'admin'], function () {
 });
 
 Route::post('/save-page-elements', [PageElementsController::class, 'store']);
+Route::get('/save-page-elements', [PageElementsController::class, 'store_get']);
 
 Route::get('/report-templates', [TemplatesController::class, 'index']);
 Route::post('/report-template', [TemplatesController::class, 'store']);
 Route::get('/report-template/{template}', [TemplatesController::class, 'show']);
 Route::post('/report-template/{template}', [TemplatesController::class, 'update']);
 
-Route::get('/page-reports', [ReportsController::class, 'index']);
+Route::get('/page-reports', [ReportsController::class, 'index'])->middleware('auth');
 Route::post('/page-report', [ReportsController::class, 'store']);
 Route::get('/page-report/{order}', [ReportsController::class, 'show']);
 Route::post('/page-report/{order}', [ReportsController::class, 'update']);
@@ -47,7 +50,6 @@ Route::post('/auth/login',function () {
 
 
 Route::group([
-
     'middleware' => 'web',
     'namespace'  => 'App\Http\Controllers'
 ], function () {
@@ -74,6 +76,21 @@ Route::group([
     Route::get('/cible/loadcible/{naf_selection}/{customer_statut_id}',[CibleController::class,'loadcible'])->middleware('auth')->name('loadcible');
     Route::post('/cible/createcampagne',[CibleController::class,'createcampagne'])->middleware('auth')->name('createcampagne');
 
+    // Devis
+    Route::post('/get-devis-list',[DevisController::class,'loadList'])->middleware('auth')->name('get-devis-list');
+    Route::post('/get-ged-categories', [DevisController::class,'getGedCategories'])->middleware('auth')->name('get.ged.categories');
+    Route::post('/get-all-toits', [DevisController::class,'getAllToits'])->middleware('auth')->name('get.all.toits');
+    Route::post('/get-prestation-ouvrages', [DevisController::class,'getPrestationOuvrages'])->middleware('auth')->name('get.all.toits');
+    // End Devis
+
+    // Customer
+    Route::post('/get-list-info-for-customer', [ CustomerController::class, 'getListInfoForCustomer' ])->middleware('auth')->name('get.list.info.for.customer');
+    Route::post('/add-customer', [ CustomerController::class, 'storeCustomer' ])->middleware('auth')->name('store.customer');
+    Route::post('/search-customer', [ CustomerController::class, 'searchCustomer' ])->middleware('auth')->name('search.customer');
+    Route::post('/get-customer-addresses', [ CustomerController::class, 'getCustomerAddresses' ])->middleware('auth')->name('get.customer.addresses');
+    Route::post('/add-customer-address', [ CustomerController::class, 'addCustomerAddress' ])->middleware('auth')->name('add.customer.address');
+    // End Customer
+    
     Route::put('deleteCompagneCible/', [CompagneController::class, 'deleteCompagneCible'])->middleware('auth')->name('deleteCompagneCible');
     Route::put('insertCompagneCible/', [CompagneController::class, 'insertCompagneCible'])->middleware('auth')->name('insertCompagneCible');
     Route::get('/getCourrier',[CompagneController::class, 'getCourrier'])->middleware('auth')->name('getCourrier');

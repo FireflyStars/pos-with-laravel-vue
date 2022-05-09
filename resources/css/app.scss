@@ -91,3 +91,69 @@ html{
   line-height: 110%;
   color: #000000;
 }
+
+P {
+  margin-bottom: 0;
+}
+
+.textarea {
+  width: auto;
+  height: auto;
+  border: 1px solid #ccc;
+  z-index: 13;
+  word-wrap: normal;
+  .heading {
+      font-style: normal;
+      font-family: inherit;
+      font-size: 20px;
+      line-height: 29px;
+      color: #212529;
+      font-weight: 500;
+  }
+}
+
+.icon-close{
+  display: inline-block;
+  width: 20px;
+  height: 19px;
+  position: absolute;
+  cursor: pointer;
+  transition: all .3s  ease-in-out;
+  border-radius: 3px;
+  &:before{
+    content: '';
+    height: 2px;
+    width: 19px;
+    background: #000;
+    border-radius: 2px;
+    position: absolute;
+    transform-origin: top left;
+    transform: rotate(45deg);
+    left: 4px;
+    top:2px;
+
+
+  }
+  &:after{
+    content: '';
+    height: 2px;
+    width: 19px;
+    background: #000;
+    border-radius: 2px;
+    position: absolute;
+    transform-origin: top right;
+    transform: rotate(-45deg);
+    top:2px;
+    left:-3px;
+  }
+  &:hover{
+
+    transform: scale(1.5);
+
+  }
+
+}
+
+.hide-overflowY{
+  overflow-y: hidden;
+}

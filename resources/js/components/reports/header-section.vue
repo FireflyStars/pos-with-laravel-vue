@@ -39,11 +39,9 @@
     <div class="d-flex justify-content-between align-items-center">
 
         <div class="reports-dropdown">
-            <!-- :class="{ 'not-allowed': fetching }"  -->
-                <!-- :disabled="fetching || loading" -->
             <BaseButton 
                 title="Change Fond"
-                @click="toggleModal('templates-modal', true)"
+                @click="toggleModal('change-fond', true)"
             />
         </div>
 
@@ -82,7 +80,15 @@
                     name="page"
                     classnames="reports-dropdown-button"
                     :disabled="fetching"
-                    :selectStyles="{ maxHeight: '10rem', overflow: 'auto' }"
+                    :styles="{
+                        background: '#C4C4C4',
+                        color: '#000'
+                    }"
+                    :selectStyles="{ 
+                        maxHeight: '10rem', 
+                        overflow: 'auto', 
+                        borderRadius: 0 
+                    }"
                 />
 
             </div>
@@ -91,57 +97,7 @@
 
     </div>
 
-    <Modal 
-        id="templates-modal"
-        classes="p-5" 
-        size="md"
-    >
-        <div>
-            <h4 class="d-flex align-items-center gap-3">
-                <Icon name="report" width="32" height="32" />
-                Change Fond
-            </h4>
-            <div class="mt-3"> 
-
-                <div class="d-flex align-items-center justify-content-around">
-                    <BaseButton 
-                        title="Votre Image"
-                    />
-
-                    <div class="image-boxes">
-                        <div>
-                            <div class="image-box"></div>
-                            <label>Standard</label>
-                        </div>
-                        <div>
-                            <div class="image-box"></div>
-                            <label>XXXXXXX</label>
-                        </div>
-                        <div>
-                            <div class="image-box"></div>
-                            <label>Vide</label>
-                        </div>
-                        <div>
-                            <div class="image-box"></div>
-                            <label>YYYYYY</label>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="d-flex align-items-center justify-content-around mt-5">
-                    <BaseButton 
-                        title="Valider"
-                        kind="green"
-                    />
-                    <BaseButton 
-                        title="Non"
-                    />
-                </div>
-
-            </div>
-        </div>
-    </Modal>
+    <backgrounds-modal />
 
 </template>
 
@@ -150,6 +106,7 @@
 import { useStore } from 'vuex'
 import useModal from '../../composables/useModal'
 import { computed, watch, inject } from 'vue'
+import backgroundsModal from './backgrounds-modal'
 
 import { 
     BUILDER_MODULE,
@@ -163,6 +120,10 @@ import {
 export default {
 
     name: 'header-section',
+
+    components: {
+        backgroundsModal
+    },
     
     props: {
         title: {
@@ -180,7 +141,7 @@ export default {
         const { toggleModal } = useModal()
 
         const fetching = inject('fetching')
-        
+
         const loading = computed(() => {
             const { id, value } = store.getters[`${BUILDER_MODULE}/loading`]
             return id == 'submit' && value
@@ -237,8 +198,7 @@ export default {
                     display: template.name
                 }
             })
-        })
-        
+        })        
     
         const assignTemplateToActivePage = (id) => {
             if(!fetching.value) store.commit(`${BUILDER_MODULE}/${ASSIGN_TEMPLATE}`, id)
@@ -291,6 +251,18 @@ export default {
 
 <style lang="scss" scoped>
 
+.tile_h1 {
+    font-family: 'Almarai';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 22px;
+    line-height: 24px;
+    display: flex;
+    align-items: center;
+    color: #000000;
+    gap: 1.5rem;
+}
+
 .reports-dropdown {
     position: relative;
     margin-bottom: .75rem;
@@ -330,28 +302,6 @@ export default {
     border: none;
     height: 2.31rem;
 }
-
-.image-boxes {
-
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: .5rem;
-    text-align: center;
-    font-family: 'Poppins';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 22px;
-    color: #000000;
-
-    .image-box {
-        width: 5.93rem;
-        height: 5.625rem;
-        background: #525252;
-        border-radius: 8px;
-    }
-}
-
 
 .text {
     font-family: Poppins;

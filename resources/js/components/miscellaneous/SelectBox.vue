@@ -34,7 +34,7 @@
             }">
                 <slot>
                     <div
-                        class="opts"
+                        class="opts text-nowrap"
                         v-for="(item, index) in options"
                         :key="index"
                         @click="select(index)"
@@ -183,6 +183,19 @@ export default {
 </script>
 
 <style scoped>
+/* width */
+::-webkit-scrollbar {
+  width: 9px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: #E0E0E0; 
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #47454B; 
+  border-radius: 6px;
+}
 .trans-select-enter-from {
     opacity: 0;
     transform: scale(0.6);
@@ -224,19 +237,27 @@ export default {
     border: 1px solid #eeeeee;
     outline: 2px #000000 solid;
 }
+.disp{
+    white-space: nowrap;
+    width: 100%;
+    overflow: hidden;
+    display: block;
+    text-overflow: ellipsis;    
+}
 .select.active .disp {
     font-weight: 600;
 }
 .select-options {
     position: absolute;
-    width: 100%;
+    min-width: 100%;
+    width: fit-content;
     left: 0;
     top: 44px;
     background: #fff;
     box-shadow: 1px 1px 3px rgba(0, 0, 0, .4);
     max-height: 168px;
     z-index: 1;
-    overflow-y: visible;
+    overflow-y: scroll;
     transform-origin: top center;
 }
 .select::after,

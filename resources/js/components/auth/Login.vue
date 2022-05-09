@@ -107,7 +107,6 @@ import {
                                        ...route.query,
                                    },
                                 })
-                                // window.location = '/'
                             } else {
                                 store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
                                     type: 'danger',

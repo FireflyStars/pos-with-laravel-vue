@@ -108,7 +108,7 @@ trait GedFileProcessor
         return $uuid_filename;
             
     }
-//TODO: get urls for files given ged_detail
+    //TODO: get urls for files given ged_detail
     public function getFileUrls($gedDetail){
           
 

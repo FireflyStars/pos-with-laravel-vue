@@ -22,7 +22,7 @@
         name: "TabPane",
         props:['tabs','current','class'],
         setup(props){
-            const c=ref('');
+           
             const currenttab=ref('');
             currenttab.value=props.current;
             function show(index){
@@ -30,12 +30,12 @@
             }
 
             function classes(index){
-                c.value=props.class;
+              
                
                 if(currenttab.value==index){
-                    c.value+=' active';
+                    return `${props.class} active`;
                 }
-                return c.value;
+                return props.class;
             }
             return {
                 classes,
@@ -49,6 +49,7 @@
 <style scoped>
     .tp-tabs{
         display: flex;
+        padding-left: 5px;
     }
  .tp-tab{
      min-width: 150px;
@@ -66,6 +67,8 @@
       background-color: #FFF;
       font-weight: bold;
       color:var(--lcdtOrange);
+      position: relative;
+      bottom:2px;
   }
     .tab-view{
         min-height: 550px;

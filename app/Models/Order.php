@@ -8,6 +8,7 @@ use App\Models\Contact;
 
 use App\Traits\LcdtLog;
 use App\Models\Customer;
+use App\Models\Affiliate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -39,6 +40,10 @@ class Order extends Model
         return $this->belongsTo(OrderState::class);
     }
 
+    public function geds(){
+        return $this->hasMany(Ged::class);
+    }
+
     public function contact() 
     {
         return $this->belongsTo(Contact::class, 'responsable_id');
@@ -47,6 +52,11 @@ class Order extends Model
     public function report() 
     {
         return $this->hasOne(Report::class);
+    }
+
+    public function affiliate() 
+    {
+        return $this->belongsTo(Affiliate::class);
     }
 
     public function updateState($order_state_id,$user_id=null){
@@ -69,5 +79,9 @@ class Order extends Model
 
     public function generateReference(){
         $this->reference= strtoupper($this->passwdGen(10,'NO_NUMERIC'));
+    }
+
+    public function address(){
+        return $this->belongsTo(Address::class);
     }
 }

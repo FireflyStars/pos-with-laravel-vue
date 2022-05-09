@@ -5,16 +5,17 @@
             <p class="text-base orange">Acces tolture</p>
         </div>
         <div class="col">
-            <h4>
-                {{ zone.moyenacces?.name }}
+            <h4 v-if="isEmptyMoyenacces">
+                {{ zone.hauteur }} M, {{ zone.moyenacces?.name }}
             </h4>
         </div>
         <div class="col">
             <Icon 
+                v-if="isEmptyMoyenacces"
                 name="circle-plus" 
                 class="pointer"
                 @click="generateElement('textarea', {
-                    content: zone.moyenacces?.name
+                    content: `${zone.hauteur} M, ${zone.moyenacces?.name}`
                 })"
             />
         </div>
@@ -23,7 +24,7 @@
 
 <script>
 
-import { inject } from 'vue'
+import { computed, inject } from 'vue'
 
 export default {
     name: 'camping-section',
@@ -34,10 +35,15 @@ export default {
         }
     },
 
-    setup () {
+    setup (props) {
         
         const generateElement = inject('generateElement')
+        const isEmptyMoyenacces = computed(() => {
+            return props.zone.moyenacces != null && props.zone.moyenacces != '' && props.zone.hauteur != 0
+        })
+
         return {
+            isEmptyMoyenacces,
             generateElement
         }
     }

@@ -9,7 +9,7 @@
             <h4 class="text-base orange">{{ category }}</h4>
         </div>
 
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 flex-wrap">
             <ged-detail-files :gedDetail="gedDetail" />
         </div>
 

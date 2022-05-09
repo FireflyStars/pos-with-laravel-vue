@@ -6,7 +6,6 @@ const itemAttributes = reactive({
     width: '',
     height: '',
     fontSize: '',
-    // lineHeight: '',
     fontFamily: 'poppins',
     color: '',
     textAlign: 'left',
@@ -16,7 +15,11 @@ const itemAttributes = reactive({
     zIndex: 0,
     borderColor: '',
     borderWidth: 0,
-    borderStyle: 'solid'
+    borderStyle: 'solid',
+    svg: {
+        stroke: null,
+        strokeWidth: 0.4
+    }
 })
 
 export default function useStyles() {
@@ -47,14 +50,12 @@ export default function useStyles() {
 
             }
 
-            // for(let attribute in itemAttributes) {
-            //    if(itemAttributes[attribute] == '') {
-            //         itemAttributes[attribute] = getComputedAttributeValue(attribute, oldStyles[attribute])
-            //    }
-            // }
-
-
         }
+    }
+
+    const loadSvgAttributes = ({ stroke = '#000', strokeWidth = 0.4 }) => {
+        itemAttributes.svg.stroke = stroke
+        itemAttributes.svg.strokeWidth = strokeWidth
     }
 
     const getComputedAttributeValue = (style, value) => {
@@ -81,7 +82,6 @@ export default function useStyles() {
         itemAttributes.width = '',
         itemAttributes.height = '',
         itemAttributes.fontSize = '',
-        // itemAttributes.lineHeight = '',
         itemAttributes.fontFamily = 'poppins',
         itemAttributes.color = '',
         itemAttributes.textAlign = 'left',
@@ -92,11 +92,14 @@ export default function useStyles() {
         itemAttributes.borderColor = '',
         itemAttributes.borderWidth = 0,
         itemAttributes.borderStyle = 'solid'
+        itemAttributes.svg.stroke = null
+        itemAttributes.svg.strokeWidth = null
     }
 
     const getStylesOfElement = (element) => {
         
         const computedStyles = window.getComputedStyle(element)
+        const { width, height } = element.getBoundingClientRect()
 
         return {
             left: element.style.left,
@@ -104,10 +107,9 @@ export default function useStyles() {
             top: element.style.top,
             bottom: element.style.bottom,
             transform: element.style.transform,
-            width: element.clientWidth,
-            height: element.clientHeight,
+            width,//element.clientWidth,
+            height, //element.clientHeight,
             fontSize: computedStyles.fontSize,
-            // lineHeight: computedStyles.lineHeight, 
             fontFamily: computedStyles.fontFamily,
             color: computedStyles.color,
             textAlign: computedStyles.textAlign,
@@ -120,25 +122,32 @@ export default function useStyles() {
     }
 
     const getComputedStyle = (styles, elementOldStyles, item = '') => {
-        
-        styles = {
-            top: styles.top ? `${styles.top}px` : elementOldStyles.top,
-            left: styles.left ? `${styles.left}px` : elementOldStyles.left,
-            transform: styles.transform ? styles.transform : elementOldStyles.transform,
-            width: styles.width ? `${styles.width}px` : elementOldStyles.width,
-            height: styles.height ? `${styles.height}px` : elementOldStyles.height,
-            fontSize: styles.fontSize ? `${styles.fontSize}px` : elementOldStyles.fontSize,
-            // lineHeight: styles.lineHeight ? styles.lineHeight : elementOldStyles.lineHeight,
-            fontFamily: styles.fontFamily ? styles.fontFamily : elementOldStyles.fontFamily,
-            color: styles.color ? styles.color : elementOldStyles.color,
-            textAlign: styles.textAlign ? styles.textAlign : elementOldStyles.textAlign,
-            zIndex: styles.zIndex ? styles.zIndex : elementOldStyles.zIndex,
-            borderColor: styles.borderColor ? styles.borderColor : elementOldStyles.borderColor,
-            borderStyle: styles.borderStyle ? styles.borderStyle : elementOldStyles.borderStyle,
-            borderWidth: styles.borderWidth ? `${styles.borderWidth}px` : elementOldStyles.borderWidth,
-        }
 
-        if(item == 'table') delete styles.lineHeight
+        if(item == 'svg') {
+            styles = {
+                top: styles.top ? `${styles.top}px` : elementOldStyles.top,
+                left: styles.left ? `${styles.left}px` : elementOldStyles.left,
+                transform: styles.transform ? styles.transform : elementOldStyles.transform,
+            }
+        }
+        
+        else {
+            styles = {
+                top: styles.top ? `${styles.top}px` : elementOldStyles.top,
+                left: styles.left ? `${styles.left}px` : elementOldStyles.left,
+                transform: styles.transform ? styles.transform : elementOldStyles.transform,
+                // width: styles.width ? `${styles.width}px` : elementOldStyles.width,
+                // height: styles.height ? `${styles.height}px` : elementOldStyles.height,
+                color: styles.color ? styles.color : elementOldStyles.color,
+                'font-size': styles.fontSize ? `${styles.fontSize}px` : elementOldStyles.fontSize,
+                'font-family': styles.fontFamily ? styles.fontFamily : elementOldStyles.fontFamily,
+                'text-align': styles.textAlign ? styles.textAlign : elementOldStyles.textAlign,
+                'z-index': styles.zIndex ? styles.zIndex : elementOldStyles.zIndex,
+                'border-color': styles.borderColor ? styles.borderColor : elementOldStyles.borderColor,
+                'border-style': styles.borderStyle ? styles.borderStyle : elementOldStyles.borderStyle,
+                'border-width': styles.borderWidth ? `${styles.borderWidth}px` : elementOldStyles.borderWidth,
+            }
+        }
 
         let computedStyles = ''
 
@@ -157,6 +166,7 @@ export default function useStyles() {
     return {
         itemAttributes,
         getComputedStyle,
+        loadSvgAttributes,
         loadDefaultStyles,
         getStylesOfElement,
     }

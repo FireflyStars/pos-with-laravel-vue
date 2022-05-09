@@ -75,8 +75,20 @@
         <path d="M1 11L10 1L19 11" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
 
-    <svg v-else-if="name == 'egg'" width="35" height="25" viewBox="0 0 35 25" fill="none" xmlns="http://www.w3.org/2000/svg" v-bind="$attrs">
-        <path d="M33 12.5C33 15.1382 31.5063 17.7154 28.7119 19.7114C25.9213 21.7046 21.9637 23 17.5 23C13.0363 23 9.07867 21.7046 6.28811 19.7114C3.49371 17.7154 2 15.1382 2 12.5C2 9.86176 3.49371 7.28463 6.28811 5.28863C9.07867 3.29538 13.0363 2 17.5 2C21.9637 2 25.9213 3.29538 28.7119 5.28863C31.5063 7.28463 33 9.86176 33 12.5Z" stroke="black" stroke-width="4"/>
+    <svg 
+        v-else-if="name == 'egg'" 
+        :width="$attrs.width || 35" 
+        :height="$attrs.height || 25" 
+        viewBox="0 0 35 25" 
+        fill="none" 
+        xmlns="http://www.w3.org/2000/svg" 
+        v-bind="$attrs"
+    >
+        <path 
+            d="M33 12.5C33 15.1382 31.5063 17.7154 28.7119 19.7114C25.9213 21.7046 21.9637 23 17.5 23C13.0363 23 9.07867 21.7046 6.28811 19.7114C3.49371 17.7154 2 15.1382 2 12.5C2 9.86176 3.49371 7.28463 6.28811 5.28863C9.07867 3.29538 13.0363 2 17.5 2C21.9637 2 25.9213 3.29538 28.7119 5.28863C31.5063 7.28463 33 9.86176 33 12.5Z" 
+            :stroke="$attrs.stroke || 'black'" 
+            :stroke-width="$attrs.strokeWidth || 0.4"
+        />
     </svg>
 
     <svg v-else-if="name == 'plus-o'" width="36" height="29" viewBox="0 0 36 29" fill="none" xmlns="http://www.w3.org/2000/svg" v-bind="$attrs">
@@ -157,6 +169,27 @@
     </svg>
 
     <svg 
+        v-else-if="name == 'table'"
+        version="1.1" 
+        id="Layer_1" 
+        xmlns="http://www.w3.org/2000/svg" 
+        xmlns:xlink="http://www.w3.org/1999/xlink" 
+        viewBox="0 0 445 445" 
+        style="enable-background:new 0 0 445 445;" 
+        xml:space="preserve"
+        :width="$attrs.width || 20"
+        :height="$attrs.height || 20"
+        v-bind="$attrs"
+    >
+        <path 
+            d="M0,37.215v55v15v300.57h445v-300.57v-15v-55H0z M276.667,277.595H168.333v-70.19h108.334V277.595z M306.667,207.405H415
+            v70.19H306.667V207.405z M276.667,307.595v70.19H168.333v-70.19H276.667z M30,207.405h108.333v70.19H30V207.405z M168.333,177.405
+            v-70.19h108.334v70.19H168.333z M138.333,107.215v70.19H30v-70.19H138.333z M30,307.595h108.333v70.19H30V307.595z M306.667,377.785
+            v-70.19H415v70.19H306.667z M415,177.405H306.667v-70.19H415V177.405z"
+        />
+    </svg>
+
+    <svg 
         v-else-if="name== 'loader'"
         :width="$attrs.width || 30"
         :height="$attrs.height || 30"
@@ -191,6 +224,125 @@
     >
         <span class="visually-hidden">Loading...</span>
     </div>
+
+    <svg 
+        v-else-if="name == 'report-arrow-figma'"
+        :width="$attrs.width || 30"
+        :height="$attrs.height || 30"
+        viewBox="0 0 50 50" fill="none" 
+        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        v-bind="$attrs"
+    >
+        <rect x="19.3647" y="0.398438" width="42" height="28" transform="rotate(43.4086 19.3647 0.398438)" fill="url(#pattern0)"/>
+        <defs>
+            <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
+                <use xlink:href="#image0_1050_3244" transform="translate(0 -0.25) scale(0.00195312 0.00292969)"/>
+            </pattern>
+            <image id="image0_1050_3244" width="512" height="512" xlink:href="data:image/png;base64,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"/>
+        </defs>
+    </svg>
+
+    <svg 
+        v-else-if="name == 'report-arrow'"
+        version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" 
+        xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	    viewBox="0 0 512 512" 
+        style="enable-background:new 0 0 512 512;" 
+        xml:space="preserve"
+        :width="$attrs.width || 30" 
+        :height="$attrs.height || 30"
+        v-bind="$attrs" 
+    >
+        <path 
+            :stroke="$attrs.color || '#000'"
+            :stroke-width="$attrs.strokeWidth || 0.4"
+            d="M506.134,241.843c-0.006-0.006-0.011-0.013-0.018-0.019l-104.504-104c-7.829-7.791-20.492-7.762-28.285,0.068
+            c-7.792,7.829-7.762,20.492,0.067,28.284L443.558,236H20c-11.046,0-20,8.954-20,20c0,11.046,8.954,20,20,20h423.557
+            l-70.162,69.824c-7.829,7.792-7.859,20.455-0.067,28.284c7.793,7.831,20.457,7.858,28.285,0.068l104.504-104
+            c0.006-0.006,0.011-0.013,0.018-0.019C513.968,262.339,513.943,249.635,506.134,241.843z"
+        />
+    </svg>
+    
+
+    <img 
+        v-else-if="name == 'report-arrow-image'"
+        src="data:image/png;base64,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" 
+        alt="Arrow long"
+        :width="$attrs.width || 30"
+        :height="$attrs.height || 30"
+        v-bind="$attrs"
+    />
+
+    <svg 
+        v-else-if="name === 'arrow-right'" 
+        viewBox="0 0 24 24" 
+        :stroke-width="$attrs.strokeWidth || 2" 
+        :stroke="$attrs.stroke || 'currentColor'" 
+        fill="none" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" 
+        class="icon icon-tabler icon-tabler-arrow-narrow-right"
+        v-bind="$attrs"
+    >
+        <path d="M0 0h24v24H0z" stroke="none"></path>
+        <path d="M5 12h14M15 16l4-4M15 8l4 4"></path>
+    </svg>
+
+    <svg 
+        v-else-if="name === 'arrow-circle-right'" 
+        fill="none" 
+        viewBox="0 0 24 24" 
+        stroke="currentColor"
+        v-bind="$attrs"
+    >
+        <path 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            stroke-width="2" 
+            d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" 
+        />
+    </svg>
+
+    <svg 
+        v-else-if="name === 'arrow-diagonal'" 
+        fill="currentColor" 
+        viewBox="0 0 24 24"
+        v-bind="$attrs"
+    >
+        <path 
+            d="M20 4h1a1 1 0 00-1-1v1zm-1 12a1 1 0 102 0h-2zM8 3a1 1 0 000 2V3zM3.293 19.293a1 1 0 101.414 1.414l-1.414-1.414zM19 4v12h2V4h-2zm1-1H8v2h12V3zm-.707.293l-16 16 1.414 1.414 16-16-1.414-1.414z" 
+        />
+    </svg>
+
+    <svg 
+        v-else-if="name === 'arrow-back'" 
+        viewBox="0 0 24 24" 
+        :stroke-width="$attrs.strokeWidth || 2" 
+        :stroke="$attrs.stroke || 'currentColor'" 
+        fill="none" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" 
+        class="icon icon-tabler icon-tabler-arrow-back-up"
+        v-bind="$attrs"
+    >
+        <path d="M0 0h24v24H0z" stroke="none"></path>
+        <path d="M9 13L5 9l4-4M5 9h11a4 4 0 010 8h-1"></path>
+    </svg>
+
+
+    <svg 
+        v-else-if="name == 'comment-box'"
+        :width="$attrs.width || 36" 
+        :height="$attrs.height || 29" 
+        viewBox="0 0 36 29" fill="none" xmlns="http://www.w3.org/2000/svg"
+        v-bind="$attrs"
+    >
+        <path 
+            d="M33 0H3C2.20435 0 1.44129 0.30125 0.87868 0.837478C0.31607 1.37371 0 2.10099 0 2.85933V25.1907C0 25.949 0.31607 26.6763 0.87868 27.2125C1.44129 27.7488 2.20435 28.05 3 28.05C3.76162 28.0459 4.49307 27.7658 5.046 27.2665L9.132 23.5952C9.24265 23.4964 9.38842 23.4413 9.54 23.4408H33C33.7957 23.4408 34.5587 23.1395 35.1213 22.6033C35.6839 22.0671 36 21.3398 36 20.5814V2.85361C35.9984 2.09626 35.6816 1.37045 35.1192 0.835455C34.5568 0.300463 33.7946 -1.5147e-06 33 0ZM33.6 20.5872C33.6 20.7388 33.5368 20.8843 33.4243 20.9915C33.3117 21.0988 33.1591 21.159 33 21.159H9.552C8.78706 21.1587 8.05088 21.4369 7.494 21.9368L3.414 25.6081C3.32876 25.6856 3.2215 25.7374 3.10557 25.7572C2.98964 25.7769 2.87018 25.7637 2.76206 25.7192C2.65395 25.6747 2.56198 25.6008 2.49759 25.5069C2.43321 25.4129 2.39927 25.3029 2.4 25.1907V2.85933C2.4 2.70766 2.46321 2.5622 2.57574 2.45496C2.68826 2.34771 2.84087 2.28746 3 2.28746H33C33.1591 2.28746 33.3117 2.34771 33.4243 2.45496C33.5368 2.5622 33.6 2.70766 33.6 2.85933V20.5872Z" 
+            :stroke="$attrs.stroke || 'black'"
+            :stroke-width="$attrs.strokeWidth || 0.4"
+        />
+    </svg>
 
         
     <img 

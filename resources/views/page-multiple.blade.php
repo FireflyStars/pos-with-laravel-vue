@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Pages Report</title>
+    <title>Report</title>
     
     <style>
         * {
@@ -18,10 +18,8 @@
         }
         main {
             position: relative;
-            width: 90%;
-            margin: 1rem auto;
-            min-height: 45rem;
-            max-height: 55rem;
+            width: 100%;
+            height: 100%;
         }
         .draggable, .item {
             z-index: 10;
@@ -78,30 +76,20 @@
         .order-1 {
             order: 1 !important;
         }
-
-        .template-header {
-            top: 0;
-            max-height: 4.75rem !important;
-        }
-        .template-footer {
-            bottom: 0;
-            max-height: 4.75rem !important;
-        }
-        .template-header,  
-        .template-footer {
+        .template-affiliate {
+            bottom: 20px;
+            left: 0;
             width: 100%;
             position: absolute;
-            left: 0;
-        }
-        .template-footer img,
-        .template-footer img {
-            width: 100%;
-            height: 100%;
             padding: 1rem;
-            object-fit: cover;
+            font-size: 10px;
+            font-family: inherit;
+            display: grid;
+            grid-template-columns: 10% 90%;
         }
-        .template-body {
-            margin-top: 6.75rem;
+        .template-affiliate .page-number {
+            font-weight: bold;
+            font-size: 12px;
         }
         .template-body span {
             word-break: break-all !important;
@@ -110,8 +98,8 @@
             width: auto;
             height: auto;
             object-fit: cover;
-            width: 25rem;
-            height: 25rem;
+            max-width: 25rem;
+            max-height: 25rem;
             border: 3px solid orange;
             position: absolute;
         }
@@ -151,25 +139,33 @@
             align-items: center;
         }
 
+        .title-bar .content {
+            flex-grow: 1;
+        }
+
         .textarea {
             position: absolute !important;
             border: none;
-            min-width: 350px;
-            min-height: 50px;
+            width: auto;
+            height: auto;
             border: 1px solid #ccc;
-            z-index: 99999;
+            z-index: 13;
             word-wrap: normal;
+            color: #000;
         }
        
-        .textarea::before,
-        .textarea::after {
-            float: none;
-            clear: both;
-        }
-
         .textarea p {
             margin-bottom: 0 !important;
             margin-top: 0 !important;
+        }
+
+        .textarea .heading {
+            font-style: normal;
+            font-family: inherit;
+            font-size: 20px;
+            line-height: 29px;
+            color: #212529;
+            font-weight: 500;
         }
 
         .table {
@@ -194,18 +190,22 @@
 <body>
 
     @foreach ($pages as $page)
-        <?php $break_rule = $loop->last ? 'avoid-page': 'page';  ?>
-        <main style="break-after: {{ $break_rule }}; position: relative; margin: 1rem;">
+        <?php 
+            $break_rule = $loop->last ? 'avoid-page': 'page';
+            $background = $builder::get_page_background($page);
+            $last = $loop->index == count((array) $pages) - 1;
+            $first = $loop->first;
+        ?>
+        <main 
+            style="
+            break-after: {{ $break_rule }};
+            position: relative; 
+            background-image: url('{{$background}}'); 
+            background-repeat: no-repeat; 
+            background-size: cover; 
+            background-position: center;"
+        >
 
-            <div class="template-header" style="max-height: 6rem; position: absolute; top: 20px; left: 0">
-                <img 
-                    v-if="templates.length"
-                    src="{{ $builder::get_active_template($page->template_id)['template']['header'] }}" 
-                    alt="Template header"
-                    style="width: 90%; height: 6rem;"  
-                >
-            </div>
-        
             <div class="template-body">
                 
                 @foreach ($page->elements as $element)
@@ -221,7 +221,7 @@
                     @if (strtolower($element->name) == 'textarea')
                         <div 
                         class="{{ $element->attributes->class }} textarea" 
-                        style="{{ $element->attributes->style ?? '' }} position: absolute; min-height: 50px"
+                        style="{{ $element->attributes->style ?? '' }} position: absolute; border: 0 !important;"
                         >{!! $element->content ?? '' !!}
                         </div>
                     @endif
@@ -229,8 +229,9 @@
                     @if (strtolower($element->name) == 'svg')
                         <?php 
                             
-                            $name = $svgs[$element->attributes->name];
-                            $src = 'data:image/svg+xml;base64,' . base64_encode($name);
+                            // $name = $svgs[$element->attributes->name];
+                            // $src = 'data:image/svg+xml;base64,' . base64_encode($name);
+                            $src = svg_base64_encode($element->attributes->name, $element->attributes->stroke);
                         ?>
                         <img 
                             class="{{ $element->attributes->class ?? 'draggable' }} svg"
@@ -242,7 +243,7 @@
                     @if (strtolower($element->name) == 'img')
                         <?php
                             $src = $element->prefetched 
-                            ? $builder::convert_base64(public_path('\/storage/' . $element->dataFile))
+                            ? $builder::convert_base64(config('app.url') . '/' . 'storage/' . $element->dataFile)
                             : $builder::convert_resource_file("Img#".$element->attributes->id);
                         ?>
                         <img 
@@ -260,14 +261,14 @@
                         >
                             <tr @if(optional($element->attributes)->headers ?? true) @endif>
                                 @for ($i = 1; $i <= $element->attributes->cols; $i++)
-                                    <?php $col = '1'.$i; ?>
-                                    <th>{{ optional(ucFirst($element->content->header)->$col ?? 'title ' . $i) }}</th>
+                                    <?php $col = 'tr-1' . $i; ?>
+                                    <th>{{ optional($element->content->header)->$col ?? 'title ' . $i }}</th>
                                 @endfor    
                             </tr>
                             @for($row = 1; $row <= $element->attributes->rows; $row++)
                                 <tr>
                                     @for($col = 1; $col <= $element->attributes->cols; $col++)
-                                        <?php $rowValue = $row .''. $col; ?>
+                                        <?php $rowValue = 'tr-' . $row .''. $col; ?>
                                         <td>{{ optional($element->content->body)->$rowValue ?? 'Col '. $col }}</td>
                                     @endfor
                                 </tr>
@@ -279,14 +280,16 @@
                 @endforeach
         
             </div>
-        
-            <div class="template-footer" style="max-height: 6rem; position: absolute; bottom: 0; left: 0">
-                <img 
-                    src="{{ $builder::get_active_template($page->template_id)['template']['footer'] }}" 
-                    alt="Template footer"
-                    style="width: 90%; max-height: 6rem;" 
+            @if (!$last && !$first)
+
+                <div 
+                    class="template-affiliate" 
+                    style="display: flex;"
                 >
-            </div>
+                    <div class="page-number" style="margin-top: 20px !important;margin-left: 20px; color: #F45B1F; font-weight: bold;">{{ (int) $loop->index }}/{{ count((array)$pages) }}</div>
+                    <div class="content" style="margin-left: 20px;">{!! optional($affiliate)->footerreport ?? '' !!}</div>
+                </div>
+            @endif
 
         </main>
         
@@ -294,10 +297,5 @@
 
 </body>
 
-<script type="text/php">
-    if ( isset($pdf) ) {
-        $pdf->page_text(550, 10, "{PAGE_NUM}/{PAGE_COUNT}", null, 12, array(0,0,0));
-    }
-</script> 
 
 </html>

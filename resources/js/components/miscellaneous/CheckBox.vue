@@ -1,6 +1,6 @@
 <template>
     <div 
-    @click.prevent="togglechkbox"
+    @click="togglechkbox"
      class="chkbox_wrap">
         <span 
         class="chkbox" 
@@ -8,19 +8,22 @@
         :style="styles"
         >
         </span>
-        <label class="noselect body_regular">{{ title }}</label>
+        <label class="noselect body_regular" v-if="title!=null" style="margin-left:0.5rem;">{{ title }}</label>
     </div>
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed,ref, watch } from 'vue'
 export default {
     
     name: "CheckBox",
 
     props: {
         id: [String, Number],
-        checked: Boolean,
+        checked: {
+            type:Boolean,
+            default:false
+            },
         name: String,
         title: String,
         classes: {
@@ -30,25 +33,28 @@ export default {
         }
     },
 
-    emits: ['changed'],
+    emits: ['change'],
 
     setup(props, { emit, attrs }) { 
-
+        const check = ref(false);
+        check.value = props.checked;
         const togglechkbox = () => {
-            const check = !props.checked
-            emit('changed', { value: check, id: props.id, name: props.name })
+            check.value=!check.value;
+            emit('change', { value: check.value, id: props.id, name: props.name })
         }
 
         const styles = computed(() => {
             return {
-                background: attrs.background && props.checked ? `${attrs.background} !important`: '',
+                background: attrs.background && check.value ? `${attrs.background} !important`: '',
                 color: attrs.color && props.color ? `${attrs.color} !important`: '',
                 fontFamily: attrs.fontFamily ? `${attrs.fontFamily} !important`: '',
                 border: attrs.border ? `${attrs.border} !important`: '',
             }
         })
-
-        const classSet = computed(() => [{ 'checked': props.checked }, ...props.classes.split(',')])
+        watch(() => props.checked, (current_val, previous_val) => {
+                check.value=current_val;
+            });
+        const classSet = computed(() => [{ 'checked': check.value }, ...props.classes.split(',')])
         
         return {
             styles,
@@ -105,7 +111,6 @@ export default {
     .chkbox_wrap {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
         margin: .3rem 0;
     }
     .filters span.chkbox{

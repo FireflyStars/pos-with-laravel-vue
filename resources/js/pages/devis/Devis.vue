@@ -14,16 +14,29 @@
 
             <div class="row m-0 ml-5 mr-5">
                         <div class="col">
-                            <tab-pane :tabs="{first:'First tab',second:'Second tab',third:'Third tab'}" class="almarai_700_normal">
-                                <template v-slot:first>
-                                    1st
+                            <tab-pane :tabs="tabs" current='tout' class="almarai_700_normal">
+                                <template v-slot:tout>
+                                   <item-list-table :table_def="all_devis" ></item-list-table>
                                 </template>
-                                <template v-slot:second>
+                                <template v-slot:en_cours>
                                     2nd
                                 </template>
-                               <template v-slot:third>
+                               <template v-slot:a_faire>
                                     3rd
                                 </template>
+                                 <template v-slot:gagne>
+                                    4
+                                </template>
+                                      <template v-slot:perdu>
+                                    5
+                                </template>
+                                      <template v-slot:en_retard>
+                                    6
+                                </template>
+                                      <template v-slot:mes_devis>
+                                    7
+                                </template>
+                                
                             </tab-pane>
                         </div>
                          
@@ -43,7 +56,11 @@
 
 import MainHeader from '../../components/layout/MainHeader.vue';
 import SideBar from '../../components/layout/SideBar.vue';
-import { ref, onMounted, nextTick } from 'vue';
+import ItemListTable from '../../components/miscellaneous/ItemListTable/ItemListTable.vue';
+import { ref, onMounted, nextTick, computed } from 'vue';
+import { useStore } from 'vuex';
+import { DEVIS_LIST_MODULE, GET_DEVIS_LIST_DEF } from '../../store/types/types';
+
 
 export default {
 
@@ -52,9 +69,25 @@ export default {
     components: {
       MainHeader,
       SideBar,
+      ItemListTable
     },
 
     setup() {
+
+        const tabs=ref({});
+        const store=useStore();
+
+        const all_devis=computed(()=>store.getters[`${DEVIS_LIST_MODULE}${GET_DEVIS_LIST_DEF}`]);
+    
+        tabs.value= {
+            tout:'Tout',
+            en_cours:'En cours',
+            a_faire:'A faire',
+            gagne:'Gagné',
+            perdu:'Perdu',
+            en_retard:'En retard',
+            mes_devis:'Mes devis',
+        };
 
         const showcontainer = ref(false)
 
@@ -66,7 +99,9 @@ export default {
         })
 
         return {
-            showcontainer
+            showcontainer,
+            tabs,
+            all_devis
         }
 
   }

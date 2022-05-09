@@ -29,7 +29,9 @@
 .bg-color {
     background: #E5E5E5;
 }
-
+.text-gray{
+    color: #C3C3C3 !important;
+}
 .self-end {
     justify-self: flex-end !important;
 }
@@ -54,3 +56,140 @@
     font-family: 'Almarai regular';
     font-style: normal;
 }  
+.devis-icon{
+    display: block;
+    width: 44px;
+    height: 46px;
+    background-image: url(../js/images/devis-icon.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.edit-icon{
+    display: block;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    background-image: url(../js/images/edit.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.call-external{
+    display: block;
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    background-image: url(../js/images/call-external.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.home-icon{
+    display: block;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    background-image: url(../js/images/home-icon.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.roof-icon{
+    display: block;
+    cursor: pointer;
+    width: 23px;
+    height: 25px;
+    background-image: url(../js/images/roof-icon.png);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.camera-icon{
+    display: block;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    background-image: url(../js/images/camera-icon.png);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.plus-icon{
+    display: block;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    background-image: url(../js/images/plus-icon.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.cancel-icon{
+    display: block;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    background-image: url(../js/images/cancel-icon.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.customer-icon{
+    display: block;
+    cursor: pointer;
+    width: 47px;
+    height: 40px;
+    background-image: url(../js/images/user-fill-icon.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.installation-icon,
+.securite-icon,
+.prestation-icon{
+    display: block;
+    width: 53px;
+    height: 53px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.installation-icon{
+    background-image: url(../js/images/install-icon.svg);
+}
+.securite-icon{
+    background-image: url(../js/images/securite-icon.svg);
+}
+.prestation-icon{
+    background-image: url(../js/images/prestation-icon.svg);
+}
+.arrow-icon{
+    width: 13px;   
+    height: 13px;
+    display: block;
+    background-image: url(../js/images/left-arrow.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;    
+}
+.ouvrage-section.open{
+    .arrow-icon{
+        background-image: url(../js/images/down-arrow.svg);
+    }   
+}
+.cursor-pointer{
+    cursor: pointer;
+}
+.custom-text-danger{
+    color: #E8581B !important;
+}
+.text-custom-success{
+    color: #42A71E !important;
+}
+.bg-gray{
+    background-color: #F8F8F8 !important;
+}
+.text-gray{
+    color: #868686 !important;
+}
