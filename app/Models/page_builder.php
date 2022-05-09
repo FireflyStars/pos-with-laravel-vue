@@ -39,11 +39,6 @@ class page_builder extends Model
         }
     }
 
-    public static function get_active_template($id) 
-    {
-        return optional(self::templates()->where('id', $id))->first();
-    }
-
     public static function convert_base64($path) 
     {
         $extenstion = pathinfo($path, PATHINFO_EXTENSION);
@@ -58,13 +53,20 @@ class page_builder extends Model
         return self::convert_base64($path);
     }
 
-    public static function get_svgs() 
+    public static function svg_base64_encode($name, $stroke) 
     {
+        $name = self::get_svgs($stroke)[$name];
+        return 'data:image/svg+xml;base64,' . base64_encode($name) . $name;
+    }
+
+    public static function get_svgs($stroke = 'black') 
+    {
+        $strokeColor = $stroke ?? 'black';
         return [
             'arrow-right' => '<svg 
                 viewBox="0 0 24 24" 
                 stroke-width="0.4" 
-                stroke="black" 
+                stroke="<?=$strokeColor?>" 
                 fill="none" 
                 stroke-linecap="round" 
                 stroke-linejoin="round" 
