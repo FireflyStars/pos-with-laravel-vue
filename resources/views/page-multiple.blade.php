@@ -229,9 +229,7 @@
                     @if (strtolower($element->name) == 'svg')
                         <?php 
                             
-                            // $name = $svgs[$element->attributes->name];
-                            // $src = 'data:image/svg+xml;base64,' . base64_encode($name);
-                            $src = svg_base64_encode($element->attributes->name, $element->attributes->stroke);
+                            $src = $builder::svg_base64_encode($element->attributes);
                         ?>
                         <img 
                             class="{{ $element->attributes->class ?? 'draggable' }} svg"

@@ -183,13 +183,14 @@ export default {
         }
 
         const getReport = async () => {
+            await getOrderDetails()
             await store.dispatch(`${BUILDER_MODULE}/${GET_REPORT}`, props.id)
             if(!pages.value.length) {
                 toggleModal('report-templates')
                 await getReportTemplates()
             }
             else {
-                getOrderDetails()
+                // getOrderDetails()
             }
             return Promise.resolve()
         }
@@ -210,7 +211,7 @@ export default {
                 nextTick(() => {
                     toggleModal('report-templates', false)
                     getReportTemplate(value)
-                    getOrderDetails()
+                    // getOrderDetails()
                 })
             }
         })
@@ -220,6 +221,9 @@ export default {
             nextTick(async () => {
                 await getReport()
                 showcontainer.value = true
+                if(window?.screen && window?.screen?.width >= 1500) {
+                    showRightContainer.value = true
+                }
             })
         })
       
@@ -275,10 +279,14 @@ $orange: orange;
     top: 0;
     right: 0;
     width: 300px;
-    z-index: 99;
+    z-index: 1;
     position: absolute;
     transition: width .2s;
-   
+    
+    @media only screen and (min-width: 1500px) {
+        width: 530px;
+    }
+
     &-visible {
         width: 530px;
     }

@@ -206,7 +206,10 @@ export default {
         }
 
         const addPage = () => {
-            if(!fetching.value) store.commit(`${BUILDER_MODULE}/${ADD_PAGE}`)
+            if(!fetching.value) {
+                store.commit(`${BUILDER_MODULE}/${ADD_PAGE}`)
+                toggleModal('change-fond', true)
+            }
         }
 
         const deletePage = () => {

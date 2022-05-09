@@ -4,7 +4,7 @@ export default function useHelpers() {
         return string.length > 5 ? string.slice(0, limit) + '...' : string
     }
 
-    const generateId = (length) => {
+    const generateId = (length = 12) => {
         const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
         let result = ''
         const charactersLength = characters.length
@@ -15,8 +15,6 @@ export default function useHelpers() {
     }
 
     const getDomElementParent = (element, className = 'library-item') => {
-        // if(element.className.split(' ').includes(className)) return element.cloneNode(true)
-        // return getDomElementParent(element.parentNode, className)
         return element.closest(`.${className}`)
     }
 

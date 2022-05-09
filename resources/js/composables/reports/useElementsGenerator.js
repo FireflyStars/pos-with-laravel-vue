@@ -19,6 +19,39 @@ import {
 const { generateId } = useHelpers()
 
 export default function useElementsGenerator() {
+
+    const generateTags = (textValue, action = 'generateElement') => {
+        var result = textValue.match(/\[(.*?)\]/g)
+        if(result?.length) {
+            result = result.map(function(val){
+                return val.replace(/\[/g,'').replace(/\]/g, '')
+            })
+            if(result.length) {
+                result.forEach((tag) => generateCustomerInfo(tag, action))
+                return result.length
+            }
+            return false
+        }
+        return false
+    }
+
+    const generatePreRenderedTags = (textValue, action = 'generateTextarea') => {
+        var result = textValue.match(/\[(.*?)\]/g)
+        if(result?.length) {
+            result = result.map(function(val){
+                return val.replace(/\[/g,'').replace(/\]/g, '')
+            })
+            if(result.length) {
+                const tags = []
+                result.forEach((tag) => {
+                    tags.push(getCustomerInfo(tag, action))
+                })
+                return tags
+            }
+            return []
+        }
+        return []
+    }
     
     const generateTextarea = (attributes) => {
         return {
@@ -175,8 +208,91 @@ export default function useElementsGenerator() {
 
     }
 
+    const generateCustomerInfo = (tag) => {
+
+        const order = store.getters[`${BUILDER_MODULE}/order`]
+        tag = tag?.toString()?.trim()
+
+        switch (tag) {
+            case 'customer-name': generateElement('textarea', { 
+                content: `<div>
+                    <div class='heading'>Client</div>
+                    <div>${order?.customer?.name || ''}</div>
+                    <div>${order?.customer?.firstname || ''}</div>
+                    <div>${order?.customer?.compnay || ''}</div>
+                    <div>${order?.customer?.signupdate || ''}</div>
+                </div>`
+            })
+            break
+            case 'customer-contact': generateElement('textarea', { 
+                content: `
+                    <h4 class='title'>Contact</h4>
+                    <div>${order?.contact?.name || ''}</div>
+                    <div>${order?.contact?.email || ''}</div>
+                    <div>${order?.contact?.mobile || ''}</div>
+                    <div>${order?.contact?.type || ''}</div>
+                    <div>${order?.contact?.comment || ''}</div>
+                `
+            })
+            break
+            case 'customer-address': generateElement('textarea', { 
+                content: `<div>
+                    <div class='heading'>Client Address</div>
+                    <div>${order?.customer?.address?.address1 || ''}</div>
+                    <div>${order?.customer?.address?.address2 || ''}</div>
+                    <div>${order?.customer?.address?.city || ''}</div>
+                    <div>${order?.customer?.address?.phone || ''}</div>
+                    <div>${order?.customer?.address?.phone_mobile || ''}</div>
+                    <div>${order?.customer?.address?.vat_number || ''}</div>
+                </div>    
+                `
+            })
+            break
+        }
+
+    }
+
+    const getCustomerInfo = (tag) => {
+
+        const order = store.getters[`${BUILDER_MODULE}/order`]
+        tag = tag?.toString()?.trim()
+
+        switch (tag) {
+            case 'customer-name': return `<div>
+                    <div class='heading'>Client</div>
+                    <div>${order?.customer?.name || ''}</div>
+                    <div>${order?.customer?.firstname || ''}</div>
+                    <div>${order?.customer?.compnay || ''}</div>
+                    <div>${order?.customer?.signupdate || ''}</div>
+                </div>`
+            break
+            case 'customer-contact': return `
+                    <h4 class='title'>Contact</h4>
+                    <div>${order?.contact?.name || ''}</div>
+                    <div>${order?.contact?.email || ''}</div>
+                    <div>${order?.contact?.mobile || ''}</div>
+                    <div>${order?.contact?.type || ''}</div>
+                    <div>${order?.contact?.comment || ''}</div>
+                `
+            break
+            case 'customer-address': return `<div>
+                    <div class='heading'>Client Address</div>
+                    <div>${order?.customer?.address?.address1 || ''}</div>
+                    <div>${order?.customer?.address?.address2 || ''}</div>
+                    <div>${order?.customer?.address?.city || ''}</div>
+                    <div>${order?.customer?.address?.phone || ''}</div>
+                    <div>${order?.customer?.address?.phone_mobile || ''}</div>
+                    <div>${order?.customer?.address?.vat_number || ''}</div>
+                </div>    
+                `
+            break
+        }
+
+    }
+
     return {
         promptImage,
+        generateTags,
         generateIcon,
         generateTable,
         generateImage,
@@ -184,7 +300,9 @@ export default function useElementsGenerator() {
         generateElement,
         generateTextarea,
         generateBackground,
+        generateCustomerInfo,
         generatePrefetchedImage,
+        generatePreRenderedTags,
     }
 
 }

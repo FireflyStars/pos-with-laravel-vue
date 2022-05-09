@@ -1,6 +1,7 @@
 
 import { unref, computed } from 'vue'
 import { isEmpty } from 'lodash'
+import useHelpers from '../useHelpers'
 import store from '../../store/store'
 import useElementsGenerator from './useElementsGenerator'
 
@@ -15,9 +16,11 @@ from '../../store/types/types'
 
 export default function useReports() {
 
+    const { generateId } = useHelpers()
+    const { generateElement, generatePreRenderedTags } = useElementsGenerator()
+
     const pages = computed(() => store.getters[`${BUILDER_MODULE}/pages`])
 
-    const { generateElement } = useElementsGenerator()
 
     const formatFormData = (pages) => {
 
@@ -93,6 +96,23 @@ export default function useReports() {
                             prefetched: true,
                         })
                     }
+                    else if(element.name == 'textarea') {
+                        const tags = generatePreRenderedTags(element.content)
+                        if(tags.length) {
+                            tags.forEach((tag, i) => {
+                                formattedPage.elements.push({ 
+                                    ...element,
+                                    attributes: {
+                                        ...element.attributes,
+                                        id: generateId(),
+                                        style: element.attributes.style += ` margin: ${+i*2}rem;`
+                                    },
+                                    content: tag
+                                })
+                            })
+                        }
+                        else formattedPage.elements.push({ ...element })
+                    }
                     else {
                         formattedPage.elements.push({ ...element })
                     }
@@ -107,6 +127,7 @@ export default function useReports() {
         return formattedPages
 
     }
+    
 
     const findFile = (files, id) => {
         return files.find(file => file.id == id)
@@ -131,7 +152,6 @@ export default function useReports() {
         })
         store.commit(`${BUILDER_MODULE}/${RESET_PAGES}`, [])
     }
-
 
     const generatePagePdf = async (orderId = null) => {
         try {
@@ -172,11 +192,11 @@ export default function useReports() {
             case 'customer-contact': generateElement('textarea', { 
                 content: `
                     <h4 class='title'>Contact</h4>
-                    <div>${order.contact?.name || ''}</div>
-                    <div>${order.contact?.email || ''}</div>
-                    <div>${order.contact?.mobile || ''}</div>
-                    <div>${order.contact?.type || ''}</div>
-                    <div>${order.contact?.comment || ''}</div>
+                    <div>${order?.contact?.name || ''}</div>
+                    <div>${order?.contact?.email || ''}</div>
+                    <div>${order?.contact?.mobile || ''}</div>
+                    <div>${order?.contact?.type || ''}</div>
+                    <div>${order?.contact?.comment || ''}</div>
                 `
             })
             break

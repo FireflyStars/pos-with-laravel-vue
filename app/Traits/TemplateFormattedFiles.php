@@ -50,7 +50,7 @@ trait TemplateFormattedFiles {
             foreach($pages as $page) 
             {
 
-                if(count($page['background'])) 
+                if(!is_null($page['background']) && count($page['background'])) 
                 {
                     $background = $page['background'];
                     if($background['prefetched'] == true) 
