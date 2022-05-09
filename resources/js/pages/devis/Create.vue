@@ -194,7 +194,7 @@
                                 <span class="arrow-icon ms-auto"></span>
                               </div>
                               <div class="add-btn ms-5 ps-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" 
-                                @click="openOuvrageModal('Installation', zoneIndex)">
+                                @click="openOuvrageModal('installation', zoneIndex)">
                                 <span class="plus-icon me-2"></span> AJOUTER UN OUVRAGE
                               </div>
                             </div>
@@ -218,7 +218,7 @@
                                 <span class="arrow-icon ms-auto"></span>
                               </div>
                               <div class="add-btn ms-5 ps-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" 
-                                @click="openOuvrageModal('Sécurité', zoneIndex)">
+                                @click="openOuvrageModal('security', zoneIndex)">
                                 <span class="plus-icon me-2"></span> AJOUTER UN OUVRAGE
                               </div>
                             </div>
@@ -255,39 +255,35 @@
                             <div class="ouvrage-list d-flex">
                               <div class="col-4">
                                 <ul class="nav flex-column">
-                                  <li class="nav-item">
-                                    <a class="nav-link d-flex align-items-center px-0 active" data-id="home" href="javascript:;"
-                                      @click="activeItem"
+                                  <li class="nav-item" v-for="(ouvrage, index) in zone.prestationOuvrage.ouvrages" :key="index">
+                                    <a class="nav-link custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': index == 0}" :data-id="'ouvrage-'+ouvrage.id" href="javascript:;"
+                                      @click="activeOuvrage"
                                     >
-                                      <span class="option-icon me-2"><span class="option-icon-dot"></span></span> Ouvrage Securite
-                                    </a>
-                                  </li>
-                                  <li class="nav-item">
-                                    <a class="nav-link d-flex align-items-center px-0" data-id="menu1" href="javascript:;"
-                                      @click="activeItem"
-                                    >
-                                      <span class="option-icon me-2"><span class="option-icon-dot"></span></span>Narcelle 30 mm
-                                    </a>
-                                  </li>
-                                  <li class="nav-item">
-                                    <a class="nav-link d-flex align-items-center px-0" data-id="menu2" href="javascript:;"
-                                      @click="activeItem">
-                                      <span class="option-icon me-2"><span class="option-icon-dot"></span></span>Ouvrage Secu1
+                                      <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ ouvrage.name }}
                                     </a>
                                   </li>
                                 </ul>
                               </div>
                               <div class="col-8">
-                                <table class="table table-hover table-bordered" style="margin-top: -40px">
+                                <table class="table table-bordered" style="margin-top: -40px">
                                   <tbody>
-                                    <tr v-for="(item, index) in 5" :key="index">
-                                      <td class="text-center">2</td>
-                                      <td class="text-center">UN</td>
-                                      <td class="text-center">0 hr</td>
-                                      <td class="text-center"></td>
-                                      <td class="text-center">2 000 €</td>
+                                    <tr v-for="(ouvrage, index) in zone.prestationOuvrage.ouvrages" :key="index">
+                                      <td class="text-center"><input type="text" class="form-control form-control-sm" v-model="ouvrage.qty"></td>
                                       <td class="text-center">
-                                        <svg @click="removeOuvrage(index)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <select class="form-control form-control-sm" v-model="ouvrage.unit">
+                                          <option value="1">L</option>
+                                          <option value="2">HR</option>
+                                          <option value="3">UNIT</option>
+                                          <option value="4">KG</option>
+                                          <option value="5">M</option>
+                                          <option value="6">M2</option>
+                                        </select>
+                                      </td>
+                                      <td class="text-center">{{ ouvrage.totalHour }}</td>
+                                      <td class="text-center">{{ ouvrage.totalQty }}</td>
+                                      <td class="text-center">{{ ouvrage.total }}</td>
+                                      <td class="text-center">
+                                        <svg class="cursor-pointer" @click="removeOuvrage(index)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M17 6H22V8H20V21C20 21.2652 19.8946 21.5196 19.7071 21.7071C19.5196 21.8946 19.2652 22 19 22H5C4.73478 22 4.48043 21.8946 4.29289 21.7071C4.10536 21.5196 4 21.2652 4 21V8H2V6H7V3C7 2.73478 7.10536 2.48043 7.29289 2.29289C7.48043 2.10536 7.73478 2 8 2H16C16.2652 2 16.5196 2.10536 16.7071 2.29289C16.8946 2.48043 17 2.73478 17 3V6ZM18 8H6V20H18V8ZM13.414 14L15.182 15.768L13.768 17.182L12 15.414L10.232 17.182L8.818 15.768L10.586 14L8.818 12.232L10.232 10.818L12 12.586L13.768 10.818L15.182 12.232L13.414 14ZM9 4V6H15V4H9Z" fill="black"/>
                                         </svg>
                                       </td>
@@ -297,9 +293,10 @@
                               </div>
                             </div>
                             <!-- Tab panes -->
-                            <div class="tab-content">
-                              <div class="tab-pane active ps-3" id="home">
+                            <div class="tab-content ouvrage-tab-content">
+                              <div class="tab-pane ps-3" :class="{ 'active': index == 0}" v-for="(ouvrage, index) in zone.prestationOuvrage.ouvrages" :key="index" :id="'ouvrage-'+ouvrage.id">
                                 <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
+                                <!-- ouvrage description -->
                                 <ul class="ps-3">
                                   <li class="mulish-regular font-10">Kindly note that we will only accept POS payment option on delivery</li>
                                   <li class="mulish-regular font-10">You have to make payment before opening package</li>
@@ -307,21 +304,66 @@
                                 </ul>
                                 <h3 class="mt-3 mulish-light fw-light text-custom-success font-14">TEXTE POUR CLIENTS</h3>
                                 <ul class="ps-3">
-                                  <li class="mulish-regular font-10 custom-text-danger">Kindly note that we will only accept POS payment option on delivery</li>
-                                  <li class="mulish-regular font-10 custom-text-danger">You have to make payment before opening package</li>
-                                </ul>                                
-                              </div>
-                              <div class="tab-pane ps-3" id="menu1">
-                                <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
-                                <ul class="ps-3">
-                                  <li class="mulish-regular font-10">Kindly note that we will only accept POS payment option on delivery</li>
-                                  <li class="mulish-regular font-10">You have to make payment before opening package</li>
-                                  <li class="mulish-regular font-10">Once the seal is broken, item can only be returned if damaged or defective </li>
+                                  <li class="mulish-regular font-10 custom-text-danger">{{ ouvrage.customerText }}</li>
                                 </ul>
-                                <h3 class="mt-3 mulish-light fw-light text-custom-success font-14">TEXTE POUR CLIENTS</h3>
-                              </div>
-                              <div class="tab-pane ps-3" id="menu2">
-                                <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
+                                <!-- Ouvrage Task -->
+                                <div class="ouvrage-task" v-for="(task, taskIndex) in ouvrage.tasks" :key="taskIndex">
+                                  <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'task-'+task.id" @click="activeOuvrageTask">
+                                    <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ task.name }}
+                                  </div>
+                                  <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'task-'+task.id">
+                                    <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
+                                    <!-- ouvrage description -->
+                                    <ul class="ps-3">
+                                      <li class="mulish-regular font-10">Kindly note that we will only accept POS payment option on delivery</li>
+                                    </ul>
+                                    <h3 class="mt-3 mulish-light fw-light text-custom-success font-14">TEXTE POUR CLIENTS</h3>
+                                    <ul class="ps-3">
+                                      <li class="mulish-regular font-10 custom-text-danger">{{ task.customerText }}</li>
+                                    </ul>
+                                    <div class="d-flex ps-3" v-for="(detail, detailIndex) in task.details" :key="detailIndex">
+                                      <div class="col-3 custom-option d-flex align-items-center">
+                                        <span class="option-icon me-3"></span> {{ detail.type }}
+                                      </div>
+                                      <div class="col-9 d-flex">
+                                        <div class="col-1 h-100  d-flex align-items-center justify-content-center border border-1 qty-ouvrage">{{ detail.qty_calc }}</div>
+                                        <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 qty"><input type="text" v-model="detail.qty" class="w-100 form-control form-control-sm custom-text-danger"></div>
+                                        <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 unit">{{ detail.unit }}</div>
+                                        <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 numberh">{{ detail.numberh }}</div>
+                                        <div class="col-2 h-100 d-flex align-items-center justify-content-center border border-1 unitprice"><input type="text" v-model="detail.unitPrice" class="w-100 form-control form-control-sm custom-text-danger"></div>
+                                        <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 marge"><input type="text" v-model="detail.marge" class="w-100 form-control form-control-sm custom-text-danger"></div>
+                                        <div class="col-2 h-100 d-flex align-items-center justify-content-center border border-1 totalprice">{{ detail.totalPrice }}</div>
+                                        <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 tax"><input type="text" v-model="detail.tax" class="w-100 form-control form-control-sm custom-text-danger"></div>
+                                        <div class="col-2 h-100 d-flex align-items-center justify-content-center trash">
+                                          <svg class="cursor-pointer" @click="removeOuvrageDetail(detailIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                          <path d="M17 6H22V8H20V21C20 21.2652 19.8946 21.5196 19.7071 21.7071C19.5196 21.8946 19.2652 22 19 22H5C4.73478 22 4.48043 21.8946 4.29289 21.7071C4.10536 21.5196 4 21.2652 4 21V8H2V6H7V3C7 2.73478 7.10536 2.48043 7.29289 2.29289C7.48043 2.10536 7.73478 2 8 2H16C16.2652 2 16.5196 2.10536 16.7071 2.29289C16.8946 2.48043 17 2.73478 17 3V6ZM18 8H6V20H18V8ZM13.414 14L15.182 15.768L13.768 17.182L12 15.414L10.232 17.182L8.818 15.768L10.586 14L8.818 12.232L10.232 10.818L12 12.586L13.768 10.818L15.182 12.232L13.414 14ZM9 4V6H15V4H9Z" fill="black"/>
+                                          </svg>                                          
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="btns d-flex mt-4">
+                                      <div class="col-5">
+                                        <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer">
+                                          <span class="plus-icon me-2"></span> AJOUTER UN PRODUIT
+                                        </div>
+                                        <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer">
+                                          <span class="plus-icon me-2"></span> AJOUTER ACTION
+                                        </div>
+                                        <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer">
+                                          <span class="plus-icon me-2"></span> COMMANDE FOURNISSEUR
+                                        </div>
+                                      </div>
+                                      <div class="col-5">
+                                        <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer">
+                                          <span class="plus-icon me-2"></span> AJOUTER UN MAIN D’ OEUVRES
+                                        </div>
+                                        <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer">
+                                          <span class="plus-icon me-2"></span> AJOUTER  INTERIM
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -453,7 +495,7 @@ export default {
     const store = useStore();
     const router = useRouter();
     const breadcrumbs = ref(['Choix client']);
-    const devisCreateStep = ref('choose_customer');
+    const devisCreateStep = ref('create_devis');
     watchEffect(()=>{
       if(devisCreateStep.value == 'choose_customer'){
         breadcrumbs.value = ['Choix client'];
@@ -643,12 +685,20 @@ export default {
     }
 
     const selectedOuvrage = (data)=>{
+      store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Adding selected Ouvrage..']);
       axios.post('/get-ouvrage', { id: data.ouvrageId }).then((res)=>{
-
+        if(data.type == 'prestation'){
+          console.log(res.data);
+          form.value.zones[data.zoneIndex].prestationOuvrage.ouvrages.push(res.data);
+        }else if( data.type == 'installation' ){
+          form.value.zones[data.zoneIndex].installationOuvrage.ouvrages.push(res.data);
+        }else{
+          form.value.zones[data.zoneIndex].securityOuvrage.ouvrages.push(res.data);
+        }
       }).catch((error)=>{
-
+        console.log(error);
       }).finally(()=>{
-
+        store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
       });
     }
     const addZone = (index)=>{
@@ -690,8 +740,8 @@ export default {
       form.value.zones = zones;
     }
 
-    const activeItem = (event)=>{
-      document.querySelectorAll('.nav-link').forEach((item)=>{
+    const activeOuvrage = (event)=>{
+      document.querySelectorAll('.nav .custom-option').forEach((item)=>{
         item.classList.remove('active');
       })
       document.querySelectorAll('.tab-pane').forEach((item)=>{
@@ -699,6 +749,20 @@ export default {
       })
       event.target.classList.add('active');
       document.getElementById(event.target.getAttribute('data-id')).classList.add('active');
+    }
+    const activeOuvrageTask = (event)=>{
+      document.querySelectorAll('.task-header.custom-option').forEach((item)=>{
+        item.classList.remove('active');
+      })      
+      event.target.classList.add('active');
+
+      document.querySelectorAll('.task-body').forEach((item)=>{
+        item.classList.remove('show');
+      })      
+      document.getElementById(event.target.getAttribute('data-id')).classList.add('show');
+    }
+    const removeOuvrageDetail = ()=>{
+
     }
     return {
       breadcrumbs,
@@ -728,7 +792,9 @@ export default {
       selectedOuvrage, // Ouvrage was choosed
       addZone,
       removeZone,
-      activeItem,
+      activeOuvrage,
+      activeOuvrageTask,
+      removeOuvrageDetail
     }
   },
 }
@@ -782,7 +848,21 @@ export default {
     height: 400px;
     overflow-y: auto;
   }
-  .nav-link {
+
+  .table{
+    .form-control{
+      border: none;
+      outline: none;
+      box-shadow: none;
+      background: transparent;
+      width: 60px;
+      &:focus{
+        outline: none;
+        box-shadow: none;        
+      }
+    }
+  }
+  .custom-option{
     .option-icon{
       display: block;
       width: 13px;
@@ -804,6 +884,12 @@ export default {
     }
     *{
       pointer-events: none;
+    }
+  }
+  .task-body{
+    display: none;
+    &.show{
+      display: block;
     }
   }
   .main-view{

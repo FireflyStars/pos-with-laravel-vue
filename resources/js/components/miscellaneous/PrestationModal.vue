@@ -133,9 +133,9 @@ export default {
                 queryElement.value.focus();
             })
         }  
-        const selectOuvrage = (index)=>{
+        const selectOuvrage = (id)=>{
             showModal.value = false;
-            emit('selectedOuvrage', { ouvrageId: prestations.value[index].id, zoneIndex: zoneIndex.value });
+            emit('selectedOuvrage', { ouvrageId: id, zoneIndex: zoneIndex.value, type: 'prestation' });
         }
         const nextStep = ()=>{
             step.value = 2;

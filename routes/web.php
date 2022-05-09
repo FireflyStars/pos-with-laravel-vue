@@ -81,6 +81,8 @@ Route::group([
     Route::post('/get-ged-categories', [DevisController::class,'getGedCategories'])->middleware('auth')->name('get.ged.categories');
     Route::post('/get-all-toits', [DevisController::class,'getAllToits'])->middleware('auth')->name('get.all.toits');
     Route::post('/get-prestation-ouvrages', [DevisController::class,'getPrestationOuvrages'])->middleware('auth')->name('get.all.toits');
+    Route::post('/search-ouvrage', [DevisController::class,'searchOuvrage'])->middleware('auth')->name('search.ouvrage');
+    Route::post('/get-ouvrage', [DevisController::class,'getOuvrage'])->middleware('auth')->name('get.ouvrage');
     // End Devis
 
     // Customer

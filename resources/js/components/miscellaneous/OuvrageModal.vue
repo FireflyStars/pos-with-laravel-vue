@@ -3,7 +3,7 @@
         <div class="search-layer d-flex align-items-center justify-content-center position-fixed" v-if="showModal">
             <transition name="list" appear>
                 <div class="search-panel m-auto bg-white">
-                    <div class="search-header d-flex align-items-center justify-content-center position-relative almarai-extrabold font-22">
+                    <div class="search-header text-capitalize d-flex align-items-center justify-content-center position-relative almarai-extrabold font-22">
                         <span class="devis-icon me-3"></span> Ajout ouvrage {{ headTitle }}
                         <svg @click="closeModal" class="close-icon cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M6.78812 5.2973C6.3976 4.90481 5.76444 4.90481 5.37392 5.2973C4.98339 5.6898 4.98339 6.32616 5.37392 6.71865L10.5883 11.9594L5.29289 17.2816C4.90237 17.6741 4.90237 18.3105 5.29289 18.703C5.68341 19.0955 6.31657 19.0955 6.7071 18.703L12.0025 13.3808L17.293 18.6979C17.6835 19.0904 18.3166 19.0904 18.7072 18.6979C19.0977 18.3054 19.0977 17.6691 18.7072 17.2766L13.4167 11.9594L18.6261 6.7237C19.0167 6.33121 19.0167 5.69485 18.6261 5.30235C18.2356 4.90986 17.6025 4.90986 17.2119 5.30235L12.0025 10.5381L6.78812 5.2973Z" fill="black"/>
@@ -19,24 +19,26 @@
                             </div>
                         </div>
                         <div class="result-panel mt-4">
-                            <div class="ouvrage-wrap border-bottom" v-for="(item, index) in 5" :key="index" :class="{ 'border-top': index == 0 }">
+                            <div class="ouvrage-wrap border-bottom" v-for="(item, index) in ouvrages" :key="index" :class="{ 'border-top': index == 0 }">
                                 <div class="ouvrage-item d-flex">
-                                    <div class="installation-icon col-1"></div>
+                                    <div class="col-1" :class="{ 'installation-icon': headTitle == 'installation', 'securite-icon': headTitle == 'Sécurité' }"></div>
                                     <div class="ouvrage-item-content col-11 ps-3 position-relative">
-                                        <p class="mt-3 mulish-extrabold font-16">Sur Couverture Pour toiture FC (Onduclair)</p>
-                                        <div class="my-2 ps-2 almarai-light font-14">
-                                            Mise en place d'un complexe de sur toiture de type ONDUCLAIR RENOV FC avec isolation comprenant nettoyage du support, mise en place isolation polystyrène 50mm et plaque polystyrène opaque compris fixation
+                                        <p class="mt-3 mulish-extrabold font-16">{{ item.name }}</p>
+                                        <div class="my-2 ps-2 almarai-light font-14 text-justify">
+                                            {{ item.textchargeaffaire }}
                                         </div>
                                         <div class="d-flex justify-content-between ps-2">
-                                            <div class="custom-text-danger almarai-light font-14">Partie courante</div>
-                                            <div class="custom-text-danger almarai-light font-14">Sécurisation Permanente de Toiture</div>
-                                            <div class="custom-text-danger almarai-light font-14">Tous les toits</div>
+                                            <div class="custom-text-danger almarai-light font-14">{{ item.type }}</div>
+                                            <div class="custom-text-danger almarai-light font-14">{{ item.metier }}</div>
+                                            <div class="custom-text-danger almarai-light font-14">{{ item.toit }}</div>
                                         </div>
-                                        <div class="add-ouvrage-btn d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer position-absolute">
+                                        <div class="add-ouvrage-btn d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer position-absolute"
+                                            @click="selectOuvrage(item.id)"
+                                        >
                                             <span class="plus-icon me-2"></span> AJOUTER CET OUVRAGE
                                         </div>
                                     </div>
-                                </div>
+                                </div>                                
                             </div>
                         </div>
                     </div>
@@ -66,20 +68,22 @@ export default {
     },
     setup(props, { emit }){
         const store = useStore();
-        const customers = ref([
+        const ouvrages = ref([
         ]);
         const query = ref('');
         const headTitle = ref('Installation');
         const queryElement = ref(null);
+        const zoneIndex = ref(null);
         const closeModal = ()=>{
             showModal.value = !showModal.value;
         }
         const searchOuvrage = async ()=>{
             store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Search Ouvrage...']);
-            await axios.post('/search-ouvrage', {
-                query: query.value
+            axios.post('/search-ouvrage', {
+                query: query.value,
+                type: '',
             }).then((response)=>{
-                customers.value = response.data;
+                ouvrages.value = response.data;
             }).catch((error)=>{
                 console.log(error)
             }).finally(()=>{
@@ -87,27 +91,42 @@ export default {
             })
         }
         const showModal = ref(false);
-        const openModal = (title)=>{
-            headTitle.value = title;
+        const openModal = (title, index)=>{
+            zoneIndex.value = index;
+            if(title == 'security')
+                headTitle.value = 'Sécurité';
+            else 
+                headTitle.value = title;
+                
             showModal.value = !showModal.value;
             nextTick(()=>{
                 queryElement.value.focus();
             })
+            axios.post('/search-ouvrage', {
+                query: query.value,
+                type: title,
+            }).then((response)=>{
+                ouvrages.value = response.data;
+            }).catch((error)=>{
+                console.log(error)
+            }).finally(()=>{
+                store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
+            })            
         }  
-        const selectCustomer = (index)=>{
+        const selectOuvrage = (data)=>{
             showModal.value = false;
-            emit('selectedOuvrage', customers.value[index]);
+            emit('selectedOuvrage', { ouvrageId: data, type: headTitle == 'installation' ? 'installation' : 'security', zoneIndex: zoneIndex.value});
         }
         return {
             headTitle,
             query,
-            customers,
+            ouvrages,
             showModal,
             queryElement,
             searchOuvrage,
             closeModal,
             openModal,
-            selectCustomer
+            selectOuvrage
         }
     }
 

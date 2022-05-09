@@ -93,4 +93,53 @@ class DevisController extends Controller
             )->get()
         );
     }
+
+    public function getOuvrage(Request $request){
+        $ouvrage = DB::table('ouvrages')
+                    ->select(
+                        'unit_id as unit', 'textcustomer as customerText', 'name', 'id'
+                        )
+                    ->where('id', $request->id)->first();
+        $ouvrage->qty = 0;
+        $ouvrage->totalHour = 0;
+        $ouvrage->toalQty = 0;
+        $ouvrage->toal = 0;
+        $tasks = DB::table('ouvrage_task')
+                ->where('ouvrage_id', $request->id)
+                ->select('id', 'name', 'textcustomer as customerText', )
+                ->get();
+        $ouvrage->tasks = $tasks;
+        foreach ($tasks as $task) {
+            $details = DB::table('ouvrage_detail')
+                            ->join('products', 'products.id', '=', 'ouvrage_detail.product_id')
+                            ->join('units', 'units.id', '=', 'products.unit_id')
+                            ->where('ouvrage_task_id', $task->id)
+                            ->select(
+                                'ouvrage_detail.id', 'ouvrage_detail.numberh', 'ouvrage_detail.qty as qty_calc', 'units.id as unit_id',
+                                'products.type', 'units.code as unit'
+                            )->get();
+            foreach ($details as $detail) {
+                $detail->qty = 0;
+                $detail->unitPrice = 0;
+                $detail->marge = 0;
+                $detail->totalPrice = 0;
+                $detail->tax = 0;
+            }
+            $task->details = $details;
+        }
+        return response()->json($ouvrage);
+    }
+
+    /**
+     * Search Ouvrages
+     */
+    public function searchOuvrage(Request $request){
+        $query = DB::table('ouvrages')
+                    ->where('name', 'like', '%'.$request->search.'%')
+                    ->orWhere('codelcdt', 'like', '%'.$request->search.'%')
+                    ->orWhere('textchargeaffaire', 'like', '%'.$request->search.'%');
+        if($request->type != '')
+            $query =    $query->where('type', $request->type == 'installation' ? 'INSTALLATION' : 'SECURITE');
+        return response()->json($query->get());
+    }
 }
