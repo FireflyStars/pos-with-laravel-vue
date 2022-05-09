@@ -5,14 +5,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\CibleController;
+use App\Http\Controllers\DevisController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\CompagneController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\LcdtAdminController;
 use App\Http\Controllers\LcdtFrontController;
 use App\Http\Controllers\TemplatesController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\DevisController;
-use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PageElementsController;
 
 
@@ -38,6 +39,8 @@ Route::post('/page-report/{order}', [ReportsController::class, 'update']);
 
 Route::get('/get-page-order/{order}', [PageElementsController::class, 'get_page_order']);
 Route::get('/get-templates', [PageElementsController::class, 'get_page_templates']);
+
+Route::get('/search', [SearchController::class, 'search']);
 
 Route::post('/api',[ApiController::class,'index'])->middleware('cors')->name('api');
 

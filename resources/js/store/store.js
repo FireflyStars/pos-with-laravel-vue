@@ -30,6 +30,8 @@ import { toggler as TOGGLER_MODULE } from "./modules/toggler"
 
 import { PageBuilder as BUILDER_MODULE } from "./modules/PageBuilder"
 
+import { mainSearch as SEARCH_MODULE } from './modules/mainSearch'
+
 
 export default createStore({
     modules: {
@@ -43,6 +45,7 @@ export default createStore({
         FILTER_MODULE,
         TOGGLER_MODULE,
         BUILDER_MODULE,
+        SEARCH_MODULE,
         CUSTOMERLIST_MODULE,
     }
 });
