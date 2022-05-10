@@ -1682,7 +1682,7 @@ public function SaveDevisTechnician(Request $request){
         }
 
         //VERIFY SIGNATURE
-        if(isset($Parameters['signed_by_customer'])&&$Parameters['signed_by_customer']!==1&&$Parameters['signed_by_customer']!==2){
+        if(isset($Parameters['signed_by_customer'])&&$Parameters['signed_by_customer']!==0&&$Parameters['signed_by_customer']!==1){
             return $this->response(0,null,'Le champs signed_by_customer est invalid');
         }
 
@@ -1725,7 +1725,7 @@ public function SaveDevisTechnician(Request $request){
                     //verify that order zone id belongs to order
                     $oz=OrderZone::find($order_zone['order_zone_id']);
                     if($oz==null)
-                    return $this->response(0,null,'order_zone_id '.$order_zone['order_zone_id'].' not found.');
+                    return $this->response(0,null,'order_zone_id '.$order_zone['order_zone_id'].' pas trouvé.');
                     if($oz->order_id!=$order->id)
                     return $this->response(0,null,'order_zone_id  '.$order_zone['order_zone_id'].' n\'appartient pas à la commande.');
                     if(isset($order_zone['order_categories'])&&!empty($order_zone['order_categories'])){
@@ -1737,7 +1737,7 @@ public function SaveDevisTechnician(Request $request){
                             //verify that order cat id belongs to order zone
                             $oc=OrderCat::find($order_cat['order_cat_id']);
                             if($oc==null)
-                            return $this->response(0,null,'order_cat_id '.$order_cat['order_cat_id'].' not found.');
+                            return $this->response(0,null,'order_cat_id '.$order_cat['order_cat_id'].' pas trouvé.');
                             if($oc->order_zone_id!=$order_zone['order_zone_id'])
                             return $this->response(0,null,'order_cat_id  '.$order_cat['order_cat_id'].' n\'appartient pas à la zone '.$order_zone['order_zone_id'].'.');
 
@@ -1749,7 +1749,7 @@ public function SaveDevisTechnician(Request $request){
                                     //verify that order ouvrage belongs to order zone
                                     $oo=OrderOuvrage::find($list_ouvrage['order_ouvrage_id']);
                                     if($oo==null)
-                                    return $this->response(0,null,'order_ouvrage_id '.$list_ouvrage['order_ouvrage_id'].' not found.');
+                                    return $this->response(0,null,'order_ouvrage_id '.$list_ouvrage['order_ouvrage_id'].' pas trouvé.');
                                     if($oo->order_zone_id!=$order_zone['order_zone_id'])
                                     return $this->response(0,null,'order_ouvrage_id  '.$list_ouvrage['order_ouvrage_id'].' n\'appartient pas à la zone '.$order_zone['order_zone_id'].'.');
 
@@ -1839,7 +1839,7 @@ public function SaveDevisTechnician(Request $request){
                                    //verify that order zone id belongs to order
                                 $oz=OrderZone::find($order_zone['order_zone_id']);
                                 if($oz==null)
-                                return $this->response(0,null,'(TRAVAUX SUPPLEMENTAIRE) order_zone_id '.$order_zone['order_zone_id'].' not found.');
+                                return $this->response(0,null,'(TRAVAUX SUPPLEMENTAIRE) order_zone_id '.$order_zone['order_zone_id'].' pas trouvé.');
                                 if($oz->order_id!=$order->id)
                                 return $this->response(0,null,'(TRAVAUX SUPPLEMENTAIRE) order_zone_id  '.$order_zone['order_zone_id'].' n\'appartient pas à la commande.');
                         
@@ -1989,19 +1989,22 @@ public function SaveDevisTechnician(Request $request){
                 //order zones
                 foreach($Parameters['order_zones'] as $order_zone){
                     
-                        $oz=OrderZone::find($order_zone['order_zone_id']);
+                
                      
                         if(isset($order_zone['order_categories'])&&!empty($order_zone['order_categories'])){
                            
                             foreach($order_zone['order_categories'] as $order_cat){
  
-                                $oc=OrderCat::find($order_cat['order_cat_id']);
+                                
     
                                 if(isset($order_cat['list_ouvrages'])&&!empty($order_cat['list_ouvrages'])){
                                     foreach($order_cat['list_ouvrages'] as  $list_ouvrage){
                                     
                                         $oo=OrderOuvrage::find($list_ouvrage['order_ouvrage_id']);
-                                      
+                                      if(isset($list_ouvrage['textoperator'])){
+                                        $oo->textoperator=$list_ouvrage['textoperator'];
+                                        $oo->save();
+                                      }
     
                                         if(isset($list_ouvrage['Avant'])&&!empty($list_ouvrage['Avant'])){
                                             
@@ -2101,8 +2104,7 @@ public function SaveDevisTechnician(Request $request){
         //validate devis 
         if(isset($Parameters['order_state_id']))    
         $order->updateState($Parameters['order_state_id'],$lcdtapp_api_instance->user->id);
-
-        dd($Parameters);
+        return $this->response(1);
 }else{
     return $isLoggedIn;
 }
