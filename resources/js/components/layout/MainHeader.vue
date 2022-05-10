@@ -78,7 +78,7 @@
 <style scoped>
     .main-logo {
         background-color:#070113;
-        position: relative;
+        position: fixed;
         width: 100%;
         z-index: 10;
         box-shadow: 0px 0px 4px rgba(80, 80, 80, 0.2);
