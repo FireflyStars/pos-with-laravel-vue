@@ -37,8 +37,8 @@
 
                                 <div 
                                     class="right-page-container" 
-                                    @mouseenter="showRightContainer=true"
-                                    @mouseleave="showRightContainer=false"
+                                    @mouseenter="toggleContainer(true)"
+                                    @mouseleave="toggleContainer"
                                     :class="showRightContainer ? 'right-page-container-visible': ''"
                                 >
 
@@ -122,6 +122,12 @@ export default {
             return Promise.resolve()
         }
 
+        const toggleContainer = (value = true) => {
+            if(window?.screen?.width >= 1500) return
+            if(value == true) showRightContainer.value = true
+            else showRightContainer.value = false
+        }
+
         const saveTemplate = async () => {
             activeItem.value = null
             const { value: name } = await Swal.fire({
@@ -165,6 +171,7 @@ export default {
             fetching,
             saveTemplate,
             showcontainer,
+            toggleContainer,
             generatePagePdf,
             showRightContainer
         }
@@ -176,12 +183,6 @@ export default {
 <style lang="scss" scoped>
 
 $orange: orange;
-
-// * {
-//     margin: 0;
-//     padding: 0;
-//     box-sizing: border-box;
-// }
 
 .swal2-container {
     z-index: 999999999999999999 !important;
@@ -202,6 +203,7 @@ $orange: orange;
 }
 
 .left-page-container {
+    z-index: 6;
     width: 793px;
     height: 1122px;
 }
@@ -210,7 +212,7 @@ $orange: orange;
     top: 0;
     right: 0;
     width: 300px;
-    z-index: 1;
+    z-index: 7;
     position: absolute;
     transition: width .2s;
 

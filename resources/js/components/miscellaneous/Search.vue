@@ -1,4 +1,5 @@
 <template>
+
     <div class="search">
 
         <input 
@@ -7,14 +8,21 @@
             placeholder="Rechercher..."
             v-model="search"
             @keyup.enter="submit"
-            @focus="show = true"
-            @blur="show = false"
+            @focus="show=true"
+            @keyup.esc="close"
         >
 
-        <search-results :show="show" />
+        <Icon 
+            class="icon"
+            name="spinner"
+            v-show="loading"
+        />
         
     </div>
 
+    <search-results 
+        :show="show"
+    />
 
 </template>
 
@@ -22,6 +30,7 @@
 import { useStore } from 'vuex'
 import { ref, computed } from 'vue'
 import {
+    SET_SEARCH,
     SEARCH_MODULE,
     GET_SEARCH_RESULTS
 }
@@ -29,30 +38,37 @@ import {
 import searchResults from './search-results'
 
 export default {
-    
     name: "Search",
-
-    components: {
-        searchResults,
-    },
-    
-    setup() {
-
-        const store = useStore()
-        const show = ref(false)
-        const search = computed(() => store.getters[`${SEARCH_MODULE/'search'}`])
-        
-        const submit = () => store.dispatch(`${[SEARCH_MODULE]}/${[GET_SEARCH_RESULTS]}`)
-        
-        return {
-            show,
-            search,
-            submit
-        }    
-
-    }
-
 }
+</script>
+
+<script setup>
+
+    const store = useStore()
+    const show = ref(false)
+
+    const search = computed({
+        set(value) {
+            if(value == '') show.value = false
+            store.commit(`${SEARCH_MODULE}/${SET_SEARCH}`, value)
+        },
+        get() {
+            return store.getters[`${SEARCH_MODULE}/search`]
+        }
+    })
+
+    const loading = computed(() => {
+        const { id, value } = store.getters[`${SEARCH_MODULE}/loading`]
+        return id == 'search' && value
+    })
+
+    const close = () => {
+        show.value = false
+        document.querySelector('input[type="search"]').blur()
+    }
+    
+    const submit = () => store.dispatch(`${[SEARCH_MODULE]}/${[GET_SEARCH_RESULTS]}`)
+
 </script>
 
 <style scoped lang="scss">
@@ -63,6 +79,7 @@ export default {
     margin-right: 19px;
     margin-top: 18px;
     width: 217px;
+    position: relative;
 
     input[type="search"] {
         box-sizing: border-box;
@@ -76,6 +93,13 @@ export default {
         padding-left:12px;
         letter-spacing: 0.2px;
         background: url("../../images/search-icon.svg") no-repeat right 14px center;
+    }
+
+    .icon {
+        position: absolute;
+        top: 6px;
+        right: 35px;
+        color: white;
     }
 
 }

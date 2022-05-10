@@ -35,8 +35,8 @@
 
                                 <div 
                                     class="right-page-container" 
-                                    @mouseenter="showRightContainer=true"
-                                    @mouseleave="showRightContainer=false"
+                                    @mouseenter="toggleContainer(true)"
+                                    @mouseleave="toggleContainer"
                                     :class="showRightContainer ? 'right-page-container-visible': ''"
                                 >
 
@@ -132,6 +132,12 @@ export default {
             return Promise.resolve()
         }
 
+        const toggleContainer = (value = true) => {
+            if(window?.screen?.width >= 1500) return
+            if(value == true) showRightContainer.value = true
+            else showRightContainer.value = false
+        }
+
         provide('fetching', fetching)
         provide('promptImage', promptImage)
         provide('generateElement', generateElement)
@@ -153,6 +159,7 @@ export default {
             fetching,
             saveTemplate,
             showcontainer,
+            toggleContainer,
             generatePagePdf,
             showRightContainer,
         }
@@ -190,13 +197,14 @@ $orange: orange;
 .left-page-container {
     width: 793px;
     height: 1122px;
+    z-index: 6;
 }
 
 .right-page-container {
     top: 0;
     right: 0;
     width: 300px;
-    z-index: 1;
+    z-index: 7;
     position: absolute;
     transition: width .2s;
     @media only screen and (min-width: 1500px) {
