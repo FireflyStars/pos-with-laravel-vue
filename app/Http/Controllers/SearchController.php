@@ -20,6 +20,7 @@ class SearchController extends Controller
                     ->where('customers.name', 'LIKE', "%{$request->search}%")
                     ->orWhere('company', 'LIKE', "%{$request->search}%")
                     ->orWhere('raisonsociale', 'LIke', "%$request->search%")
+                    ->limit(3)
                     ->get();
 
         $contacts = Contact::query();   
@@ -28,6 +29,7 @@ class SearchController extends Controller
                     ->where('contacts.name', 'LIKE', "%{$request->search}%")
                     ->orWhere('firstname', 'LIKE', "%{$request->search}%")
                     ->orWhere('email', 'LIke', "%$request->search%")
+                    ->limit(3)
                     ->get();
                     
         $orders = Order::query();
@@ -42,6 +44,7 @@ class SearchController extends Controller
                     ->orWhere('addresses.address1', 'LIKE', "%{$request->search}%")
                     ->orWhere('addresses.city', 'LIKE', "%{$request->search}%")
                     ->orWhere('orders.id', 'LIKE', "%{$request->search}%")
+                    ->limit(3)
                     ->get();
 
         $events = Event::query();
@@ -57,6 +60,7 @@ class SearchController extends Controller
                     ->orWhere('events.name', 'LIKE', "%{$request->search}%")
                     ->orWhere('events.description', 'LIKE', "%{$request->search}%")
                     ->orWhere('events.id', 'LIKE', "%{$request->search}%")
+                    ->limit(3)
                     ->get();
 
         return response()->json(

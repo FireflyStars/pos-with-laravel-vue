@@ -4,16 +4,22 @@
         <transition
             enter-active-class="animate__animated animate__fadeIn"
         >
-            <div class="container-fluid h-100 bg-color" v-if="showcontainer">
+            <div 
+                class="container-fluid h-100 bg-color" 
+                v-if="showcontainer"
+            >
+                
                 <main-header />
 
                 <div 
-                class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap reports-page" 
-                style="z-index:100" >
+                    class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap reports-page" 
+                    style="z-index:100" 
+                >
                     
                     <side-bar />
 
                     <div class="col main-view">
+                        
                         <div>
 
                             <div class="d-flex gap-3 main-container">
@@ -34,6 +40,7 @@
                                         readonly
                                         classes="d-flex justify-content-center" 
                                         contentClasses="overflow-visible"
+                                        style="z-index: 999999"
                                     >
                                         <div>
                                             <h4>Templates List</h4>
@@ -61,11 +68,11 @@
 
                                 </div>
 
-
                                 <div 
+                                    v-show="show"
                                     class="right-page-container" 
-                                    @mouseenter="showRightContainer=true"
-                                    @mouseleave="showRightContainer=false"
+                                    @mouseenter="toggleContainer(true)"
+                                    @mouseleave="toggleContainer"
                                     :class="showRightContainer ? 'right-page-container-visible': ''"
                                 >
 
@@ -77,6 +84,7 @@
                             </div>
 
                         </div>
+
                     </div>
 
                 </div>
@@ -136,6 +144,7 @@ export default {
 
         const store = useStore()
         const showRightContainer = ref(false)
+        const show = ref(false)
         const { toggleModal } = useModal()
         const { 
             promptImage,
@@ -200,6 +209,12 @@ export default {
             return Promise.resolve()
         }
 
+        const toggleContainer = (value = true) => {
+            if(window?.screen?.width >= 1500) return
+            if(value == true) showRightContainer.value = true
+            else showRightContainer.value = false
+        }
+
         provide('fetching', fetching)
         provide('promptImage', promptImage)
         provide('generateElement', generateElement)
@@ -208,6 +223,7 @@ export default {
 
         watch(activeReportTemplate, (value) => {
             if(value != 0) {
+                show.value = true
                 nextTick(() => {
                     toggleModal('report-templates', false)
                     getReportTemplate(value)
@@ -228,12 +244,14 @@ export default {
         })
       
         return { 
+            show,
             fetching,
             activeItem,
             toggleModal,
             saveReport,
             promptImage,
             showcontainer,
+            toggleContainer,
             generatePagePdf,
             showRightContainer,
             activeReportTemplate,
@@ -273,13 +291,14 @@ $orange: orange;
 .left-page-container {
     width: 793px;
     height: 1122px;
+    z-index: 4;
 }
 
 .right-page-container {
     top: 0;
     right: 0;
     width: 300px;
-    z-index: 1;
+    z-index: 5;
     position: absolute;
     transition: width .2s;
     

@@ -1,8 +1,10 @@
 <template>
-    <transition name="search">    
-        <div class="card search--results" v-if="!lodash.isEmpty(results)">
+    <transition name="search"> 
+
+        <div class="card search--results" v-if="!lodash.isEmpty(results) && show">
 
             <div class="card-body">
+
                 <section class="societe" v-if="results?.customers?.length">
                     <div class="header">
                         <h4>Sociéte</h4>
@@ -35,110 +37,110 @@
 
                 </section>
 
-                <section class="contact">
+                <section class="contact" v-if="results?.contacts?.length">
                     
                     <div class="header">
                         <h4>Contact</h4>
                         <a href="#">Voir plus</a>
                     </div>
 
-                    <div class="info-box">
+                    <div 
+                        class="info-box"
+                        v-for="(contact, index) in results.contacts"
+                        :key="index"
+                    >
                         <div class="item">
-                            <h5>Brad pitt</h5>
-                            <label for="">+444 0979 7900</label>
+                            <h5>{{ contact.firstname + " " + contact.name }}</h5>
+                            <label for="">{{ contact.mobile }}</label>
                         </div>
                         <div class="label-info">
-                            <label>carli@gmail.com</label>
-                        </div>
-                        <div class="label-info">
-                        </div>
-                        <div class="tag tag-contact-type">
-                            client
-                        </div>
-                    </div>
-
-                    <div class="info-box">
-                        <div class="item">
-                            <h5>Coulomier Bart</h5>
-                            <label for="">+444 6434 9000</label>
-                        </div>
-                        <div class="label-info">
-                            <label class="align-self-end">coulomier@gmail.com</label>
+                            <label>{{ contact.email }}</label>
                         </div>
                         <div class="label-info">
                         </div>
-                        <div class="tag tag-customer-status">
-                            prospect
-                        </div>
-                    </div>
-
-                    <div class="info-box">
-                        <div class="item">
-                            <h5>Trump Donald</h5>
-                            <label for="">+444 8677 0099</label>
-                        </div>
-                        <div class="label-info">
-                            <label class="align-self-end">cardamon@gmail.com</label>
-                        </div>
-                        <div class="label-info">
-                            <label></label>
-                        </div>
-                        <div class="tag tag-contact-type">
-                            client
+                        <div 
+                            class="tag tag-contact-type" 
+                            :style="{ 'background': contact.contact_color }"
+                        >
+                            {{ contact.contact_name }}
                         </div>
                     </div>
 
                 </section>
 
-                <section class="devis">
+                <section class="devis" v-if="results?.orders?.length">
                     
                     <div class="header">
                         <h4>Devis/Commande</h4>
                         <a href="#">Voir plus</a>
                     </div>
 
-                    <div class="info-box">
+                    <div 
+                        class="info-box"
+                        v-for="order in results.orders"
+                        :key="order.order_id"
+                    >
                         <div class="item">
-                            <h5>SocieteXXX</h5>
-                            <label for=""></label>
+                            <label>{{ order.order_id }}</label>
+                            <h5>{{ order.company }}</h5>
                         </div>
                         <div class="label-info">
-                            <label>23 rue de prince 31000 Toulouse</label>
+                            <label>{{ orderAddress(order) }}</label>
                         </div>
                         <div class="label-info">
-                            <label>24/02/2022</label>
+                            <label>{{ order.datecommande }}</label>
                         </div>
                         <div class="label-info">
-                            <label>3 000€ &nbsp; 12Hr</label>
+                            <label>{{ order.total }}€ &nbsp; {{ order.nbheure }}Hr</label>
                         </div>
-                        <div class="tag tag-order-status">
-                            en cours
-                        </div>
-                    </div>
-
-                    <div class="info-box">
-                        <div class="item">
-                            <h5>calimir Boris</h5>
-                            <label for=""></label>
-                        </div>
-                        <div class="label-info">
-                            <label>Delivery</label>
-                        </div>
-                        <div class="label-info">
-                            <label>26/02</label>
-                        </div>
-                        <div class="label-info">
-                            <label></label>
-                        </div>
-                        <div class="tag tag-order-status">
-                            facturation
+                        <div 
+                            class="tag tag-order-status"
+                            :style="{ 'background': order.states_color }"
+                        >
+                            {{ order.states_name }}
                         </div>
                     </div>
 
                 </section>
 
+                <section class="action" v-if="results?.events?.length">
+                    
+                    <div class="header">
+                        <h4>Action Commerciale</h4>
+                        <a href="#">Voir plus</a>
+                    </div>
+
+                    <div 
+                        class="info-box"
+                        v-for="event in results.events"
+                        :key="event.event_id"
+                    >
+                        <div class="item">
+                            <label>{{ event.event_id }}</label>
+                            <h5>{{ event.event_name }}</h5>
+                        </div>
+                        <div class="label-info">
+                            <label class="fw-bold fs-6">{{ event.company }}</label>
+                            <label>{{ event.firstname + " " + event.customer_name }}</label>
+                        </div>
+                        <div class="label-info">
+                            <label>{{ event.datedebut }}</label>
+                        </div>
+                        <div class="label-info">
+                            <label>{{ event.description }}</label>
+                        </div>
+                        <div 
+                            class="tag tag-order-status"
+                            :style="{ 'background': event.status_color }"
+                        >
+                            {{ event.status_name }}
+                        </div>
+                    </div>
+
+                </section>
 
             </div>
+
         </div>
 
     </transition>
@@ -164,12 +166,18 @@
 
     const store = useStore()
 
+    const search = computed(() => store.getters[`${SEARCH_MODULE}/search`])
+
     const loading = computed(() => {
         const { id, value } = store.getters[`${SEARCH_MODULE}/loading`]
         return id == 'search' && value
     })
 
     const results = computed(() => store.getters[`${SEARCH_MODULE}/results`])
+
+    const orderAddress = (order) => {
+        return `${order.firstname} ${order.address_name} ${order.address1} ${order.address2} ${order.postcode} ${order.city}`
+    }
 
 </script>
 
@@ -207,14 +215,29 @@
 
     &--results {
 
-        position: absolute;
-        top: 100%;
+        position: fixed;
+        top: 64px;
         right: 10%;
         background: #fff;
         border-radius: 5px;
         width: 700px;
+        max-height: calc(100vh - 71px);
+        overflow: auto;
 
-        .societe, .contact, .devis {
+        &::-webkit-scrollbar {
+            width: 7px;
+        }
+        
+        &::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgb(224, 224, 224);
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            background-color: darkgrey;
+            outline: 1px solid rgb(224, 224, 224);
+        }
+
+        .societe, .contact, .devis, .action {
             .header {
                 display: flex;
                 align-items: center;
@@ -331,13 +354,20 @@
             margin-top: .93rem;
         }
 
-        .contact, .devis {
+        .contact, .devis, .action {
             margin-top: 2.5rem;
         }
 
-        .devis {
+        .devis, .action {
             .info-box {
                 grid-template-columns: 30% 15% 15% 15% 25%; 
+                .item {
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        gap: 0.5rem;
+                        justify-content: flex-start;
+                }
             }
         }
 
@@ -352,6 +382,10 @@
                     color: #868686 !important;
                 }
             }
+        }
+
+        .fw-bold {
+            font-weight: bold !important;
         }
 
     }
