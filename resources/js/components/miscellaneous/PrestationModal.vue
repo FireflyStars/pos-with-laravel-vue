@@ -113,9 +113,9 @@
             const searchOuvrage = async ()=>{
                 store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Search Ouvrage...']);
                 await axios.post('/search-ouvrage', {
-                    query: query.value
+                    search: query.value
                 }).then((response)=>{
-                    customers.value = response.data;
+                    prestations.value = response.data;
                 }).catch((error)=>{
                     console.log(error)
                 }).finally(()=>{

@@ -152,4 +152,25 @@ class DevisController extends Controller
             )->get()
         );
     }
+
+    /**
+     * Search Products
+     */
+    public function searchProduct(Request $request){
+        $query = DB::table('products');
+        if($request->search != ''){
+            $query =    $query->where('name', 'like', '%'.$request->search.'%')
+                        ->orWhere('reference', 'like', '%'.$request->search.'%')
+                        ->orWhere('description', 'like', '%'.$request->search.'%');
+        }
+        if($request->type != '')
+            $query =    $query->where('type', $request->type);
+        return response()->json(
+            $query->select(
+                'id', 'name',
+                'description', 'type', 
+                'reference', 'wholesale_price'
+            )->get()
+        );
+    }
 }

@@ -300,7 +300,7 @@
                               </div>
                               <div class="btns d-flex mt-4">
                                 <div class="col-5">
-                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer">
+                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openProductModal(zoneIndex, 1,ouvrageIndex, taskIndex)">
                                     <span class="plus-icon me-2"></span> AJOUTER UN PRODUIT
                                   </div>
                                   <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer">
@@ -441,7 +441,7 @@
                               </div>
                               <div class="btns d-flex mt-4">
                                 <div class="col-5">
-                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer">
+                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openProductModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
                                     <span class="plus-icon me-2"></span> AJOUTER UN PRODUIT
                                   </div>
                                   <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer">
@@ -582,7 +582,7 @@
                               </div>
                               <div class="btns d-flex mt-4">
                                 <div class="col-5">
-                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer">
+                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openProductModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
                                     <span class="plus-icon me-2"></span> AJOUTER UN PRODUIT
                                   </div>
                                   <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer">
@@ -699,6 +699,7 @@
         <InstallationModal ref="installationModal" @selectedOuvrage="selectedOuvrage"></InstallationModal>
         <PrestationModal ref="prestationModal" @selectedOuvrage="selectedOuvrage"></PrestationModal>
         <SupplierModal ref="supplierModal"></SupplierModal>
+        <ProductModal ref="productModal"></ProductModal>
         <AddressModal ref="addressModal" @addedNewAddress="addedNewAddress"></AddressModal>
       </div>
     </transition>
@@ -713,6 +714,7 @@ import SecuriteModal from '../../components/miscellaneous/SecuriteModal';
 import InstallationModal from '../../components/miscellaneous/InstallationModal';
 import PrestationModal from '../../components/miscellaneous/PrestationModal';
 import SupplierModal from '../../components/miscellaneous/SupplierModal';
+import ProductModal from '../../components/miscellaneous/ProductModal';
 import AddressModal from '../../components/miscellaneous/AddressModal';
 import Swal from 'sweetalert2';
 import {     
@@ -733,6 +735,7 @@ export default {
     PrestationModal,
     SupplierModal,
     AddressModal,
+    ProductModal
   },
   setup() {
     const store = useStore();
@@ -758,6 +761,7 @@ export default {
     const installationModal = ref(null);
     const prestationModal = ref(null);
     const supplierModal = ref(null);
+    const productModal = ref(null);
     const addressModal = ref(null);
     const gedCatId = ref(0);
     const gedCats = ref([]);
@@ -889,6 +893,9 @@ export default {
     }
     const openSupplierModal = ()=>{
       supplierModal.value.openModal();
+    }
+    const openProductModal = ()=>{
+      productModal.value.openModal();
     }
         
     const addNewCustomer = ()=>{
@@ -1109,6 +1116,7 @@ export default {
       installationModal,
       prestationModal,
       supplierModal,
+      productModal,
       addressModal,
       addFileToGed,
       previewFile,
@@ -1118,6 +1126,7 @@ export default {
       openInstallationModal,
       openPrestationModal,
       openSupplierModal,
+      openProductModal,
       addNewCustomer,
       selectedCustomer,
       chooseOtherCustomer, // handler to choose other customer

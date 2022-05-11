@@ -85,6 +85,7 @@ Route::group([
     Route::post('/get-all-toits', [DevisController::class,'getAllToits'])->middleware('auth')->name('get.all.toits');
     Route::post('/get-prestation-ouvrages', [DevisController::class,'getPrestationOuvrages'])->middleware('auth')->name('get.all.toits');
     Route::post('/search-ouvrage', [DevisController::class,'searchOuvrage'])->middleware('auth')->name('search.ouvrage');
+    Route::post('/search-product', [DevisController::class,'searchProduct'])->middleware('auth')->name('search.product');
     Route::post('/get-ouvrage', [DevisController::class,'getOuvrage'])->middleware('auth')->name('get.ouvrage');
     // End Devis
 
