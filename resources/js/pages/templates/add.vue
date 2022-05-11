@@ -212,7 +212,7 @@ $orange: orange;
     top: 0;
     right: 0;
     width: 300px;
-    z-index: 7;
+    z-index: 0;
     position: absolute;
     transition: width .2s;
 
@@ -222,6 +222,7 @@ $orange: orange;
 
     &-visible {
         width: 530px;
+        z-index: 7;
     }
 }
 

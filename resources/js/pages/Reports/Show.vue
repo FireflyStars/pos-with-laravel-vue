@@ -68,6 +68,7 @@
 
                                 </div>
 
+
                                 <div 
                                     v-show="show"
                                     class="right-page-container" 
@@ -145,7 +146,7 @@ export default {
         const store = useStore()
         const showRightContainer = ref(false)
         const show = ref(false)
-        const { toggleModal } = useModal()
+        const { toggleModal, isOpenModal } = useModal()
         const { 
             promptImage,
             generateElement,
@@ -223,10 +224,10 @@ export default {
 
         watch(activeReportTemplate, (value) => {
             if(value != 0) {
-                show.value = true
                 nextTick(() => {
                     toggleModal('report-templates', false)
                     getReportTemplate(value)
+                    setTimeout(() => show.value = true, 1000);
                     // getOrderDetails()
                 })
             }
@@ -248,6 +249,7 @@ export default {
             fetching,
             activeItem,
             toggleModal,
+            isOpenModal,
             saveReport,
             promptImage,
             showcontainer,
@@ -291,14 +293,14 @@ $orange: orange;
 .left-page-container {
     width: 793px;
     height: 1122px;
-    z-index: 4;
+    z-index: 1;
 }
 
 .right-page-container {
     top: 0;
     right: 0;
     width: 300px;
-    z-index: 5;
+    z-index: 0;
     position: absolute;
     transition: width .2s;
     
@@ -308,6 +310,7 @@ $orange: orange;
 
     &-visible {
         width: 530px;
+        z-index: 2;
     }
 }
 

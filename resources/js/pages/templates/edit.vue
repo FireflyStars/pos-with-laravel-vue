@@ -204,7 +204,7 @@ $orange: orange;
     top: 0;
     right: 0;
     width: 300px;
-    z-index: 7;
+    z-index: 0;
     position: absolute;
     transition: width .2s;
     @media only screen and (min-width: 1500px) {
@@ -212,6 +212,7 @@ $orange: orange;
     }
     &-visible {
         width: 530px;
+        z-index: 7;
     }
 }
 

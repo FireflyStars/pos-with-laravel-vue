@@ -58,8 +58,8 @@ class page_builder extends Model
         $name = $attrs->name;
         $stroke = $attrs->stroke ?? 'black';
         $strokeWidth = $attrs->strokeWidth ?? 0.4;
-        $width = $attrs->width ?? 50;
-        $height = $attrs->height ?? 50;
+        $width = $attrs->width ?? 100;
+        $height = $attrs->height ?? 100;
         $name = self::get_svgs()[$name];
         $svg = sprintf($name, $width, $height, $stroke, $strokeWidth);
         return 'data:image/svg+xml;base64,' . base64_encode($svg);
