@@ -221,6 +221,7 @@
         class="spinner-border spinner-border-sm" 
         role="status" 
         :class="$attrs.class || ''"
+        v-bind="$attrs"
     >
         <span class="visually-hidden">Loading...</span>
     </div>

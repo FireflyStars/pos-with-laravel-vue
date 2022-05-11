@@ -17,6 +17,8 @@ use App\Models\GedCategory;
 use App\Models\GedDetail;
 use App\Models\lcdtapp\Api;
 use App\Models\lcdtapp\ApiSession;
+use App\Models\OrderCat;
+use App\Models\OrderOuvrage;
 use App\Models\OrderState;
 use App\Models\OrderZoneComment;
 use App\Models\Status;
@@ -1036,6 +1038,7 @@ public function GetTechnicianDevisDetails(Request $request){
             foreach($gedDetails as $gedDetail){
                 $gedDetail->user->makeHidden(['created_at','updated_at','deleted_at']);
                 $gedDetail->makeHidden(['updated_at','deleted_at','additional_work','storage_path','signature']);
+                if($gedDetail->type!='description')
                 $gedDetail->urls=$this->getFileUrls($gedDetail);
                 $order->signatures=array_merge( $order->signatures,[$gedDetail]);
 
@@ -1055,6 +1058,7 @@ public function GetTechnicianDevisDetails(Request $request){
             foreach($gedDetails as $gedDetail){
                 if($gedDetail->order_ouvrage_id==0&&$gedDetail->ged_category_id==0&&$gedDetail->additional_work==0){
                     $gedDetail->makeHidden(['created_at','updated_at','deleted_at','additional_work','storage_path']);
+                    if($gedDetail->type!='description')
                     $gedDetail->urls=$this->getFileUrls($gedDetail);
                     $order_zone->satellite_view = array_merge($order_zone->satellite_view, [$gedDetail]);
                 }
@@ -1082,6 +1086,7 @@ public function GetTechnicianDevisDetails(Request $request){
                         foreach($gedDetails as $gedDetail){
                             if($gedDetail->order_ouvrage_id==$order_ouvrage->id&&$gedDetail->additional_work==0){
                                 $gedDetail->makeHidden(['created_at','updated_at','deleted_at','additional_work','storage_path']);
+                                if($gedDetail->type!='description')
                                 $gedDetail->urls=$this->getFileUrls($gedDetail);
 
                                 if($gedDetail->timeline=='AVANT'){
@@ -1116,21 +1121,22 @@ public function GetTechnicianDevisDetails(Request $request){
             }
 
         }
+
         $order1=Order::find($Parameters['order_id']);
         $order->travaux_supplementaire=[];
         $gedCats=[];
         foreach($order1->orderZones as $order_zone){
             foreach($additional_works as $additional_work){
+                if($additional_work->type!='description')
                 $additional_work->urls=$this->getFileUrls($additional_work);
                 $a=$additional_work->makeHidden(['created_at','updated_at','deleted_at','additional_work','storage_path','signature','timeline'])->toArray();
              
                 $gedCategory=$additional_work->gedCategory;
           
-                if(!key_exists($gedCategory->name,$gedCats)){
+                if(!key_exists($gedCategory->name,$gedCats))
+                    $gedCats[$gedCategory->name]=[];
+
                 $gedCats[$gedCategory->name][]=$a;
-                
-                
-                }
             }
         }
 
@@ -1138,17 +1144,21 @@ public function GetTechnicianDevisDetails(Request $request){
         foreach($gedCats as $gedCatName=>$gedDetails){
 
             foreach($order1->orderZones as $order_zone){
+                $order_zone->ged_details=[];
+                $o=new stdClass;
+                $o->name=$gedCatName;
+
                 $order_zone->makeHidden(['created_at','updated_at','deleted_at']);
                 foreach($gedDetails as $gedDetail ){
             
                     if($order_zone->id==$gedDetail['order_zone_id']){
-                        $order_zone->ged_details=new stdClass;
-                        $order_zone->ged_details->name=$gedCatName;
-                        if(empty( $order_zone->ged_details->list))
-                        $order_zone->ged_details->list=[];
-                        $order_zone->ged_details->list[]=$gedDetail;   
+                        if(empty( $order_zone->ged_details)){
+                            $o->list[]=$gedDetail;
+                        }
+                        
                     }
                 }
+                $order_zone->ged_details=array_merge($order_zone->ged_details,[$o]) ;
                 $order->travaux_supplementaire=array_merge( $order->travaux_supplementaire,[$order_zone]); 
             }
          
@@ -1668,14 +1678,44 @@ public function SaveDevisTechnician(Request $request){
         if(!isset($Parameters['order_id'])||$this->isBlank($Parameters['order_id'])){
             return $this->response(0,null,'ID order manquant');
         }
+        $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
+     
+        if(isset($Parameters['order_state_id'])&&$Parameters['order_state_id']!==19){
+            return $this->response(0,null,'Le champs order_state_id est invalid');
+        }
 
         //VERIFY SIGNATURE
-        if(isset($Parameters['signature'])){
-            if(!isset($Parameters['signature']['data'])||$this->isBlank($Parameters['signature']['data'])||!isset($Parameters['signature']['human_readable_filename'])||$this->isBlank($Parameters['signature']['human_readable_filename'])){
+        if(isset($Parameters['signed_by_customer'])&&$Parameters['signed_by_customer']!==0&&$Parameters['signed_by_customer']!==1){
+            return $this->response(0,null,'Le champs signed_by_customer est invalid');
+        }
 
-            }
+        if(isset($Parameters['signature'])&&!empty($Parameters['signature'])){
+            foreach($Parameters['signature'] as $ged_detail){
+                if((!isset($ged_detail['description'])||$this->isBlank($ged_detail['description']))&&(!isset($ged_detail['data'])||$this->isBlank($ged_detail['data']))){
+                    return $this->response(0,null,'Détails Ged(Signature) non valides','Au moins une donnée de fichier ou une description est requise.');
+                }
+
+                if(isset($ged_detail['data'])&&!$this->isBlank($ged_detail['data']))
+                    if(!isset($ged_detail['human_readable_filename'])||$this->isBlank($ged_detail['human_readable_filename'])){
+                        return $this->response(0,null,'Le nom du fichier de détails Ged(Signature) est requis.');
+                    }
+                if(!isset($ged_detail['latitude'])||$this->isBlank($ged_detail['latitude'])){
+                    return $this->response(0,null,'La latitude de détail Ged(Signature) est requise.');
+                }
+                if(!isset($ged_detail['longitude'])||$this->isBlank($ged_detail['longitude'])){
+                    return $this->response(0,null,'La longitude de détail Ged(Signature) est requise.');
+                }
 
         }
+    }
+
+    $order=null;
+    if(isset($Parameters['order_id'])&&$Parameters['order_id']!=null){
+        $order=Order::where('id','=',$Parameters['order_id'])->where('affiliate_id','=',$lcdtapp_api_instance->user->affiliate->id)->first();
+        if($order==null)
+            return $this->response(0,null,'Commande introuvable.');
+    }
+
         //VERIFY ORDER ZONE
         if(isset($Parameters['order_zones'])&&is_array($Parameters['order_zones'])){
         
@@ -1686,6 +1726,11 @@ public function SaveDevisTechnician(Request $request){
                         return $this->response(0,null,'order_zone_id est requis.');
                     }
                     //verify that order zone id belongs to order
+                    $oz=OrderZone::find($order_zone['order_zone_id']);
+                    if($oz==null)
+                    return $this->response(0,null,'order_zone_id '.$order_zone['order_zone_id'].' pas trouvé.');
+                    if($oz->order_id!=$order->id)
+                    return $this->response(0,null,'order_zone_id  '.$order_zone['order_zone_id'].' n\'appartient pas à la commande.');
                     if(isset($order_zone['order_categories'])&&!empty($order_zone['order_categories'])){
                        
                         foreach($order_zone['order_categories'] as $order_cat){
@@ -1693,12 +1738,23 @@ public function SaveDevisTechnician(Request $request){
                                 return $this->response(0,null,'order_cat_id est requis.');
                             }
                             //verify that order cat id belongs to order zone
+                            $oc=OrderCat::find($order_cat['order_cat_id']);
+                            if($oc==null)
+                            return $this->response(0,null,'order_cat_id '.$order_cat['order_cat_id'].' pas trouvé.');
+                            if($oc->order_zone_id!=$order_zone['order_zone_id'])
+                            return $this->response(0,null,'order_cat_id  '.$order_cat['order_cat_id'].' n\'appartient pas à la zone '.$order_zone['order_zone_id'].'.');
+
                             if(isset($order_cat['list_ouvrages'])&&!empty($order_cat['list_ouvrages'])){
                                 foreach($order_cat['list_ouvrages'] as  $list_ouvrage){
                                     if(!isset($list_ouvrage['order_ouvrage_id'])||$this->isBlank($list_ouvrage['order_ouvrage_id'])){
                                         return $this->response(0,null,'order_ouvrage_id est requis.');
                                     }
                                     //verify that order ouvrage belongs to order zone
+                                    $oo=OrderOuvrage::find($list_ouvrage['order_ouvrage_id']);
+                                    if($oo==null)
+                                    return $this->response(0,null,'order_ouvrage_id '.$list_ouvrage['order_ouvrage_id'].' pas trouvé.');
+                                    if($oo->order_zone_id!=$order_zone['order_zone_id'])
+                                    return $this->response(0,null,'order_ouvrage_id  '.$list_ouvrage['order_ouvrage_id'].' n\'appartient pas à la zone '.$order_zone['order_zone_id'].'.');
 
                                     if(isset($list_ouvrage['Avant'])&&!empty($list_ouvrage['Avant'])){
                                         
@@ -1712,7 +1768,7 @@ public function SaveDevisTechnician(Request $request){
 
                                                 if(isset($ged_detail['data'])&&!$this->isBlank($ged_detail['data']))
                                                     if(!isset($ged_detail['human_readable_filename'])||$this->isBlank($ged_detail['human_readable_filename'])){
-                                                        return $this->response(0,null,'	Le nom du fichier de détails Ged est requis.');
+                                                        return $this->response(0,null,'Le nom du fichier de détails Ged est requis.');
                                                     }
                                                 if(!isset($ged_detail['latitude'])||$this->isBlank($ged_detail['latitude'])){
                                                     return $this->response(0,null,'La latitude de détail Ged est requise.');
@@ -1723,8 +1779,41 @@ public function SaveDevisTechnician(Request $request){
                                                 if(!isset($ged_detail['ged_category_id'])||$this->isBlank($ged_detail['ged_category_id'])){
                                                     return $this->response(0,null,'ged_category_id est requise.');
                                                 }
-                                            
-                
+                                               //verify valid ged category id
+                                                $gc=GedCategory::find($ged_detail['ged_category_id']);
+                                                if($gc==null)
+                                                return $this->response(0,null,'la ged_category_id '.$ged_detail['ged_category_id'].' est invalide.');
+                                        }
+
+                                    }
+
+                                    if(isset($list_ouvrage['Apres'])&&!empty($list_ouvrage['Apres'])){
+                                        
+                                        foreach($list_ouvrage['Apres'] as $ged_detail){
+                                        
+                                            //ged details
+                                
+                                                if((!isset($ged_detail['description'])||$this->isBlank($ged_detail['description']))&&(!isset($ged_detail['data'])||$this->isBlank($ged_detail['data']))){
+                                                    return $this->response(0,null,'Détails ged non valides','Au moins une donnée de fichier ou une description est requise.');
+                                                }
+
+                                                if(isset($ged_detail['data'])&&!$this->isBlank($ged_detail['data']))
+                                                    if(!isset($ged_detail['human_readable_filename'])||$this->isBlank($ged_detail['human_readable_filename'])){
+                                                        return $this->response(0,null,'Le nom du fichier de détails Ged est requis.');
+                                                    }
+                                                if(!isset($ged_detail['latitude'])||$this->isBlank($ged_detail['latitude'])){
+                                                    return $this->response(0,null,'La latitude de détail Ged est requise.');
+                                                }
+                                                if(!isset($ged_detail['longitude'])||$this->isBlank($ged_detail['longitude'])){
+                                                    return $this->response(0,null,'La longitude de détail Ged est requise.');
+                                                }
+                                                if(!isset($ged_detail['ged_category_id'])||$this->isBlank($ged_detail['ged_category_id'])){
+                                                    return $this->response(0,null,'ged_category_id est requise.');
+                                                }
+                                               //verify valid ged category id
+                                                $gc=GedCategory::find($ged_detail['ged_category_id']);
+                                                if($gc==null)
+                                                return $this->response(0,null,'la ged_category_id '.$ged_detail['ged_category_id'].' est invalide.');
                                         }
 
                                     }
@@ -1740,86 +1829,285 @@ public function SaveDevisTechnician(Request $request){
             }
 
         }
-     
-        dd($Parameters);
-/*
-  
-        $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
-        $event=Event::find($Parameters['event_id']);
-        $order=null;
-        if(isset($Parameters['order_id'])&&$Parameters['order_id']!=null){
-            $order=Order::where('id','=',$Parameters['order_id'])->where('affiliate_id','=',$lcdtapp_api_instance->user->affiliate->id)->first();
-            if($order==null)
-                return $this->response(0,null,'Commande introuvable.');
-    
-            if($event->affiliate_id!=$lcdtapp_api_instance->user->affiliate->id){
-                return $this->response(0,null,'Impossible de sauvegarder', 'événement non affecté à la franchise de l\'utilisateur actuel.');
-            }
-           
-        }
 
- //remove logo data before saving log       
-$params=$Parameters;
-if(isset($params['order_zones'])&&is_array($params['order_zones'])){
-    if(!empty($params['order_zones'])){
-        foreach($params['order_zones'] as &$order_zone){
-            if(isset($order_zone['ged_details'])){
-                foreach($order_zone['ged_details'] as &$ged_detail){
-                    $ged_detail['data']='REMOVED FOR LCDTLOG..';
+        //VERIFY TRAVAUX SUPPLEMENTAIRE
+        if(isset($Parameters['travaux_supplementaire'])&&is_array($Parameters['travaux_supplementaire'])){
+                
+            if(!empty($Parameters['travaux_supplementaire'])){
+                //order zones
+                foreach($Parameters['travaux_supplementaire'] as $order_zone){
+                        if(!isset($order_zone['order_zone_id'])||$this->isBlank($order_zone['order_zone_id'])){
+                            return $this->response(0,null,'(TRAVAUX SUPPLEMENTAIRE) order_zone_id est requis.');
+                        }
+                                   //verify that order zone id belongs to order
+                                $oz=OrderZone::find($order_zone['order_zone_id']);
+                                if($oz==null)
+                                return $this->response(0,null,'(TRAVAUX SUPPLEMENTAIRE) order_zone_id '.$order_zone['order_zone_id'].' pas trouvé.');
+                                if($oz->order_id!=$order->id)
+                                return $this->response(0,null,'(TRAVAUX SUPPLEMENTAIRE) order_zone_id  '.$order_zone['order_zone_id'].' n\'appartient pas à la commande.');
+                        
+
+                        if(isset($order_zone['ged_details'])&&!empty($order_zone['ged_details'])){
+                            
+                            foreach($order_zone['ged_details'] as $ged_detail){
+                            
+                                //ged details
+                    
+                                    if((!isset($ged_detail['description'])||$this->isBlank($ged_detail['description']))&&(!isset($ged_detail['data'])||$this->isBlank($ged_detail['data']))){
+                                        return $this->response(0,null,'(TRAVAUX SUPPLEMENTAIRE) Détails ged non valides','Au moins une donnée de fichier ou une description est requise.');
+                                    }
+
+                                    if(isset($ged_detail['data'])&&!$this->isBlank($ged_detail['data']))
+                                        if(!isset($ged_detail['human_readable_filename'])||$this->isBlank($ged_detail['human_readable_filename'])){
+                                            return $this->response(0,null,'(TRAVAUX SUPPLEMENTAIRE) Le nom du fichier de détails Ged est requis.');
+                                        }
+                                    if(!isset($ged_detail['latitude'])||$this->isBlank($ged_detail['latitude'])){
+                                        return $this->response(0,null,'(TRAVAUX SUPPLEMENTAIRE) La latitude de détail Ged est requise.');
+                                    }
+                                    if(!isset($ged_detail['longitude'])||$this->isBlank($ged_detail['longitude'])){
+                                        return $this->response(0,null,'(TRAVAUX SUPPLEMENTAIRE) La longitude de détail Ged est requise.');
+                                    }
+                                    if(!isset($ged_detail['ged_category_id'])||$this->isBlank($ged_detail['ged_category_id'])){
+                                        return $this->response(0,null,'(TRAVAUX SUPPLEMENTAIRE) ged_category_id est requise.');
+                                    }
+                                    $gc=GedCategory::find($ged_detail['ged_category_id']);
+                                    if($gc==null)
+                                    return $this->response(0,null,'(TRAVAUX SUPPLEMENTAIRE) la ged_category_id '.$ged_detail['ged_category_id'].' est invalide.');
+    
+                            }
+
+                        }
+            
+                    }
+                }
+
+            }
+
+
+            $this->l('API SAVE DEVIS TECHNICIAN',null,$lcdtapp_api_instance->user->id);
+
+
+        //signature
+        if(isset($Parameters['signed_by_customer'])){
+            $order->signed_by_customer=$Parameters['signed_by_customer'];
+            $order->save();
+        }
+        if(isset($Parameters['signature'])&&!empty($Parameters['signature']))
+            foreach($Parameters['signature'] as $ged_detail){
+                if(!isset($ged_detail['id'])||$this->isBlank($ged_detail['id'])||$ged_detail['id']==null){
+                    $gedDetail=new GedDetail();
+                    //find existing ged to link to ged detail
+                    $ged=Ged::where('user_id','=',$lcdtapp_api_instance->user->id)->where('order_id','=',$order->id)->first();
+                    if($ged==null){
+                        //new ged
+                        $ged=new Ged();
+                        $ged->customer_id=$order->customer_id;
+                        $ged->order_id=$order->id;
+                        $ged->user_id=$lcdtapp_api_instance->user->id;
+                        $ged->save();
+                    }
+                    $gedDetail->ged_id=$ged->id;
+                    $gedDetail->user_id=$lcdtapp_api_instance->user->id;
+                }else{
+                    $gedDetail=GedDetail::find($ged_detail['id']);   
+                }
+                $gedDetail->order_ouvrage_id=0;
+                $gedDetail->timeline=null;
+                $gedDetail->ged_category_id=0;
+                $gedDetail->order_zone_id=0;
+                $gedDetail->signature=1;
+                $gedDetail->description=isset($ged_detail['description'])?$ged_detail['description']:'';
+                $gedDetail->longitude=isset($ged_detail['longitude'])?$ged_detail['longitude']:'';
+                $gedDetail->latitude=isset($ged_detail['latitude'])?$ged_detail['latitude']:'';
+                $gedDetail->save();
+                $gedDetail=$gedDetail->fresh();//retreve fresh object with all fields
+        
+                if( $gedDetail->file==null){//files can only be stored once to avoid duplicates;
+                    if(isset($ged_detail['data'])&&!$this->isBlank($ged_detail['data'])){
+                      
+                        $storedFile=$this->storeFile($ged_detail['data'],$ged_detail['human_readable_filename'],$gedDetail->id);
+                        $gedDetail->file=$storedFile->file;
+                        $gedDetail->type=$storedFile->type;
+                        $gedDetail->storage_path=$storedFile->storage_path;
+                        $gedDetail->human_readable_filename=$storedFile->human_readable_filename;
+                    }
+                }
+                $gedDetail->save();
+
+            }
+
+            if(isset($Parameters['travaux_supplementaire'])&&is_array($Parameters['travaux_supplementaire'])){
+                
+                if(!empty($Parameters['travaux_supplementaire'])){
+                    //order zones
+                    foreach($Parameters['travaux_supplementaire'] as $order_zone){
+                        if(isset($order_zone['ged_details'])&&!empty($order_zone['ged_details'])){
+                            foreach($order_zone['ged_details'] as $ged_detail){
+                                if(!isset($ged_detail['id'])||$this->isBlank($ged_detail['id'])||$ged_detail['id']==null){
+                                    $gedDetail=new GedDetail();
+                                    //find existing ged to link to ged detail
+                                    $ged=Ged::where('user_id','=',$lcdtapp_api_instance->user->id)->where('order_id','=',$order->id)->first();
+                                    if($ged==null){
+                                        //new ged
+                                        $ged=new Ged();
+                                        $ged->customer_id=$order->customer_id;
+                                        $ged->order_id=$order->id;
+                                        $ged->user_id=$lcdtapp_api_instance->user->id;
+                                        $ged->save();
+                                    }
+                                    $gedDetail->ged_id=$ged->id;
+                                    $gedDetail->user_id=$lcdtapp_api_instance->user->id;
+                                }else{
+                                    $gedDetail=GedDetail::find($ged_detail['id']);   
+                                }
+                                $gedDetail->order_ouvrage_id=0;
+                                $gedDetail->timeline=null;
+                                $gedDetail->ged_category_id=$ged_detail['ged_category_id'];
+                                $gedDetail->order_zone_id=$order_zone['order_zone_id'];
+                                $gedDetail->additional_work=1;
+                                $gedDetail->description=isset($ged_detail['description'])?$ged_detail['description']:'';
+                                $gedDetail->longitude=isset($ged_detail['longitude'])?$ged_detail['longitude']:'';
+                                $gedDetail->latitude=isset($ged_detail['latitude'])?$ged_detail['latitude']:'';
+                                $gedDetail->save();
+                                $gedDetail=$gedDetail->fresh();//retreve fresh object with all fields
+                        
+                                if( $gedDetail->file==null){//files can only be stored once to avoid duplicates;
+                                    if(isset($ged_detail['data'])&&!$this->isBlank($ged_detail['data'])){
+                                      
+                                        $storedFile=$this->storeFile($ged_detail['data'],$ged_detail['human_readable_filename'],$gedDetail->id);
+                                        $gedDetail->file=$storedFile->file;
+                                        $gedDetail->type=$storedFile->type;
+                                        $gedDetail->storage_path=$storedFile->storage_path;
+                                        $gedDetail->human_readable_filename=$storedFile->human_readable_filename;
+                                    }
+                                }
+                                $gedDetail->save();
+                            }
+                        }
+                    }
                 }
             }
-        }
-    }
-}
 
- $this->l('API SAVE DEVIS TECHNICIAN',json_encode($params),$lcdtapp_api_instance->user->id);
-
-
-
-        if(isset($Parameters['order_zones'])&&is_array($Parameters['order_zones'])){
             if(!empty($Parameters['order_zones'])){
                 //order zones
                 foreach($Parameters['order_zones'] as $order_zone){
-                    if(!isset($order_zone['id'])||$order_zone['id']==null){
-                        $orderZone=new OrderZone();
-                    }else{
-                        $orderZone=OrderZone::find($order_zone['id']);
-                        if($orderZone==null){
-                            return $this->response(0,null,'Impossible de sauvegarder ', 'Order zone id '.$order_zone['id'].' pas trouvé.');
-                        }
-
-                        if($order!=null&&$order->id>0 && $orderZone->order_id!=$order->id){
-                            return $this->response(0,null,'Impossible de sauvegarder ', 'Order zone id '.$orderZone->id.' non lié à la commande '.$order->id.'.');
-                        }
-                    }
-        
-              
+                    
                 
-                    if(isset($order_zone['ged_details'])){
-                       
-                        foreach($order_zone['ged_details'] as $ged_detail){
-                        
-                            if($ged_detail['id']>0){
-                                    $gedDetails=GedDetail::find($ged_detail['id']);
-                                    if($gedDetails==null)
-                                        return $this->response(0,null,'Impossible de sauvegarder', 'Détail Ged avec identifiant '.$ged_detail['id'].' pas trouvé.');
-                                    $ged=Ged::find($gedDetails->ged_id);
-                                    if($order!=null&&$order->id>0 && $ged->order_id!=$order->id)
-                                        return $this->response(0,null,'Impossible de sauvegarder', 'Détail Ged avec identifiant '.$ged_detail['id'].' non lié à la commande '.$order->id.'.');
-                            }
-
-                            if(isset($ged_detail['order_ouvrage_id'])&&!$this->isBlank($ged_detail['order_ouvrage_id'])){
-                                if(!isset($ged_detail['timeline'])||!in_array($ged_detail['timeline'],['AVANT','APRES']))
-                                return $this->response(0,null,'Impossible de sauvegarder', 'Veuillez spécifier un calendrier valide pour l\'identifiant de l\'ouvrage de commande '.$ged_detail['order_ouvrage_id'].'.');
+                     
+                        if(isset($order_zone['order_categories'])&&!empty($order_zone['order_categories'])){
+                           
+                            foreach($order_zone['order_categories'] as $order_cat){
+ 
+                                
+    
+                                if(isset($order_cat['list_ouvrages'])&&!empty($order_cat['list_ouvrages'])){
+                                    foreach($order_cat['list_ouvrages'] as  $list_ouvrage){
+                                    
+                                        $oo=OrderOuvrage::find($list_ouvrage['order_ouvrage_id']);
+                                      if(isset($list_ouvrage['textoperator'])){
+                                        $oo->textoperator=$list_ouvrage['textoperator'];
+                                        $oo->save();
+                                      }
+    
+                                        if(isset($list_ouvrage['Avant'])&&!empty($list_ouvrage['Avant'])){
+                                            
+                                            foreach($list_ouvrage['Avant'] as $ged_detail){
+                                                if(!isset($ged_detail['id'])||$this->isBlank($ged_detail['id'])||$ged_detail['id']==null){
+                                                    $gedDetail=new GedDetail();
+                                                    //find existing ged to link to ged detail
+                                                    $ged=Ged::where('user_id','=',$lcdtapp_api_instance->user->id)->where('order_id','=',$order->id)->first();
+                                                    if($ged==null){
+                                                        //new ged
+                                                        $ged=new Ged();
+                                                        $ged->customer_id=$order->customer_id;
+                                                        $ged->order_id=$order->id;
+                                                        $ged->user_id=$lcdtapp_api_instance->user->id;
+                                                        $ged->save();
+                                                    }
+                                                    $gedDetail->ged_id=$ged->id;
+                                                    $gedDetail->user_id=$lcdtapp_api_instance->user->id;
+                                                }else{
+                                                    $gedDetail=GedDetail::find($ged_detail['id']);   
+                                                }
+                                                $gedDetail->order_ouvrage_id=$list_ouvrage['order_ouvrage_id'];
+                                                $gedDetail->timeline='AVANT';
+                                                $gedDetail->ged_category_id=$ged_detail['ged_category_id'];
+                                                $gedDetail->order_zone_id=$order_zone['order_zone_id'];
+                                                $gedDetail->description=isset($ged_detail['description'])?$ged_detail['description']:'';
+                                                $gedDetail->longitude=isset($ged_detail['longitude'])?$ged_detail['longitude']:'';
+                                                $gedDetail->latitude=isset($ged_detail['latitude'])?$ged_detail['latitude']:'';
+                                                $gedDetail->save();
+                                                $gedDetail=$gedDetail->fresh();//retreve fresh object with all fields
+                                        
+                                                if( $gedDetail->file==null){//files can only be stored once to avoid duplicates;
+                                                    if(isset($ged_detail['data'])&&!$this->isBlank($ged_detail['data'])){
+                                                      
+                                                        $storedFile=$this->storeFile($ged_detail['data'],$ged_detail['human_readable_filename'],$gedDetail->id);
+                                                        $gedDetail->file=$storedFile->file;
+                                                        $gedDetail->type=$storedFile->type;
+                                                        $gedDetail->storage_path=$storedFile->storage_path;
+                                                        $gedDetail->human_readable_filename=$storedFile->human_readable_filename;
+                                                    }
+                                                }
+                                                $gedDetail->save();
+                                            }
+                                        }
+                                        if(isset($list_ouvrage['Apres'])&&!empty($list_ouvrage['Apres'])){
+                                            
+                                            foreach($list_ouvrage['Apres'] as $ged_detail){
+                                                if(!isset($ged_detail['id'])||$this->isBlank($ged_detail['id'])||$ged_detail['id']==null){
+                                                    $gedDetail=new GedDetail();
+                                                    //find existing ged to link to ged detail
+                                                    $ged=Ged::where('user_id','=',$lcdtapp_api_instance->user->id)->where('order_id','=',$order->id)->first();
+                                                    if($ged==null){
+                                                        //new ged
+                                                        $ged=new Ged();
+                                                        $ged->customer_id=$order->customer_id;
+                                                        $ged->order_id=$order->id;
+                                                        $ged->user_id=$lcdtapp_api_instance->user->id;
+                                                        $ged->save();
+                                                    }
+                                                    $gedDetail->ged_id=$ged->id;
+                                                    $gedDetail->user_id=$lcdtapp_api_instance->user->id;
+                                                }else{
+                                                    $gedDetail=GedDetail::find($ged_detail['id']);   
+                                                }
+                                                $gedDetail->order_ouvrage_id=$list_ouvrage['order_ouvrage_id'];
+                                                $gedDetail->timeline='APRES';
+                                                $gedDetail->ged_category_id=$ged_detail['ged_category_id'];
+                                                $gedDetail->order_zone_id=$order_zone['order_zone_id'];
+                                                $gedDetail->description=isset($ged_detail['description'])?$ged_detail['description']:'';
+                                                $gedDetail->longitude=isset($ged_detail['longitude'])?$ged_detail['longitude']:'';
+                                                $gedDetail->latitude=isset($ged_detail['latitude'])?$ged_detail['latitude']:'';
+                                                $gedDetail->save();
+                                                $gedDetail=$gedDetail->fresh();//retreve fresh object with all fields
+                                        
+                                                if( $gedDetail->file==null){//files can only be stored once to avoid duplicates;
+                                                    if(isset($ged_detail['data'])&&!$this->isBlank($ged_detail['data'])){
+                                                      
+                                                        $storedFile=$this->storeFile($ged_detail['data'],$ged_detail['human_readable_filename'],$gedDetail->id);
+                                                        $gedDetail->file=$storedFile->file;
+                                                        $gedDetail->type=$storedFile->type;
+                                                        $gedDetail->storage_path=$storedFile->storage_path;
+                                                        $gedDetail->human_readable_filename=$storedFile->human_readable_filename;
+                                                    }
+                                                }
+                                                $gedDetail->save();
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
-
                     }
                 }
-            }
-        }
-}*/
 
+
+
+        //validate devis 
+        if(isset($Parameters['order_state_id']))    
+        $order->updateState($Parameters['order_state_id'],$lcdtapp_api_instance->user->id);
+        return $this->response(1);
 }else{
     return $isLoggedIn;
 }
