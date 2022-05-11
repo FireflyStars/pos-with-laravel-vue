@@ -79,113 +79,112 @@
     </Teleport>
 </template>
 <script>
-
-import {nextTick, ref, onMounted} from 'vue';
-import axios from 'axios';
-import {
-    LOADER_MODULE,
-    DISPLAY_LOADER,
-    HIDE_LOADER,
-} from '../../store/types/types';
-import { useStore } from 'vuex';
-
-export default {
-    name: 'PrestationModal',
-    props: {
-        modelValue: Object
-    },
-    emits: ['selectedOuvrage'],
-    components:{
-    },
-    setup(props, { emit }){
-        const store = useStore();
-        const step = ref(1);
-        const zoneIndex = ref(null);
-        const selectedRoofType = ref({
-            id: 0,
-            name: '',
-        });
-        const toits = ref([]);
-        const prestations = ref([]);
-        const query = ref('');
-        const queryElement = ref(null);
-        const closeModal = ()=>{
-            showModal.value = !showModal.value;
-        }
-        const searchOuvrage = async ()=>{
-            store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Search Ouvrage...']);
-            await axios.post('/search-ouvrage', {
-                query: query.value
-            }).then((response)=>{
-                customers.value = response.data;
-            }).catch((error)=>{
-                console.log(error)
-            }).finally(()=>{
-                store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
-            })
-        }
-        const showModal = ref(false);
-        const openModal = (index)=>{
-            zoneIndex.value = index;
-            step.value = 1;
-            showModal.value = !showModal.value;
-            nextTick(()=>{
-                queryElement.value.focus();
-            })
-        }  
-        const selectOuvrage = (id)=>{
-            showModal.value = false;
-            emit('selectedOuvrage', { ouvrageId: id, zoneIndex: zoneIndex.value, type: 'prestation' });
-        }
-        const nextStep = ()=>{
-            step.value = 2;
-            axios.post('/get-prestation-ouvrages', { toit: selectedRoofType.value.id }).then((res)=>{
-                prestations.value = res.data;
-            }).catch((error)=>{
-                console.log(error);
-            }).finally(()=>{
-
-            })
-        }
-        const resetRoofFilter = ()=>{
-            selectedRoofType.value.id = 0;
-            selectedRoofType.value.name = '';
-        }
-        const selectRoof = (e, toit)=>{
-            document.querySelectorAll('.roof').forEach((item)=>{
-                item.classList.remove('select');
-            })
-            e.target.classList.add('select');
-            selectedRoofType.value = toit;
-        }
-        onMounted(()=>{
-            axios.post('/get-all-toits').then((res)=>{
-                toits.value = res.data;
-            }).catch((error)=>{
-                console.log(error);
-            }).finally(()=>{
-
+    import {nextTick, ref, onMounted} from 'vue';
+    import axios from 'axios';
+    import {
+        LOADER_MODULE,
+        DISPLAY_LOADER,
+        HIDE_LOADER,
+    } from '../../store/types/types';
+    import { useStore } from 'vuex';
+    export default {
+        name: 'PrestationModal',
+        props: {
+            modelValue: Object
+        },
+        emits: ['selectedOuvrage'],
+        components:{
+        },
+        setup(props, { emit }){
+            const store = useStore();
+            const step = ref(1);
+            const zoneIndex = ref(null);
+            const selectedRoofType = ref({
+                id: 0,
+                name: '',
             });
-        })
-        return {
-            step,
-            query,
-            showModal,
-            selectedRoofType,
-            queryElement,
-            searchOuvrage,
-            closeModal,
-            openModal,
-            selectOuvrage,
-            nextStep,
-            resetRoofFilter,
-            selectRoof,
-            toits,
-            prestations
+            const toits = ref([]);
+            const prestations = ref([]);
+            const query = ref('');
+            const queryElement = ref(null);
+            const closeModal = ()=>{
+                showModal.value = !showModal.value;
+            }
+            const searchOuvrage = async ()=>{
+                store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Search Ouvrage...']);
+                await axios.post('/search-ouvrage', {
+                    query: query.value
+                }).then((response)=>{
+                    customers.value = response.data;
+                }).catch((error)=>{
+                    console.log(error)
+                }).finally(()=>{
+                    store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
+                })
+            }
+            const showModal = ref(false);
+            const openModal = (index)=>{
+                zoneIndex.value = index;
+                console.log(zoneIndex.value);
+                step.value = 1;
+                showModal.value = !showModal.value;
+                nextTick(()=>{
+                    queryElement.value.focus();
+                })
+            }  
+            const selectOuvrage = (id)=>{
+                showModal.value = false;
+                emit('selectedOuvrage', { ouvrageId: id, zoneIndex: zoneIndex.value, type: 'prestation' });
+            }
+            const nextStep = ()=>{
+                step.value = 2;
+                store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Loading Ouvrages...']);            
+                axios.post('/get-prestation-ouvrages', { toit: selectedRoofType.value.id }).then((res)=>{
+                    prestations.value = res.data;
+                }).catch((error)=>{
+                    console.log(error);
+                }).finally(()=>{
+                    store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
+                })
+            }
+            const resetRoofFilter = ()=>{
+                selectedRoofType.value.id = 0;
+                selectedRoofType.value.name = '';
+            }
+            const selectRoof = (e, toit)=>{
+                document.querySelectorAll('.roof').forEach((item)=>{
+                    item.classList.remove('select');
+                })
+                e.target.classList.add('select');
+                selectedRoofType.value = toit;
+            }
+            onMounted(()=>{
+                axios.post('/get-all-toits').then((res)=>{
+                    toits.value = res.data;
+                }).catch((error)=>{
+                    console.log(error);
+                }).finally(()=>{
+
+                });
+            })
+            return {
+                step,
+                query,
+                showModal,
+                selectedRoofType,
+                queryElement,
+                searchOuvrage,
+                closeModal,
+                openModal,
+                selectOuvrage,
+                nextStep,
+                resetRoofFilter,
+                selectRoof,
+                toits,
+                prestations
+            }
         }
     }
-
-}
 </script>
 <style lang="scss" scoped>
 /* width */

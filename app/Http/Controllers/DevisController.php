@@ -102,7 +102,7 @@ class DevisController extends Controller
                     ->where('id', $request->id)->first();
         $ouvrage->qty = 0;
         $ouvrage->totalHour = 0;
-        $ouvrage->toalQty = 0;
+        $ouvrage->avg = 0;
         $ouvrage->toal = 0;
         $tasks = DB::table('ouvrage_task')
                 ->where('ouvrage_id', $request->id)
@@ -135,11 +135,21 @@ class DevisController extends Controller
      */
     public function searchOuvrage(Request $request){
         $query = DB::table('ouvrages')
-                    ->where('name', 'like', '%'.$request->search.'%')
-                    ->orWhere('codelcdt', 'like', '%'.$request->search.'%')
-                    ->orWhere('textchargeaffaire', 'like', '%'.$request->search.'%');
+                    ->join('ouvrage_toit', 'ouvrage_toit.id', '=', 'ouvrages.ouvrage_toit_id')
+                    ->join('ouvrage_metier', 'ouvrage_metier.id', '=', 'ouvrages.ouvrage_metier_id');
+        if($request->search != ''){
+            $query =    $query->where('name', 'like', '%'.$request->search.'%')
+                        ->orWhere('codelcdt', 'like', '%'.$request->search.'%')
+                        ->orWhere('textchargeaffaire', 'like', '%'.$request->search.'%');
+        }
         if($request->type != '')
-            $query =    $query->where('type', $request->type == 'installation' ? 'INSTALLATION' : 'SECURITE');
-        return response()->json($query->get());
+            $query =    $query->where('type', $request->type);
+        return response()->json(
+            $query->select(
+                'ouvrages.id', 'ouvrages.name',
+                'ouvrages.textchargeaffaire', 'ouvrage_metier.name as metier', 
+                'ouvrage_toit.name as toit', 'ouvrages.type'
+            )->get()
+        );
     }
 }
