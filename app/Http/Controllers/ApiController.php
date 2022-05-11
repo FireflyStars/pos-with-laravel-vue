@@ -1144,18 +1144,21 @@ public function GetTechnicianDevisDetails(Request $request){
         foreach($gedCats as $gedCatName=>$gedDetails){
 
             foreach($order1->orderZones as $order_zone){
-                $order_zone->ged_details=new stdClass;
-                $order_zone->ged_details->name=$gedCatName;
+                $order_zone->ged_details=[];
+                $o=new stdClass;
+                $o->name=$gedCatName;
+
                 $order_zone->makeHidden(['created_at','updated_at','deleted_at']);
                 foreach($gedDetails as $gedDetail ){
             
                     if($order_zone->id==$gedDetail['order_zone_id']){
-                    
-                        if(empty( $order_zone->ged_details->list))
-                        $order_zone->ged_details->list=[];
-                        $order_zone->ged_details->list[]=$gedDetail;   
+                        if(empty( $order_zone->ged_details)){
+                            $o->list[]=$gedDetail;
+                        }
+                        
                     }
                 }
+                $order_zone->ged_details=array_merge($order_zone->ged_details,[$o]) ;
                 $order->travaux_supplementaire=array_merge( $order->travaux_supplementaire,[$order_zone]); 
             }
          
