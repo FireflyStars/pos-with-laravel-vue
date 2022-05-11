@@ -1,8 +1,14 @@
+
 import { 
+    
     SET_SEARCH,
     SET_LOADING,
     GET_SEARCH_RESULTS,
     SET_SEARCH_RESULTS,
+    SEARCH_MORE,
+    APPEND_SEARCH,
+    INCREMENT_ITERATION
+
 } from '../types/types'
 
 import axios from 'axios'
@@ -18,12 +24,26 @@ export const mainSearch = {
             id: '',
             value: ''
         },
+        iteration: {
+            customers: 0,
+            contacts: 0,
+            orders: 0,
+            events: 0
+        },
+        limitReached: {
+            customers: false,
+            contacts: false,
+            orders: false,
+            events: false,
+        }
     },
 
     getters: {
         loading: state => state.loading,
-        search: (state) => state.search,
-        results: (state) => state.results,
+        search: state => state.search,
+        results: state => state.results,
+        iteration: state => state.iteration,
+        limitReached: state => state.limitReached
     },
     
     mutations: {
@@ -36,6 +56,13 @@ export const mainSearch = {
         },
         [SET_SEARCH](state, value) {
             state.search = value
+        },
+        [INCREMENT_ITERATION](state, action) {
+            state.iteration[action]++
+        },
+        [APPEND_SEARCH](state, { data, action }) {
+            if(data.length) state.results[action].push(...data)
+            else state.limitReached[action] = true
         }
     },
 
@@ -58,6 +85,39 @@ export const mainSearch = {
                 throw e
             }
         },
+
+        async [SEARCH_MORE]({ state, commit }, action) {
+
+            if(_.isEmpty(state.search)) return 
+            if(state.limitReached[action]) return
+
+            await commit(INCREMENT_ITERATION, action)
+
+            try {
+
+                commit(SET_LOADING, { id: `search-append-${action}`, value: true })
+
+                const { data } = await axios.get('/search-append', {
+                    params: {
+                        search: state.search,
+                        action,
+                        skip: state.iteration[action]
+                    }
+                })
+
+                commit(APPEND_SEARCH, { data, action })
+
+                commit(SET_LOADING, { id: `search-append-${action}`, value: false })
+
+
+            }
+
+            catch(e) {
+                commit(SET_LOADING, { id: `search-append-${action}`, value: false  })
+                throw e
+            }
+
+        }
 
     }
 

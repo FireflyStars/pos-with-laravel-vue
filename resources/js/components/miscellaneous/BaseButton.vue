@@ -108,6 +108,7 @@
         font-size: 16px;
         color:#47454B;
         line-height: 140%;
+        font-family: 'Open Sans', sans-serif;
         
         &:hover {
             opacity: 0.9;

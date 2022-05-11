@@ -79,7 +79,7 @@ export default {
 }
 .title-section {
     p {
-        font-family: Mulish;
+        font-family: 'Mulish Regular';
         font-weight: 600;
         font-style: normal;
         font-size: 0.625rem;
@@ -89,7 +89,7 @@ export default {
         margin-bottom: .4rem;
     }
     h4 {
-        font-family: Mulish;
+        font-family: 'Mulish Regular';
         font-style: normal;
         font-weight: 800;
         font-size: 16px;
@@ -99,7 +99,7 @@ export default {
 
     &-right {
         p {
-            font-family: Almarai;
+            font-family: 'Almarai Bold';
             font-weight: bold;
             font-size: 14px;
             line-height: 140%;
@@ -107,7 +107,7 @@ export default {
         }
 
         h4 {
-            font-family: Almarai;
+            font-family: 'Almarai Light';
             font-weight: 300;
             font-size: 14px;
             line-height: 140%;
@@ -119,7 +119,7 @@ export default {
 }
 
 .text {
-    font-family: Poppins;
+    font-family: 'Poppins', sans-serif;
     font-style: normal;
     font-weight: 600;
     font-size: 14px;
@@ -130,7 +130,7 @@ export default {
     text-decoration: none;
     color: #000000;
     &-base {
-        font-family: Poppins;
+        font-family: 'Poppins', sans-serif;
         font-style: normal;
         font-weight: 600;
         line-height: 22px;

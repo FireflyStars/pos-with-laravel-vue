@@ -46,6 +46,11 @@ html{
   .main-view{
     margin-top: 64px;
   }
+
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
 .report-page .main-view,.templates .main-view{
   z-index: 9;
 }

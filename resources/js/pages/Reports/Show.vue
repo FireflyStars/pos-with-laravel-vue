@@ -70,7 +70,6 @@
 
 
                                 <div 
-                                    v-show="show"
                                     class="right-page-container" 
                                     @mouseenter="toggleContainer(true)"
                                     @mouseleave="toggleContainer"
@@ -193,13 +192,14 @@ export default {
         }
 
         const getReport = async () => {
-            await getOrderDetails()
+            getOrderDetails()
             await store.dispatch(`${BUILDER_MODULE}/${GET_REPORT}`, props.id)
             if(!pages.value.length) {
                 toggleModal('report-templates')
                 await getReportTemplates()
             }
             else {
+                show.value = true
                 // getOrderDetails()
             }
             return Promise.resolve()
@@ -227,7 +227,7 @@ export default {
                 nextTick(() => {
                     toggleModal('report-templates', false)
                     getReportTemplate(value)
-                    setTimeout(() => show.value = true, 1000);
+                    setTimeout(() => show.value = true, 1000)
                     // getOrderDetails()
                 })
             }
@@ -236,8 +236,8 @@ export default {
         onMounted(() => {
             resetPages()
             nextTick(async () => {
-                await getReport()
                 showcontainer.value = true
+                await getReport()
                 if(window?.screen && window?.screen?.width >= 1500) {
                     showRightContainer.value = true
                 }
@@ -302,7 +302,7 @@ $orange: orange;
     width: 300px;
     z-index: 0;
     position: absolute;
-    transition: width .2s;
+    transition: width .2s, z-index .2s;
     
     @media only screen and (min-width: 1500px) {
         width: 530px;

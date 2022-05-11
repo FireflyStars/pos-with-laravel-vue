@@ -148,6 +148,10 @@ export const CUSTOMER_SET_LOADER = 'CUSTOMER_SET_LOADER'//getters
 
 //search module
 export const SEARCH_MODULE = 'SEARCH_MODULE'
-export const GET_SEARCH_RESULTS = 'get_search_results'
-export const SET_SEARCH_RESULTS = 'set_search_results'
+export const GET_SEARCH_RESULTS = 'getSearchResults'
+export const SET_SEARCH_RESULTS = 'setSearchResults'
 export const SET_SEARCH = 'setSearch'
+export const SEARCH_MORE = 'searchMore'
+export const APPEND_SEARCH = 'appendSearch'
+export const INCREMENT_ITERATION = 'incrementIteration'
+

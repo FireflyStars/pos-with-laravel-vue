@@ -14,7 +14,7 @@
             v-if="!fetching"
             class="template-body"
         >
-            
+
             <template 
                 v-for="(element, index) in page.elements"
                 :key="index"
@@ -163,6 +163,7 @@ export default {
         const activePage = computed(() => store.getters[`${BUILDER_MODULE}/activePage`])
         const page = computed(() => store.getters[`${BUILDER_MODULE}/page`])
         const pages = computed(() => store.getters[`${BUILDER_MODULE}/pages`])
+        const order = computed(() => store.getters[`${BUILDER_MODULE}/order`])
 
         const reportBackground = computed(() => page.value?.background || {})
 
@@ -313,6 +314,7 @@ export default {
         return {
             page,
             pages,
+            order,
             onDrag,
             onScale,
             hideDrag,

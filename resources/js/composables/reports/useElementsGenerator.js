@@ -247,6 +247,159 @@ export default function useElementsGenerator() {
                 </div>    
                 `
             })
+            case 'société': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.customer?.company || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'raisonsocial': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.customer?.raisonsociale || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'raisonsocial2': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.customer?.raisonsociale2 || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'téléphone-client': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.customer?.telephone || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'prénom-contact': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.contact?.firstname || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'nom-contact': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.contact?.name || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'email-contact': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.contact?.email || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'mobile-contact': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.contact?.mobile || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'téléphone-contact': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.contact?.telephone || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'société-adresse': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.customer?.address?.company || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'prénom-ou-batiment': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.customer?.address?.firstname || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'nom-adresse': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.customer?.address?.name || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'adresse1': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.customer?.address?.address1 || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'adresse2': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.customer?.address?.address2 || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'adresse3': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.customer?.address?.address3 || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'code-postal': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.customer?.address?.postcode || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'ville': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.customer?.address?.city || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'num-commande': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.id || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'total-commande': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.total || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'heure-commande': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.nbheure || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'date-de-fin-prevue-commande': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.datefinprevu || ''}</div>
+                </div>    
+                `
+            })
+            break
+            case 'date-de-commande': generateElement('textarea', { 
+                content: `<div>
+                    <div>${order?.datecommande || ''}</div>
+                </div>    
+                `
+            })
             break
         }
 
@@ -283,6 +436,116 @@ export default function useElementsGenerator() {
                     <div>${order?.customer?.address?.phone || ''}</div>
                     <div>${order?.customer?.address?.phone_mobile || ''}</div>
                     <div>${order?.customer?.address?.vat_number || ''}</div>
+                </div>    
+                `
+            break
+            case 'société': return `<div>
+                    <div>${order?.customer?.company || ''}</div>
+                </div>    
+                `
+            break
+            case 'raisonsocial': return `<div>
+                    <div>${order?.customer?.raisonsociale || ''}</div>
+                </div>    
+                `
+            break
+            case 'raisonsocial2': return `<div>
+                    <div>${order?.customer?.raisonsociale2 || ''}</div>
+                </div>    
+                `
+            break
+            case 'téléphone-client': return `<div>
+                    <div>${order?.customer?.telephone || ''}</div>
+                </div>    
+                `
+            break
+            case 'prénom-contact': return `<div>
+                    <div>${order?.contact?.firstname || ''}</div>
+                </div>    
+                `
+            break
+            case 'nom-contact': return `<div>
+                    <div>${order?.contact?.name || ''}</div>
+                </div>    
+                `
+            break
+            case 'email-contact': return `<div>
+                    <div>${order?.contact?.email || ''}</div>
+                </div>    
+                `
+            break
+            case 'mobile-contact': return `<div>
+                    <div>${order?.contact?.mobile || ''}</div>
+                </div>    
+                `
+            break
+            case 'téléphone-contact': return `<div>
+                    <div>${order?.contact?.telephone || ''}</div>
+                </div>    
+                `
+            break
+            case 'société-adresse': return `<div>
+                    <div>${order?.customer?.address?.company || ''}</div>
+                </div>    
+                `
+            break
+            case 'prénom-ou-batiment': return `<div>
+                    <div>${order?.customer?.address?.firstname || ''}</div>
+                </div>    
+                `
+            break
+            case 'nom-adresse': return `<div>
+                    <div>${order?.customer?.address?.name || ''}</div>
+                </div>    
+                `
+            break
+            case 'adresse1': return `<div>
+                    <div>${order?.customer?.address?.address1 || ''}</div>
+                </div>    
+                `
+            break
+            case 'adresse2': return `<div>
+                    <div>${order?.customer?.address?.address2 || ''}</div>
+                </div>    
+                `
+            break
+            case 'adresse3': return `<div>
+                    <div>${order?.customer?.address?.address3 || ''}</div>
+                </div>    
+                `
+            break
+            case 'code-postal': return `<div>
+                    <div>${order?.customer?.address?.postcode || ''}</div>
+                </div>    
+                `
+            break
+            case 'ville': return `<div>
+                    <div>${order?.customer?.address?.city || ''}</div>
+                </div>    
+                `
+            break
+            case 'num-commande': return `<div>
+                    <div>${order?.id || ''}</div>
+                </div>    
+                `
+            break
+            case 'total-commande': return `<div>
+                    <div>${order?.total || ''}</div>
+                </div>    
+                `
+            break
+            case 'heure-commande': return `<div>
+                    <div>${order?.nbheure || ''}</div>
+                </div>    
+                `
+            break
+            case 'date-de-fin-prevue-commande': return `<div>
+                    <div>${order?.datefinprevu || ''}</div>
+                </div>    
+                `
+            break
+            case 'date-de-commande': return `<div>
+                    <div>${order?.datecommande || ''}</div>
                 </div>    
                 `
             break

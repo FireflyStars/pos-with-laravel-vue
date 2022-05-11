@@ -105,7 +105,7 @@ export default function useReports() {
                                     attributes: {
                                         ...element.attributes,
                                         id: generateId(),
-                                        style: element.attributes.style += ` margin: ${+i*2}rem;`
+                                        style: element.attributes.style += ` margin: ${+i*8}px;`
                                     },
                                     content: tag
                                 })

@@ -1,14 +1,14 @@
 <template>
     <transition name="search"> 
 
-        <div class="card search--results" v-if="!lodash.isEmpty(results) && show">
+        <div class="card search--results" v-if="showResults">
 
             <div class="card-body">
 
                 <section class="societe" v-if="results?.customers?.length">
                     <div class="header">
                         <h4>Sociéte</h4>
-                        <a href="#">Voir plus</a>
+                        <load-more action="customers" />
                     </div>
 
                     <div 
@@ -41,7 +41,7 @@
                     
                     <div class="header">
                         <h4>Contact</h4>
-                        <a href="#">Voir plus</a>
+                        <load-more action="contacts" />
                     </div>
 
                     <div 
@@ -72,7 +72,7 @@
                     
                     <div class="header">
                         <h4>Devis/Commande</h4>
-                        <a href="#">Voir plus</a>
+                        <load-more action="orders" />
                     </div>
 
                     <div 
@@ -81,20 +81,20 @@
                         :key="order.order_id"
                     >
                         <div class="item">
-                            <label>{{ order.order_id }}</label>
+                            <label class="font-14 font-light">{{ order.order_id }}</label>
                             <h5>{{ order.company }}</h5>
                         </div>
                         <div class="label-info">
-                            <label>{{ orderAddress(order) }}</label>
+                            <label class="font-14 font-light">{{ orderAddress(order) }}</label>
                         </div>
                         <div class="label-info">
-                            <label>{{ order.datecommande }}</label>
+                            <label class="font-14 font-light">{{ order.datecommande }}</label>
                         </div>
                         <div class="label-info">
-                            <label>{{ order.total }}€ &nbsp; {{ order.nbheure }}Hr</label>
+                            <label class="font-14 font-light">{{ order.total }}€ &nbsp; {{ order.nbheure }}Hr</label>
                         </div>
                         <div 
-                            class="tag tag-order-status"
+                            class="tag tag-order-status font-12"
                             :style="{ 'background': order.states_color }"
                         >
                             {{ order.states_name }}
@@ -107,7 +107,9 @@
                     
                     <div class="header">
                         <h4>Action Commerciale</h4>
-                        <a href="#">Voir plus</a>
+
+                        <load-more action="events" />
+
                     </div>
 
                     <div 
@@ -116,21 +118,21 @@
                         :key="event.event_id"
                     >
                         <div class="item">
-                            <label>{{ event.event_id }}</label>
-                            <h5>{{ event.event_name }}</h5>
+                            <label class="font-14 font-light">{{ event.event_id }}</label>
+                            <h5 style="font-size: 14px !important">{{ event.event_name }}</h5>
+                        </div>
+                        <div class="label-info flex-row">
+                            <label class="fw-bold fs-6 font-14 almarai-bold text-black mb-2">{{ event.company }}</label>
+                            <label class="font-14 font-light">{{ event.firstname + " " + event.customer_name }}</label>
                         </div>
                         <div class="label-info">
-                            <label class="fw-bold fs-6">{{ event.company }}</label>
-                            <label>{{ event.firstname + " " + event.customer_name }}</label>
+                            <label class="font-14 font-light">{{ event.datedebut }}</label>
                         </div>
                         <div class="label-info">
-                            <label>{{ event.datedebut }}</label>
-                        </div>
-                        <div class="label-info">
-                            <label>{{ event.description }}</label>
+                            <label class="font-14 font-light">{{ event.description }}</label>
                         </div>
                         <div 
-                            class="tag tag-order-status"
+                            class="tag tag-order-status font-12"
                             :style="{ 'background': event.status_color }"
                         >
                             {{ event.status_name }}
@@ -146,6 +148,13 @@
     </transition>
 </template>
 
+<script>
+export default {
+    name: 'search-results'
+}
+</script>
+
+
 <script setup>
 
     import lodash from 'lodash'
@@ -154,9 +163,11 @@
 
     import { 
         SEARCH_MODULE,
-    } from '../../store/types/types'
+    } from '../../../store/types/types'
 
-    defineProps({
+    import loadMore from './load-more'
+
+    const props = defineProps({
         show: {
             required: false,
             type: Boolean,
@@ -172,8 +183,21 @@
         const { id, value } = store.getters[`${SEARCH_MODULE}/loading`]
         return id == 'search' && value
     })
+    
 
     const results = computed(() => store.getters[`${SEARCH_MODULE}/results`])
+
+    const showResults = computed(() => {
+        const data = results.value
+        return !lodash.isEmpty(data) 
+        &&  (   
+                data?.customers?.length || 
+                data?.contacts?.length || 
+                data?.orders?.length || 
+                data?.events?.length
+            ) 
+        && props.show
+    })
 
     const orderAddress = (order) => {
         return `${order.firstname} ${order.address_name} ${order.address1} ${order.address2} ${order.postcode} ${order.city}`
@@ -244,7 +268,7 @@
                 justify-content: space-between;
                 border-bottom: 1px solid #C3C3C3;
                 h4 {
-                    font-family: 'Almarai';
+                    font-family: 'Almarai Bold';
                     font-style: normal;
                     font-weight: 800;
                     font-size: 22px;
@@ -252,17 +276,6 @@
                     display: flex;
                     align-items: center;
                     color: #000000; 
-                }
-                a {
-                    font-family: 'Almarai';
-                    font-style: normal;
-                    font-weight: 300;
-                    font-size: 18px;
-                    line-height: 100%;
-                    display: flex;
-                    align-items: center;
-                    text-decoration-line: underline;
-                    color: #000000;
                 }
             }
 
@@ -276,19 +289,22 @@
                 margin-top: .75rem;
 
                 .item {
-                    font-family: 'Almarai';
+                    
                     font-style: normal;
                     font-weight: 700;
-                    font-size: 16px;
                     line-height: 140%;
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
                     label {
+                        font-family: 'Almarai Regular';
                         color: #868686 !important;
+                        font-size: 16px !important;
                     }
                     h5 {
+                        font-family: 'Almarai Bold';
                         color: #000000 !important;
+                        font-size: 16px !important;
                     }
                 }
 
@@ -302,7 +318,7 @@
                     flex-direction: row;
                     justify-content: center;
                     align-items: center;
-                    font-family: 'Almarai';
+                    font-family: 'Almarai Bold';
                     font-style: normal;
                     font-weight: 700;
                     font-size: 12px;
@@ -336,7 +352,7 @@
                 }
 
                 label {
-                    font-family: 'Almarai';
+                    font-family: 'Almarai Regular';
                     font-style: normal;
                     font-weight: 700;
                     font-size: 16px;
@@ -380,6 +396,14 @@
             .item {
                 h5, label {
                     color: #868686 !important;
+                }
+            }
+        }
+
+        .action {
+            .info-box {
+                .flex-row {
+                   display: block;
                 }
             }
         }

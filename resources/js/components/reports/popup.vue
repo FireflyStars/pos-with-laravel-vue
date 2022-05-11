@@ -153,36 +153,6 @@
                         </div>
                     </template>
 
-                    <!-- <div class="attribute">
-                        <div>Width:</div>
-                        <div class="d-flex align-items-center gap-1">
-                            <input type="text" v-model="itemAttributes.width">
-                            <span class="unit">px</span>
-                        </div>
-                    </div>
-                    <div class="attribute">
-                        <div>Height:</div>
-                        <div class="d-flex align-items-center gap-1">
-                            <input type="text" v-model="itemAttributes.height">
-                            <span class="unit">px</span>
-                        </div>
-                    </div>
-                
-                    <div class="attribute">
-                        <div>Top:</div>
-                        <div class="d-flex align-items-center gap-1">
-                            <input type="text" v-model="itemAttributes.top">
-                            <span class="unit">px</span>
-                        </div>
-                    </div>
-                    <div class="attribute">
-                        <div>Left:</div>
-                        <div class="d-flex align-items-center gap-1">
-                            <input type="text" v-model="itemAttributes.left">
-                            <span class="unit">px</span>
-                        </div>
-                    </div> -->
-                    
                     <template v-if="!isSvg">
 
                         <div class="attribute">
@@ -319,9 +289,31 @@ export default {
         const hasVariables = ref(false)
 
         const reportVariables = ref([
-            'customer-name',
-            'customer-address',
-            'customer-contact'
+            // 'customer-name',
+            // 'customer-address',
+            // 'customer-contact',
+            'société',
+            'raisonsocial',
+            'raisonsocial2',
+            'téléphone-client',
+            'prénom-contact',
+            'nom-contact',
+            'email-contact',
+            'mobile-contact',
+            'téléphone-contact',
+            'société-adresse',
+            'prénom-ou-batiment',
+            'nom-adresse',
+            'adresse1',
+            'adresse2',
+            'adresse3',
+            'code-postal',
+            'ville',
+            'num-commande',
+            'total-commande',
+            'heure-commande',
+            'date-de-fin-prevue-commande',
+            'date-de-commande'
         ])
 
         const insertVariable = (variable) => {
@@ -582,6 +574,9 @@ export default {
             color: #47454B;
             font-size: 12px;
             text-transform: lowercase;
+            &:hover {
+                color: #000;
+            }
         }
     }
 

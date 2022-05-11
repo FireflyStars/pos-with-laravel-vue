@@ -41,6 +41,7 @@ Route::get('/get-page-order/{order}', [PageElementsController::class, 'get_page_
 Route::get('/get-templates', [PageElementsController::class, 'get_page_templates']);
 
 Route::get('/search', [SearchController::class, 'search']);
+Route::get('/search-append', [SearchController::class, 'search_append']);
 
 Route::post('/api',[ApiController::class,'index'])->middleware('cors')->name('api');
 

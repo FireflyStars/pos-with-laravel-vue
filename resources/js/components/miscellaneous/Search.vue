@@ -35,7 +35,7 @@ import {
     GET_SEARCH_RESULTS
 }
  from '../../store/types/types'
-import searchResults from './search-results'
+import searchResults from './search-results/index'
 
 export default {
     name: "Search",
@@ -44,6 +44,7 @@ export default {
 
 <script setup>
 
+    import lodash from 'lodash'
     const store = useStore()
     const show = ref(false)
 
@@ -67,7 +68,10 @@ export default {
         document.querySelector('input[type="search"]').blur()
     }
     
-    const submit = () => store.dispatch(`${[SEARCH_MODULE]}/${[GET_SEARCH_RESULTS]}`)
+    const submit = () => {
+        if(loading.value) return
+        store.dispatch(`${[SEARCH_MODULE]}/${[GET_SEARCH_RESULTS]}`)
+    }
 
 </script>
 

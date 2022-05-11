@@ -117,7 +117,7 @@ export default {
             align-items: center;
         }
         .title {
-            font-family: Mulish;
+            font-family: 'Mulish ExtraBold';
             font-style: normal;
             font-weight: 900;
             font-size: 17px;
@@ -145,7 +145,7 @@ export default {
         }
         .title {
             font-weight: 900;
-            font-family: Mullish, sans-serif;
+            font-family: 'Mullish ExtraBold', sans-serif;
         }
     }
 }
@@ -162,7 +162,7 @@ export default {
 }
 
 .text {
-    font-family: Poppins;
+    font-family: 'Poppins', sans-serif;
     font-style: normal;
     font-weight: 600;
     font-size: 14px;
@@ -173,7 +173,7 @@ export default {
     text-decoration: none;
     color: #000000;
     &-base {
-        font-family: Poppins;
+        font-family: 'Poppins', sans-serif;
         font-style: normal;
         font-weight: 600;
         line-height: 22px;
