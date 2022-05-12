@@ -286,10 +286,10 @@ export const PageBuilder = {
 
         },
 
-        async [GET_REPORT_TEMPLATE]({ commit }, id) {
+        async [GET_REPORT_TEMPLATE]({ commit }, { id, route }) {
             try {
                 const { data } = await axios.get(`/report-template/${id}`)
-                saveReportPages(data)
+                saveReportPages(data, route)
             }
             catch(e) {
                 throw e

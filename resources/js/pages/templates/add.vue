@@ -104,7 +104,7 @@ export default {
             generatePrefetchedImage,
         } = useElementsGenerator()
 
-        const { resetPages, generatePagePdf } = useReports()
+        const { resetPages, generatePagePdf, resetOrder } = useReports()
 
         const activeItem = ref(null)
         const showcontainer = ref(false)
@@ -158,6 +158,7 @@ export default {
 
         onMounted(() => {
             resetPages()
+            resetOrder()
             loadPages()
             nextTick(async () => {
                 showcontainer.value = true
@@ -214,7 +215,7 @@ $orange: orange;
     width: 300px;
     z-index: 0;
     position: absolute;
-    transition: width .2s;
+    transition: width .2s, z-index .2s;
 
     @media only screen and (min-width: 1500px) {
         width: 530px;

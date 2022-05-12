@@ -10,7 +10,8 @@ import {
     SAVE_REPORT,
     SAVE_REPORT_PAGES,
     RESET_PAGES,
-    GENERATE_PDF
+    GENERATE_PDF,
+    SAVE_PAGE_ORDER
 }
 from '../../store/types/types'
 
@@ -55,7 +56,7 @@ export default function useReports() {
     
     }
 
-    const getFormattedPages = (data) => {
+    const getFormattedPages = (data, route = 'report-page') => {
 
         const pages = data.pages
         const formattedPages = []
@@ -97,21 +98,26 @@ export default function useReports() {
                         })
                     }
                     else if(element.name == 'textarea') {
-                        const tags = generatePreRenderedTags(element.content)
-                        if(tags.length) {
-                            tags.forEach((tag, i) => {
-                                formattedPage.elements.push({ 
-                                    ...element,
-                                    attributes: {
-                                        ...element.attributes,
-                                        id: generateId(),
-                                        style: element.attributes.style += ` margin: ${+i*8}px;`
-                                    },
-                                    content: tag
-                                })
-                            })
+                        if(route != 'report-page') {
+                            formattedPage.elements.push({ ...element })
                         }
-                        else formattedPage.elements.push({ ...element })
+                        else {
+                            const tags = generatePreRenderedTags(element.content)
+                            if(tags.length) {
+                                tags.forEach((tag, i) => {
+                                    formattedPage.elements.push({ 
+                                        ...element,
+                                        attributes: {
+                                            ...element.attributes,
+                                            id: generateId(),
+                                            style: element.attributes.style += ` margin: ${+i*8}px;`
+                                        },
+                                        content: tag
+                                    })
+                                })
+                            }
+                            else formattedPage.elements.push({ ...element })
+                        }
                     }
                     else {
                         formattedPage.elements.push({ ...element })
@@ -133,14 +139,14 @@ export default function useReports() {
         return files.find(file => file.id == id)
     }
 
-    const saveReportPages = (data) => {
+    const saveReportPages = (data, route = 'report-page') => {
         if(!_.isEmpty(data)) {
             const pages = typeof pages == 'string' ? JSON.parse(data.pages) : data.pages
             if(!pages.length) {
                 resetPages()
                 return
             }
-            const formattedPages = getFormattedPages(data)
+            const formattedPages = getFormattedPages(data, route)
             store.commit(`${BUILDER_MODULE}/${SAVE_REPORT_PAGES}`, formattedPages)
         }
     }
@@ -151,6 +157,10 @@ export default function useReports() {
             status: 'store' 
         })
         store.commit(`${BUILDER_MODULE}/${RESET_PAGES}`, [])
+    }
+
+    const resetOrder = () => {
+        store.commit(`${BUILDER_MODULE}/${SAVE_PAGE_ORDER}`, [])
     }
 
     const generatePagePdf = async (orderId = null) => {
@@ -174,56 +184,14 @@ export default function useReports() {
         link.click()
     }
 
-    const generateCustomerInfo = (tag) => {
-        const order = store.getters[`${BUILDER_MODULE}/order`]
-        tag = tag?.toString()?.trim()
-
-        switch (tag) {
-            case 'customer-name': generateElement('textarea', { 
-                content: `<div>
-                    <div class='heading'>Client</div>
-                    <div>${order?.customer?.name || ''}</div>
-                    <div>${order?.customer?.firstname || ''}</div>
-                    <div>${order?.customer?.compnay || ''}</div>
-                    <div>${order?.customer?.signupdate || ''}</div>
-                </div>`
-            })
-            break
-            case 'customer-contact': generateElement('textarea', { 
-                content: `
-                    <h4 class='title'>Contact</h4>
-                    <div>${order?.contact?.name || ''}</div>
-                    <div>${order?.contact?.email || ''}</div>
-                    <div>${order?.contact?.mobile || ''}</div>
-                    <div>${order?.contact?.type || ''}</div>
-                    <div>${order?.contact?.comment || ''}</div>
-                `
-            })
-            break
-            case 'customer-address': generateElement('textarea', { 
-                content: `<div>
-                    <div class='heading'>Client Address</div>
-                    <div>${order?.customer?.address?.address1 || ''}</div>
-                    <div>${order?.customer?.address?.address2 || ''}</div>
-                    <div>${order?.customer?.address?.city || ''}</div>
-                    <div>${order?.customer?.address?.phone || ''}</div>
-                    <div>${order?.customer?.address?.phone_mobile || ''}</div>
-                    <div>${order?.customer?.address?.vat_number || ''}</div>
-                </div>    
-                `
-            })
-            break
-        }
-    }
-
     return {
+        resetOrder,
         resetPages,
         generatePDF,
         formatFormData,
         generatePagePdf,
         saveReportPages,
         getFormattedPages,
-        generateCustomerInfo
     }
 
 }

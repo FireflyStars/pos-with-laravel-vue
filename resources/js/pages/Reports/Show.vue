@@ -144,14 +144,13 @@ export default {
 
         const store = useStore()
         const showRightContainer = ref(false)
-        const show = ref(false)
         const { toggleModal, isOpenModal } = useModal()
         const { 
             promptImage,
             generateElement,
             generatePrefetchedImage,
         } = useElementsGenerator()
-        const { resetPages, generatePagePdf } = useReports()
+        const { resetPages, generatePagePdf, resetOrder } = useReports()
 
         const activeItem = ref(null)
         const showcontainer = ref(false)
@@ -199,14 +198,13 @@ export default {
                 await getReportTemplates()
             }
             else {
-                show.value = true
                 // getOrderDetails()
             }
             return Promise.resolve()
         }
 
         const getReportTemplate = async (id) => {
-            await store.dispatch(`${[BUILDER_MODULE]}/${[GET_REPORT_TEMPLATE]}`, id)
+            await store.dispatch(`${[BUILDER_MODULE]}/${[GET_REPORT_TEMPLATE]}`, { id })
             return Promise.resolve()
         }
 
@@ -227,7 +225,6 @@ export default {
                 nextTick(() => {
                     toggleModal('report-templates', false)
                     getReportTemplate(value)
-                    setTimeout(() => show.value = true, 1000)
                     // getOrderDetails()
                 })
             }
@@ -235,6 +232,7 @@ export default {
 
         onMounted(() => {
             resetPages()
+            resetOrder()
             nextTick(async () => {
                 showcontainer.value = true
                 await getReport()
@@ -245,7 +243,6 @@ export default {
         })
       
         return { 
-            show,
             fetching,
             activeItem,
             toggleModal,

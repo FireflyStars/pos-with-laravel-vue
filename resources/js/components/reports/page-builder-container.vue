@@ -194,7 +194,7 @@ export default {
 
         const updateCloseButtonStyles = (elem) => {
             const close = document.querySelector('.close')
-            const { width } = elem.getBoundingClientRect()
+            const { width, height } = elem.getBoundingClientRect()
             const left = elem.style.left || 0
             const top = elem.style.top || 0
             const closeLeft = parseInt(left) + width/2
