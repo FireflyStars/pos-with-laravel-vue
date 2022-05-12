@@ -97,6 +97,10 @@ export default {
         padding-left:12px;
         letter-spacing: 0.2px;
         background: url("../../images/search-icon.svg") no-repeat right 14px center;
+        &:focus,
+        &:active {
+            outline: 0;
+        }
     }
 
     .icon {
