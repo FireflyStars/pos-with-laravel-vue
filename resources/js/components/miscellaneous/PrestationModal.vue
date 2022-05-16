@@ -63,7 +63,7 @@
                                                 <div class="custom-text-danger almarai-light font-14">{{ item.toit }}</div>
                                             </div>
                                             <div class="add-ouvrage-btn d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer position-absolute"
-                                                @click="selectOuvrage(item.id)"
+                                                @click="selectOuvrage(item)"
                                             >
                                                 <span class="plus-icon me-2"></span> AJOUTER CET OUVRAGE
                                             </div>
@@ -71,6 +71,33 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="ouvrage-wrap" v-if="step == 3">
+                                <div class="ouvrage-item">
+                                    <div class="d-flex">
+                                        <div class="col-1 prestation-icon"></div>
+                                        <div class="col-11">
+                                            <p class="mt-3 mulish-extrabold font-16">{{ item.name }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="almarai-light font-14 text-justify">
+                                        {{ item.textchargeaffaire }}
+                                    </div>
+                                    <div class="d-flex justify-content-between px-5">
+                                        <div class="form-group col-5">
+                                            <label for="unit">Unité</label>
+                                            <input type="text" id="unit" :value="ouvrage.unit" readonly class="form-control">
+                                        </div>
+                                        <div class="form-group col-5">
+                                            <label for="unit">Quantité</label>
+                                            <input type="text" v-model="ouvrage.qtyOuvrage" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="btns mt-4 d-flex justify-content-between">
+                                        <button class="custom-btn btn-cancel" @click="closeModal">Annuler</button>
+                                        <button class="custom-btn btn-ok" @click="confirm">Suivant</button>
+                                    </div>
+                                </div>
+                            </div>                            
                         </div>
                     </div>
                 </div>
@@ -99,6 +126,10 @@
             const store = useStore();
             const step = ref(1);
             const zoneIndex = ref(null);
+            const ouvrage = ref({
+                id: '',
+                qtyOuvrage: 1,
+            });            
             const selectedRoofType = ref({
                 id: 0,
                 name: '',
@@ -125,16 +156,16 @@
             const showModal = ref(false);
             const openModal = (index)=>{
                 zoneIndex.value = index;
-                console.log(zoneIndex.value);
                 step.value = 1;
                 showModal.value = !showModal.value;
                 nextTick(()=>{
                     queryElement.value.focus();
                 })
             }  
-            const selectOuvrage = (id)=>{
-                showModal.value = false;
-                emit('selectedOuvrage', { ouvrageId: id, zoneIndex: zoneIndex.value, type: 'prestation' });
+            const selectOuvrage = (data)=>{
+                ouvrage.value.id = data.id;
+                ouvrage.value.unit = data.unit;
+                step.value = 3;                
             }
             const nextStep = ()=>{
                 step.value = 2;
@@ -167,21 +198,32 @@
 
                 });
             })
+            const confirm = ()=>{
+                showModal.value = false;
+                emit('selectedOuvrage', { 
+                    type: 'prestation', 
+                    ouvrageId: ouvrage.value.id, 
+                    qtyOuvrage: ouvrage.value.qtyOuvrage, 
+                    zoneIndex: zoneIndex.value
+                });
+            }            
             return {
                 step,
+                ouvrage,
                 query,
                 showModal,
-                selectedRoofType,
                 queryElement,
+                openModal,
+                toits,
+                prestations,
+                selectedRoofType,
                 searchOuvrage,
                 closeModal,
-                openModal,
                 selectOuvrage,
                 nextStep,
-                resetRoofFilter,
                 selectRoof,
-                toits,
-                prestations
+                resetRoofFilter,
+                confirm
             }
         }
     }
@@ -228,6 +270,26 @@
 }
 .list-move{
     transition:all 0.9s ease;
+}
+.custom-btn{
+    width: 96px;
+    height: 40px;
+    font-family: 'Almarai Bold';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 140%;
+    border-radius: 4px;
+    text-align: center;
+    border: 1px solid #47454B;
+    cursor: pointer;
+}
+.btn-cancel{
+    color: rgba(0, 0, 0, 0.2);
+}
+.btn-ok{
+    background: #A1FA9F;
+    color: #3E9A4D;
 }
 .search-layer{
     width: 100%;

@@ -106,7 +106,7 @@ class DevisController extends Controller
         $ouvrage->toal = 0;
         $tasks = DB::table('ouvrage_task')
                 ->where('ouvrage_id', $request->id)
-                ->select('id', 'name', 'textcustomer as customerText', )
+                ->select('id', 'name', 'textcustomer as customerText', 'textchargeaffaire', 'unit_id', 'qty')
                 ->get();
         $ouvrage->tasks = $tasks;
         foreach ($tasks as $task) {
@@ -136,7 +136,8 @@ class DevisController extends Controller
     public function searchOuvrage(Request $request){
         $query = DB::table('ouvrages')
                     ->join('ouvrage_toit', 'ouvrage_toit.id', '=', 'ouvrages.ouvrage_toit_id')
-                    ->join('ouvrage_metier', 'ouvrage_metier.id', '=', 'ouvrages.ouvrage_metier_id');
+                    ->join('ouvrage_metier', 'ouvrage_metier.id', '=', 'ouvrages.ouvrage_metier_id')
+                    ->join('units', 'units.id', '=', 'ouvrages.unit_id');
         if($request->search != ''){
             $query =    $query->where('name', 'like', '%'.$request->search.'%')
                         ->orWhere('codelcdt', 'like', '%'.$request->search.'%')
@@ -148,7 +149,7 @@ class DevisController extends Controller
             $query->select(
                 'ouvrages.id', 'ouvrages.name',
                 'ouvrages.textchargeaffaire', 'ouvrage_metier.name as metier', 
-                'ouvrage_toit.name as toit', 'ouvrages.type'
+                'ouvrage_toit.name as toit', 'ouvrages.type', 'units.code as unit'
             )->get()
         );
     }
@@ -157,19 +158,19 @@ class DevisController extends Controller
      * Search Products
      */
     public function searchProduct(Request $request){
-        $query = DB::table('products');
+        $query = DB::table('products')->join('units', 'units.id', '=', 'products.unit_id');
         if($request->search != ''){
-            $query =    $query->where('name', 'like', '%'.$request->search.'%')
-                        ->orWhere('reference', 'like', '%'.$request->search.'%')
-                        ->orWhere('description', 'like', '%'.$request->search.'%');
+            $query =    $query->where('products.name', 'like', '%'.$request->search.'%')
+                        ->orWhere('products.reference', 'like', '%'.$request->search.'%')
+                        ->orWhere('products.description', 'like', '%'.$request->search.'%');
         }
         if($request->type != '')
-            $query =    $query->where('type', $request->type);
+            $query =    $query->where('products.type', $request->type);
         return response()->json(
             $query->select(
-                'id', 'name',
-                'description', 'type', 
-                'reference', 'wholesale_price'
+                'products.id', 'products.name',
+                'products.description', 'products.type', 'products.unit_id', 'products.tax_id as tax',
+                'products.reference', 'products.wholesale_price', 'products.type', 'units.code as unit'
             )->get()
         );
     }

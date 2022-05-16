@@ -33,7 +33,7 @@
                                             <div class="custom-text-danger almarai-light font-14">{{ item.wholesale_price }} €</div>
                                         </div>
                                         <div class="add-ouvrage-btn d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer position-absolute"
-                                            @click="selectOuvrage(item.id)"
+                                            @click="selectOuvrage(item)"
                                         >
                                             <span class="plus-icon me-2"></span> AJOUTER CE PRODUIT
                                         </div>
@@ -96,14 +96,23 @@
                 data.value.ouvrageType = ouvrageType;
                 data.value.ouvrageId = ouvrageId;
                 data.value.taskId = taskId;
+                
                 showModal.value = !showModal.value;
                 nextTick(()=>{
                     queryElement.value.focus();
                 })
             }  
-            const selectProduct = (id)=>{
+            const selectProduct = (product)=>{
                 showModal.value = false;
-                emit('selectedProduct', { productId: id, ... data.value });
+                emit('selectedProduct', { 
+                    productId: product.id, 
+                    tax: product.tax, 
+                    unitPrice: product.wholesale_price, 
+                    type: product.type, 
+                    unit: product.unit, 
+                    numberh: product.numberh, 
+                    ... data.value 
+                });
             }
             onMounted(()=>{
                 // axios.post('/get-all-toits').then((res)=>{

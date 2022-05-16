@@ -15,7 +15,7 @@
                                 <div class="d-flex px-3 justify-content-between">
                                     <div class="col-5">
                                         <SelectBox :label="''" 
-                                            v-model="labor.hours" 
+                                            v-model="labor.numberH" 
                                             :options="[ 
                                                 { display:'Intérieur', value: 'Intérieur' }, 
                                                 { display:'Extérieur', value: 'Extérieur' },
@@ -79,20 +79,28 @@ export default {
             showModal.value = !showModal.value;
         }
         const labor = ref({
-            hours: '',
+            zoneIndex: '',
+            ouvrageType: '',
+            ouvrageId: '',
+            taskId: '',
+            numberH: '',
             amountExcludeTax: '',
             tax: '',
         })
         const showModal = ref(false);
-        const openModal = ()=>{
+        const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId)=>{
+            labor.value.zoneIndex = zoneIndex;
+            labor.value.ouvrageType = ouvrageType;
+            labor.value.ouvrageId = ouvrageId;
+            labor.value.taskId = taskId;
             showModal.value = !showModal.value;
             nextTick(()=>{
                 queryElement.value.focus();
             })
         }  
-        const selectLabor = (index)=>{
+        const selectLabor = ()=>{
             showModal.value = false;
-            emit('selectedLabor', );
+            emit('selectedLabor', labor.value);
         }
         return {
             labor,

@@ -19,26 +19,55 @@
                             </div>
                         </div>
                         <div class="result-panel mt-4">
-                            <div class="ouvrage-wrap border-bottom" v-for="(item, index) in ouvrages" :key="index" :class="{ 'border-top': index == 0 }">
-                                <div class="ouvrage-item d-flex">
-                                    <div class="col-1 installation-icon"></div>
-                                    <div class="ouvrage-item-content col-11 ps-3 position-relative">
-                                        <p class="mt-3 mulish-extrabold font-16">{{ item.name }}</p>
-                                        <div class="my-2 ps-2 almarai-light font-14 text-justify">
-                                            {{ item.textchargeaffaire }}
+                            <div v-if="step == 1">
+                                <div class="ouvrage-wrap border-bottom" v-for="(item, index) in ouvrages" :key="index" :class="{ 'border-top': index == 0 }">
+                                    <div class="ouvrage-item d-flex">
+                                        <div class="col-1 installation-icon"></div>
+                                        <div class="ouvrage-item-content col-11 ps-3 position-relative">
+                                            <p class="mt-3 mulish-extrabold font-16">{{ item.name }}</p>
+                                            <div class="my-2 ps-2 almarai-light font-14 text-justify">
+                                                {{ item.textchargeaffaire }}
+                                            </div>
+                                            <div class="d-flex justify-content-between ps-2">
+                                                <div class="custom-text-danger almarai-light font-14">{{ item.type }}</div>
+                                                <div class="custom-text-danger almarai-light font-14">{{ item.metier }}</div>
+                                                <div class="custom-text-danger almarai-light font-14">{{ item.toit }}</div>
+                                            </div>
+                                            <div class="add-ouvrage-btn d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer position-absolute"
+                                                @click="selectOuvrage(item)"
+                                            >
+                                                <span class="plus-icon me-2"></span> AJOUTER CET OUVRAGE
+                                            </div>
                                         </div>
-                                        <div class="d-flex justify-content-between ps-2">
-                                            <div class="custom-text-danger almarai-light font-14">{{ item.type }}</div>
-                                            <div class="custom-text-danger almarai-light font-14">{{ item.metier }}</div>
-                                            <div class="custom-text-danger almarai-light font-14">{{ item.toit }}</div>
-                                        </div>
-                                        <div class="add-ouvrage-btn d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer position-absolute"
-                                            @click="selectOuvrage(item.id)"
-                                        >
-                                            <span class="plus-icon me-2"></span> AJOUTER CET OUVRAGE
+                                    </div>                                
+                                </div>
+                            </div>
+                            <div class="ouvrage-wrap" v-else>
+                                <div class="ouvrage-item">
+                                    <div class="d-flex">
+                                        <div class="col-1 installation-icon"></div>
+                                        <div class="col-11">
+                                            <p class="mt-3 mulish-extrabold font-16">{{ item.name }}</p>
                                         </div>
                                     </div>
-                                </div>                                
+                                    <div class="almarai-light font-14 text-justify">
+                                        {{ item.textchargeaffaire }}
+                                    </div>
+                                    <div class="d-flex justify-content-between px-5">
+                                        <div class="form-group col-5">
+                                            <label for="unit">Unité</label>
+                                            <input type="text" id="unit" :value="ouvrage.unit" readonly class="form-control">
+                                        </div>
+                                        <div class="form-group col-5">
+                                            <label for="unit">Quantité</label>
+                                            <input type="text" v-model="ouvrage.qtyOuvrage" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="btns mt-4 d-flex justify-content-between">
+                                        <button class="custom-btn btn-cancel" @click="closeModal">Annuler</button>
+                                        <button class="custom-btn btn-ok" @click="confirm">Suivant</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -70,7 +99,12 @@ export default {
         const store = useStore();
         const ouvrages = ref([
         ]);
+        const step = ref(1);
         const query = ref('');
+        const ouvrage = ref({
+            id: '',
+            qtyOuvrage: 1,
+        });
         const queryElement = ref(null);
         const zoneIndex = ref(null);
         const closeModal = ()=>{
@@ -91,6 +125,7 @@ export default {
         }
         const showModal = ref(false);
         const openModal = (index)=>{
+            step.value = 1;
             zoneIndex.value = index;
             showModal.value = !showModal.value;
             nextTick(()=>{
@@ -109,18 +144,31 @@ export default {
             })            
         }  
         const selectOuvrage = (data)=>{
+            ouvrage.value.id = data.id;
+            ouvrage.value.unit = data.unit;
+            step.value = 2;
+        }
+        const confirm = ()=>{
             showModal.value = false;
-            emit('selectedOuvrage', { ouvrageId: data, type: 'installation', zoneIndex: zoneIndex.value});
+            emit('selectedOuvrage', { 
+                type: 'installation', 
+                ouvrageId: ouvrage.value.id, 
+                qtyOuvrage: ouvrage.value.qtyOuvrage, 
+                zoneIndex: zoneIndex.value
+            });
         }
         return {
             query,
+            step,
+            ouvrage,
             ouvrages,
             showModal,
             queryElement,
             searchOuvrage,
             closeModal,
             openModal,
-            selectOuvrage
+            selectOuvrage,
+            confirm
         }
     }
 
@@ -168,6 +216,26 @@ export default {
 }
 .list-move{
     transition:all 0.9s ease;
+}
+.custom-btn{
+    width: 96px;
+    height: 40px;
+    font-family: 'Almarai Bold';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 140%;
+    border-radius: 4px;
+    text-align: center;
+    border: 1px solid #47454B;
+    cursor: pointer;
+}
+.btn-cancel{
+    color: rgba(0, 0, 0, 0.2);
+}
+.btn-ok{
+    background: #A1FA9F;
+    color: #3E9A4D;
 }
 .search-layer{
     width: 100%;
