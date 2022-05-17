@@ -104,14 +104,24 @@ export default {
             tax: '',
             file: '',
             marge: '',
+            zoneIndex: '',
+            ouvrageType: '',
+            ouvrageId: '',
+            taskId: '',
+            qtyOuvrage: '',
         })
         const showModal = ref(false);
-        const openModal = ()=>{
+        const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
+            supplier.value.zoneIndex = zoneIndex;
+            supplier.value.ouvrageType = ouvrageType;
+            supplier.value.ouvrageId = ouvrageId;
+            supplier.value.taskId = taskId;
+            supplier.value.qtyOuvrage = qtyOuvrage;
             showModal.value = !showModal.value;
         }  
         const selectSupplier = (index)=>{
             showModal.value = false;
-            emit('selectedSupplier', );
+            emit('selectedSupplier', supplier.value);
         }
         return {
             supplier,

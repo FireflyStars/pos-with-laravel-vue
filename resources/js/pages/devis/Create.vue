@@ -300,21 +300,21 @@
                               </div>
                               <div class="btns d-flex mt-4">
                                 <div class="col-5">
-                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openProductModal(zoneIndex, 1,ouvrageIndex, taskIndex)">
+                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openProductModal(zoneIndex, 1,ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
                                     <span class="plus-icon me-2"></span> AJOUTER UN PRODUIT
                                   </div>
                                   <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openTaskModal(zoneIndex, 1, ouvrageIndex)">
                                     <span class="plus-icon me-2"></span> AJOUTER ACTION
                                   </div>
-                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openSupplierModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
+                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openSupplierModal(zoneIndex, 1, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
                                     <span class="plus-icon me-2"></span> COMMANDE FOURNISSEUR
                                   </div>
                                 </div>
                                 <div class="col-5">
-                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openLaborModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
+                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openLaborModal(zoneIndex, 1, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
                                     <span class="plus-icon me-2"></span> AJOUTER UN MAIN D’ OEUVRES
                                   </div>
-                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openInterimModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
+                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openInterimModal(zoneIndex, 1, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
                                     <span class="plus-icon me-2"></span> AJOUTER  INTERIM
                                   </div>
                                 </div>
@@ -441,21 +441,21 @@
                               </div>
                               <div class="btns d-flex mt-4">
                                 <div class="col-5">
-                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openProductModal(zoneIndex, 2, ouvrageIndex, taskIndex)">
+                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openProductModal(zoneIndex, 2, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
                                     <span class="plus-icon me-2"></span> AJOUTER UN PRODUIT
                                   </div>
                                   <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openTaskModal(zoneIndex, 2, ouvrageIndex)">
                                     <span class="plus-icon me-2"></span> AJOUTER ACTION
                                   </div>
-                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openSupplierModal(zoneIndex, 2, ouvrageIndex, taskIndex)">
+                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openSupplierModal(zoneIndex, 2, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
                                     <span class="plus-icon me-2"></span> COMMANDE FOURNISSEUR
                                   </div>
                                 </div>
                                 <div class="col-5">
-                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openLaborModal(zoneIndex, 2, ouvrageIndex, taskIndex)">
+                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openLaborModal(zoneIndex, 2, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
                                     <span class="plus-icon me-2"></span> AJOUTER UN MAIN D’ OEUVRES
                                   </div>
-                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openInterimModal(zoneIndex, 2, ouvrageIndex, taskIndex)">
+                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openInterimModal(zoneIndex, 2, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
                                     <span class="plus-icon me-2"></span> AJOUTER  INTERIM
                                   </div>
                                 </div>
@@ -582,21 +582,21 @@
                               </div>
                               <div class="btns d-flex mt-4">
                                 <div class="col-5">
-                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openProductModal(zoneIndex, 3, ouvrageIndex, taskIndex)">
+                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openProductModal(zoneIndex, 3, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
                                     <span class="plus-icon me-2"></span> AJOUTER UN PRODUIT
                                   </div>
                                   <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openTaskModal(zoneIndex, 3, ouvrageIndex)">
                                     <span class="plus-icon me-2"></span> AJOUTER ACTION
                                   </div>
-                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openSupplierModal(zoneIndex, 3, ouvrageIndex, taskIndex)">
+                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openSupplierModal(zoneIndex, 3, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
                                     <span class="plus-icon me-2"></span> COMMANDE FOURNISSEUR
                                   </div>
                                 </div>
                                 <div class="col-5">
-                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer"  @click="openLaborModal(zoneIndex, 3, ouvrageIndex, taskIndex)">
+                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer"  @click="openLaborModal(zoneIndex, 3, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
                                     <span class="plus-icon me-2"></span> AJOUTER UN MAIN D’ OEUVRES
                                   </div>
-                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openInterimModal(zoneIndex, 3, ouvrageIndex, taskIndex)">
+                                  <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openInterimModal(zoneIndex, 3, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
                                     <span class="plus-icon me-2"></span> AJOUTER  INTERIM
                                   </div>
                                 </div>
@@ -1010,28 +1010,28 @@ export default {
       // toggle open class for 3th parent. (<div class="ouvrage-section bg-white px-4 py-3 mt-2 mb-2">)
       event.path[3].classList.toggle('open');
     }
-    const openSecuriteModal = ()=>{
-      securiteModal.value.openModal();
+    const openSecuriteModal = (zIndex)=>{
+      securiteModal.value.openModal(zIndex);
     }
-    const openInstallationModal = ()=>{
-      installationModal.value.openModal();
+    const openInstallationModal = (zIndex)=>{
+      installationModal.value.openModal(zIndex);
     }
     const openPrestationModal = (zIndex)=>{
       prestationModal.value.openModal(zIndex);
     }
-    const openSupplierModal = (zIndex, ouvrageType, ouvrageId, taskId)=>{
-      supplierModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId);
+    const openSupplierModal = (zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
+      supplierModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage);
     }
-    const openProductModal = (zIndex, ouvrageType, ouvrageId, taskId)=>{
-      productModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId);
+    const openProductModal = (zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
+      productModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage);
     }
     
-    const openInterimModal = (zIndex, ouvrageType, ouvrageId, taskId)=>{
-      interimModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId);
+    const openInterimModal = (zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
+      interimModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage);
     }
 
-    const openLaborModal = (zIndex, ouvrageType, ouvrageId, taskId)=>{
-      laborModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId);
+    const openLaborModal = (zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
+      laborModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage);
     }
     const openTaskModal = (zIndex, ouvrageType, ouvrageId)=>{
       laborModal.value.openModal(zIndex, ouvrageType, ouvrageId);
@@ -1081,9 +1081,6 @@ export default {
     const selectedOuvrage = (data)=>{
       store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Adding selected Ouvrage..']);
       axios.post('/get-ouvrage', { id: data.ouvrageId, qtyOuvrage: data.qtyOuvrage }).then((res)=>{
-
-        console.log(data.zoneIndex);
-        console.log(form.value.zones);
         if( data.type == 'installation' ){
           form.value.zones[data.zoneIndex].installOuvrage.ouvrages.push(res.data);
         }
@@ -1110,7 +1107,7 @@ export default {
           marge: 0,
           type: product.type,
           unit: product.unit,
-          qty_calc: '',
+          qtyOuvrage: product.qtyOuvrage,
           totalPrice: product.wholesale_price,
           numberH: 1,
         });
@@ -1122,7 +1119,7 @@ export default {
           marge: 0,
           type: product.type,
           unit: product.unit,
-          qty_calc: '',
+          qtyOuvrage: product.qtyOuvrage,
           totalPrice: product.wholesale_price,
           numberH: 1,
         });
@@ -1134,7 +1131,7 @@ export default {
           marge: 0,
           type: product.type,
           unit: product.unit,
-          qty_calc: '',
+          qtyOuvrage: product.qtyOuvrage,
           totalPrice: product.wholesale_price,
           numberH: 1,
         });
@@ -1151,7 +1148,7 @@ export default {
           marge: 0,
           type: 'supplier',
           unit: 'UN',
-          qty_calc: '',
+          qtyOuvrage: supplier.qtyOuvrage,
           totalPrice: 0,
           numberH: 1,
         });
@@ -1163,7 +1160,7 @@ export default {
           marge: 0,
           type: 'supplier',
           unit: 'UN',
-          qty_calc: '',
+          qtyOuvrage: supplier.qtyOuvrage,
           totalPrice: 0,
           numberH: 1,
         });
@@ -1175,7 +1172,7 @@ export default {
           marge: 0,
           type: 'supplier',
           unit: 'UN',
-          qty_calc: '',
+          qtyOuvrage: supplier.qtyOuvrage,
           totalPrice: 0,
           numberH: 1,          
         });
@@ -1191,7 +1188,7 @@ export default {
           marge: 0,
           type: 'Labor',
           unit: 'HR',
-          qty_calc: 1,
+          qtyOuvrage: labor.qtyOuvrage,
           totalPrice: '',
           numberH: 1,
         });
@@ -1203,7 +1200,7 @@ export default {
           marge: 0,
           type: 'Labor',
           unit: 'HR',
-          qty_calc: 1,
+          qtyOuvrage: labor.qtyOuvrage,
           totalPrice: '',
           numberH: 1,
         });
@@ -1215,7 +1212,7 @@ export default {
           marge: 0,
           type: 'Labor',
           unit: 'HR',
-          qty_calc: 1,
+          qtyOuvrage: labor.qtyOuvrage,
           totalPrice: '',
           numberH: 1,
         });
@@ -1231,7 +1228,7 @@ export default {
           marge: 0,
           type: 'Interim',
           unit: 'HR',
-          qty_calc: 1,
+          qtyOuvrage: interim.qtyOuvrage,
           totalPrice: 0,
           numberH: 1,
         });
@@ -1243,7 +1240,7 @@ export default {
           marge: 0,
           type: 'Interim',
           unit: 'HR',
-          qty_calc: 1,
+          qtyOuvrage: interim.qtyOuvrage,
           totalPrice: 0,
           numberH: 1,
         });
@@ -1255,7 +1252,7 @@ export default {
           marge: 0,
           type: 'Interim',
           unit: 'HR',
-          qty_calc: 1,
+          qtyOuvrage: interim.qtyOuvrage,
           totalPrice: 0,
           numberH: 1,
         });

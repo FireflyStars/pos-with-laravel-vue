@@ -173,7 +173,7 @@ class DevisController extends Controller
         return response()->json(
             $query->select(
                 'products.id', 'products.name',
-                'products.description', 'products.type', 'products.unit_id', 'products.tax_id as tax',
+                'products.description', 'products.type', 'products.unit_id', 'products.taxe_id as tax',
                 'products.reference', 'products.wholesale_price', 'products.type', 'units.code as unit'
             )->get()
         );

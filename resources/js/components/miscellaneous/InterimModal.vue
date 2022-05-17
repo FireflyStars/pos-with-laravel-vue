@@ -94,9 +94,19 @@ export default {
             amountExcludeTax: '',
             company: '',
             tax: '',
+            zoneIndex: 0,
+            ouvrageType: '',
+            ouvrageId: 0,
+            taskId: 0,
+            qtyOuvrage: 0,
         })
         const showModal = ref(false);
-        const openModal = ()=>{
+        const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
+            interim.value.zoneIndex = zoneIndex;
+            interim.value.ouvrageType = ouvrageType;
+            interim.value.ouvrageId = ouvrageId;
+            interim.value.taskId = taskId;
+            interim.value.qtyOuvrage = qtyOuvrage;            
             showModal.value = !showModal.value;
             nextTick(()=>{
                 queryElement.value.focus();
@@ -104,7 +114,7 @@ export default {
         }  
         const selectInterim = (index)=>{
             showModal.value = false;
-            emit('selectedInterim', );
+            emit('selectedInterim', interim.value);
         }
         return {
             interim,

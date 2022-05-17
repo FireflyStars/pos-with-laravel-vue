@@ -86,13 +86,15 @@ export default {
             numberH: '',
             amountExcludeTax: '',
             tax: '',
+            qtyOuvrage: 0,
         })
         const showModal = ref(false);
-        const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId)=>{
+        const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
             labor.value.zoneIndex = zoneIndex;
             labor.value.ouvrageType = ouvrageType;
             labor.value.ouvrageId = ouvrageId;
             labor.value.taskId = taskId;
+            labor.value.qtyOuvrage = qtyOuvrage;
             showModal.value = !showModal.value;
             nextTick(()=>{
                 queryElement.value.focus();

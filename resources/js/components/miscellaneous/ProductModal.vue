@@ -12,7 +12,9 @@
                     <div class="search-body">
                         <div class="d-flex justify-content-center mt-5">
                             <div class="search-part d-flex align-items-center justify-content-between px-3">
-                                <input type="text" ref="queryElement" class="w-100" placeholder="Rechercher dans base ouvrage">
+                                <input type="text" ref="queryElement" class="w-100" placeholder="Rechercher dans base ouvrage"
+                                    @keyup="submit"
+                                >
                                 <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M8.25982 0.0710449C10.2565 0.0710449 12.1713 0.890046 13.5832 2.34788C14.995 3.80571 15.7882 5.78295 15.7882 7.84464C15.7882 9.7701 15.1048 11.5401 13.9814 12.9035L14.2941 13.2264H15.2091L21.0001 19.206L19.2628 21L13.4718 15.0203V14.0755L13.1591 13.7526C11.793 14.9566 10.0559 15.6181 8.25982 15.6182C6.26317 15.6182 4.3483 14.7992 2.93645 13.3414C1.52461 11.8836 0.731445 9.90633 0.731445 7.84464C0.731445 5.78295 1.52461 3.80571 2.93645 2.34788C4.3483 0.890046 6.26317 0.0710449 8.25982 0.0710449ZM8.25982 2.46292C5.36429 2.46292 3.04787 4.8548 3.04787 7.84464C3.04787 10.8345 5.36429 13.2264 8.25982 13.2264C11.1553 13.2264 13.4718 10.8345 13.4718 7.84464C13.4718 4.8548 11.1553 2.46292 8.25982 2.46292Z" fill="black"/>
                                 </svg>
@@ -33,7 +35,7 @@
                                             <div class="custom-text-danger almarai-light font-14">{{ item.wholesale_price }} €</div>
                                         </div>
                                         <div class="add-ouvrage-btn d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer position-absolute"
-                                            @click="selectOuvrage(item)"
+                                            @click="selectProduct(item)"
                                         >
                                             <span class="plus-icon me-2"></span> AJOUTER CE PRODUIT
                                         </div>
@@ -70,7 +72,8 @@
                 zoneIndex: '',
                 ouvrageType: '',
                 ouvrageId: '',
-                taskId: ''
+                taskId: '',
+                qtyOuvrage: '',
             });
             const products = ref([]);
             const query = ref('');
@@ -78,24 +81,30 @@
             const closeModal = ()=>{
                 showModal.value = !showModal.value;
             }
-            const searchProduct = async ()=>{
-                store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Search Product...']);
-                await axios.post('/search-product', {
-                    search: query.value
-                }).then((response)=>{
-                    products.value = response.data;
-                }).catch((error)=>{
-                    console.log(error)
-                }).finally(()=>{
-                    store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
-                })
-            }
+            const timeout =ref('');
+            const submit = (e)=> { 
+                clearTimeout(timeout.value);
+                timeout.value = setTimeout(function(){
+                    store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Search Product...']);
+                    axios.post('/search-product', {
+                        search: query.value
+                    }).then((response)=>{
+                        products.value = response.data;
+                    }).catch((error)=>{
+                        console.log(error)
+                    }).finally(()=>{
+                        store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
+                    })
+                }  
+                , 500)
+            };            
             const showModal = ref(false);
-            const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId)=>{
+            const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
                 data.value.zoneIndex = zoneIndex;
                 data.value.ouvrageType = ouvrageType;
                 data.value.ouvrageId = ouvrageId;
                 data.value.taskId = taskId;
+                data.value.qtyOuvrage = qtyOuvrage;
                 
                 showModal.value = !showModal.value;
                 nextTick(()=>{
@@ -114,21 +123,12 @@
                     ... data.value 
                 });
             }
-            onMounted(()=>{
-                // axios.post('/get-all-toits').then((res)=>{
-                //     toits.value = res.data;
-                // }).catch((error)=>{
-                //     console.log(error);
-                // }).finally(()=>{
-
-                // });
-            })
             return {
                 query,
                 showModal,
                 queryElement,
                 products,
-                searchProduct,
+                submit,
                 closeModal,
                 openModal,
                 selectProduct,
@@ -197,34 +197,7 @@
             }
         }
         .result-panel{
-            height: 600px;
-            .second-step{
-                height: 575px;
-                overflow-y: auto;
-            }
-            .roof-types{
-                background: #F8F8F8;
-                box-shadow: inset 0px -1px 0px rgba(168, 168, 168, 0.25);
-                .roof{
-                    width: 148px;
-                    border: solid 2px transparent;
-                    border-radius: 4px;
-                    .roof-image{
-                        width: 100%;
-                        height: 74px;
-                        pointer-events: none;
-                        background-size: contain;
-                        background-position: center;
-                        background-repeat: no-repeat;
-                    }
-                    .roof-desc{
-                        pointer-events: none;
-                    }
-                }
-                .roof.select{
-                    border: solid 2px #3E9A4D;
-                }
-            }
+            height: 575px;
             .btns{
                 .custom-btn{
                     width: 96px;
