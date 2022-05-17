@@ -287,7 +287,7 @@
                                           <span class="option-icon me-3"></span> {{ detail.type }}
                                         </div>
                                       </td>
-                                      <td valign="middle">{{ detail.qty*detail.qtyOuvrage }}</td>
+                                      <td valign="middle">{{ detail.qtyOuvrage }}</td>
                                       <td>
                                         <input type="text" v-model="detail.qty" class="w-100 form-control form-control-sm custom-text-danger">
                                       </td>
@@ -454,7 +454,7 @@
                                           <span class="option-icon me-3"></span> {{ detail.type }}
                                         </div>
                                       </td>
-                                      <td valign="middle">{{ detail.qty*detail.qtyOuvrage }}</td>
+                                      <td valign="middle">{{ detail.qtyOuvrage }}</td>
                                       <td>
                                         <input type="text" v-model="detail.qty" class="w-100 form-control form-control-sm custom-text-danger">
                                       </td>
@@ -621,7 +621,7 @@
                                           <span class="option-icon me-3"></span> {{ detail.type }}
                                         </div>
                                       </td>
-                                      <td valign="middle">{{ detail.qty*detail.qtyOuvrage }}</td>
+                                      <td valign="middle">{{ detail.qtyOuvrage }}</td>
                                       <td>
                                         <input type="text" v-model="detail.qty" class="w-100 form-control form-control-sm custom-text-danger">
                                       </td>
@@ -945,9 +945,6 @@ export default {
               }  
               if(detail.type == 'Interim')     
                 form.value.totalHoursForInterim += parseFloat(detail.numberH)
-              console.log(detail.unitPrice)
-              console.log(detail.qty)
-              console.log(detail.marge)
               ouvrage.total += detail.totalPrice;
               ouvrage.totalWithoutMarge += detail.totalPriceWithoutMarge;
               ouvrage.totalHour += parseFloat(detail.numberH);

@@ -138,7 +138,7 @@ class DevisController extends Controller
                 $detail->unitPrice = 0;
                 $detail->marge = 0;
                 $detail->totalPrice = 0;
-                $detail->qtyOuvrage = $request->qtyOuvrage;
+                $detail->qtyOuvrage = (int)$request->qtyOuvrage*((int)$detail->qty);
                 $detail->totalPriceWithoutMarge = 0;
                 $detail->tax = 0;
             }
