@@ -10,7 +10,7 @@
                         </svg>
                     </div>
                     <div class="search-body">
-                        <div class="d-flex justify-content-center mt-5">
+                        <div class="d-flex justify-content-center mt-5" v-if="step != 3">
                             <div class="search-part d-flex align-items-center justify-content-between px-3">
                                 <input type="text" ref="queryElement" class="w-100" placeholder="Rechercher dans base ouvrage">
                                 <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -47,11 +47,11 @@
                                     <div class="d-flex">
                                         <div class="col-1 securite-icon"></div>
                                         <div class="col-11">
-                                            <p class="mt-3 mulish-extrabold font-16">{{ item.name }}</p>
+                                            <p class="mt-3 mulish-extrabold font-16">{{ ouvrage.name }}</p>
                                         </div>
                                     </div>
                                     <div class="almarai-light font-14 text-justify">
-                                        {{ item.textchargeaffaire }}
+                                        {{ ouvrage.textchargeaffaire }}
                                     </div>
                                     <div class="d-flex justify-content-between px-5">
                                         <div class="form-group col-5">
@@ -103,6 +103,8 @@ export default {
         const ouvrage = ref({
             id: '',
             qtyOuvrage: 1,
+            name: '',
+            textchargeaffaire: '',
         });            
         const query = ref('');
         const queryElement = ref(null);
@@ -146,6 +148,8 @@ export default {
         const selectOuvrage = (data)=>{
             ouvrage.value.id = data.id;
             ouvrage.value.unit = data.unit;
+            ouvrage.value.name = data.name;
+            ouvrage.value.textchargeaffaire = data.textchargeaffaire;            
             step.value = 2;            
         }
         const confirm = ()=>{
@@ -158,8 +162,10 @@ export default {
             });
         }               
         return {
+            step,
             query,
             ouvrages,
+            ouvrage,
             showModal,
             queryElement,
             searchOuvrage,
@@ -239,7 +245,7 @@ export default {
     width: 100%;
     height: 100%;
     top: 0;
-    z-index: 20000000000;
+    z-index: 11;
     background: rgba(0, 0, 0, 0.3);
     .search-panel{
         width: 700px;

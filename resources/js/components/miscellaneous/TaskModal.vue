@@ -12,56 +12,25 @@
                     <div class="search-body">
                         <div class="result-panel mt-4">
                             <div class="border-top border-bottom px-2">
-                                <div class="d-flex px-3 justify-content-between">
-                                    <div class="col-5">
-                                        <SelectBox :label="''" 
-                                            v-model="interim.hours" 
-                                            :options="[ 
-                                                { display:'Intérieur', value: 'Intérieur' }, 
-                                                { display:'Extérieur', value: 'Extérieur' },
-                                                { display:'Pas d’accès', value: 'Pas d’accès' }
-                                            ]"
-                                            :name="'workHours'"
-                                            :classnames="'col-5'"
-                                            :placeholder="'Nombre d’heure'"
-                                        />
-                                    </div>
-                                    <div class="col-5">
-                                        <input type="text" v-model="supplier.amountExcludeTax" placeholder="Montant HT" class="form-control form-control-sm">
+                                <div class="form-group">
+                                    <div class="col-12">
+                                        <input type="text" v-model="task.name" placeholder="Nom" class="form-control form-control-sm">
                                     </div>
                                 </div>
-                                <div class="d-flex px-3 justify-content-between">
-                                    <div class="col-5">
-                                        <SelectBox :label="''" 
-                                            v-model="interim.company" 
-                                            :options="[ 
-                                                { display:'Intérieur', value: 'Intérieur' }, 
-                                                { display:'Extérieur', value: 'Extérieur' },
-                                                { display:'Pas d’accès', value: 'Pas d’accès' }
-                                            ]"
-                                            :name="'company'"
-                                            :classnames="'col-5'"
-                                            :placeholder="'Société'"
-                                        />                                        
+                                <div class="form-group">
+                                    <div class="col-12">
+                                        <input type="text" v-model="task.textchargeaffaire" placeholder="Texte Chargé d affaire" class="form-control form-control-sm">
                                     </div>
-                                    <div class="col-5">
-                                        <SelectBox :label="''" 
-                                            v-model="interim.tax" 
-                                            :options="[ 
-                                                { display:'Intérieur', value: 'Intérieur' }, 
-                                                { display:'Extérieur', value: 'Extérieur' },
-                                                { display:'Pas d’accès', value: 'Pas d’accès' }
-                                            ]"
-                                            :name="'tax'"
-                                            :classnames="'col-5'"
-                                            :placeholder="'Taxe'"
-                                        />                                        
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-12">
+                                        <input type="text" v-model="task.cusomerText" placeholder="Texte Commerical" class="form-control form-control-sm">
                                     </div>
                                 </div>
                             </div>
                             <div class="btns mt-4 d-flex justify-content-between px-5">
                                 <button class="custom-btn btn-cancel" @click="closeModal">Annuler</button>
-                                <button class="custom-btn btn-ok" @click="selectSupplier">Suivant</button>
+                                <button class="custom-btn btn-ok" @click="selectTask">Suivant</button>
                             </div>
                         </div>
                     </div>
@@ -72,16 +41,15 @@
 </template>
 <script>
 
-import {nextTick, ref} from 'vue';
-import axios from 'axios';
+import {ref} from 'vue';
 import SelectBox from '../../components/miscellaneous/SelectBox';
 
 export default {
-    name: 'InterimModal',
+    name: 'TaskModal',
     props: {
         modelValue: Object
     },
-    emits: ['selectedInterim'],
+    emits: ['selectedTask'],
     components:{
         SelectBox
     },
@@ -89,29 +57,34 @@ export default {
         const closeModal = ()=>{
             showModal.value = !showModal.value;
         }
-        const interim = ref({
-            hours: '',
-            amountExcludeTax: '',
-            company: '',
-            tax: '',
+        const task = ref({
+            zoneIndex: '',
+            ouvrageType: '',
+            ouvrageId: '',
+            name: '',
+            textchargeaffaire: '',
+            customerText: '',
+            unit_id: 3,
+            qty: 1,
+            details: [],
         })
         const showModal = ref(false);
-        const openModal = ()=>{
+        const openModal = (zoneIndex, ouvrageType, ouvrageId)=>{
+            task.value.zoneIndex = zoneIndex;
+            task.value.ouvrageType = ouvrageType;
+            task.value.ouvrageId = ouvrageId;
             showModal.value = !showModal.value;
-            nextTick(()=>{
-                queryElement.value.focus();
-            })
         }  
-        const selectInterim = (index)=>{
+        const selectTask = ()=>{
             showModal.value = false;
-            emit('selectedInterim', );
+            emit('selectedTask', task.value);
         }
         return {
-            interim,
+            task,
             showModal,
             closeModal,
             openModal,
-            selectInterim,
+            selectTask,
         }
     }
 

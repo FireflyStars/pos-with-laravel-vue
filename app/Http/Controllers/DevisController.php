@@ -82,14 +82,15 @@ class DevisController extends Controller
         $query = DB::table('ouvrages')
                 ->join('ouvrage_toit', 'ouvrage_toit.id', '=', 'ouvrages.ouvrage_toit_id')
                 ->join('ouvrage_metier', 'ouvrage_metier.id', '=', 'ouvrages.ouvrage_metier_id')
+                ->join('units', 'units.id', '=', 'ouvrages.unit_id')
                 ->where('type', 'PRESTATION')
                 ->where('ouvrage_toit_id', $request->toit == 0 ? '!=' : '=',$request->toit);
         
         return response()->json(
             $query->select(
                 'ouvrages.id', 'ouvrages.name',
-                'ouvrages.textchargeaffaire', 'ouvrage_metier.name as metier', 
-                'ouvrage_toit.name as toit', 'ouvrages.type'
+                'ouvrages.textchargeaffaire', 'ouvrage_metier.name as metier',
+                'ouvrage_toit.name as toit', 'ouvrages.type', 'units.code as unit'
             )->get()
         );
     }
@@ -103,7 +104,9 @@ class DevisController extends Controller
         $ouvrage->qty = 0;
         $ouvrage->totalHour = 0;
         $ouvrage->avg = 0;
-        $ouvrage->toal = 0;
+        $ouvrage->qtyOuvrage = $request->qtyOuvrage;
+        $ouvrage->total = 0;
+        $ouvrage->totalWithoutMarge = 0;
         $tasks = DB::table('ouvrage_task')
                 ->where('ouvrage_id', $request->id)
                 ->select('id', 'name', 'textcustomer as customerText', 'textchargeaffaire', 'unit_id', 'qty')
@@ -115,14 +118,15 @@ class DevisController extends Controller
                             ->join('units', 'units.id', '=', 'products.unit_id')
                             ->where('ouvrage_task_id', $task->id)
                             ->select(
-                                'ouvrage_detail.id', 'ouvrage_detail.numberh', 'ouvrage_detail.qty as qty_calc', 'units.id as unit_id',
+                                'ouvrage_detail.id', 'ouvrage_detail.numberh', 'ouvrage_detail.qty', 'units.id as unit_id',
                                 'products.type', 'units.code as unit'
                             )->get();
             foreach ($details as $detail) {
-                $detail->qty = 0;
                 $detail->unitPrice = 0;
                 $detail->marge = 0;
                 $detail->totalPrice = 0;
+                $detail->qtyOuvrage = $request->qtyOuvrage;
+                $detail->totalPriceWithoutMarge = 0;
                 $detail->tax = 0;
             }
             $task->details = $details;
@@ -158,7 +162,7 @@ class DevisController extends Controller
      * Search Products
      */
     public function searchProduct(Request $request){
-        $query = DB::table('products')->join('units', 'units.id', '=', 'products.unit_id');
+    $query = DB::table('products')->join('units', 'units.id', '=', 'products.unit_id');
         if($request->search != ''){
             $query =    $query->where('products.name', 'like', '%'.$request->search.'%')
                         ->orWhere('products.reference', 'like', '%'.$request->search.'%')

@@ -76,11 +76,11 @@
                                     <div class="d-flex">
                                         <div class="col-1 prestation-icon"></div>
                                         <div class="col-11">
-                                            <p class="mt-3 mulish-extrabold font-16">{{ item.name }}</p>
+                                            <p class="mt-3 mulish-extrabold font-16">{{ ouvrage.name }}</p>
                                         </div>
                                     </div>
                                     <div class="almarai-light font-14 text-justify">
-                                        {{ item.textchargeaffaire }}
+                                        {{ ouvrage.textchargeaffaire }}
                                     </div>
                                     <div class="d-flex justify-content-between px-5">
                                         <div class="form-group col-5">
@@ -129,6 +129,8 @@
             const ouvrage = ref({
                 id: '',
                 qtyOuvrage: 1,
+                name: '',
+                textchargeaffaire: '',
             });            
             const selectedRoofType = ref({
                 id: 0,
@@ -165,7 +167,9 @@
             const selectOuvrage = (data)=>{
                 ouvrage.value.id = data.id;
                 ouvrage.value.unit = data.unit;
-                step.value = 3;                
+                ouvrage.value.name = data.name;
+                ouvrage.value.textchargeaffaire = data.textchargeaffaire;
+                step.value = 3;
             }
             const nextStep = ()=>{
                 step.value = 2;
@@ -295,7 +299,7 @@
     width: 100%;
     height: 100%;
     top: 0;
-    z-index: 20000000000;
+    z-index: 11;
     background: rgba(0, 0, 0, 0.3);
     .search-panel{
         width: 700px;

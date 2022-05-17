@@ -47,11 +47,11 @@
                                     <div class="d-flex">
                                         <div class="col-1 installation-icon"></div>
                                         <div class="col-11">
-                                            <p class="mt-3 mulish-extrabold font-16">{{ item.name }}</p>
+                                            <p class="mt-3 mulish-extrabold font-16">{{ ouvrage.name }}</p>
                                         </div>
                                     </div>
                                     <div class="almarai-light font-14 text-justify">
-                                        {{ item.textchargeaffaire }}
+                                        {{ ouvrage.textchargeaffaire }}
                                     </div>
                                     <div class="d-flex justify-content-between px-5">
                                         <div class="form-group col-5">
@@ -104,12 +104,17 @@ export default {
         const ouvrage = ref({
             id: '',
             qtyOuvrage: 1,
+            name: '',
+            textchargeaffaire: '',            
         });
+        
         const queryElement = ref(null);
         const zoneIndex = ref(null);
+        
         const closeModal = ()=>{
             showModal.value = !showModal.value;
         }
+        
         const searchOuvrage = async ()=>{
             store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Search Ouvrage...']);
             axios.post('/search-ouvrage', {
@@ -124,6 +129,7 @@ export default {
             })
         }
         const showModal = ref(false);
+
         const openModal = (index)=>{
             step.value = 1;
             zoneIndex.value = index;
@@ -141,22 +147,27 @@ export default {
                 console.log(error)
             }).finally(()=>{
                 store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
-            })            
-        }  
+            })
+        };
+
         const selectOuvrage = (data)=>{
             ouvrage.value.id = data.id;
             ouvrage.value.unit = data.unit;
+            ouvrage.value.name = data.name;
+            ouvrage.value.textchargeaffaire = data.textchargeaffaire;
             step.value = 2;
-        }
+        };
+
         const confirm = ()=>{
             showModal.value = false;
             emit('selectedOuvrage', { 
-                type: 'installation', 
-                ouvrageId: ouvrage.value.id, 
-                qtyOuvrage: ouvrage.value.qtyOuvrage, 
+                type: 'installation',
+                ouvrageId: ouvrage.value.id,
+                qtyOuvrage: ouvrage.value.qtyOuvrage,
                 zoneIndex: zoneIndex.value
             });
-        }
+        };
+
         return {
             query,
             step,
@@ -241,7 +252,7 @@ export default {
     width: 100%;
     height: 100%;
     top: 0;
-    z-index: 20000000000;
+    z-index: 11;
     background: rgba(0, 0, 0, 0.3);
     .search-panel{
         width: 700px;

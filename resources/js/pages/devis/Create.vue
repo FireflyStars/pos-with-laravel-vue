@@ -200,7 +200,7 @@
                       </div>
                       <div class="col-5 d-flex align-items-center">
                         <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.installOuvrage.totalHour }} hr</div>
-                        <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.installOuvrage.unitPrice }} €</div>
+                        <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.installOuvrage.sumUnitPrice }} €</div>
                         <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.installOuvrage.totalPrice }} €</div>
                       </div>
                     </div>
@@ -283,13 +283,13 @@
                                   <span class="option-icon me-3"></span> {{ detail.type }}
                                 </div>
                                 <div class="col-9 d-flex">
-                                  <div class="col-1 h-100  d-flex align-items-center justify-content-center border border-1 qty-ouvrage">{{ detail.qty_calc*ouvrage.qtyCalc }}</div>
+                                  <div class="col-1 h-100  d-flex align-items-center justify-content-center border border-1 qty-ouvrage">{{ detail.qty*detail.qtyOuvrage }}</div>
                                   <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 qty"><input type="text" v-model="detail.qty" class="w-100 form-control form-control-sm custom-text-danger"></div>
                                   <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 unit">{{ detail.unit }}</div>
-                                  <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 numberh">{{ detail.numberh }}</div>
-                                  <div class="col-2 h-100 d-flex align-items-center justify-content-center border border-1 unitprice"><input type="text" v-model="detail.unitPrice" class="w-100 form-control form-control-sm custom-text-danger"></div>
-                                  <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 marge"><input type="text" v-model="detail.marge" class="w-100 form-control form-control-sm custom-text-danger"></div>
-                                  <div class="col-2 h-100 d-flex align-items-center justify-content-center border border-1 totalprice">{{ detail.totalPrice }}</div>
+                                  <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 numberh">{{ detail.numberh }} hr</div>
+                                  <div class="col-2 h-100 d-flex align-items-center justify-content-center border border-1 unitprice"><input type="text" v-model="detail.unitPrice" class="w-100 form-control form-control-sm custom-text-danger">&nbsp;€</div>
+                                  <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 marge"><input type="text" v-model="detail.marge" class="w-100 form-control form-control-sm custom-text-danger">&nbsp;%</div>
+                                  <div class="col-2 h-100 d-flex align-items-center justify-content-center border border-1 totalprice">{{ detail.totalPrice }}&nbsp;€</div>
                                   <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 tax"><input type="text" v-model="detail.tax" class="w-100 form-control form-control-sm custom-text-danger"></div>
                                   <div class="col-2 h-100 d-flex align-items-center justify-content-center trash">
                                     <svg class="cursor-pointer" @click="removeOuvrageDetail(zoneIndex, 1, ouvrageIndex, taskIndex, detailIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -341,7 +341,7 @@
                       </div>
                       <div class="col-5 d-flex align-items-center">
                         <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.securityOuvrage.totalHour }} hr</div>
-                        <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.securityOuvrage.unitPrice }} €</div>
+                        <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.securityOuvrage.sumUnitPrice }} €</div>
                         <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.securityOuvrage.totalPrice }} €</div>
                       </div>
                     </div>
@@ -424,13 +424,13 @@
                                   <span class="option-icon me-3"></span> {{ detail.type }}
                                 </div>
                                 <div class="col-9 d-flex">
-                                  <div class="col-1 h-100  d-flex align-items-center justify-content-center border border-1 qty-ouvrage">{{ detail.qty_calc*ouvrage.qtyCalc }}</div>
+                                  <div class="col-1 h-100  d-flex align-items-center justify-content-center border border-1 qty-ouvrage">{{ detail.qty*detail.qtyOuvrage }}</div>
                                   <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 qty"><input type="text" v-model="detail.qty" class="w-100 form-control form-control-sm custom-text-danger"></div>
                                   <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 unit">{{ detail.unit }}</div>
-                                  <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 numberh">{{ detail.numberh }}</div>
-                                  <div class="col-2 h-100 d-flex align-items-center justify-content-center border border-1 unitprice"><input type="text" v-model="detail.unitPrice" class="w-100 form-control form-control-sm custom-text-danger"></div>
-                                  <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 marge"><input type="text" v-model="detail.marge" class="w-100 form-control form-control-sm custom-text-danger"></div>
-                                  <div class="col-2 h-100 d-flex align-items-center justify-content-center border border-1 totalprice">{{ detail.totalPrice }}</div>
+                                  <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 numberh">{{ detail.numberh }} hr</div>
+                                  <div class="col-2 h-100 d-flex align-items-center justify-content-center border border-1 unitprice"><input type="text" v-model="detail.unitPrice" class="w-100 form-control form-control-sm custom-text-danger">&nbsp;€</div>
+                                  <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 marge"><input type="text" v-model="detail.marge" class="w-100 form-control form-control-sm custom-text-danger">&nbsp;%</div>
+                                  <div class="col-2 h-100 d-flex align-items-center justify-content-center border border-1 totalprice">{{ detail.totalPrice }} €</div>
                                   <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 tax"><input type="text" v-model="detail.tax" class="w-100 form-control form-control-sm custom-text-danger"></div>
                                   <div class="col-2 h-100 d-flex align-items-center justify-content-center trash">
                                     <svg class="cursor-pointer" @click="removeOuvrageDetail(zoneIndex, 2, ouvrageIndex, taskIndex, detailIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -482,7 +482,7 @@
                       </div>
                       <div class="col-5 d-flex align-items-center">
                         <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.prestationOuvrage.totalHour }} hr</div>
-                        <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.prestationOuvrage.unitPrice }} €</div>
+                        <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.prestationOuvrage.sumUnitPrice }} €</div>
                         <div class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">{{ zone.prestationOuvrage.totalPrice }} €</div>
                       </div>
                     </div>
@@ -565,13 +565,13 @@
                                   <span class="option-icon me-3"></span> {{ detail.type }}
                                 </div>
                                 <div class="col-9 d-flex">
-                                  <div class="col-1 h-100  d-flex align-items-center justify-content-center border border-1 qty-ouvrage">{{ detail.qty_calc*ouvrage.qtyCalc }}</div>
+                                  <div class="col-1 h-100  d-flex align-items-center justify-content-center border border-1 qty-ouvrage">{{ detail.qty*detail.qtyOuvrage }}</div>
                                   <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 qty"><input type="text" v-model="detail.qty" class="w-100 form-control form-control-sm custom-text-danger"></div>
                                   <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 unit">{{ detail.unit }}</div>
-                                  <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 numberh">{{ detail.numberh }}</div>
-                                  <div class="col-2 h-100 d-flex align-items-center justify-content-center border border-1 unitprice"><input type="text" v-model="detail.unitPrice" class="w-100 form-control form-control-sm custom-text-danger"></div>
-                                  <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 marge"><input type="text" v-model="detail.marge" class="w-100 form-control form-control-sm custom-text-danger"></div>
-                                  <div class="col-2 h-100 d-flex align-items-center justify-content-center border border-1 totalprice">{{ detail.totalPrice }}</div>
+                                  <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 numberh">{{ detail.numberh }} hr</div>
+                                  <div class="col-2 h-100 d-flex align-items-center justify-content-center border border-1 unitprice"><input type="text" v-model="detail.unitPrice" class="w-100 form-control form-control-sm custom-text-danger">&nbsp;€</div>
+                                  <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 marge"><input type="text" v-model="detail.marge" class="w-100 form-control form-control-sm custom-text-danger">&nbsp;%</div>
+                                  <div class="col-2 h-100 d-flex align-items-center justify-content-center border border-1 totalprice">{{ detail.totalPrice }} €</div>
                                   <div class="col-1 h-100 d-flex align-items-center justify-content-center border border-1 tax"><input type="text" v-model="detail.tax" class="w-100 form-control form-control-sm custom-text-danger"></div>
                                   <div class="col-2 h-100 d-flex align-items-center justify-content-center trash">
                                     <svg class="cursor-pointer" @click="removeOuvrageDetail(zoneIndex, 3, ouvrageIndex, taskIndex, detailIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -652,41 +652,45 @@
                         Apud has gentes, quarum exordiens 
                       </p>
                     </div>
-                    <div class="col-2 d-flex align-items-center justify-content-center fw-bold mulish-extra-bold font-16 text-black">16 hr</div>
-                    <div class="col-2 d-flex align-items-center justify-content-center fw-bold mulish-extra-bold font-16 text-black">15 000 €</div>
+                    <div class="col-2 d-flex align-items-center justify-content-center fw-bold mulish-extra-bold font-16 text-black">
+                      {{ form.totalHoursForInstall + form.totalHoursForSecurity + form.totalHoursForPrestation }} hr
+                    </div>
+                    <div class="col-2 d-flex align-items-center justify-content-center fw-bold mulish-extra-bold font-16 text-black">
+                      {{ form.totalPriceForInstall + form.totalPriceForSecurity + form.totalPriceForPrestation }} €
+                    </div>
                   </div>
                   <div class="d-flex mt-4">
                     <div class="col-8 title">
                       Installation
                     </div>
-                    <div class="col-2 border-bottom text-center border-end font-14">2hr</div>
-                    <div class="col-2 border-bottom text-center font-14">2 000 €</div>
+                    <div class="col-2 border-bottom text-center border-end font-14">{{ form.totalHoursForInstall }}hr</div>
+                    <div class="col-2 border-bottom text-center font-14">{{ form.totalPriceForInstall }} €</div>
                   </div>
                   <div class="d-flex mt-3">
                     <div class="col-8 title">
                       Mise en Securite
                     </div>
-                    <div class="col-2 border-bottom text-center border-end font-14">2hr</div>
-                    <div class="col-2 border-bottom text-center font-14">2 000 €</div>
+                    <div class="col-2 border-bottom text-center border-end font-14">{{ form.totalHoursForSecurity }}hr</div>
+                    <div class="col-2 border-bottom text-center font-14">{{ form.totalPriceForSecurity }} €</div>
                   </div>
                   <div class="d-flex mt-3">
                     <div class="col-8 title">
                       Intervention
                     </div>
-                    <div class="col-2 border-bottom text-center border-end font-14">12hr</div>
-                    <div class="col-2 border-bottom text-center font-14">10 000 €</div>
+                    <div class="col-2 border-bottom text-center border-end font-14">{{ form.totalHoursForPrestation }}hr</div>
+                    <div class="col-2 border-bottom text-center font-14">{{ form.totalPriceForPrestation }} €</div>
                   </div>
                   <div class="d-flex mt-4">
                     <div class="col-10 bold-title">
                       Total Jours Interim
                     </div>
-                    <div class="col-2 font-14 fw-bold">37 Jours</div>
+                    <div class="col-2 font-14 fw-bold">{{form.totalHoursForInterim}} Jours</div>
                   </div>
                   <div class="d-flex mt-3">
                     <div class="col-10 bold-title">
                       Total M/V  Fourniseurs
                     </div>
-                    <div class="col-2 font-14 fw-bold">€ 230 000</div>
+                    <div class="col-2 font-14 fw-bold">€ {{ form.totalPriceWithoutMarge }}</div>
                   </div>
                 </div>
               </div>
@@ -814,59 +818,59 @@ export default {
           gedCats: [],
           installOuvrage: {
             totalHour: 0,
-            unitPrice: 0,
+            sumUnitPrice: 0,
             totalPrice: 0,
             ouvrages: [
-              {
-                id: '',
-                name: '',
-                customerText: '',
-                qty: '',
-                unit: '',
-                totalHour: '',
-                qtyCalc: '',
-                avg: '',
-                tasks:[
-                  {
-                    id: '',
-                    name: '',
-                    techText: '',
-                    customerText: '',                    
-                    details:[
-                      {
-                        id: '',
-                        name: '',
-                        qtyOuvrage: '',
-                        qty: '',
-                        unit: '',
-                        numberH: '',
-                        unitPrice: '',
-                        marge: '',
-                        totalPrice: '',
-                        tax: '',
-                      }
-                    ]
-                  }
-                ]
-              }
+              // {
+              //   id: '',
+              //   name: '',
+              //   customerText: '',
+              //   qty: '',
+              //   unit: '',
+              //   totalHour: '',
+              //   qtyOuvrage: '',
+              //   avg: '',
+              //   tasks:[
+              //     {
+              //       id: '',
+              //       name: '',
+              //       techText: '',
+              //       customerText: '',                    
+              //       details:[
+              //         {
+              //           id: '',
+              //           name: '',
+              //           qtyOuvrage: '',
+              //           qty: '',
+              //           unit: '',
+              //           numberH: '',
+              //           unitPrice: '',
+              //           marge: '',
+              //           totalPrice: '',
+              //           tax: '',
+              //         }
+              //       ]
+              //     }
+              //   ]
+              // }
             ]
           },
           securityOuvrage: {
             totalHour: 0,
-            unitPrice: 0,
+            sumUnitPrice: 0,
             totalPrice: 0,
             ouvrages: []
           },
           prestationOuvrage: {
             totalHour: 0,
-            unitPrice: 0,
+            sumUnitPrice: 0,
             totalPrice: 0,
             ouvrages: []
           },          
         }
       ],
     });    
-    watch(() => _.cloneDeep(form.value), (curVal, oldVal) => {
+    watch(() => _.cloneDeep(form.value.zones), (curVal, oldVal) => {
       form.value.totalHoursForInstall = 0;
       form.value.totalPriceForInstall = 0;
       form.value.totalHoursForSecurity = 0;
@@ -877,44 +881,97 @@ export default {
       form.value.totalPriceWithoutMarge = 0;
       form.value.zones.forEach(zone=>{
         // install ouvrages
-        zone.installOuvrage.ouvrages(ouvrage=>{
+        zone.installOuvrage.totalHour = 0;
+        zone.installOuvrage.totalPrice = 0;
+        zone.installOuvrage.sumUnitPrice = 0;
+        zone.installOuvrage.ouvrages.forEach(ouvrage=>{
+          ouvrage.total = 0;
+          ouvrage.totalHour = 0;
           ouvrage.tasks.forEach(task=>{
             task.details.forEach(detail=>{
+              zone.installOuvrage.sumUnitPrice += parseInt(detail.unitPrice);
               if(detail.type == 'MO'){
-                detail.totalPrice = detail.numberH * detail.unitPrice;
+                detail.totalPrice = parseInt(detail.numberH) * parseInt(detail.unitPrice);
+                detail.totalPriceWithoutMarge = parseInt(detail.numberH) * parseInt(detail.unitPrice);
               }else{
-                detail.totalPrice = detail.qty * detail.unitPrice * (detail.marge + 1);
-              }              
+                detail.totalPrice = parseInt(detail.qty) * parseInt(detail.unitPrice) * (parseInt(detail.marge)/100 + 1);
+                detail.totalPriceWithoutMarge = parseInt(detail.qty) * parseInt(detail.unitPrice);
+              }  
+              if(detail.type == 'Interim')     
+                form.value.totalHoursForInterim += parseInt(detail.numberH)
+              ouvrage.total += detail.totalPrice;      
+              ouvrage.totalWithoutMarge += detail.totalPriceWithoutMarge;
+              ouvrage.totalHour += parseInt(detail.numberH);
             })
-            
           })
-          ouvrage.total = calcOuvrageTotal(ouvrage.task)
+          zone.installOuvrage.totalHour += ouvrage.totalHour;
+          zone.installOuvrage.totalPrice += ouvrage.total;
+          form.value.totalPriceWithoutMarge += ouvrage.totalWithoutMarge;
         })
+        form.value.totalHoursForInstall += zone.installOuvrage.totalHour;
+        form.value.totalPriceForInstall += zone.installOuvrage.totalPrice;
         // securite ouvrages
-        zone.securityOuvrage.ouvrages(ouvrage=>{
+        zone.securityOuvrage.totalHour = 0;
+        zone.securityOuvrage.totalPrice = 0;
+        zone.securityOuvrage.sumUnitPrice = 0;        
+        zone.securityOuvrage.ouvrages.forEach(ouvrage=>{
+          ouvrage.total = 0;
+          ouvrage.totalHour = 0;
           ouvrage.tasks.forEach(task=>{
             task.details.forEach(detail=>{
+              zone.securityOuvrage.sumUnitPrice += parseInt(detail.unitPrice);
               if(detail.type == 'MO'){
-                detail.totalPrice = detail.numberH * detail.unitPrice;
+                detail.totalPrice = parseInt(detail.numberH) * parseInt(detail.unitPrice);
+                detail.totalPriceWithoutMarge = parseInt(detail.numberH) * parseInt(detail.unitPrice);
               }else{
-                detail.totalPrice = detail.qty * detail.unitPrice * (detail.marge + 1);
-              }
+                detail.totalPrice = parseInt(detail.qty) * parseInt(detail.unitPrice) * (parseInt(detail.marge)/100 + 1);
+                detail.totalPriceWithoutMarge = parseInt(detail.qty) * parseInt(detail.unitPrice);
+              }       
+              if(detail.type == 'Interim')     
+                form.value.totalHoursForInterim += parseInt(detail.numberH)              
+              ouvrage.total += detail.totalPrice;      
+              ouvrage.totalWithoutMarge += detail.totalPriceWithoutMarge;
+              ouvrage.totalHour += parseInt(detail.numberH);
             })
           })
+          zone.securityOuvrage.totalHour += ouvrage.totalHour;
+          zone.securityOuvrage.totalPrice += ouvrage.total;          
+          form.value.totalPriceWithoutMarge += ouvrage.totalWithoutMarge;
         })
+        form.value.totalHoursForInstall += zone.securityOuvrage.totalHour;
+        form.value.totalPriceForInstall += zone.securityOuvrage.totalPrice;        
         // prestation ouvrages
-        zone.prestationOuvrage.ouvrages(ouvrage=>{
+        zone.prestationOuvrage.totalHour = 0;
+        zone.prestationOuvrage.totalPrice = 0;
+        zone.prestationOuvrage.sumUnitPrice = 0;                
+        zone.prestationOuvrage.ouvrages.forEach(ouvrage=>{
+          ouvrage.total = 0;
+          ouvrage.totalHour = 0;
+          
           ouvrage.tasks.forEach(task=>{
             task.details.forEach(detail=>{
+              detail.sumUnitPrice = parseInt(detail.unitPrice);
+              zone.prestationOuvrage.sumUnitPrice += parseInt(detail.unitPrice);
               if(detail.type == 'MO'){
-                detail.totalPrice = detail.numberH * detail.unitPrice;
+                detail.totalPrice = parseInt(detail.numberH) * parseInt(detail.unitPrice);
+                detail.totalPriceWithoutMarge = parseInt(detail.numberH) * parseInt(detail.unitPrice);
               }else{
-                detail.totalPrice = detail.qty * detail.unitPrice * (detail.marge + 1);
-              }
+                detail.totalPrice = parseInt(detail.qty) * parseInt(detail.unitPrice) * (parseInt(detail.marge)/100 + 1);
+                detail.totalPriceWithoutMarge = parseInt(detail.qty) * parseInt(detail.unitPrice);
+              }       
+              if(detail.type == 'Interim')     
+                form.value.totalHoursForInterim += parseInt(detail.numberH)              
+              ouvrage.total += detail.totalPrice;      
+              ouvrage.totalWithoutMarge += detail.totalPriceWithoutMarge;
+              ouvrage.totalHour += parseInt(detail.numberH);
             })
           })
+          zone.prestationOuvrage.totalHour += ouvrage.totalHour;
+          zone.prestationOuvrage.totalPrice += ouvrage.total;            
+          form.value.totalPriceWithoutMarge += ouvrage.totalWithoutMarge;          
         })
-
+        form.value.totalHoursForInstall += zone.prestationOuvrage.totalHour;
+        form.value.totalPriceForInstall += zone.prestationOuvrage.totalPrice;    
       })
     });
     onMounted(()=>{
@@ -1023,14 +1080,19 @@ export default {
     // get details for a ouvrage selected
     const selectedOuvrage = (data)=>{
       store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Adding selected Ouvrage..']);
-      axios.post('/get-ouvrage', { id: data.ouvrageId }).then((res)=>{
-        if(data.type == 'prestation'){
-          form.value.zones[data.zoneIndex].prestationOuvrage.ouvrages.push(res.data);
-        }else if( data.type == 'installation' ){
+      axios.post('/get-ouvrage', { id: data.ouvrageId, qtyOuvrage: data.qtyOuvrage }).then((res)=>{
+
+        console.log(data.zoneIndex);
+        console.log(form.value.zones);
+        if( data.type == 'installation' ){
           form.value.zones[data.zoneIndex].installOuvrage.ouvrages.push(res.data);
-        }else{
+        }
+        if( data.type == 'security' ){
           form.value.zones[data.zoneIndex].securityOuvrage.ouvrages.push(res.data);
         }
+        if(data.type == 'prestation'){
+          form.value.zones[data.zoneIndex].prestationOuvrage.ouvrages.push(res.data);
+        }        
       }).catch((error)=>{
         console.log(error);
       }).finally(()=>{
