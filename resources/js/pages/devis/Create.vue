@@ -1083,7 +1083,7 @@ export default {
       laborModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage);
     }
     const openTaskModal = (zIndex, ouvrageType, ouvrageId)=>{
-      laborModal.value.openModal(zIndex, ouvrageType, ouvrageId);
+      taskModal.value.openModal(zIndex, ouvrageType, ouvrageId);
     }
         
     const addNewCustomer = ()=>{
