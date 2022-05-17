@@ -990,8 +990,8 @@ export default {
           zone.securityOuvrage.totalPrice += ouvrage.total;          
           form.value.totalPriceWithoutMarge += ouvrage.totalWithoutMarge;
         })
-        form.value.totalHoursForInstall += zone.securityOuvrage.totalHour;
-        form.value.totalPriceForInstall += zone.securityOuvrage.totalPrice;        
+        form.value.totalHoursForSecurity += zone.securityOuvrage.totalHour;
+        form.value.totalPriceForSecurity += zone.securityOuvrage.totalPrice;        
         // prestation ouvrages
         zone.prestationOuvrage.totalHour = 0;
         zone.prestationOuvrage.totalPrice = 0;
@@ -1022,8 +1022,8 @@ export default {
           zone.prestationOuvrage.totalPrice += ouvrage.total;            
           form.value.totalPriceWithoutMarge += ouvrage.totalWithoutMarge;          
         })
-        form.value.totalHoursForInstall += zone.prestationOuvrage.totalHour;
-        form.value.totalPriceForInstall += zone.prestationOuvrage.totalPrice;    
+        form.value.totalHoursForPrestation += zone.prestationOuvrage.totalHour;
+        form.value.totalPriceForPrestation += zone.prestationOuvrage.totalPrice;    
       })
     });
     onMounted(()=>{
