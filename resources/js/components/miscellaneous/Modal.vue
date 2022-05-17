@@ -132,7 +132,7 @@ $main-color: #9191E9;
   bottom: 0;
   right: 0;
   background-color: rgba(0, 0, 0, .80);
-  z-index: 99999999999999;
+  z-index: 99999999999999 !important;
   visibility: hidden;
   opacity: 0;
   overflow: hidden;

@@ -16,6 +16,10 @@ class ReportsResource extends JsonResource
         return [
             'id'   => $this->id,
             'lang_id' => $this->lang_id,
+            'total' => $this->total,
+            'nbheure' => $this->nbheure,
+            'datefinprevu' => $this->datefinprevu,
+            'datecommande' => $this->datecommande,
             'affiliate' => $this->affiliate,
             'customer' => $this->get_customer_details(),
             'contact' => $this->get_contact_details(),
@@ -49,6 +53,9 @@ class ReportsResource extends JsonResource
             'company' => $this->customer->company,
             'signupdate' => $this->customer->signupdate,
             'active' => $this->customer->active,
+            'raisonsociale' => $this->customer->raisonsociale,
+            'raisonsociale2' => $this->customer->raisonsociale2,
+            'telephone' => $this->customer->telephone,
             'address' => $this->get_customer_address($this->events)
         ];
     }
@@ -58,9 +65,10 @@ class ReportsResource extends JsonResource
         $customer_address = optional($events->last())->address; 
         if(!is_null($customer_address)) 
         {
-            return $customer_address->first()->only([
+            return $customer_address->only([
                 'address1',
                 'address2',
+                'address3',
                 'postcode',
                 'city',
                 'other',
@@ -68,7 +76,10 @@ class ReportsResource extends JsonResource
                 'phone_mobile',
                 'vat_number',
                 'dni',
-                'active'
+                'active',
+                'name',
+                'firstname',
+                'company'
             ]);
         }
     }

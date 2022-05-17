@@ -166,7 +166,7 @@ export default {
     }    
 }
 .text {
-    font-family: Poppins;
+    font-family: 'Poppins', sans-serif;
     font-style: normal;
     font-weight: 600;
     font-size: 14px;
@@ -177,7 +177,7 @@ export default {
     text-decoration: none;
     color: #000000;
     &-base {
-        font-family: Poppins;
+        font-family: 'Poppins', sans-serif;
         font-style: normal;
         font-weight: 600;
         line-height: 22px;

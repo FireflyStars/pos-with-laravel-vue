@@ -53,24 +53,7 @@ export const devislist= {
                  filter:true,
                  table:'orders',
                },     
-               {
-                 
-                id:"new",
-                display_name:"",
-                type:"iconsvg",
-                class:"",
-                header_class:"",
-                icons:{
-                    0:"",
-                    1:""    
-                },
-                event:null,
-                sort:false,
-                filter:true,   
-                css:{
-                  flex:0.5
-                },
-              } ,    
+               
               {
                 id:"customer",
                 display_name:"CLIENT",
@@ -128,9 +111,9 @@ export const devislist= {
                 filter_options:[]
               },
               {
-                id:"order_state",
+                id:"order_state_id",
                 display_name:"STATUS",
-                type:"tag",
+                type:"component",
                 class:"",
                 header_class:"",
                 event:null,

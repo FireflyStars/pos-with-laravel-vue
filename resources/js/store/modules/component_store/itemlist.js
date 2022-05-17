@@ -61,19 +61,21 @@ export const itemlist= {
       [ITEM_LIST_RESET_MULTI_CHECK]:(state)=>{
         state.multichecked[state.current_table_identifier]=[];
       },
-      [ITEM_LIST_SET_SORT]:(state,col)=>{
+      [ITEM_LIST_SET_SORT]:(state,params)=>{
         if(typeof state.sortby[state.current_table_identifier]=="undefined")
         state.sortby[state.current_table_identifier]=[];
-
-        let c=state.sortby[state.current_table_identifier].filter(obj=>obj.id==col.id);
+        if(params.multiple_col==false){
+            state.sortby[state.current_table_identifier]=[];
+        }
+        let c=state.sortby[state.current_table_identifier].filter(obj=>obj.id==params.col.id);
 
         if(c.length==0){
-            state.sortby[state.current_table_identifier].push({id:col.id,orderby:'asc'});
+            state.sortby[state.current_table_identifier].push({id:params.col.id,orderby:'asc'});
         }else if (c[0].orderby=='asc'){
             c[0].orderby='desc';
         }else if (c[0].orderby=='desc'){
             
-            state.sortby[state.current_table_identifier]=state.sortby[state.current_table_identifier].filter(obj=>obj.id!=col.id);
+            state.sortby[state.current_table_identifier]=state.sortby[state.current_table_identifier].filter(obj=>obj.id!=params.col.id);
         }
 
        
@@ -111,6 +113,7 @@ export const itemlist= {
 
             {
               column_filters:state.column_filters[state.current_table_identifier],
+              sortby:state.sortby[state.current_table_identifier],
               skip:state.paginations[state.current_table_identifier],
               take:state.tables[state.current_table_identifier].table_def.max_per_page
             },{root: true}).then((response)=>{
@@ -139,8 +142,8 @@ export const itemlist= {
                     window.scrollTo({ left: 0, top: document.body.scrollHeight, behavior: "smooth" });
             });
         },
-        [ITEM_LIST_SORT]:({commit,state,dispatch},col)=>{
-            commit(`${ITEM_LIST_SET_SORT}`,col)
+        [ITEM_LIST_SORT]:({commit,state,dispatch},params)=>{
+            commit(`${ITEM_LIST_SET_SORT}`,params)
         }
     },
     getters: {

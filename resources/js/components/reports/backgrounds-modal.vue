@@ -130,7 +130,7 @@ export default {
     grid-template-columns: repeat(3, 1fr);
     gap: .5rem;
     text-align: center;
-    font-family: 'Poppins';
+    font-family: 'Poppins', sans-serif;
     font-style: normal;
     font-weight: 600;
     font-size: 16px;

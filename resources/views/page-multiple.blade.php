@@ -228,7 +228,6 @@
             
                     @if (strtolower($element->name) == 'svg')
                         <?php 
-                            
                             $src = $builder::svg_base64_encode($element->attributes);
                         ?>
                         <img 

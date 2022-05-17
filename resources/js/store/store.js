@@ -24,6 +24,8 @@ import {search as CUSTOMERLIST_MODULE } from "./modules/search";
 
 import { itemlist as ITEM_LIST_MODULE } from "./modules/component_store/itemlist";
 
+import { orderstatetag as ORDERSTATETAG_MODULE } from "./modules/component_store/orderstatetag";
+
 import { devislist as DEVIS_LIST_MODULE } from "./modules/devislist";
 
 import { toggler as TOGGLER_MODULE } from "./modules/toggler"
@@ -39,6 +41,7 @@ export default createStore({
         TOASTER_MODULE,
         CIBLE_MODULE,
         ITEM_LIST_MODULE,
+        ORDERSTATETAG_MODULE,
         DEVIS_LIST_MODULE,
         SIDEBAR_MODULE,
         SELECT_MODULE,

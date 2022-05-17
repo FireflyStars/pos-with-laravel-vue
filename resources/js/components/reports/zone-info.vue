@@ -40,7 +40,7 @@ export default {
 .breadcrumb {
     margin-top: 3rem;
     &-title {
-        font-family: Mulish;
+        font-family: 'Mulish ExtraBold';
         font-style: normal;
         font-weight: 900;
         font-size: 18px;

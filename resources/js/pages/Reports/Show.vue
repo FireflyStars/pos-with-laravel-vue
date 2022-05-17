@@ -68,8 +68,8 @@
 
                                 </div>
 
+
                                 <div 
-                                    v-show="show"
                                     class="right-page-container" 
                                     @mouseenter="toggleContainer(true)"
                                     @mouseleave="toggleContainer"
@@ -144,14 +144,13 @@ export default {
 
         const store = useStore()
         const showRightContainer = ref(false)
-        const show = ref(false)
-        const { toggleModal } = useModal()
+        const { toggleModal, isOpenModal } = useModal()
         const { 
             promptImage,
             generateElement,
             generatePrefetchedImage,
         } = useElementsGenerator()
-        const { resetPages, generatePagePdf } = useReports()
+        const { resetPages, generatePagePdf, resetOrder } = useReports()
 
         const activeItem = ref(null)
         const showcontainer = ref(false)
@@ -192,7 +191,7 @@ export default {
         }
 
         const getReport = async () => {
-            await getOrderDetails()
+            getOrderDetails()
             await store.dispatch(`${BUILDER_MODULE}/${GET_REPORT}`, props.id)
             if(!pages.value.length) {
                 toggleModal('report-templates')
@@ -205,7 +204,7 @@ export default {
         }
 
         const getReportTemplate = async (id) => {
-            await store.dispatch(`${[BUILDER_MODULE]}/${[GET_REPORT_TEMPLATE]}`, id)
+            await store.dispatch(`${[BUILDER_MODULE]}/${[GET_REPORT_TEMPLATE]}`, { id })
             return Promise.resolve()
         }
 
@@ -223,7 +222,6 @@ export default {
 
         watch(activeReportTemplate, (value) => {
             if(value != 0) {
-                show.value = true
                 nextTick(() => {
                     toggleModal('report-templates', false)
                     getReportTemplate(value)
@@ -234,9 +232,10 @@ export default {
 
         onMounted(() => {
             resetPages()
+            resetOrder()
             nextTick(async () => {
-                await getReport()
                 showcontainer.value = true
+                await getReport()
                 if(window?.screen && window?.screen?.width >= 1500) {
                     showRightContainer.value = true
                 }
@@ -244,10 +243,10 @@ export default {
         })
       
         return { 
-            show,
             fetching,
             activeItem,
             toggleModal,
+            isOpenModal,
             saveReport,
             promptImage,
             showcontainer,
@@ -291,16 +290,16 @@ $orange: orange;
 .left-page-container {
     width: 793px;
     height: 1122px;
-    z-index: 4;
+    z-index: 1;
 }
 
 .right-page-container {
     top: 0;
     right: 0;
     width: 300px;
-    z-index: 5;
+    z-index: 0;
     position: absolute;
-    transition: width .2s;
+    transition: width .2s, z-index .2s;
     
     @media only screen and (min-width: 1500px) {
         width: 530px;
@@ -308,6 +307,7 @@ $orange: orange;
 
     &-visible {
         width: 530px;
+        z-index: 2;
     }
 }
 

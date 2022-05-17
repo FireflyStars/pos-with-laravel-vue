@@ -74,7 +74,7 @@ export default {
             align-items: center;
         }
         .title {
-            font-family: Mulish;
+            font-family: 'Mulish ExtraBold';
             font-style: normal;
             font-weight: 900;
             font-size: 17px;

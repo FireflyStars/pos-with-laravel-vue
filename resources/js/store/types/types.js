@@ -32,6 +32,13 @@ export const ITEM_LIST_SORT='ITEM_LIST_SORT'//action
 export const ITEM_LIST_SET_SORT='ITEM_LIST_SET_SORT'//action
 export const ITEM_LIST_GET_SORT='ITEM_LIST_GET_SORT'//getters
 
+//ORDER STATE TAG
+export const ORDERSTATETAG_MODULE='ORDERSTATETAG_MODULE/';
+export const ORDERSTATETAG_SET_ORDER_STATES='ORDERSTATETAG_SET_ORDER_STATES'//mutation
+export const ORDERSTATETAG_LOAD_ORDER_STATES='ORDERSTATETAG_LOAD_ORDER_STATES'//action
+export const ORDERSTATETAG_GET_ORDER_STATES='ORDERSTATETAG_GET_ORDER_STATES'//getter
+export const ORDERSTATETAG_GET_LOADED='ORDERSTATETAG_GET_LOADED'//getter
+export const ORDERSTATETAG_SET_LOADED='ORDERSTATETAG_SET_LOADED'//mutation
 //DEVIS LIST STORE
 export const DEVIS_LIST_MODULE='DEVIS_LIST_MODULE/'//namespace
 export const GET_DEVIS_LIST_DEF='GET_DEVIS_LIST_DEF'//getters
@@ -148,6 +155,10 @@ export const CUSTOMER_SET_LOADER = 'CUSTOMER_SET_LOADER'//getters
 
 //search module
 export const SEARCH_MODULE = 'SEARCH_MODULE'
-export const GET_SEARCH_RESULTS = 'get_search_results'
-export const SET_SEARCH_RESULTS = 'set_search_results'
+export const GET_SEARCH_RESULTS = 'getSearchResults'
+export const SET_SEARCH_RESULTS = 'setSearchResults'
 export const SET_SEARCH = 'setSearch'
+export const SEARCH_MORE = 'searchMore'
+export const APPEND_SEARCH = 'appendSearch'
+export const INCREMENT_ITERATION = 'incrementIteration'
+

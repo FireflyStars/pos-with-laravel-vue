@@ -41,6 +41,7 @@ Route::get('/get-page-order/{order}', [PageElementsController::class, 'get_page_
 Route::get('/get-templates', [PageElementsController::class, 'get_page_templates']);
 
 Route::get('/search', [SearchController::class, 'search']);
+Route::get('/search-append', [SearchController::class, 'search_append']);
 
 Route::post('/api',[ApiController::class,'index'])->middleware('cors')->name('api');
 
@@ -81,6 +82,7 @@ Route::group([
 
     // Devis
     Route::post('/get-devis-list',[DevisController::class,'loadList'])->middleware('auth')->name('get-devis-list');
+    Route::post('/get-order-states',[DevisController::class,'getOrderStates'])->middleware('auth')->name('get-order-states');
     Route::post('/get-ged-categories', [DevisController::class,'getGedCategories'])->middleware('auth')->name('get.ged.categories');
     Route::post('/get-all-toits', [DevisController::class,'getAllToits'])->middleware('auth')->name('get.all.toits');
     Route::post('/get-prestation-ouvrages', [DevisController::class,'getPrestationOuvrages'])->middleware('auth')->name('get.all.toits');

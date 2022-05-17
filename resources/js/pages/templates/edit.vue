@@ -61,6 +61,7 @@
 
 <script>
 
+import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { onMounted, ref, nextTick, computed, provide } from 'vue'
 
@@ -99,6 +100,7 @@ export default {
 
     setup(props) {
 
+        const route = useRoute()
         const store = useStore()
         const showRightContainer = ref(false)
 
@@ -108,7 +110,7 @@ export default {
             generatePrefetchedImage,
         } = useElementsGenerator()
 
-        const { resetPages, generatePagePdf } = useReports()
+        const { resetPages, generatePagePdf, resetOrder } = useReports()
 
         const showcontainer = ref(false)
 
@@ -128,7 +130,7 @@ export default {
         }
 
         const getPageTemplate = () => {
-            store.dispatch(`${[BUILDER_MODULE]}/${[GET_REPORT_TEMPLATE]}`, props.id)
+            store.dispatch(`${[BUILDER_MODULE]}/${[GET_REPORT_TEMPLATE]}`, { id: props.id, route: route.name})
             return Promise.resolve()
         }
 
@@ -146,6 +148,7 @@ export default {
 
         onMounted(() => {
             resetPages()
+            resetOrder()
             nextTick(async () => {
                 await getPageTemplate()
                 showcontainer.value = true
@@ -204,14 +207,15 @@ $orange: orange;
     top: 0;
     right: 0;
     width: 300px;
-    z-index: 7;
+    z-index: 0;
     position: absolute;
-    transition: width .2s;
+    transition: width .2s, z-index .2s;
     @media only screen and (min-width: 1500px) {
         width: 530px;
     }
     &-visible {
         width: 530px;
+        z-index: 7;
     }
 }
 

@@ -3,8 +3,8 @@
 <div :id="table_def.identifier">
     <div class="list-header">
         <template v-for="item,index in table_def.columns_def" :key="index">
-            <div class="list-header-col almarai_700_normal" @click="sortby(item)" @drop="onDrop($event,item)" @dragover="onDragOver($event,item)"  @dragleave="onDragLeave($event,item)" @dragenter="onDragEnter($event,item)" @dragover.prevent  :draggable="isDraggable(item)" @dragstart="startDrag($event,item)" @dragend="endDrag($event,item)" :class="headerClasses(item,sortings)" :style="item.css">
-                <span>{{item.display_name}}</span>
+            <div class="list-header-col almarai_700_normal" @drop="onDrop($event,item)" @dragover="onDragOver($event,item)"  @dragleave="onDragLeave($event,item)" @dragenter="onDragEnter($event,item)" @dragover.prevent  :draggable="isDraggable(item)" @dragstart="startDrag($event,item)" @dragend="endDrag($event,item)" :class="headerClasses(item,sortings)" :style="item.css">
+                <span  @click.exact="sortby(item,false)" @click.shift="sortby(item,true)" >{{item.display_name}}</span>
                 <check-box v-if="item.type=='checkbox'" name="checkall" id="checkall" :checked="lists.length==MULTI_CHECKED.length" @change="checkboxallclicked"/>
                 <input  class="mulish_400_normal" v-if="(item.type=='string'||item.type=='html'||item.type=='price')&&item.sort" type="text" @keyup.enter="filterColumn(item,$event.target.value)"/>
             </div>
@@ -18,6 +18,7 @@
                      <span v-if="col.type=='date'">{{formatDate(row[col.id],'DD/MM/YY')}}</span>
                      <check-box v-else-if="col.type=='checkbox'" :name="col.id" :id="row[col.id]" @change="checkboxclicked" :checked="row.id==CURRENT_SELECTED||MULTI_CHECKED.includes(row.id)"/>
                       <span v-else-if="col.type=='html'" v-html="ifnull(row[col.id])"></span>
+                      <slot v-else-if="col.type=='component'" :name="col.id" :row="row"></slot>
                      <span v-else>{{ifnull(row[col.id])}}</span>
                      </div>
              </template>
@@ -110,6 +111,11 @@ export default {
 
                 return [];
             });
+        //set sortby
+        const sortby=(col,multiple_col)=>{
+            store.dispatch(`${ITEM_LIST_MODULE}${ITEM_LIST_SORT}`,{col:col,multiple_col:multiple_col});
+        }
+        //watch for any column sort    
         const sortings=computed(()=>{
             let sort=store.getters[`${ITEM_LIST_MODULE}${ITEM_LIST_GET_SORT}`];
               if(typeof sort[identifier]!="undefined")
@@ -117,6 +123,14 @@ export default {
 
                 return [];
         });
+         watch(() => sortings, (currentValue, oldValue) => {
+                    showLoader('Tri en cours. Veuillez patienter')
+                  store.dispatch(`${ITEM_LIST_MODULE}${ITEM_LIST_TABLE_RELOAD}`,{fullreload:true}).finally(()=>hideLoader());   
+            },
+                { deep: true }
+            );
+        //end watch for any column sort
+
         //set a column filter
         const filterColumn=(col,word)=>{
             store.dispatch(`${ITEM_LIST_MODULE}${ITEM_LIST_FILTER}`,{col:col,word:word});
@@ -129,6 +143,14 @@ export default {
                 return col_filters[identifier];
             });
 
+
+         watch(() => colfilters, (currentValue, oldValue) => {
+                    showLoader('Filtrage en cours. Veuillez patienter')
+                  store.dispatch(`${ITEM_LIST_MODULE}${ITEM_LIST_TABLE_RELOAD}`,{fullreload:true}).finally(()=>hideLoader());   
+            },
+                { deep: true }
+            );
+         //end watch for any column filter change and send request to server
          const CURRENT_SELECTED=computed(()=>{
             let current_selecteds=store.getters[`${ITEM_LIST_MODULE}${ITEM_LIST_GET_CURRENT}`];
             if(typeof current_selecteds[identifier]!="undefined")
@@ -141,13 +163,6 @@ export default {
 
                 return [];
             });
-         watch(() => colfilters, (currentValue, oldValue) => {
-                    showLoader('Filtrage en cours. Veuillez patienter')
-                  store.dispatch(`${ITEM_LIST_MODULE}${ITEM_LIST_TABLE_RELOAD}`,{fullreload:true}).finally(()=>hideLoader());   
-            },
-                { deep: true }
-            );
-         //end watch for any column filter change and send request to server
 
         const headerClasses=(item,sortings)=>{
      
@@ -312,9 +327,6 @@ export default {
         }
         //end column drag
 
-        const sortby=(col)=>{
-            store.dispatch(`${ITEM_LIST_MODULE}${ITEM_LIST_SORT}`,col);
-        }
       return{
           table_def:props.table_def,
           lists,
@@ -384,19 +396,49 @@ export default {
         border-left: 2px solid white;
         
         &.sortable{
+             position: relative;    
             & span{
+           
+            padding-right: 13px;
             transition: color 300ms ease-in-out;
             cursor:pointer;
                 &::after{
-                  //  content: url('data:image/svg+xml; utf8, <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 0l8 10h-16l8-10zm8 14h-16l8 10 8-10z"/></svg>');
+               
+                   content: url('data:image/svg+xml; utf8, <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 3.202l3.839 4.798h-7.678l3.839-4.798zm0-3.202l-8 10h16l-8-10zm3.839 16l-3.839 4.798-3.839-4.798h7.678zm4.161-2h-16l8 10 8-10z"/></svg>');
                     display: block;
                     width: 22px;
-                    height: 10px;
-                    margin: 10px 5px 0 10px;
+                    height: 25px;
+                   transform: scale(0.65);
+                   position: absolute;
+                   right: 0;
+                   top:-3px;
                 }
+                
             }
             &:hover span{
                 color:var(--lcdtOrange);
+            }
+            &.desc{
+                & span{
+                    &::after{
+                        content: url('data:image/svg+xml; utf8, <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="%23e86f29" viewBox="0 0 24 24"><path d="M12 3.202l3.839 4.798h-7.678l3.839-4.798zm0-3.202l-8 10h16l-8-10zm8 14h-16l8 10 8-10z"/></svg>');
+                    }
+                  
+                }
+            }
+            &.asc{
+                & span{
+                    &::after{
+                        content: url('data:image/svg+xml; utf8, <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="%23e86f29" viewBox="0 0 24 24"><path d="M12 0l-8 10h16l-8-10zm3.839 16l-3.839 4.798-3.839-4.798h7.678zm4.161-2h-16l8 10 8-10z"/></svg>');
+                    }
+                  
+                }
+            }
+            &.desc span{
+                  color:var(--lcdtOrange);
+            }
+            &.asc span{
+                  color:var(--lcdtOrange);
             }
         }
 }
