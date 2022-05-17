@@ -945,7 +945,7 @@ export default {
               }  
               if(detail.type == 'Interim')     
                 form.value.totalHoursForInterim += parseFloat(detail.numberH)
-              ouvrage.total += detail.totalPrice;
+              ouvrage.total += parseInt(detail.totalPrice);
               ouvrage.totalWithoutMarge += detail.totalPriceWithoutMarge;
               ouvrage.totalHour += parseFloat(detail.numberH);
             })
@@ -978,7 +978,7 @@ export default {
               console.log(detail.unitPrice)
               console.log(detail.qty)
               console.log(detail.marge)                
-              ouvrage.total += detail.totalPrice;      
+              ouvrage.total += parseInt(detail.totalPrice);    
               ouvrage.totalWithoutMarge += detail.totalPriceWithoutMarge;
               ouvrage.totalHour += parseFloat(detail.numberH);
             })
@@ -1010,7 +1010,7 @@ export default {
               }       
               if(detail.type == 'Interim')     
                 form.value.totalHoursForInterim += parseFloat(detail.numberH)              
-              ouvrage.total += detail.totalPrice;      
+              ouvrage.total += parseInt(detail.totalPrice); 
               ouvrage.totalWithoutMarge += detail.totalPriceWithoutMarge;
               ouvrage.totalHour += parseFloat(detail.numberH);
             })
@@ -1241,7 +1241,7 @@ export default {
           type: 'Labor',
           unit: 'HR',
           qtyOuvrage: labor.qtyOuvrage,
-          totalPrice: '',
+          totalPrice: 0,
           numberH: 0,
         });
       }else if(labor.ouvrageType == 2){
@@ -1253,7 +1253,7 @@ export default {
           type: 'Labor',
           unit: 'HR',
           qtyOuvrage: labor.qtyOuvrage,
-          totalPrice: '',
+          totalPrice: 0,
           numberH: 0,
         });
       }else{
@@ -1265,7 +1265,7 @@ export default {
           type: 'Labor',
           unit: 'HR',
           qtyOuvrage: labor.qtyOuvrage,
-          totalPrice: '',
+          totalPrice: 0,
           numberH: 0,
         });
       }
