@@ -198,6 +198,7 @@
         }
         .result-panel{
             height: 575px;
+            overflow-y: auto;
             .btns{
                 .custom-btn{
                     width: 96px;

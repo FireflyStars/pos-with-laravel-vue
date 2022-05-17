@@ -11,7 +11,7 @@
                     </div>
                     <div class="search-body">
                         <div class="result-panel mt-4">
-                            <div class="border-top border-bottom px-2">
+                            <div class="px-2">
                                 <div class="form-group">
                                     <div class="col-12">
                                         <input type="text" v-model="task.name" placeholder="Nom" class="form-control form-control-sm">
@@ -126,8 +126,8 @@ export default {
     z-index: 11;
     background: rgba(0, 0, 0, 0.3);
     .search-panel{
-        width: 700px;
-        height: 700px;
+        width: 600px;
+        height: 500px;
         padding: 40px 35px;
         .search-header{
             .close-icon{

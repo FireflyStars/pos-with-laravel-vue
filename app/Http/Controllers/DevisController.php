@@ -118,7 +118,7 @@ class DevisController extends Controller
                             ->join('units', 'units.id', '=', 'products.unit_id')
                             ->where('ouvrage_task_id', $task->id)
                             ->select(
-                                'ouvrage_detail.id', 'ouvrage_detail.numberh', 'ouvrage_detail.qty', 'units.id as unit_id',
+                                'ouvrage_detail.id', 'ouvrage_detail.numberh as numberH', 'ouvrage_detail.qty', 'units.id as unit_id',
                                 'products.type', 'units.code as unit'
                             )->get();
             foreach ($details as $detail) {
@@ -162,7 +162,9 @@ class DevisController extends Controller
      * Search Products
      */
     public function searchProduct(Request $request){
-    $query = DB::table('products')->join('units', 'units.id', '=', 'products.unit_id');
+    $query = DB::table('products')
+                ->join('taxes', 'taxes.id', '=', 'products.taxe_id')
+                ->join('units', 'units.id', '=', 'products.unit_id');
         if($request->search != ''){
             $query =    $query->where('products.name', 'like', '%'.$request->search.'%')
                         ->orWhere('products.reference', 'like', '%'.$request->search.'%')
@@ -173,7 +175,7 @@ class DevisController extends Controller
         return response()->json(
             $query->select(
                 'products.id', 'products.name',
-                'products.description', 'products.type', 'products.unit_id', 'products.taxe_id as tax',
+                'products.description', 'products.type', 'products.unit_id', DB::raw('CEIL(taxes.taux * 100) as tax'),
                 'products.reference', 'products.wholesale_price', 'products.type', 'units.code as unit'
             )->get()
         );

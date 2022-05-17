@@ -11,7 +11,7 @@
                     </div>
                     <div class="search-body">
                         <div class="result-panel mt-4">
-                            <div class="border-top border-bottom px-2">
+                            <div class="px-2">
                                 <div class="d-flex px-3 justify-content-between">
                                     <div class="col-5">
                                         <SelectBox :label="''" 
@@ -22,7 +22,7 @@
                                                 { display:'Pas d’accès', value: 'Pas d’accès' }
                                             ]"
                                             :name="'workHours'"
-                                            :classnames="'col-5'"
+                                            :classnames="'w-100'"
                                             :placeholder="'Nombre d’heure'"
                                         />
                                     </div>
@@ -30,7 +30,7 @@
                                         <input type="text" v-model="supplier.amountExcludeTax" placeholder="Montant HT" class="form-control form-control-sm">
                                     </div>
                                 </div>
-                                <div class="d-flex px-3 justify-content-between">
+                                <div class="d-flex px-3 mt-3 justify-content-between">
                                     <div class="col-5">
                                         <SelectBox :label="''" 
                                             v-model="interim.company" 
@@ -40,7 +40,7 @@
                                                 { display:'Pas d’accès', value: 'Pas d’accès' }
                                             ]"
                                             :name="'company'"
-                                            :classnames="'col-5'"
+                                            :classnames="'w-100'"
                                             :placeholder="'Société'"
                                         />                                        
                                     </div>
@@ -53,7 +53,7 @@
                                                 { display:'Pas d’accès', value: 'Pas d’accès' }
                                             ]"
                                             :name="'tax'"
-                                            :classnames="'col-5'"
+                                            :classnames="'w-100'"
                                             :placeholder="'Taxe'"
                                         />                                        
                                     </div>
@@ -164,7 +164,7 @@ export default {
     background: rgba(0, 0, 0, 0.3);
     .search-panel{
         width: 700px;
-        height: 700px;
+        height: 500px;
         padding: 40px 35px;
         .search-header{
             .close-icon{
@@ -174,6 +174,7 @@ export default {
             }
         }
         .result-panel{
+            height: 400px;            
             overflow-y: auto;
             .btns{
                 .custom-btn{
