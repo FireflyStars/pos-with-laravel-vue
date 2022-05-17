@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderState;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,6 +14,7 @@ class DevisController extends Controller
     public function loadList(Request $request){
 
         $column_filters=$request->post('column_filters');
+        $column_sortby=$request->post('sortby');
         $skip=$request->post('skip');
         $take=$request->post('take');
   
@@ -47,8 +49,19 @@ class DevisController extends Controller
             }
         }
 
+        //sortby
+        if($column_sortby!=null)
+        foreach($column_sortby as $sortby){
+            $orderList=$orderList->orderBy($sortby['id'],$sortby['orderby']);
+        }
+        
+
         $orderList=$orderList->groupBy('orders.id')->skip($skip)->take($take)->get();
         return response()->json($orderList);
+    }
+
+    public function getOrderStates(Request $request){
+        return response()->json(OrderState::all());
     }
 
     /**

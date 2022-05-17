@@ -16,7 +16,12 @@
                         <div class="col">
                             <tab-pane :tabs="tabs" current='tout' class="almarai_700_normal">
                                 <template v-slot:tout>
-                                   <item-list-table :table_def="all_devis" ></item-list-table>
+                                   <item-list-table :table_def="all_devis" >
+                                        <template v-slot:order_state_id="{row}">
+                                            
+                                            <order-state-tag  :order_state_id="row.order_state_id" classes="almarai_700_normal"></order-state-tag>
+                                        </template>
+                                   </item-list-table>
                                 </template>
                                 <template v-slot:en_cours>
                                     2nd
@@ -57,6 +62,7 @@
 import MainHeader from '../../components/layout/MainHeader.vue';
 import SideBar from '../../components/layout/SideBar.vue';
 import ItemListTable from '../../components/miscellaneous/ItemListTable/ItemListTable.vue';
+import OrderStateTag from '../../components/miscellaneous/OrderStateTag.vue';
 import { ref, onMounted, nextTick, computed } from 'vue';
 import { useStore } from 'vuex';
 import { DEVIS_LIST_MODULE, GET_DEVIS_LIST_DEF } from '../../store/types/types';
@@ -69,7 +75,8 @@ export default {
     components: {
       MainHeader,
       SideBar,
-      ItemListTable
+      ItemListTable,
+      OrderStateTag
     },
 
     setup() {
