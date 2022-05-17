@@ -27,7 +27,7 @@
                                         />
                                     </div>
                                     <div class="col-5">
-                                        <input type="text" v-model="supplier.amountExcludeTax" placeholder="Montant HT" class="form-control form-control-sm">
+                                        <input type="text" v-model="interim.amountExcludeTax" placeholder="Montant HT" class="form-control form-control-sm">
                                     </div>
                                 </div>
                                 <div class="d-flex px-3 mt-3 justify-content-between">
@@ -61,7 +61,7 @@
                             </div>
                             <div class="btns mt-4 d-flex justify-content-between px-5">
                                 <button class="custom-btn btn-cancel" @click="closeModal">Annuler</button>
-                                <button class="custom-btn btn-ok" @click="selectSupplier">Suivant</button>
+                                <button class="custom-btn btn-ok" @click="selectInterim">Suivant</button>
                             </div>
                         </div>
                     </div>
