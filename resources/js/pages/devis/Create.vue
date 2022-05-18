@@ -169,13 +169,14 @@
                           </div>
                         </div>
                         <div class="ged-cat-content mt-3 mb-3 d-flex flex-wrap">
-                          <div class="img ms-2 cursor-pointer" v-for="(gedDetail, key) in gedCat[0].items" :key="key">
-                            <div class="rounded border border-1"
-                              :style="{ 'background-image': `url(${gedDetail.previewContent})`, 'background-size': 'contain', 'width': '55px', 'height':'55px'}"
-                              @click="zoomImage(gedDetail.previewContent)"
+                          <div class="img ms-2" v-for="(gedDetail, index) in gedCat[0].items" :key="index">
+                            <div class="rounded border border-1 ged-image"
+                              :style="{ 'background-image': `url(${gedDetail.previewContent})`}"
                             >
-                            <div class="w-100 h-100 image-overlayer">
-                            </div>
+                              <div class="w-100 h-100 image-overlayer d-flex justify-content-around align-items-center">
+                                <span class="eye-icon" @click="zoomImage(gedDetail.previewContent)"></span>
+                                <span class="cancel-icon" @click="removeImage(zoneIndex, gedCat[0].id,index)"></span>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -775,7 +776,7 @@
             </div>
           </div>
         </div>
-        <input type="file" @change="previewFile" ref="file" class="d-none">
+        <input type="file" @change="previewFile" ref="file" multiple class="d-none">
         <zoom-modal ref="zoomModal"></zoom-modal>
         <SecuriteModal ref="securiteModal" @selectedOuvrage="selectedOuvrage"></SecuriteModal>
         <InstallationModal ref="installationModal" @selectedOuvrage="selectedOuvrage"></InstallationModal>
@@ -845,7 +846,6 @@ export default {
     const zoneEdit = ref(false);
     const customerAddresses = ref([]);
     const zoneIndex = ref(0);
-    var formData = new FormData();
     const file = ref(null);
     const zoomModal = ref(null);
     const securiteModal = ref(null);
@@ -975,9 +975,6 @@ export default {
               }       
               if(detail.type == 'Interim')     
                 form.value.totalHoursForInterim += parseFloat(detail.numberH)              
-              console.log(detail.unitPrice)
-              console.log(detail.qty)
-              console.log(detail.marge)                
               ouvrage.total += parseInt(detail.totalPrice);    
               ouvrage.totalWithoutMarge += detail.totalPriceWithoutMarge;
               ouvrage.totalHour += parseFloat(detail.numberH);
@@ -1024,14 +1021,14 @@ export default {
       })
     });
     onMounted(()=>{
-      // axios.post('/get-ged-categories').then((res)=>{
-      //   gedCats.value = res.data;
-      //   form.value.zones.forEach(element => {
-      //     element.gedCats = res.data;
-      //   });
-      // }).catch((error)=>{
-      //   console.log(error);
-      // })
+      axios.post('/get-ged-categories').then((res)=>{
+        gedCats.value = res.data;
+        form.value.zones.forEach(element => {
+          element.gedCats = res.data;
+        });
+      }).catch((error)=>{
+        console.log(error);
+      })
     })
     const addFileToGed = (zone, catId)=>{
       zoneIndex.value = zone;
@@ -1039,18 +1036,28 @@ export default {
       file.value.click();
     }
     const previewFile = ()=>{
-      let image = file.value.files;
-      formData.append('zone['+zoneIndex.value+']["gedCat"]['+ gedCatId.value +']', image[0]);
-      if (image && image[0]) {
-        let reader = new FileReader
-        reader.onload = e => {
+      let images = file.value.files;
+      // formData.append('zone['+zoneIndex.value+']["gedCat"]['+ gedCatId.value +']', image[0]);
+      for (let i = 0; i < images.length; i++) {
+        let reader = new FileReader();
+        reader.onload = (e) => {
           form.value.zones[zoneIndex.value].gedCats[gedCatId.value][0].items.push({
             type: 'img',
-            previewContent: e.target.result
-          })
+            previewContent: reader.result,
+            file: images[i]
+          })         
+        };
+        reader.readAsDataURL(images[i]);
+      }      
+    }
+    const removeImage = (zIndex, id, index)=>{
+      let images = [];
+      form.value.zones[zIndex].gedCats[id][0].items.forEach((item, i)=>{
+        if(index != i){
+          images.push(item);
         }
-        reader.readAsDataURL(image[0])
-      }
+      })
+      form.value.zones[zIndex].gedCats[id][0].items = images;
     }
     const zoomImage = (content)=>{
       zoomModal.value.openModal(content);
@@ -1510,6 +1517,7 @@ export default {
       taskModal,
       addFileToGed,
       previewFile,
+      removeImage,
       zoomImage,
       togglePanel,
       openSecuriteModal,
@@ -1652,9 +1660,20 @@ export default {
           }
         }
         .zone-section{
-          .image-overlayer:hover{
-            background: rgba(0, 0, 0, .2);
-            transition: background ease-out .3s;
+          .ged-image{
+            background-size: contain;
+            width: 55px;
+            height: 55px;
+            .image-overlayer{
+              visibility: hidden;
+            }
+            &:hover{
+              .image-overlayer{
+                visibility: visible;
+                background: rgba(0, 0, 0, .2);
+                transition: background ease-out .3s;
+              }
+            }
           }
         }
         .ouvrage-section{

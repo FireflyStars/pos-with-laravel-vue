@@ -173,14 +173,16 @@
             }
             const nextStep = ()=>{
                 step.value = 2;
-                store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Loading Ouvrages...']);            
-                axios.post('/get-prestation-ouvrages', { toit: selectedRoofType.value.id }).then((res)=>{
-                    prestations.value = res.data;
-                }).catch((error)=>{
-                    console.log(error);
-                }).finally(()=>{
-                    store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
-                })
+                if(prestations.value.length == 0){
+                    store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Loading Ouvrages...']);            
+                    axios.post('/get-prestation-ouvrages', { toit: selectedRoofType.value.id }).then((res)=>{
+                        prestations.value = res.data;
+                    }).catch((error)=>{
+                        console.log(error);
+                    }).finally(()=>{
+                        store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
+                    })
+                }
             }
             const resetRoofFilter = ()=>{
                 selectedRoofType.value.id = 0;
@@ -194,13 +196,15 @@
                 selectedRoofType.value = toit;
             }
             onMounted(()=>{
-                axios.post('/get-all-toits').then((res)=>{
-                    toits.value = res.data;
-                }).catch((error)=>{
-                    console.log(error);
-                }).finally(()=>{
-
-                });
+                if(toits.value.length == 0){
+                    axios.post('/get-all-toits').then((res)=>{
+                        toits.value = res.data;
+                    }).catch((error)=>{
+                        console.log(error);
+                    }).finally(()=>{
+    
+                    });
+                }
             })
             const confirm = ()=>{
                 showModal.value = false;
@@ -217,10 +221,10 @@
                 query,
                 showModal,
                 queryElement,
-                openModal,
                 toits,
                 prestations,
                 selectedRoofType,
+                openModal,
                 searchOuvrage,
                 closeModal,
                 selectOuvrage,

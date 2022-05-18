@@ -93,8 +93,8 @@ export default {
     z-index: 11;
     background: rgba(0, 0, 0, 0.3);
     .modal-panel{
-        width: 660px;
-        height: 450px;
+        width: 700px;
+        height: 600px;
         div{
             background-size: contain;
             background-position: center;

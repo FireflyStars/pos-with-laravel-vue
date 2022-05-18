@@ -125,7 +125,8 @@
     background-position: center;
     background-repeat: no-repeat;
 }
-.cancel-icon{
+.cancel-icon,
+.eye-icon{
     display: block;
     cursor: pointer;
     width: 16px;
@@ -134,6 +135,12 @@
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
+    background-color: black;
+    border-radius: 50%;
+}
+.eye-icon{
+    background-image: url(../js/images/eye.svg);
+    background-color: white;
 }
 .customer-icon{
     display: block;

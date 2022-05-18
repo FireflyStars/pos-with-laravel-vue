@@ -70,8 +70,8 @@ class DevisController extends Controller
      */
 
     public function getGedCategories(){
-        $categories = DB::table('ged_categories')->select('id', 'name', )->get();
-        foreach ($categories as $key => $item) {
+        $categories = DB::table('ged_categories')->select('id', 'name')->get();
+        foreach ($categories as $item) {
             $item->items = [];
         }
         return response()->json($categories->groupBy('id'));
