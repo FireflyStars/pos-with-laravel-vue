@@ -1052,10 +1052,8 @@ export default {
     }
     const removeImage = (zIndex, id, index)=>{
       let images = [];
-      form.value.zones[zIndex].gedCats[id][0].items.forEach((item, i)=>{
-        if(index != i){
-          images.push(item);
-        }
+      form.value.zones[zIndex].gedCats[id][0].items =  form.value.zones[zIndex].gedCats[id][0].items.filter((item, i)=>{
+        return i != index;
       })
       form.value.zones[zIndex].gedCats[id][0].items = images;
     }
@@ -1349,7 +1347,7 @@ export default {
 
       }
     }
-    // remove a zone
+    // add a zone
     const addZone = (index)=>{
       form.value.zones.push(
         {
@@ -1381,14 +1379,10 @@ export default {
     }
 
     // remove a zone
-    const removeZone = (index)=>{
-      var zones = [];
-      form.value.zones.forEach((element, i) => {
-        if(index != i){
-          zones.push(element);
-        }   
+    const removeZone = (selectedIndex)=>{
+      form.value.zones = form.value.zones.filter((item, index)=>{
+        return index != selectedIndex;
       });
-      form.value.zones = zones;
     }
 
     // activate the ouvrage
@@ -1431,27 +1425,20 @@ export default {
             'The ouvrage has been deleted.',
             'success'
           )
-          var ouvrages = [];
           if(ouvrageType == 1){
-            form.value.zones[zoneIndex].installOuvrage.ouvrages.forEach((element, index) => {
-              if(index != ouvrageIndex)
-                ouvrages.push(element);
+            form.value.zones[zoneIndex].installOuvrage.ouvrages = form.value.zones[zoneIndex].installOuvrage.ouvrages.filter((item, index)=>{
+              return ouvrageIndex != index;
             });
-            form.value.zones[zoneIndex].installOuvrage.ouvrages = ouvrages;
           }
           if(ouvrageType == 2){
-            form.value.zones[zoneIndex].securityOuvrage.ouvrages.forEach((element, index) => {
-              if(index != ouvrageIndex)
-                ouvrages.push(element);
+            form.value.zones[zoneIndex].securityOuvrage.ouvrages = form.value.zones[zoneIndex].securityOuvrage.ouvrages.filter((item, index)=>{
+              return ouvrageIndex != index;
             });
-            form.value.zones[zoneIndex].securityOuvrage.ouvrages = ouvrages;
           }
           if(ouvrageType == 3){
-            form.value.zones[zoneIndex].prestationOuvrage.ouvrages.forEach((element, index) => {
-              if(index != ouvrageIndex)
-                ouvrages.push(element);
-            });
-            form.value.zones[zoneIndex].prestationOuvrage.ouvrages = ouvrages;
+            form.value.zones[zoneIndex].prestationOuvrage.ouvrages = form.value.zones[zoneIndex].prestationOuvrage.ouvrages.filter((item, index)=>{
+              return ouvrageIndex != index;
+            });            
           }
         }
       })      
@@ -1473,27 +1460,20 @@ export default {
             'The detail has been deleted.',
             'success'
           )
-          var details = [];
           if(ouvrageType == 1){
-            form.value.zones[zoneIndex].installOuvrage.ouvrages[ouvrageIndex].tasks[taskIndex].details.forEach((element, index) => {
-              if(index != detailIndex)
-                details.push(element);
-            });
-            form.value.zones[zoneIndex].installOuvrage.ouvrages[ouvrageIndex].tasks[taskIndex].details = details;
+            form.value.zones[zoneIndex].installOuvrage.ouvrages[ouvrageIndex].tasks[taskIndex].details = form.value.zones[zoneIndex].installOuvrage.ouvrages[ouvrageIndex].tasks[taskIndex].details.filter((item, index)=>{
+              return detailIndex != index;
+            })
           }
           if(ouvrageType == 2){
-            form.value.zones[zoneIndex].securityOuvrage.ouvrages[ouvrageIndex].tasks[taskIndex].details.forEach((element, index) => {
-              if(index != detailIndex)
-                details.push(element);
-            });
-            form.value.zones[zoneIndex].securityOuvrage.ouvrages[ouvrageIndex].tasks[taskIndex].details = details;
+            form.value.zones[zoneIndex].securityOuvrage.ouvrages[ouvrageIndex].tasks[taskIndex].details = form.value.zones[zoneIndex].securityOuvrage.ouvrages[ouvrageIndex].tasks[taskIndex].details.filter((item, index)=>{
+              return detailIndex != index;
+            })
           }
           if(ouvrageType == 3){
-            form.value.zones[zoneIndex].prestationOuvrage.ouvrages[ouvrageIndex].tasks[taskIndex].details.forEach((element, index) => {
-              if(index != detailIndex)
-                details.push(element);
-            });
-            form.value.zones[zoneIndex].prestationOuvrage.ouvrages[ouvrageIndex].tasks[taskIndex].details = details;
+            form.value.zones[zoneIndex].prestationOuvrage.ouvrages[ouvrageIndex].tasks[taskIndex].details = form.value.zones[zoneIndex].prestationOuvrage.ouvrages[ouvrageIndex].tasks[taskIndex].details.filter((item, index)=>{
+              return detailIndex != index;
+            })            
           }
         }
       })        

@@ -626,23 +626,15 @@ export default {
             });
         }     
         const removeAddress = (selectedIndex)=>{
-            var tmpAddress = [];
-            for (let index = 0; index < form.value.addresses.length; index++) {
-                const element = form.value.addresses[index];
-                if(selectedIndex != index)
-                    tmpAddress.push(element);
-            }
-            form.value.addresses = tmpAddress;
+            form.value.addresses = form.value.addresses.filter((item, index)=>{
+                return index != selectedIndex
+            });            
         }
 
         const removeContact = (selectedIndex)=>{
-            var tmpAddress = [];
-            for (let index = 0; index < form.value.contacts.length; index++) {
-                const element = form.value.contacts[index];
-                if(selectedIndex != index)
-                    tmpAddress.push(element);
-            }
-            form.value.contacts = tmpAddress;
+            form.value.contacts = form.value.contacts.filter((item, index)=>{
+                return index != selectedIndex
+            });
         }
         const submit = ()=>{
             store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Creating a new customer ...']);
