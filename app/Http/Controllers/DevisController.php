@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\OrderState;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class DevisController extends Controller
 {
@@ -74,7 +75,10 @@ class DevisController extends Controller
         foreach ($categories as $item) {
             $item->items = [];
         }
-        return response()->json($categories->groupBy('id'));
+        return response()->json([
+            'gedCats'   => $categories->groupBy('id'),
+            'taxes'     => DB::table('taxes')->select('id as value', DB::raw('taux * 100 as display'))->get(),
+        ]);
     }
 
     /**
@@ -111,7 +115,8 @@ class DevisController extends Controller
     public function getOuvrage(Request $request){
         $ouvrage = DB::table('ouvrages')
                     ->select(
-                        'unit_id as unit', 'textcustomer as customerText', 'name', 'id'
+                        'unit_id as unit', 'textcustomer as customerText', 'name', 'id',
+                        'textchargeaffaire', 'textoperator'
                         )
                     ->where('id', $request->id)->first();
         $ouvrage->qty = 0;
@@ -122,7 +127,7 @@ class DevisController extends Controller
         $ouvrage->totalWithoutMarge = 0;
         $tasks = DB::table('ouvrage_task')
                 ->where('ouvrage_id', $request->id)
-                ->select('id', 'name', 'textcustomer as customerText', 'textchargeaffaire', 'unit_id', 'qty')
+                ->select('id', 'name', 'textcustomer as customerText', 'textchargeaffaire', 'textoperator', 'unit_id', 'qty')
                 ->get();
         $ouvrage->tasks = $tasks;
         foreach ($tasks as $task) {
@@ -132,7 +137,7 @@ class DevisController extends Controller
                             ->where('ouvrage_task_id', $task->id)
                             ->select(
                                 'ouvrage_detail.id', 'ouvrage_detail.numberh as numberH', 'ouvrage_detail.qty', 'units.id as unit_id',
-                                'products.type', 'units.code as unit'
+                                'products.type', 'units.code as unit', 'products.id as productId', 'products.name', 'products.taxe_id as tax', 'products.price as productPrice'
                             )->get();
             foreach ($details as $detail) {
                 $detail->unitPrice = 0;
@@ -140,7 +145,6 @@ class DevisController extends Controller
                 $detail->totalPrice = 0;
                 $detail->qtyOuvrage = (int)$request->qtyOuvrage*((int)$detail->qty);
                 $detail->totalPriceWithoutMarge = 0;
-                $detail->tax = 0;
             }
             $task->details = $details;
         }
@@ -175,7 +179,7 @@ class DevisController extends Controller
      * Search Products
      */
     public function searchProduct(Request $request){
-    $query = DB::table('products')
+        $query = DB::table('products')
                 ->join('taxes', 'taxes.id', '=', 'products.taxe_id')
                 ->join('units', 'units.id', '=', 'products.unit_id');
         if($request->search != ''){
@@ -192,5 +196,140 @@ class DevisController extends Controller
                 'products.reference', 'products.wholesale_price', 'products.type', 'units.code as unit'
             )->get()
         );
+    }
+    
+    /**
+     * Get Taxes
+     */
+    public function getSuppliers(){
+        return response()->json(
+            DB::table('suppliers')->select('id as value', 'name as display')->get()
+        );
+    }
+
+    /**
+     * Save a new devis
+     */
+    public function storeDevis(Request $request){
+        $orderData = [
+            'lang_id'           => 1,
+            'affiliate_id'      => auth()->user->affiliate_id,
+            'reponsable_id'     => auth()->user->id,
+            'order_state_id '   => 2,
+            'total '            => ($request->totalPriceForInstall + $request->totalPriceForSecurity + $request->totalPriceForSecurity),
+            'address_id'        => $request->address['id'],
+            'customer_id'       => $request->customer['id'],
+            'datecommande'      => Carbon::now(),
+            'signed_by_customer'=> 0,
+            'created_at'        => Carbon::now(),
+            'updated_at'        => Carbon::now(),
+        ];
+
+        $orderId = DB::table('orders')->insertGetId($orderData);
+        foreach ($request->zones as $zone) {
+            $zoneData = [
+                'order_id'      =>  $orderId,
+                'latitude'      =>  '',
+                'longitude'     =>  '',
+                'description'   =>  '',
+                'hauteur'       =>  0,
+                'moyenacces_id' =>  '',
+                'name'          =>  $zone['name'],
+                'created_at'    =>  Carbon::now(),
+                'updated_at'    =>  Carbon::now(),
+            ];
+            $zoneId = DB::table('order_zones')->insertGetId($zoneData);
+            if( count($zone['installOuvrage']['ouvrages']) ){
+                $installationCat = [
+                    'order_zone_id' =>  $zoneId,
+                    'type'          =>  '',
+                    'name'          =>  $zone['installOuvrage']['name'],
+                    'textcustomer'  =>  '',
+                    'textoperator'  =>  '',
+                    'created_at'    =>  Carbon::now(),
+                    'updated_at'    =>  Carbon::now()
+                ];
+                $orderCatId = DB::table('order_cat')->insertGetId($installationCat);
+                foreach ($zone['installOuvrage']['ouvrages'] as $ouvrage) {
+                    $ouvrageData = [
+                        'order_id'          => $orderId,
+                        'order_zone_id'     => $zoneId,
+                        'unit_id'           => $ouvrage['unit'],
+                        'qty'               => $ouvrage['qty'],
+                        'order_cat_id'      => $orderCatId,
+                        'textcustomer'      => $ouvrage['customerText'],
+                        'textchargeaffaire' => $ouvrage['textchargeaffaire'],
+                        'textoperator'      => $ouvrage['textoperator'],
+                        'type'              => 'INSTALLATION',
+                        'name'              => $ouvrage['name'],
+                        'created_at'        => Carbon::now(),
+                        'updated_at'        => Carbon::now(),
+                    ];
+                    $orderOuvrageId = DB::table('order_ouvrages')->insertGetId($ouvrageData);
+                    foreach ($ouvrage['tasks'] as $taskIndex => $task) {
+                        $orderOuvrageTask = [
+                            'order_ouvrage_id'      => $orderOuvrageId,
+                            'name'                  => $task['name'],
+                            'textcustomer'          => $task['customerText'],
+                            'textchargeaffaire'     => $task['textchargeaffaire'],
+                            'textoperator'          => $task['textoperator'],
+                            'qty'                   => $task['qty'],
+                            'unit_id'               => $task['unit_id'],
+                            'created_at'            => Carbon::now(),
+                            'updated_at'            => Carbon::now()
+                        ];
+                        $orderOuvrageTaskId = DB::table('order_ouvrage_task')->insertGetId($orderOuvrageTask);
+                        foreach ($task['details'] as $detailIndex => $detail) {
+                            $detailData = [
+                                'ouvrage_task_id'   => $orderOuvrageTaskId,
+                                'product_id'        => $detail['productId'],
+                                'type'              => $detail['type'],
+                                'name'              => $detail['name'],
+                                'textcustomer'      => '',
+                                'textchargeaffaire' => '',
+                                'textoperator'      => '',
+                                'orderfile'         => '',
+                                'qty'               => $detail['qty'],
+                                'numberh'           => $detail['numberH'],
+                                'unitprice'         => $detail['unitPrice'],
+                                'qtyouvrage'        => $detail['qtyOuvrage'],
+                                'qtyunitouvrage'    => 1,
+                                'houvrage'          => 0,
+                                'marge'             => $detail['marge'],
+                                'totalprice'        => $detail['totalPrice'],
+                                'taxe_id'           => $detail['tax'],
+                                'unit_id'           => $detail['unit_id'],
+                                'priceachat'        => $detail['productPrice'],
+                            ];
+                            DB::table('order_ouvrage_detail')->insert($detailData);
+                        }
+                    }
+                }
+            }
+            foreach ($zone['gedCats'] as $gedCat) {
+                foreach ($gedCat[0]['items'] as $file) {
+                    $data = $file['base64data'];
+                    if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
+                        $data = substr($data, strpos($data, ',') + 1);
+                        $type = strtolower($type[1]); // jpg, png, gif
+                    
+                        if (!in_array($type, [ 'jpg', 'jpeg', 'gif', 'png' ])) {
+                            throw new \Exception('invalid image type');
+                        }
+                        $data = str_replace( ' ', '+', $data );
+                        $data = base64_decode($data);
+                    
+                        if ($data === false) {
+                            throw new \Exception('base64_decode failed');
+                        }
+                    } else {
+                        throw new \Exception('did not match data URI with image data');
+                    }
+                    $uuid_filename = DB::select('select UUID() AS uuid')[0]->uuid;
+                    file_put_contents(public_path('/GED'.$uuid_filename).".{$type}", $data);
+                }
+            }
+        }
+        return response()->json();
     }
 }

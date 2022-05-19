@@ -6,10 +6,18 @@
         <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap reports-page" style="z-index:100" >
           <side-bar />
           <div class="col main-view container">
-            <h1 class="d-flex align-items-center m-0">
-              <span class="devis-icon"></span>
-              <span class="ms-3 font-22 almarai_extrabold_normal_normal">Nouveau Devis</span>
-            </h1>
+            <div class="d-flex">
+              <div class="col-6">
+                <h1 class="d-flex align-items-center m-0">
+                  <span class="devis-icon"></span>
+                  <span class="ms-3 font-22 almarai_extrabold_normal_normal">Nouveau Devis</span>
+                </h1>
+              </div>
+              <div class="col-6 d-flex">
+                <button class="btn btn-save me-3 text-white" @click="storeDevis">Sauvegarder</button>
+                <button class="btn btn-pdf text-white rounded-3" @click="PDFDevis">PDF</button>
+              </div>
+            </div>
             <ul class="m-0 p-0 breadcrumb mt-3" v-if="breadcrumbs.length">
               <li class="breadcrumb-item almarai-extrabold font-18" v-for="(breadcrumb, index) in breadcrumbs" :key="index">{{ breadcrumb }}</li>
             </ul>
@@ -112,8 +120,8 @@
                     <div class="zone-header d-flex align-items-center">
                       <span class="home-icon"></span>
                       <div class="zone-name ms-2">
-                        <input type="text" @blur="zoneEdit = !zoneEdit" v-if="zoneEdit" class="form-control form-control-sm" v-model="zone.name">
-                        <span class="mulish-extrabold font-18 text-black" @dblclick="zoneEdit = !zoneEdit" v-else>{{ zone.name }}</span>
+                        <input type="text" @blur="zone.edit = false" v-if="zone.edit" class="form-control form-control-sm" v-model="zone.name">
+                        <span class="mulish-extrabold font-18 text-black" @dblclick="zone.edit = true" v-else>{{ zone.name }}</span>
                       </div>
                       <div v-if="zoneIndex == 0" @click="addZone(zoneIndex)" class="add-btn ms-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer">
                         <span class="plus-icon me-2"></span> AJOUTER
@@ -171,10 +179,10 @@
                         <div class="ged-cat-content mt-3 mb-3 d-flex flex-wrap">
                           <div class="img ms-2" v-for="(gedDetail, index) in gedCat[0].items" :key="index">
                             <div class="rounded border border-1 ged-image"
-                              :style="{ 'background-image': `url(${gedDetail.previewContent})`}"
+                              :style="{ 'background-image': `url(${gedDetail.base64data})`}"
                             >
                               <div class="w-100 h-100 image-overlayer d-flex justify-content-around align-items-center">
-                                <span class="eye-icon" @click="zoomImage(gedDetail.previewContent)"></span>
+                                <span class="eye-icon" @click="zoomImage(gedDetail.base64data)"></span>
                                 <span class="cancel-icon" @click="removeImage(zoneIndex, gedCat[0].id,index)"></span>
                               </div>
                             </div>
@@ -191,7 +199,8 @@
                       <div class="col-7">
                         <div class="col-5 d-flex align-items-center cursor-pointer toggle-btn" @click="togglePanel">
                           <span class="installation-icon me-2"></span> 
-                          <span class="me-4">Installation</span>
+                          <input type="text" @blur="zone.installOuvrage.edit = false" v-if="zone.installOuvrage.edit" class="form-control form-control-sm" v-model="zone.installOuvrage.name">
+                          <span v-else class="me-4" @dblclick="zone.installOuvrage.edit = true">{{ zone.installOuvrage.name }}</span>
                           <span class="arrow-icon ms-auto"></span>
                         </div>
                         <div class="add-btn ms-5 ps-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" 
@@ -312,9 +321,9 @@
                                       <td v-else></td>
                                       <td valign="middle">{{ detail.totalPrice }}€</td>
                                       <td>
-                                        <div class="d-flex align-items-center">
-                                          <input type="text" v-model="detail.tax" class="w-100 form-control form-control-sm custom-text-danger">%
-                                        </div>
+                                        <select class="w-100 form-control form-control-sm custom-text-danger" v-model="ouvrage.tax">
+                                          <option :value="tax.value" v-for="(tax, taxIndex) in taxes" :key="taxIndex">{{ tax.display }} %</option>
+                                        </select>                                          
                                       </td>
                                       <td>
                                         <svg class="cursor-pointer" @click="removeOuvrageDetail(zoneIndex, 2, ouvrageIndex, taskIndex, detailIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -358,7 +367,8 @@
                       <div class="col-7">
                         <div class="col-5 d-flex align-items-center cursor-pointer toggle-btn" @click="togglePanel">
                           <span class="securite-icon me-2"></span> 
-                          <span class="me-4">Sécurité</span>
+                          <input type="text" @blur="zone.securityOuvrage.edit = false" v-if="zone.securityOuvrage.edit" class="form-control form-control-sm" v-model="zone.securityOuvrage.name">
+                          <span v-else class="me-4" @dblclick="zone.securityOuvrage.edit = true">{{ zone.securityOuvrage.name }}</span>
                           <span class="arrow-icon ms-auto"></span>
                         </div>
                         <div class="add-btn ms-5 ps-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" 
@@ -479,9 +489,9 @@
                                       <td v-else></td>
                                       <td valign="middle">{{ detail.totalPrice }}€</td>
                                       <td>
-                                        <div class="d-flex align-items-center">
-                                          <input type="text" v-model="detail.tax" class="w-100 form-control form-control-sm custom-text-danger">%
-                                        </div>
+                                        <select class="w-100 form-control form-control-sm custom-text-danger" v-model="ouvrage.tax">
+                                          <option :value="tax.value" v-for="(tax, taxIndex) in taxes" :key="taxIndex">{{ tax.display }} %</option>
+                                        </select>                                          
                                       </td>
                                       <td>
                                         <svg class="cursor-pointer" @click="removeOuvrageDetail(zoneIndex, 2, ouvrageIndex, taskIndex, detailIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -523,9 +533,10 @@
                   <div class="ouvrage-section prestation-ouvrages bg-white px-4 py-3 mt-2 mb-2">
                     <div class="ouvrage-header d-flex">
                       <div class="col-7">
-                        <div class="col-5 d-flex align-items-center cursor-pointer toggle-btn" @click="togglePanel">
+                        <div class="col-5 d-flex align-items-center cursor-pointer toggle-btn" :id="'zone'" @click="togglePanel">
                           <span class="prestation-icon me-2"></span> 
-                          <span class="me-4">Prestations</span>
+                          <input type="text" @blur="zone.prestationOuvrage.edit = false" v-if="zone.prestationOuvrage.edit" class="form-control form-control-sm" v-model="zone.prestationOuvrage.name">
+                          <span v-else class="me-4" @dblclick="zone.prestationOuvrage.edit = true">{{ zone.prestationOuvrage.name }}</span>                          
                           <span class="arrow-icon ms-auto"></span>
                         </div>
                         <div class="add-btn ms-5 ps-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" 
@@ -646,9 +657,9 @@
                                       <td v-else></td>
                                       <td valign="middle">{{ detail.totalPrice }}€</td>
                                       <td>
-                                        <div class="d-flex align-items-center">
-                                          <input type="text" v-model="detail.tax" class="w-100 form-control form-control-sm custom-text-danger">%
-                                        </div>
+                                        <select class="w-100 form-control form-control-sm custom-text-danger" v-model="ouvrage.tax">
+                                          <option :value="tax.value" v-for="(tax, taxIndex) in taxes" :key="taxIndex">{{ tax.display }} %</option>
+                                        </select>
                                       </td>
                                       <td>
                                         <svg class="cursor-pointer" @click="removeOuvrageDetail(zoneIndex, 2, ouvrageIndex, taskIndex, detailIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -776,7 +787,7 @@
             </div>
           </div>
         </div>
-        <input type="file" @change="previewFile" ref="file" multiple class="d-none">
+        <input type="file" @change="previewFile" accept="image/*" ref="file" multiple class="d-none">
         <zoom-modal ref="zoomModal"></zoom-modal>
         <SecuriteModal ref="securiteModal" @selectedOuvrage="selectedOuvrage"></SecuriteModal>
         <InstallationModal ref="installationModal" @selectedOuvrage="selectedOuvrage"></InstallationModal>
@@ -843,7 +854,7 @@ export default {
         breadcrumbs.value = [];
       }
     })
-    const zoneEdit = ref(false);
+    const taxes = ref([]);
     const customerAddresses = ref([]);
     const zoneIndex = ref(0);
     const file = ref(null);
@@ -890,11 +901,14 @@ export default {
       totalPriceWithoutMarge: 0,
       zones: [
         {
+          edit: false,
           name: 'Zone 1',
           roofAccess: 'Intérieur',
           roofAccess1: 'Echelle',
           gedCats: [],
           installOuvrage: {
+            name: 'Installation',
+            edit: false,
             totalHour: 0,
             sumUnitPrice: 0,
             totalPrice: 0,
@@ -902,12 +916,16 @@ export default {
             ]
           },
           securityOuvrage: {
+            name: 'Sécurité',
+            edit: false,
             totalHour: 0,
             sumUnitPrice: 0,
             totalPrice: 0,
             ouvrages: []
           },
           prestationOuvrage: {
+            name: 'Prestations',
+            edit: false,
             totalHour: 0,
             sumUnitPrice: 0,
             totalPrice: 0,
@@ -1022,9 +1040,10 @@ export default {
     });
     onMounted(()=>{
       axios.post('/get-ged-categories').then((res)=>{
-        gedCats.value = res.data;
+        gedCats.value = res.data.gedCats;
+        taxes.value = res.data.taxes;
         form.value.zones.forEach(element => {
-          element.gedCats = res.data;
+          element.gedCats = res.data.gedCats;
         });
       }).catch((error)=>{
         console.log(error);
@@ -1037,25 +1056,20 @@ export default {
     }
     const previewFile = ()=>{
       let images = file.value.files;
-      // formData.append('zone['+zoneIndex.value+']["gedCat"]['+ gedCatId.value +']', image[0]);
       for (let i = 0; i < images.length; i++) {
         let reader = new FileReader();
         reader.onload = (e) => {
           form.value.zones[zoneIndex.value].gedCats[gedCatId.value][0].items.push({
-            type: 'img',
-            previewContent: reader.result,
-            file: images[i]
-          })         
+            base64data: reader.result,
+          })
         };
         reader.readAsDataURL(images[i]);
       }      
     }
     const removeImage = (zIndex, id, index)=>{
-      let images = [];
       form.value.zones[zIndex].gedCats[id][0].items =  form.value.zones[zIndex].gedCats[id][0].items.filter((item, i)=>{
         return i != index;
       })
-      form.value.zones[zIndex].gedCats[id][0].items = images;
     }
     const zoomImage = (content)=>{
       zoomModal.value.openModal(content);
@@ -1074,7 +1088,7 @@ export default {
       prestationModal.value.openModal(zIndex);
     }
     const openSupplierModal = (zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
-      supplierModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage);
+      supplierModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage, taxes.value);
     }
     const openProductModal = (zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
       productModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage);
@@ -1354,20 +1368,27 @@ export default {
           name: 'zone '+ (form.value.zones.length+1),
           roofAccess: 'Intérieur',
           roofAccess1: 'Echelle',
+          edit: false,
           gedCats: gedCats.value,
           installOuvrage: {
+            name: 'Installation',
+            edit: false,
             totalHour: 0,
             unitPrice: 0,
             totalPrice: 0,
             ouvrages: []
           },
           securityOuvrage: {
+            name: 'Sécurité',
+            edit: false,
             totalHour: 0,
             unitPrice: 0,
             totalPrice: 0,
             ouvrages: []
           },
           prestationOuvrage: {
+            name: 'Prestations',
+            edit: false,
             totalHour: 0,
             unitPrice: 0,
             totalPrice: 0,
@@ -1478,12 +1499,27 @@ export default {
         }
       })        
     }
+    // save Devis
+    const storeDevis = ()=>{
+      store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Storing a Devis...']);
+      axios.post('/store-devis', form.value).then((res)=>{
+        console.log(res.data);
+      }).catch((error)=>{
+        console.log(error);
+      }).finally(()=>{
+        store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
+      })
+    }
+    // Generate PDF for DEVIS
+    const PDFDevis = ()=>{
+
+    }
     return {
       breadcrumbs,
+      taxes,
       customerAddresses,
       devisCreateStep,
       form,
-      zoneEdit,
       file,
       zoomModal,
       securiteModal,
@@ -1527,7 +1563,9 @@ export default {
       activeOuvrage,
       activeOuvrageTask,
       removeOuvrage,
-      removeOuvrageDetail
+      removeOuvrageDetail,
+      storeDevis,
+      PDFDevis
     }
   },
 }
@@ -1582,6 +1620,20 @@ export default {
     overflow-y: auto;
   }
 
+  .btn-save{
+    width: 190px;
+    background: #3E9A4D;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+  }
+  .btn-pdf{
+    width: 190px;
+    background: rgba(255, 0, 0, 0.7);    
+    border-radius: 10px;
+    border: none;
+    outline: none;
+  }
   .ouvrage-section{
     .form-control{
       border: none;
@@ -1658,7 +1710,7 @@ export default {
         }
         .ouvrage-section{
           .toggle-btn{
-            span,
+            // span,
             svg{
               pointer-events: none;
             }

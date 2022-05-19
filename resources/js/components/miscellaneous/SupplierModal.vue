@@ -16,11 +16,7 @@
                                     <div class="col-5">
                                         <SelectBox :label="''" 
                                             v-model="supplier.vendor" 
-                                            :options="[ 
-                                                { display:'Intérieur', value: 'Intérieur' }, 
-                                                { display:'Extérieur', value: 'Extérieur' },
-                                                { display:'Pas d’accès', value: 'Pas d’accès' }
-                                            ]"
+                                            :options="suppliers"
                                             :name="'Fournisseur'"
                                             :classnames="'w-100'"
                                             :placeholder="'Fournisseur'"
@@ -37,11 +33,7 @@
                                     <div class="col-5">
                                         <SelectBox :label="''" 
                                             v-model="supplier.tax" 
-                                            :options="[ 
-                                                { display:'Intérieur', value: 'Intérieur' }, 
-                                                { display:'Extérieur', value: 'Extérieur' },
-                                                { display:'Pas d’accès', value: 'Pas d’accès' }
-                                            ]"
+                                            :options="taxes"
                                             :name="'Taxe'"
                                             :classnames="'w-100'"
                                             :placeholder="'Taxe'"
@@ -80,7 +72,7 @@
 </template>
 <script>
 
-import {nextTick, ref} from 'vue';
+import {onMounted, ref} from 'vue';
 import axios from 'axios';
 import SelectBox from '../../components/miscellaneous/SelectBox';
 
@@ -94,6 +86,15 @@ export default {
         SelectBox
     },
     setup(props, { emit }){
+        const taxes = ref([]);
+        const suppliers = ref([]);
+        onMounted(()=>{
+            axios.post('/get-suppliers').then((res)=>{
+                suppliers.value = res.data;
+            }).catch((error)=>{
+                
+            })
+        })
         const closeModal = ()=>{
             showModal.value = !showModal.value;
         }
@@ -111,19 +112,21 @@ export default {
             qtyOuvrage: '',
         })
         const showModal = ref(false);
-        const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
+        const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage, taxes)=>{
             supplier.value.zoneIndex = zoneIndex;
             supplier.value.ouvrageType = ouvrageType;
             supplier.value.ouvrageId = ouvrageId;
             supplier.value.taskId = taskId;
             supplier.value.qtyOuvrage = qtyOuvrage;
             showModal.value = !showModal.value;
+            taxes.value = taxes;
         }  
         const selectSupplier = (index)=>{
             showModal.value = false;
             emit('selectedSupplier', supplier.value);
         }
         return {
+            taxes,
             supplier,
             showModal,
             closeModal,
