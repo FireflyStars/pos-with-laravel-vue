@@ -164,3 +164,19 @@ P {
 .hide-overflowY{
   overflow-y: hidden;
 }
+
+.list-header-col .dp input {
+  transition: all 0.3s ease-in-out;
+  background-color: #EEE;
+  height: 20px;
+  line-height: 20px;
+  font-size: 14px;
+  border: none;
+  &:focus-visible{
+    outline: none;
+    border: none;
+  }
+  &:focus{
+    background-color: #DDDDDD;
+  }
+}

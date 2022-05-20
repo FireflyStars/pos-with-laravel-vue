@@ -43,10 +43,29 @@ class DevisController extends Controller
         //column filters
         if($column_filters!=null)
         foreach($column_filters as $column_filter){
-            if(isset($column_filter['having'])&&$column_filter['having']==true){
-                $orderList=$orderList->having($column_filter['id'],'LIKE','%'.$column_filter['word'].'%');
+       
+            if($column_filter['type']=='date'){
+                if(isset($column_filter['having'])&&$column_filter['having']==true){
+                    if($column_filter['word']['from']!=''){
+                        $orderList=$orderList->having($column_filter['id'],'>=',$column_filter['word']['from']);
+                    }
+                    if($column_filter['word']['to']!=''){
+                        $orderList=$orderList->having($column_filter['id'],'<',$column_filter['word']['to']);
+                    }
+                }else{
+                   if($column_filter['word']['from']!=''){
+                        $orderList=$orderList->whereDate((isset($column_filter['table'])?$column_filter['table'].'.':'').$column_filter['id'],'>=',$column_filter['word']['from']);
+                    }
+                    if($column_filter['word']['to']!=''){
+                        $orderList=$orderList->whereDate((isset($column_filter['table'])?$column_filter['table'].'.':'').$column_filter['id'],'<',$column_filter['word']['to']);
+                    }
+                }
             }else{
-                $orderList=$orderList->where((isset($column_filter['table'])?$column_filter['table'].'.':'').$column_filter['id'],'LIKE','%'.$column_filter['word'].'%');
+                if(isset($column_filter['having'])&&$column_filter['having']==true){
+                    $orderList=$orderList->having($column_filter['id'],'LIKE','%'.$column_filter['word'].'%');
+                }else{
+                    $orderList=$orderList->where((isset($column_filter['table'])?$column_filter['table'].'.':'').$column_filter['id'],'LIKE','%'.$column_filter['word'].'%');
+                }
             }
         }
 
