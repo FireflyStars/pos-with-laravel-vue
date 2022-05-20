@@ -1601,7 +1601,8 @@ class CompagneController extends Controller
         return response()->json(array('fields'=>$fields,'image'=>$cc->imagetemplate,'campagneCategory'=>$cc));
     }
 
-    public function fields_Pdf($id){
+    public function fields_Pdf($id) 
+    {
         $c=Campagne::find($id);
       
         $affiliate=$c->affiliate;
@@ -1622,7 +1623,7 @@ class CompagneController extends Controller
         $filedepliant=json_decode($cc->filedepliant);
         $fields->file_depliant=$filedepliant;
       
-        return array('fields'=>$fields,'image'=>$cc->imagetemplate,'campagneCategory'=>$cc);
+        return array('fields' => $fields,'image' => $cc->imagetemplate,'campagneCategory' => $cc);
     }
 
 
