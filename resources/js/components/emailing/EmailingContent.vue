@@ -86,7 +86,24 @@
                         <img v-if="imageurl!=''"
                             :src="`/storage/${imageurl}`" />
                             <template v-for="item,index in fields" :key="index">
-                                <span v-if="item.active==1" v-bind:style="{color:item.color,fontSize:`${item.size}px`,fontFamily:item.font,top:`${item.y}px`,left:`${item.x}px`}"><template v-if="index!='Email_agence'&&index!='Telephone_agence'">{{item.value}}</template><template  v-else-if="index=='Email_agence'">{{email_agence}}</template><template  v-else-if="index=='Telephone_agence'">{{phone_agence}}</template></span>
+                                <span 
+                                    v-if="item.active==1" 
+                                    v-bind:style="{color:item.color,fontSize:`${item.size}px`,fontFamily:item.font,top:`${item.y}px`,left:`${item.x}px`}"
+                                >
+                                    <template 
+                                        v-if="index != 'Email_agence' && index != 'Telephone_agence'"
+                                    >
+                                        {{item.value}}
+                                    </template>
+                                    <template v-else-if="index == 'Email_agence'">
+                                        {{email_agence}}
+                                    </template>
+                                    <template 
+                                        v-else-if="index=='Telephone_agence'"
+                                    >
+                                        {{phone_agence}}
+                                    </template>
+                                </span>
                             </template>
                         
                         </div>
@@ -104,7 +121,8 @@
                     <button
                         class="button-valider type extravalidbtn"
                         type="button"
-                        @click="$router.go(-1)">
+                        @click.prevent="saveFlyerPdf"
+                    >
                          VALIDER
                     </button>
                 </div>
@@ -197,28 +215,40 @@ export default {
         } = useCompanies();
 
         const route = useRoute();
+
+        const saveFlyerPdf = async () => {
+            try {
+                await axios.post(`/save-flyer-pdf/${props.cible_id}`, {
+                    input_coord: phone_agence.value,
+                    input_email: email_agence.value
+                })
+            }
+            catch(e) {
+                throw e
+            }
+        }
  
 
         function saveCompany(e) {
             
             
-                axios.post("/contentform/" + route.params.cible_id,{email:email_agence.value,phone:phone_agence.value})
-                    .then((res)=>{
-                        console.log(res.data);
-                    if(res.data.ok==1)
-                    router.push({
-                        name: "envoi",
-                        params: {
-                            cible_id: `${route.params.cible_id}`,
-                            type: route.params.type,
-                        },
-                    });
-        
-                    }).catch((err)=>{
+            axios.post("/contentform/" + route.params.cible_id,{email:email_agence.value,phone:phone_agence.value})
+            .then((res) => {
+                console.log(res.data);
+                if(res.data.ok==1)
+                router.push({
+                    name: "envoi",
+                    params: {
+                        cible_id: `${route.params.cible_id}`,
+                        type: route.params.type,
+                    },
+                });
 
-                    }).finally(()=>{
+            }).catch((err)=>{
 
-                    });
+            }).finally(()=>{
+
+            })
        
         }
        
@@ -257,9 +287,8 @@ export default {
             replyto,
             my_name,
             subject,
-
+            saveFlyerPdf,
             idtemplate,
-       
             imageurl,
             fields,
             email_agence,

@@ -2,20 +2,32 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\CampagneCible;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Campagne extends Model
 {
     //
+
+    protected $guarded = ['id'];
+
     use SoftDeletes;
     
-    public function affiliate(){
+    public function affiliate()
+    {
         return $this->belongsTo(Affiliate::class);
     }
 
-    public function campagneCategory(){
+    public function campagneCategory()
+    {
         return $this->belongsTo(CampagneCategory::class);
     }
+
+    public function campagneCible() 
+    {
+        return $this->hasMany(CampagneCible::class);
+    }
+
 }

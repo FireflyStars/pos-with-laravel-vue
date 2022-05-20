@@ -161,4 +161,5 @@ export const SET_SEARCH = 'setSearch'
 export const SEARCH_MORE = 'searchMore'
 export const APPEND_SEARCH = 'appendSearch'
 export const INCREMENT_ITERATION = 'incrementIteration'
+export const RESET_SEARCH = 'resetSearch'
 

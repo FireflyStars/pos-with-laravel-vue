@@ -35,7 +35,7 @@
                                         v-model="input_expediteur"
                                         @keyup.prevent="submit"
                                         name="expediteur"
-                                       
+                                        disabled
                                     />
 
                                     <label class="fix_width_tiret">-</label>
@@ -45,17 +45,19 @@
                                         v-model="input_expediteur2"
                                         @keyup.prevent="submit"
                                         name="expediteur2"
+                                        disabled
                                     />
                                 </div>
 
                                 <div class="col-lg-12 group_input">
-                                    <label class="fix_width">ADRESSE : </label>
+                                    <label class="fix_width">ADRESSE: </label>
                                     <input
                                         type="text"
                                         placeholder="1 Rue Jean-Baptiste Colbert"
                                         v-model="input_adresse"
                                         @keyup.prevent="submit"
                                         name="adresse"
+                                        disabled
                                     />
 
                                     <label class="fix_width_tiret">-</label>
@@ -65,6 +67,7 @@
                                         v-model="input_adresse2"
                                         @keyup.prevent="submit"
                                         name="adresse2"
+                                        disabled
                                     />
                                 </div>
 
@@ -131,7 +134,7 @@
                     <button
                         class="button-valider type extravalidbtn"
                         type="button"
-                        @click="$router.go(-1)">
+                        @click="validate">
                          VALIDER
                     </button>
 
@@ -291,11 +294,13 @@ export default {
         TemplateFlyer,
     },
     props: {
-      
         show: {
             type: Boolean,
             default: false,
         },
+        cible_id: {
+            type: [Number, String],
+        }
     },
     data: () => ({
         pdfsrc: "../../images/EmailingAudit.pdf",
@@ -424,7 +429,6 @@ export default {
                 axios
                     .post("/downloadPdf", {
                         expediteur: input_expediteur.value,
-
                         address: input_adresse.value,
                         coord: input_coord.value,
                         expediteur2: input_expediteur2.value,
@@ -466,7 +470,26 @@ export default {
             }, 3000);
         }
 
-        function validate() {
+        async function validate() {
+
+            if(show == 'lettre') {
+                try {
+                    await axios.post(`/save-letter-pdf/${props.cible_id}`, {
+                        input_coord: input_coord.value,
+                        input_email: input_email.value,
+                        input_content: input_content.value,
+                    })
+                }
+                catch(e) {
+                    throw e
+                }
+
+                router.go(-1)
+
+                return
+
+            }
+
             router.push({
                 name: "envoi",
                 params: {
@@ -475,11 +498,11 @@ export default {
                 },
             });
             return router;
-        }console.log('ok');
+        }
+
         return {
             errors,
             company,
-
             type,
             show,
             submit,
@@ -492,7 +515,6 @@ export default {
             input_email,
             input_content,
             state,
-
             exportToPDF,
             input_flyer_contact,
             input_flyer_contact2,

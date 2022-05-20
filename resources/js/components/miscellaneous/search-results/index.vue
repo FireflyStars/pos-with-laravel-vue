@@ -15,6 +15,7 @@
                         class="info-box" 
                         v-for="(customer, index) in results?.customers"
                         :key="index"
+                        @click.prevent="$router.push({ path: `/customer/detail/${customer.customer_id}` })"
                     >
                         <div class="item">
                             <h5>{{ customer.company }}</h5>
@@ -48,6 +49,7 @@
                         class="info-box"
                         v-for="(contact, index) in results.contacts"
                         :key="index"
+                        @click.prevent="$router.push({ path: `/contact/detail/${contact.contact_id}` })"
                     >
                         <div class="item">
                             <h5>{{ contact.firstname + " " + contact.name }}</h5>
@@ -79,6 +81,7 @@
                         class="info-box"
                         v-for="order in results.orders"
                         :key="order.order_id"
+                        @click.prevent="$router.push({ name: 'DevisDetail', params: { id: order.order_id } })"
                     >
                         <div class="item">
                             <label class="font-14 font-light">{{ order.order_id }}</label>
@@ -116,6 +119,7 @@
                         class="info-box"
                         v-for="event in results.events"
                         :key="event.event_id"
+                        @click.prevent="$router.push({ path: `/event/detail/${event.event_id}` })"
                     >
                         <div class="item">
                             <label class="font-14 font-light">{{ event.event_id }}</label>

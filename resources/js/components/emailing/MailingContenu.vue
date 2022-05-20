@@ -169,12 +169,13 @@
                     </p>
                     <div>
 
-                                                                    <button
-                                        class="button type"
-                                        v-on:click="voir"
-                                    >
-                                        VALIDER
-                                    </button>
+                        <button
+                            class="button type"
+                            v-on:click="validateAndSendEmail"
+                        >
+                            VALIDER
+                        </button>
+
                     </div>
                 </div>
 
@@ -216,12 +217,15 @@ export default {
             type: String,
         },
     },
-    setup() {
+
+    setup(props) {
+
         const my_name = localStorage.getItem("category");
-         const textedepliant = ref('');
-         const texteenveloppe = ref('');
-         const textlettre = ref('');
-         const textflyer = ref ('');
+        const textedepliant = ref('');
+        const texteenveloppe = ref('');
+        const textlettre = ref('');
+        const textflyer = ref ('');
+        const loading = ref(false)
          
         const route=useRoute();
         const {
@@ -231,6 +235,31 @@ export default {
             check_name,
             getCourrier,
         } = useCompanies();
+
+
+
+        const validateAndSendEmail = async () => {
+            try {
+                loading.value = true
+                await axios.post(`/validate-and-send-email/${props.cible_id}`)
+                loading.value = false
+            }
+            catch(e) {
+                loading.value = false
+                throw e
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
    const showcontainer = ref(false);
         onMounted(() => {
             nextTick(() => {
@@ -293,6 +322,7 @@ export default {
         }
 
         return {
+            validateAndSendEmail,
             showcontainer,
             check_name,
             courrier,

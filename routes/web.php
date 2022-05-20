@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\User;
+use App\Models\Campagne;
+use App\Models\page_builder;
 use TCG\Voyager\Facades\Voyager;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiController;
@@ -15,7 +18,6 @@ use App\Http\Controllers\LcdtFrontController;
 use App\Http\Controllers\TemplatesController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\PageElementsController;
-
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
@@ -42,6 +44,24 @@ Route::get('/get-templates', [PageElementsController::class, 'get_page_templates
 
 Route::get('/search', [SearchController::class, 'search']);
 Route::get('/search-append', [SearchController::class, 'search_append']);
+
+Route::post('/save-letter-pdf/{campagne}', [CompagneController::class, 'save_letter_pdf']);
+Route::post('/save-flyer-pdf/{campagne}', [CompagneController::class, 'save_flyer_pdf']);
+Route::post('/save-mail-csv/{campagne}', [CompagneController::class, 'generate_mail_csv_and_store']);
+Route::post('/validate-and-send-email/{campagne}', [CompagneController::class, 'validate_and_send_email']);
+Route::get('/download-resource-file', [CompagneController::class, 'download_resource_file']);
+
+Route::view('flyer-pdf', 'flyer', [
+    'builder' => (new page_builder),
+    'data'    => (new CompagneController)->fields_Pdf(421)
+]);
+
+Route::view('letter-pdf', 'letter', [
+    'builder' => (new page_builder),
+    'data'    => (new CompagneController)->lettredata_pdf(421),
+    'campagne'  => Campagne::first(),
+    'affiliate' => User::first()->affiliate
+]);
 
 Route::post('/api',[ApiController::class,'index'])->middleware('cors')->name('api');
 
