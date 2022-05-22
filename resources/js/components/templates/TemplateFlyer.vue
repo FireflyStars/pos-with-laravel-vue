@@ -1,8 +1,8 @@
 <template>
-    <div class="email-template" style="margin-right: 23px">
+    <div class="email-template">
         <div class="contenu">
             <div>
-                <img src="../../images/Flyer.png" style="width: 100%" />
+                <img src="../../images/Flyer.png" style="width: 100%; height: 100%" />
             </div>
             <div>
                 <div>

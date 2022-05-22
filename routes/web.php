@@ -45,23 +45,23 @@ Route::get('/get-templates', [PageElementsController::class, 'get_page_templates
 Route::get('/search', [SearchController::class, 'search']);
 Route::get('/search-append', [SearchController::class, 'search_append']);
 
-// Route::post('/save-letter-pdf/{campagne}', [CompagneController::class, 'save_letter_pdf']);
-// Route::post('/save-flyer-pdf/{campagne}', [CompagneController::class, 'save_flyer_pdf']);
-// Route::post('/save-mail-csv/{campagne}', [CompagneController::class, 'generate_mail_csv_and_store']);
-// Route::post('/validate-and-send-email/{campagne}', [CompagneController::class, 'validate_and_send_email']);
-// Route::get('/download-resource-file', [CompagneController::class, 'download_resource_file']);
+Route::post('/save-letter-pdf/{campagne}', [CompagneController::class, 'save_letter_pdf']);
+Route::post('/save-flyer-pdf/{campagne}', [CompagneController::class, 'save_flyer_pdf']);
+Route::post('/save-mail-csv/{campagne}', [CompagneController::class, 'generate_mail_csv_and_store']);
+Route::post('/validate-and-send-email/{campagne}', [CompagneController::class, 'validate_and_send_email']);
+Route::get('/download-resource-file', [CompagneController::class, 'download_resource_file']);
 
-// Route::view('flyer-pdf', 'flyer', [
-//     'builder' => (new page_builder),
-//     'data'    => (new CompagneController)->fields_Pdf(421)
-// ]);
+Route::view('flyer-pdf', 'flyer', [
+    'builder' => (new page_builder),
+    'data'    => (new CompagneController)->fields_Pdf(465)
+]);
 
-// Route::view('letter-pdf', 'letter', [
-//     'builder' => (new page_builder),
-//     'data'    => (new CompagneController)->lettredata_pdf(421),
-//     'campagne'  => Campagne::first(),
-//     'affiliate' => User::first()->affiliate
-// ]);
+Route::view('letter-pdf', 'letter', [
+    'builder' => (new page_builder),
+    'data'    => (new CompagneController)->lettredata_pdf(465),
+    'campagne'  => Campagne::first(),
+    'affiliate' => User::first()->affiliate
+]);
 
 Route::post('/api',[ApiController::class,'index'])->middleware('cors')->name('api');
 

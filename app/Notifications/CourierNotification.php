@@ -45,10 +45,24 @@ class CourierNotification extends Notification
     {
         return (new MailMessage)->markdown('mail.courierEmail', [
             'campagne'          => $this->campagne,
-            'campagne_category' => $this->campagne->campagneCategory,
-            'url'               => rtrim(config('app.url'), '/')
+            'campagne_category' => $campagne_category = $this->campagne->campagneCategory,
+            'url'               => rtrim(config('app.url'), '/'),
+            'filedepliant'      => $this->get_filedepliant($campagne_category),
+            'fileenveloppe'      => $this->get_fileenveloppe($campagne_category),
         ])
         ->subject($this->campagne->campagneCategory->objet);
+    }
+
+    private function get_filedepliant($campagne_category) 
+    {
+        $file = json_decode($campagne_category->filedepliant, true);
+        return count($file) ? $file[0]['download_link'] : '';
+    }
+    
+    private function get_fileenveloppe($campagne_category) 
+    {
+        $file = json_decode($campagne_category->fileenveloppe, true);
+        return count($file) ? $file[0]['download_link'] : '';
     }
 
     /**

@@ -22,6 +22,7 @@
 
     <search-results 
         :show="show"
+        @close="show=false"
     />
 
 </template>

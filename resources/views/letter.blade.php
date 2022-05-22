@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Letter</title>
+    <title>Courier LCDT AMO</title>
     <style>
         * {
             margin: 0;
@@ -14,13 +14,9 @@
         
         body {
             font-size: 16px;
-            overflow: hidden !important;
             width: 100%;
             height: 100%;
-        }
-
-        .template-email {
-            border: black 2px solid !important;
+            font-family: 'Roboto', sans-serif;
         }
 
         .contenu {
@@ -28,40 +24,31 @@
             font-size: small;
             color: black;
             padding: 50px;
+            padding-left: 4rem;
+            padding-right: 4rem;
             font-style: normal;
-            font-size: 13px !important;
+            font-size: 14px !important;
             line-height: 20px;
         }
 
-        span {
-            color: black;
-            font-size: xx-small;
+        .content {
+            word-wrap: break-word !important;
+            line-height: 1.7;
+            padding-right: 4rem;
         }
 
         .text_footer {
-            background: white;
             padding: 0 3px;
-            font-size: xx-small;
             font-weight: bold;
             margin-top: -1px;
+            line-height: 1.7;
         }
 
         #footer {
-            width: 389px;
-            display: flex;
-            justify-content: flex-end;
-            background-color: orangered;
-            margin-top: auto;
-            height: 10px;
-            padding: 0 40px 0 0;
-            margin-bottom: 20px;
-        }
-
-        .apercu h6 {
-            font-size: 12px;
-            font-weight: 700;
-            margin-bottom: 15px;
-            text-align: center;
+            float: right;
+            margin-top: 1rem;
+            padding-left: 4rem;
+            padding-right: 4rem;
         }
 
         .row {
@@ -82,79 +69,86 @@
             grid-template-columns: 8fr 4fr !important;
         }
 
+        .clearfix {
+            float: none;
+            clear: both;
+        }
+
     </style>
 </head>
 <body>
 
-    <div    
-        class="template-email" 
-        style="
-            width: 389px !important;
-            height: 668px !important;
-            overflow: hidden;
-        "
-    >
-        <div class="contenu">
-            <div class="row auth-logo">
-                <div class="col-6 p-lg-0 d-flex align-items-center">
-                    <img 
-                        src="{{ $builder::convert_base64(public_path() . '/' . 'images/logolcdt.png') }}" 
-                        alt="Logo Lcdt"
-                        style="height: 55px;"
-                    >
-                </div>
-            </div>
-            <div class="row pt-5" style="display:flex; justify-content: space-between;">
-                <div class="column">
-                    <div>
-                        <b>expediteur</b>
+
+    @foreach ($campagne->campagneCible as $cible)
+        <?php
+            $break_rule = $loop->last ? 'avoid-page': 'always';
+            $background = $builder->convert_base64(rtrim(public_path(), '/') . '/' . 'images/letter-background.jpg');
+        ?>
+
+        <div    
+            class="template-email" 
+            style="
+                page-break-after: {{ $break_rule }} !important;
+                background: url('{{ $background }}');
+                background-repeat: no-repeat;
+                background-size: cover;
+                background-position: left top;
+            "
+        >
+            
+            <div class="contenu">
+        
+                <div style="margin-top: 6rem;">
+                    <div class="column" style="float: left">
+                        <div>
+                            <b>LA COMPAGNIE DES TOITS</b>
+                        </div>
+                        <div><b>Agence {{ optional($campagne->affiliate)->name }}</b></div>
+                        <div>{{ optional($campagne->affiliate)->address }}</div>
+                        <div>{{ optional($campagne->affiliate)->postcode . " " . optional($campagne->affiliate)->city }}</div>
+                        <div>{{ $campagne->email }}</div>
+                        <div>{{ $campagne->phone }}</div>
                     </div>
-                    <div>expediteur2</div>
-                    <div>adresse</div>
-                    <div>adresse2</div>
-                    <div>Tel. coord</div>
-                    <div>email</div>
+
+                    <div class="column" style="margin-top: 4.2rem; float: left; margin-left: 6rem;">
+                        <div>{{ $cible->company }}</div>
+                        <div>{{ $cible->firstname . " " . $cible->lastname }}</div>
+                        <div>{{ $cible->address1 . " " . $cible->address2 }}</div>
+                        <div>{{ $cible->postcode . " " . $cible->city }}</div>
+                        <div style="margin-top: 3rem;">
+                            {{ optional($campagne->affiliate)->city }}, {{ now()->locale('fr_FR')}}
+                        </div>
+                    </div>
                 </div>
 
-                <div class="column">
-                    <div>SARL</div>
-                    <div>Civilité Prénom Nomn</div>
-                    <div>310 Route de l'Odyssée</div>
-                    <div>45700 CONFLANS SUR LOING</div>
-                </div>
-            </div>
-            <div class="row pt-3" style="display: flex; justify-content: space-between;">
-                <div class="column col-6"></div>
+                <div class="clearfix"></div>
 
-                <div class="column col-6">
-                    <div>Chilly Mazarin, le XX juin 2021</div>
+                <div class="letter-recipient" style="margin: 3rem 0;">
+                    {{ optional($cible->contact)->gender ?? 'Mrs' }},
                 </div>
-            </div>
-            <div>Madame X, Monsieur Y, Madame, Monsieur,</div>
 
-            <div class="pt-3">
-                {!! $data['content'] !!}
+                <div class="content">
+                    {!! $campagne->lettreaccompagnement !!}
+                </div>
+
             </div>
 
-            <div 
-                class="grid-4-8 pt-5" 
-                style="display: grid !important;
-                grid-template-columns: 8fr 4fr !important;"
-            >
-                <div class="column col-8"></div>
-                <div class="column col-4">
-                    <div><b> L’équipe commerciale</b></div>
-                    <div>Agence X</div>
+            <div id="footer">
+                <div class="text_footer">
+                    <div>
+                        {{ optional($campagne->affiliate)->firstnamedirector }} {{ optional($campagne->affiliate)->namedirector }}
+                    </div>
+                    <div style="color: orangered">
+                        Dirigeant de l’agence {{ optional($campagne->affiliate)->name }}
+                    </div>
                 </div>
             </div>
+
+            <div class="clearfix"></div>
+
         </div>
-        <div id="footer">
-            <div class="text_footer">
-                <span>LE RESEAU EXPERT </span>
-                <span style="color: orangered">DES TOITS PROFESSIONNELS</span>
-            </div>
-        </div>
-    </div>
+
+    @endforeach
     
 </body>
 </html>

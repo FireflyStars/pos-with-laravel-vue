@@ -11,9 +11,13 @@
             padding: 0;
             box-sizing: border-box;
         }
+        body {
+            width: 100% !important;
+            height: 100% !important;
+        }
         .container {
-            width: 514px !important;
-            height: 781px !important;
+            width: 100% !important;
+            height: 100% !important;
             overflow: hidden;
         }
         .link {
@@ -24,79 +28,76 @@
             font-size: 12px;
             font-family: arial;
         }
-        .info {
-            position: absolute;
-            color: rgb(0, 0, 0);
-            font-size: 12px;
-            font-family: arial;
-            top: 149px;
-            left: 322px;
-            line-height: 18px;
-        }
-
-        .contact-info {
-            position: relative;
-            color: rgb(255, 255, 255);
-            font-size: 12px;
-            font-family: arial;
-            top: 559px;
-            left: 128px;
-        }
-
         .item {
             position: absolute;
         }
-
-
     </style>
 </head>
 
 <body>
 
-    @php
-        $backgroundImage = $builder::convert_base64(public_path() . '/storage' . '/' . $data['image']);
-    @endphp
-    <div 
-        class="container"
-        style="
-            background-image: url('{{ $backgroundImage }}'); 
-            background-size: 514px 781px; 
-            background-position: center; 
-            background-repeat: no-repeat;
-            position: relative;
-        "
-    >
+    @for ($i = 0; $i < 2; $i++)
         
-        @foreach ($data['fields'] as $key => $item)
+        @php
+            $break_rule = $i == 0 ? 'always' : 'avoid-page';
+            if ($i == 0) 
+            {
+                $backgroundImage = $builder::convert_base64(public_path() . '/storage' . '/' . $data['image']);
+            }
+            else {
+                $backgroundImage = $builder::convert_base64(public_path() . '/storage' . '/' . $data['image2']);
+            }
+        @endphp
 
-            @php $item = (array) $item; @endphp
+        <div 
+            class="container"
+            style="
+                page-break-after: {{ $break_rule }} !important;
+                background-image: url('{{ $backgroundImage }}'); 
+                background-size: contain; 
+                background-position: top left; 
+                background-repeat: no-repeat;
+                position: relative;
+            "
+        >
+            @if ($i == 1)
 
-                @if (isset($item['active']) && $item['active'] == 1)
+                @foreach ($data['fields'] as $key => $item)
 
-                    <span 
-                        class="item" 
-                        style="color: {{ $item['color'] }}; 
-                        font-size: {{ $item['size'] }}px; 
-                        font-family: {{ $item['font']}}; 
-                        top: {{ $item['y'] }}px;
-                        left: {{ $item['x'] }}px;"
-                    >
+                    @php $item = (array) $item; @endphp
+                    @if (isset($item['active']) && $item['active'] == 1)
+                        @php
+                           $y = $item['y'] - 100; 
+                        @endphp
+                        <span 
+                            class="item" 
+                            style="color: {{ $item['color'] }}; 
+                            font-size: {{ $item['size'] }}px; 
+                            font-family: {{ $item['font']}}; 
+                            top: {{ $y }}px;
+                            left: {{ $item['x'] }}px;"
+                        >
 
-                        @if ((strtolower($key) != "email_egence" && strtolower($key) != "telephone_agence"))
-                            {{ $item['value'] }}
-                            @elseif (strtolower($key) == 'email_agence')
+                            @if ((strtolower($key) != "email_egence" && strtolower($key) != "telephone_agence"))
                                 {{ $item['value'] }}
-                            @elseif (strtolower($key) == 'telephone_agence')
-                                {{ $item['value'] }}    
-                        @endif
+                                @elseif (strtolower($key) == 'email_agence')
+                                    {{ $item['value'] }}
+                                @elseif (strtolower($key) == 'telephone_agence')
+                                    {{ $item['value'] }}    
+                            @endif
 
-                    </span>
+                        </span>
 
-                @endif
-                
-        @endforeach
+                    @endif
+                        
+                @endforeach
 
-    </div>
+            @endif
+
+        </div>
+
+    @endfor
+
    
 </body>
 
