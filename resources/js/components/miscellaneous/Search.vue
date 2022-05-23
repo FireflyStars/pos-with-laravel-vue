@@ -22,6 +22,7 @@
 
     <search-results 
         :show="show"
+        @close="show=false"
     />
 
 </template>
@@ -70,6 +71,7 @@ export default {
     
     const submit = () => {
         if(loading.value) return
+        show.value = true
         store.dispatch(`${[SEARCH_MODULE]}/${[GET_SEARCH_RESULTS]}`)
     }
 

@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Campagne;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CampagneCible extends Model
 {
@@ -15,6 +16,11 @@ class CampagneCible extends Model
     }
     public function contact(){
         return $this->belongsTo(Contact::class);
+    }
+
+    public function campagne() 
+    {
+        return $this->belongsTo(Campagne::class);
     }
 
 }

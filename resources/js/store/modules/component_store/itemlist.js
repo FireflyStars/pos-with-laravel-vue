@@ -15,14 +15,20 @@ export const itemlist= {
     },
     mutations: {
       [ITEM_LIST_UPDATE_FILTER]:(state,params)=>{
+   
             if(typeof state.column_filters[state.current_table_identifier]=="undefined")
             state.column_filters[state.current_table_identifier]=[];
 
             let filter=state.column_filters[state.current_table_identifier].filter(obj=>obj.id==params.filter.id)
-       
+       //filter is a proxy object therefore reactive
             if(filter.length===0)
             state.column_filters[state.current_table_identifier].push(params.filter);
 
+            if(typeof params.filter.word=="object"){
+                if(params.filter.type=="date")
+                if(params.filter.word.from==""&&params.filter.word.to=="")
+                params.filter.word='';
+            }
             if(params.filter.word=='')
             state.column_filters[state.current_table_identifier]=state.column_filters[state.current_table_identifier].filter(obj=>obj.id!=params.filter.id);
       },
@@ -64,12 +70,13 @@ export const itemlist= {
       [ITEM_LIST_SET_SORT]:(state,params)=>{
         if(typeof state.sortby[state.current_table_identifier]=="undefined")
         state.sortby[state.current_table_identifier]=[];
-        if(params.multiple_col==false){
-            state.sortby[state.current_table_identifier]=[];
-        }
+       
         let c=state.sortby[state.current_table_identifier].filter(obj=>obj.id==params.col.id);
 
         if(c.length==0){
+            if(params.multiple_col==false){
+                state.sortby[state.current_table_identifier]=[];
+            }
             state.sortby[state.current_table_identifier].push({id:params.col.id,orderby:'asc'});
         }else if (c[0].orderby=='asc'){
             c[0].orderby='desc';
@@ -128,7 +135,7 @@ export const itemlist= {
 
         },
         [ITEM_LIST_FILTER]:({commit,state,dispatch},params)=>{
-            
+            //col is reactive
             params.col.word=params.word;
             const filter= params.col;
             commit(`${ITEM_LIST_UPDATE_FILTER}`,{filter:filter,identifier:state.current_table_identifier});

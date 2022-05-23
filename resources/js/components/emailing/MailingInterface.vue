@@ -35,7 +35,7 @@
                                         v-model="input_expediteur"
                                         @keyup.prevent="submit"
                                         name="expediteur"
-                                       
+                                        disabled
                                     />
 
                                     <label class="fix_width_tiret">-</label>
@@ -45,17 +45,19 @@
                                         v-model="input_expediteur2"
                                         @keyup.prevent="submit"
                                         name="expediteur2"
+                                        disabled
                                     />
                                 </div>
 
                                 <div class="col-lg-12 group_input">
-                                    <label class="fix_width">ADRESSE : </label>
+                                    <label class="fix_width">ADRESSE: </label>
                                     <input
                                         type="text"
                                         placeholder="1 Rue Jean-Baptiste Colbert"
                                         v-model="input_adresse"
                                         @keyup.prevent="submit"
                                         name="adresse"
+                                        disabled
                                     />
 
                                     <label class="fix_width_tiret">-</label>
@@ -65,6 +67,7 @@
                                         v-model="input_adresse2"
                                         @keyup.prevent="submit"
                                         name="adresse2"
+                                        disabled
                                     />
                                 </div>
 
@@ -101,7 +104,6 @@
                                     name="lettre"
                                     :options="state.editorOption"
                                     :disabled="state.disabled"
-                             
                                 />
                             </div>
                         </div>
@@ -131,8 +133,9 @@
                     <button
                         class="button-valider type extravalidbtn"
                         type="button"
-                        @click="$router.go(-1)">
-                         VALIDER
+                        @click="validate">
+                         <span>VALIDER</span>
+                         <Icon name="spinner" v-show="loading" style="font-size: 10px;"  />
                     </button>
 
                     </div>
@@ -141,7 +144,7 @@
         </form>
 
         <form v-else>
-            <div class="container">
+            <div class="container" style="overflow: hidden">
                 <div class="ajustement">
                     <svg
                         width="38"
@@ -160,7 +163,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-lg-7">
+                    <div class="col-lg-6">
                         <h3 class="margin-align">
                             <a @click="goToHome()" class="link">Emailing</a> >
                             Cible > Contenu > Flyer
@@ -226,7 +229,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-5 apercu" style="margin-top: 26px">
+                    <div class="col-lg-6 apercu" style="margin-top: 26px">
                         <div class="bg-panel p-4">
                         <h6>APERÇU</h6>
                         <div>
@@ -244,7 +247,8 @@
                             type="submit"
                             v-on:click="validate"
                         >
-                            VALIDER
+                            <span>VALIDER</span>
+                            <Icon name="spinner" v-show="loading" style="font-size: 10px;"  />
                         </button>
                         </div>
                     </div>
@@ -291,11 +295,13 @@ export default {
         TemplateFlyer,
     },
     props: {
-      
         show: {
             type: Boolean,
             default: false,
         },
+        cible_id: {
+            type: [Number, String],
+        }
     },
     data: () => ({
         pdfsrc: "../../images/EmailingAudit.pdf",
@@ -305,6 +311,7 @@ export default {
         
         const my_name = localStorage.getItem("category");
 
+        const loading = ref(false)
         const input_expediteur = ref("La Compagnie des Toitsxxx");
         const input_adresse = ref("1 Rue Jean-Baptiste Colbert");
         const input_coord = ref("01 60 65 04 70");
@@ -424,7 +431,6 @@ export default {
                 axios
                     .post("/downloadPdf", {
                         expediteur: input_expediteur.value,
-
                         address: input_adresse.value,
                         coord: input_coord.value,
                         expediteur2: input_expediteur2.value,
@@ -466,7 +472,29 @@ export default {
             }, 3000);
         }
 
-        function validate() {
+        async function validate() {
+
+            if(show == 'lettre') {
+                try {
+                    loading.value = true
+                    await axios.post(`/save-letter-pdf/${props.cible_id}`, {
+                        input_coord: input_coord.value,
+                        input_email: input_email.value,
+                        input_content: input_content.value,
+                    })
+                    loading.value = false
+                }
+                catch(e) {
+                    loading.value = false
+                    throw e
+                }
+
+                router.go(-1)
+
+                return
+
+            }
+
             router.push({
                 name: "envoi",
                 params: {
@@ -475,11 +503,12 @@ export default {
                 },
             });
             return router;
-        }console.log('ok');
+        }
+
         return {
+            loading,
             errors,
             company,
-
             type,
             show,
             submit,
@@ -492,7 +521,6 @@ export default {
             input_email,
             input_content,
             state,
-
             exportToPDF,
             input_flyer_contact,
             input_flyer_contact2,
@@ -656,6 +684,11 @@ hr {
     height: 27px;
     float: right;
     margin: 40px 40px 0px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    gap: 3px;
 }
 .type {
     font-size: x-small;

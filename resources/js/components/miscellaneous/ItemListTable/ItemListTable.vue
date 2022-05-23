@@ -7,6 +7,8 @@
                 <span  @click.exact="sortby(item,false)" @click.shift="sortby(item,true)" >{{item.display_name}}</span>
                 <check-box v-if="item.type=='checkbox'" name="checkall" id="checkall" :checked="lists.length==MULTI_CHECKED.length" @change="checkboxallclicked"/>
                 <input  class="mulish_400_normal" v-if="(item.type=='string'||item.type=='html'||item.type=='price')&&item.sort" type="text" @keyup.enter="filterColumn(item,$event.target.value)"/>
+                <item-list-date-filter v-if="item.type=='date'" :col="item" :name="item.id" @onDateFiltered="filterdate" ></item-list-date-filter>
+
             </div>
         </template>
     </div>
@@ -43,12 +45,15 @@ import { useStore } from 'vuex';
 import { formatDate } from '../../helpers/helpers';
 import { DISPLAY_LOADER, HIDE_LOADER, ITEM_LIST_FILTER, ITEM_LIST_GET_COLUMN_FILTERS, ITEM_LIST_GET_CURRENT, ITEM_LIST_GET_LISTS, ITEM_LIST_GET_SORT, ITEM_LIST_GET_TABLES, ITEM_LIST_LOAD_MORE, ITEM_LIST_MODULE, ITEM_LIST_MULTI_CHECK, ITEM_LIST_MULTI_CHECK_LISTS, ITEM_LIST_MULTI_UNCHECK, ITEM_LIST_RESET_MULTI_CHECK, ITEM_LIST_SELECT_CURRENT, ITEM_LIST_SET_TABLE, ITEM_LIST_SET_TABLEDEF, ITEM_LIST_SORT, ITEM_LIST_TABLEDEF, ITEM_LIST_TABLE_RELOAD, LOADER_MODULE } from '../../../store/types/types';
 import { useRouter } from 'vue-router';
+import ItemListDateFilter from './ItemListDateFilter.vue';
 
 export default {
 
     
     name: "ItemListTable",
-
+    components:{
+        ItemListDateFilter
+    },
     props: { 
         table_def: {
             required: true,
@@ -61,7 +66,7 @@ export default {
         const router=useRouter();
         const store=useStore();
         const identifier=props.table_def.identifier;//table identifier
-      
+        const droppos=ref({top:"20px",right:'auto',bottom:'auto',left:'0',transformOrigin:'top center'});
       
 
         onMounted(()=>{
@@ -274,7 +279,9 @@ export default {
                 }
                 
             });
-     
+
+     cols=cols.filter((v, i, a) => a.indexOf(v) === i);
+  
             window.localStorage.setItem(`sort_${identifier}`,cols);
             let sortedcol=[];
           
@@ -327,6 +334,10 @@ export default {
         }
         //end column drag
 
+        const filterdate=(data)=>{
+                 store.dispatch(`${ITEM_LIST_MODULE}${ITEM_LIST_FILTER}`,{col:data.col,word:data.date});
+        }
+
       return{
           table_def:props.table_def,
           lists,
@@ -349,7 +360,9 @@ export default {
           onDrop,
           isDraggable,
           sortby,
-          sortings
+          sortings,
+          droppos,
+          filterdate,
       }
 
     }
@@ -389,12 +402,13 @@ export default {
 .list-header input:focus{
    background: #DDDDDD;
 }
+
 .list-header-col{
     flex:1;
     font-size: 14px;
     color:#868686;
         border-left: 2px solid white;
-        
+  
         &.sortable{
              position: relative;    
             & span{

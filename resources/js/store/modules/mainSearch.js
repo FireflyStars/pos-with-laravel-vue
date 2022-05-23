@@ -7,7 +7,8 @@ import {
     SET_SEARCH_RESULTS,
     SEARCH_MORE,
     APPEND_SEARCH,
-    INCREMENT_ITERATION
+    INCREMENT_ITERATION,
+    RESET_SEARCH
 
 } from '../types/types'
 
@@ -63,6 +64,21 @@ export const mainSearch = {
         [APPEND_SEARCH](state, { data, action }) {
             if(data.length) state.results[action].push(...data)
             else state.limitReached[action] = true
+        },
+        [RESET_SEARCH](state) {
+            state.iteration =  {
+                customers: 0,
+                contacts: 0,
+                orders: 0,
+                events: 0
+            }
+            state.limitReached =  {
+                customers: false,
+                contacts: false,
+                orders: false,
+                events: false,
+            }
+            state.results = []
         }
     },
 
@@ -70,6 +86,7 @@ export const mainSearch = {
 
         async [GET_SEARCH_RESULTS]({ state, commit }) {
             if(_.isEmpty(state.search)) return
+            commit(RESET_SEARCH)
             try {
                 commit(SET_LOADING, { id: 'search', value: true })
                 const { data } = await axios.get('/search', {

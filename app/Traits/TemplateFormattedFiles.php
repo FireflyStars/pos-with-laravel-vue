@@ -5,7 +5,8 @@ namespace App\Traits;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-trait TemplateFormattedFiles {
+trait TemplateFormattedFiles 
+{
 
     public function get_formatted_files($files) 
     {

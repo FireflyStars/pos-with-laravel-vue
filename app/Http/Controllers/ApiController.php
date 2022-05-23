@@ -1125,45 +1125,52 @@ public function GetTechnicianDevisDetails(Request $request){
         $order1=Order::find($Parameters['order_id']);
         $order->travaux_supplementaire=[];
         $gedCats=[];
+        $gedCatName=[];
         foreach($order1->orderZones as $order_zone){
             foreach($additional_works as $additional_work){
                 if($additional_work->type!='description')
-                $additional_work->urls=$this->getFileUrls($additional_work);
+               $additional_work->urls=$this->getFileUrls($additional_work);
                 $a=$additional_work->makeHidden(['created_at','updated_at','deleted_at','additional_work','storage_path','signature','timeline'])->toArray();
              
                 $gedCategory=$additional_work->gedCategory;
           
-                if(!key_exists($gedCategory->name,$gedCats))
-                    $gedCats[$gedCategory->name]=[];
-
-                $gedCats[$gedCategory->name][]=$a;
+                if(!key_exists($gedCategory->id,$gedCats)){
+                    $gedCats[$gedCategory->id]=[];
+                    $gedCatName[$gedCategory->id]=$gedCategory->name;
+                }
+                
+                $gedCats[$gedCategory->id][]=$a;
             }
         }
-
+        $sup=[];
         if(!empty($gedCats))
-        foreach($gedCats as $gedCatName=>$gedDetails){
+        foreach($gedCats as $gedCatId=>$gedDetails){
 
             foreach($order1->orderZones as $order_zone){
+        
+                if(!is_array($order_zone->ged_details))
                 $order_zone->ged_details=[];
                 $o=new stdClass;
-                $o->name=$gedCatName;
+                $o->name=$gedCatName[$gedCatId];
 
                 $order_zone->makeHidden(['created_at','updated_at','deleted_at']);
                 foreach($gedDetails as $gedDetail ){
-            
-                    if($order_zone->id==$gedDetail['order_zone_id']){
-                        if(empty( $order_zone->ged_details)){
+             
+                    if($order_zone->id==$gedDetail['order_zone_id']&&$gedDetail['ged_category_id']==$gedCatId){
+                   
                             $o->list[]=$gedDetail;
-                        }
-                        
+                       
                     }
                 }
+        
                 $order_zone->ged_details=array_merge($order_zone->ged_details,[$o]) ;
-                $order->travaux_supplementaire=array_merge( $order->travaux_supplementaire,[$order_zone]); 
+          
+                $sup[$order_zone->id]=$order_zone;
+        
             }
-         
       
         }
+        $order->travaux_supplementaire=array_merge( $order->travaux_supplementaire,$sup); 
         return $this->response(1, $order);
     }else{
         return $isLoggedIn;

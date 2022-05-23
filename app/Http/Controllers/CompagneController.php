@@ -1,35 +1,208 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Support\Facades\DB;
+use Mail;
+use Carbon\Carbon;
+use App\Models\PDF;
+use App\Models\User;
+use App\Models\Contact;
+use App\Mail\MyDemoMail;
+
+use App\Models\Campagne;
+use App\Models\Customer;
+use App\Models\Affiliate;
+use App\Traits\Sarbacane;
+use App\Models\CustomerNaf;
+use App\Models\page_builder;
 use Illuminate\Http\Request;
+use App\Models\CampagneCible;
+use App\Models\CustomerStatut;
+use App\Models\CampagneCategory;
+// use Codedge\Fpdf\Fpdf\Fpdf;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
+use App\Models\CampagneCibleStatuts;
+use App\Notifications\CourierNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
-use Carbon\Carbon;
-
-use App\Models\Affiliate;
-use App\Models\CampagneCategory;
-use App\Models\CampagneCible;
-use App\Models\CampagneCibleStatuts;
-use App\Models\CustomerStatut;
-use App\Models\CustomerNaf;
-use App\Models\Campagne;
-use App\Models\Customer;
-use App\Models\Contact;
-use App\Models\User;
-// use Codedge\Fpdf\Fpdf\Fpdf;
-use App\Models\PDF;
-use Mail;
-use App\Mail\MyDemoMail;
-use App\Traits\Sarbacane;
 
 class CompagneController extends Controller
 {
 
     use Sarbacane;
 
-     private  $pdf;
+    private $pdf;
+
+
+    public function save_letter_pdf(Request $request, Campagne $campagne) 
+    {
+        $campagne->update([
+            'email' => $request->input_email,
+            'phone' => $request->input_coord
+        ]); 
+
+        if($request->has('input_content')) 
+        {
+            $campagne->campagneCategory()->update([
+                'lettreaccompagnement' => $request->input_content
+            ]);
+        }
+        
+        $pdf = App::make('dompdf.wrapper');
+
+        $pdf->setOptions([
+            'enable_php'           => true,
+            'isRemoteEnabled'      => true, 
+            'isHtml5ParserEnabled' => true, 
+        ]);
+
+        $pdf->loadView(
+            'letter', [
+                'campagne'  => $campagne,
+                'builder'   => (new page_builder),
+                'affiliate' => $request->user()->affiliate,
+                'data'      => (new CompagneController)->lettredata_pdf($campagne->id),
+            ]
+        );
+
+        $file_path = '/' . 'mail-files/' . $campagne->id . '_letter.pdf';
+
+        $pdf->save(Storage::path('public') . $file_path);
+
+        $campagne->update([
+            'urllettre' => $file_path
+        ]);
+
+        return response()->json($file_path, 200);
+
+    }
+
+    public function save_flyer_pdf(Request $request, Campagne $campagne) 
+    {
+        $campagne->update([
+            'email' => $request->input_email,
+            'phone' => $request->input_coord
+        ]);    
+
+        $pdf = App::make('dompdf.wrapper');
+
+        $pdf->setOptions([
+            'enable_php'           => true,
+            'isRemoteEnabled'      => true, 
+            'isHtml5ParserEnabled' => true, 
+        ]);
+
+        $pdf->loadView(
+            'flyer', [
+                'builder' => (new page_builder),
+                'data'    => (new CompagneController)->fields_Pdf($campagne->id)
+            ]
+        );
+
+        $file_path = '/' . 'mail-files/' . $campagne->id . '_flyer.pdf';
+
+        $pdf->save(Storage::path('public') . $file_path);
+
+        $campagne->update([
+            'urlflyer' => $file_path
+        ]);
+
+        return response()->json($file_path, 200);
+    }
+
+
+    public function validate_and_send_email(Campagne $campagne) 
+    {
+
+        $this->generate_mail_csv_and_store($campagne);
+        
+        $user = User::find(1);
+
+        $user->notify(new CourierNotification($campagne));
+
+        return response()->json("Email sent");
+
+    }
+
+
+    public function generate_mail_csv_and_store(Campagne $campagne) 
+    {
+        $campagne_cible = $campagne->campagneCible;
+        $affiliate = $campagne->affiliate;
+        
+        $headers = [
+            'N_customer',
+            'Enterprise',
+            'Prenom',
+            'Nom',
+            'adresse1',
+            'adresse2',
+            'Code Postal',
+            'Ville',
+            'TÃ©lÃ©phone',
+            'email',
+            'Affilie',
+            'Prenom Directeur',
+            'Nom Directeur',
+            'adresse1',
+            'adresse2',
+            'Code Postal',
+            'Ville'
+        ];
+
+        $data = [];
+
+        $filename = $campagne->id;
+        $current_date_time = Carbon::now()->timestamp;
+        $csv_filename = $filename . "_" . date("Y-m-d", time()) . "_" . $current_date_time . ".csv";
+
+        $file = fopen(storage_path('/app/public/mail-files/') . $csv_filename, 'w');
+        fputcsv($file, $headers);
+
+        foreach($campagne_cible as $cible) 
+        {
+
+            $data = array(
+                $cible->customer_id,
+                $cible->company,
+                $cible->firstname,
+                $cible->name,
+                $cible->address1,
+                $cible->address2,
+                $cible->postcode,
+                $cible->city,
+                $cible->phone,
+                $cible->email,
+                $affiliate->raisonsociale,
+                $affiliate->name,
+                $affiliate->name,
+                $affiliate->address,
+                $affiliate->address2,
+                $affiliate->postcode,
+                $affiliate->city
+            );
+    
+            fputcsv($file, $data);
+
+        }
+
+        $file_path = '/mail-files' . '/' . $csv_filename;
+
+        $campagne->update([
+            'urlcsv' => $file_path
+        ]);
+
+    }
+
+    public function download_resource_file(Request $request)
+    {
+        $path = ltrim($request->resource, '/');
+        $filename = $request->filename;
+        return response()->download(Storage::path('public/' . $path), $filename);
+    }
+
+
     /**
      * Get campagnes for a specefic compagne
      *
@@ -894,7 +1067,7 @@ class CompagneController extends Controller
 
         $columns = array('Email', 'Company', 'Firstname', 'Name', 'Address2' , 'Address1', 'Postcode', 'City', 'Industrie', 'Phone' );
         $callback = function() use($data_id, $columns, $csv_filename ) {
-        $file = fopen('../public/uploads/'.$csv_filename, 'w');
+            $file = fopen('../public/uploads/'.$csv_filename, 'w');
 
             fputcsv($file, $columns);
 
@@ -918,6 +1091,7 @@ class CompagneController extends Controller
                 fputcsv($file, $data_file);
 
             }
+
             fclose($file);
         };
 
@@ -1387,9 +1561,17 @@ class CompagneController extends Controller
 
         $campagne_category=CampagneCategory::find($campagne->campagne_category_id);
         return response()->json([
-                'content' =>$campagne_category->lettreaccompagnement,
+                'content' => $campagne_category->lettreaccompagnement,
             ]);
 
+    }
+
+    public function lettredata_pdf($id){
+        $campagne=Campagne::find($id);
+        $campagne_category=CampagneCategory::find($campagne->campagne_category_id);
+        return [
+            'content' => $campagne_category->lettreaccompagnement,
+        ];
     }
 
 
@@ -1419,7 +1601,35 @@ class CompagneController extends Controller
         return response()->json(array('fields'=>$fields,'image'=>$cc->imagetemplate,'campagneCategory'=>$cc));
     }
 
-    
+    public function fields_Pdf($id) 
+    {
+        $c=Campagne::find($id);
+      
+        $affiliate=$c->affiliate;
+        $cc=$c->campagneCategory;
+        $fields=json_decode($cc->fields);
+        $fields->Nom_agence->value=$affiliate->name;
+        $fields->Telephone_agence->value=$affiliate->telephone;
+        $fields->Email_agence->value=$affiliate->reponseaddress;
+        $fields->Prenom_dirigeant->value=$affiliate->firstnamedirector;
+        $fields->Nom_dirigeant->value=$affiliate->namedirector;
+        $fields->Email_dirigeant->value=$affiliate->email;
+        $fields->Portable_dirigeant->value=$affiliate->mobile;
+        $fields->Adresse_agence->value=$affiliate->address.' '.$affiliate->address2;
+        $fields->CP_agence->value=$affiliate->postcod;
+        $fields->Ville_agence->value=$affiliate->city;
+        $fields->Page_agence->value=$affiliate->urlagence;
+        $fields->Linkedin_agence->value=$affiliate->linkedin;
+        $filedepliant=json_decode($cc->filedepliant);
+        $fields->file_depliant=$filedepliant;
+      
+        return array(
+            'fields'           => $fields,
+            'image2'           => $cc->imagetemplate,
+            'image'            => $cc->urlimageflyerpage1,
+            'campagneCategory' => $cc
+        );
+    }
 
 
     public function downloadPdfFile(Request $request){

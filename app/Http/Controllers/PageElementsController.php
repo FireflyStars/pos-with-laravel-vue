@@ -24,9 +24,6 @@ class PageElementsController extends Controller
             'isHtml5ParserEnabled' => true, 
         ]);
 
-        // session()->put('pages', $pages);
-        // session()->put('order_id', $request->order_id);
-
         $pdf->loadView(
             'page-multiple', [
                 'pages'     => $pages,
@@ -38,22 +35,6 @@ class PageElementsController extends Controller
 
         return $pdf->download('page.pdf');
         
-    }
-
-    public function store_get() 
-    {
-
-        $affiliate =  optional(Order::find(session('order_id')))->affiliate;
-
-        return view(
-            'page-multiple', [
-                'pages'     => session('pages'),
-                'svgs'      => page_builder::get_svgs(),
-                'builder'   => (new page_builder),
-                'affiliate' => $affiliate,
-            ]
-        );
-
     }
 
     public function get_order_affiliate(Request $request) 

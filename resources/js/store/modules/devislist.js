@@ -97,7 +97,9 @@ export const devislist= {
                 event:null,
                 sort:true,
                 filter:true,   
+                table:'orders'
               },
+ 
               {
                 id:"responsable",
                 display_name:"RESPONSABLE",

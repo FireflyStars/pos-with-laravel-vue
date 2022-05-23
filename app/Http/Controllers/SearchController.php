@@ -33,7 +33,7 @@ class SearchController extends Controller
     public function customers(Request $request) 
     {
         $customers = Customer::query();
-        return $customers->select('customers.name as customer_name', 'customers.company', 'customers.email', 'customers.telephone', 'customers.raisonsociale', 
+        return $customers->select('customers.id as customer_id', 'customers.name as customer_name', 'customers.company', 'customers.email', 'customers.telephone', 'customers.raisonsociale', 
         'customers.raisonsociale2', 'customer_statut.name as statut_name', 'customer_statut.color as statut_color')
                     ->join('customer_statut', 'customer_statut.id', '=', 'customers.customer_statut_id')
                     ->where('customers.name', 'LIKE', "%{$request->search}%")
@@ -47,7 +47,7 @@ class SearchController extends Controller
     public function contacts(Request $request) 
     {
         $contacts = Contact::query();   
-        return $contacts->select('contacts.firstname', 'contacts.name', 'contacts.mobile', 'contacts.email', 'contact_type.color as contact_color', 'contact_type.name as contact_name')
+        return $contacts->select('contacts.id as contact_id', 'contacts.firstname', 'contacts.name', 'contacts.mobile', 'contacts.email', 'contact_type.color as contact_color', 'contact_type.name as contact_name')
                     ->join('contact_type', 'contacts.contact_type_id', '=', 'contact_type.id')
                     ->where('contacts.name', 'LIKE', "%{$request->search}%")
                     ->orWhere('firstname', 'LIKE', "%{$request->search}%")

@@ -86,7 +86,24 @@
                         <img v-if="imageurl!=''"
                             :src="`/storage/${imageurl}`" />
                             <template v-for="item,index in fields" :key="index">
-                                <span v-if="item.active==1" v-bind:style="{color:item.color,fontSize:`${item.size}px`,fontFamily:item.font,top:`${item.y}px`,left:`${item.x}px`}"><template v-if="index!='Email_agence'&&index!='Telephone_agence'">{{item.value}}</template><template  v-else-if="index=='Email_agence'">{{email_agence}}</template><template  v-else-if="index=='Telephone_agence'">{{phone_agence}}</template></span>
+                                <span 
+                                    v-if="item.active==1" 
+                                    v-bind:style="{color:item.color,fontSize:`${item.size}px`,fontFamily:item.font,top:`${item.y}px`,left:`${item.x}px`}"
+                                >
+                                    <template 
+                                        v-if="index != 'Email_agence' && index != 'Telephone_agence'"
+                                    >
+                                        {{item.value}}
+                                    </template>
+                                    <template v-else-if="index == 'Email_agence'">
+                                        {{email_agence}}
+                                    </template>
+                                    <template 
+                                        v-else-if="index=='Telephone_agence'"
+                                    >
+                                        {{phone_agence}}
+                                    </template>
+                                </span>
                             </template>
                         
                         </div>
@@ -104,8 +121,10 @@
                     <button
                         class="button-valider type extravalidbtn"
                         type="button"
-                        @click="$router.go(-1)">
-                         VALIDER
+                        @click.prevent="saveFlyerPdf"
+                    >
+                        VALIDER
+                        <Icon name="spinner" v-show="loading" style="font-size: 10px;" />
                     </button>
                 </div>
             </div>
@@ -177,7 +196,7 @@ export default {
 
         const my_name = localStorage.getItem("category");
    
-        
+        const loading = ref(false)
         const idtemplate = localStorage.getItem("imagetemplate");
         const email_agence=ref('');
         const phone_agence=ref('');
@@ -188,7 +207,7 @@ export default {
         const fields=ref({});
         const subject = ref('');
 
-        const router =useRouter();
+        const router = useRouter();
 
         const {
             errors,
@@ -197,28 +216,43 @@ export default {
         } = useCompanies();
 
         const route = useRoute();
+
+        const saveFlyerPdf = async () => {
+            try {
+                loading.value = true
+                await axios.post(`/save-flyer-pdf/${props.cible_id}`, {
+                    input_coord: phone_agence.value,
+                    input_email: email_agence.value
+                })
+                loading.value = false
+            }
+            catch(e) {
+                loading.value = false
+                throw e
+            }
+        }
  
 
         function saveCompany(e) {
             
             
-                axios.post("/contentform/" + route.params.cible_id,{email:email_agence.value,phone:phone_agence.value})
-                    .then((res)=>{
-                        console.log(res.data);
-                    if(res.data.ok==1)
-                    router.push({
-                        name: "envoi",
-                        params: {
-                            cible_id: `${route.params.cible_id}`,
-                            type: route.params.type,
-                        },
-                    });
-        
-                    }).catch((err)=>{
+            axios.post("/contentform/" + route.params.cible_id,{email:email_agence.value,phone:phone_agence.value})
+            .then((res) => {
+                console.log(res.data);
+                if(res.data.ok==1)
+                router.push({
+                    name: "envoi",
+                    params: {
+                        cible_id: `${route.params.cible_id}`,
+                        type: route.params.type,
+                    },
+                });
 
-                    }).finally(()=>{
+            }).catch((err)=>{
 
-                    });
+            }).finally(()=>{
+
+            })
        
         }
        
@@ -249,6 +283,7 @@ export default {
         });
 
         return {
+            loading,
             showcontainer,
             errors,
             company,
@@ -257,9 +292,8 @@ export default {
             replyto,
             my_name,
             subject,
-
+            saveFlyerPdf,
             idtemplate,
-       
             imageurl,
             fields,
             email_agence,

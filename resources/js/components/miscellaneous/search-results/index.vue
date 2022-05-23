@@ -5,6 +5,13 @@
 
             <div class="card-body">
 
+                <div 
+                    class="close"
+                    @click="$emit('close')"
+                >
+                    &times;    
+                </div>
+
                 <section class="societe" v-if="results?.customers?.length">
                     <div class="header">
                         <h4>Sociéte</h4>
@@ -15,6 +22,7 @@
                         class="info-box" 
                         v-for="(customer, index) in results?.customers"
                         :key="index"
+                        @click.prevent="$router.push({ path: `/customer/detail/${customer.customer_id}` })"
                     >
                         <div class="item">
                             <h5>{{ customer.company }}</h5>
@@ -22,10 +30,12 @@
                         </div>
                         <div class="label-info">
                             <label>{{ customer.raisonsociale }}</label>
+                            <label>{{ customer.email }}</label>
+
                         </div>
                         <div class="label-info">
                             <label>{{ customer.raisonsociale2 }}</label>
-                            <label>{{ customer.email }}</label>
+                            <label>{{ customer.telephone }}</label>
                         </div>
                         <div 
                             class="tag tag-contact-type"
@@ -48,6 +58,7 @@
                         class="info-box"
                         v-for="(contact, index) in results.contacts"
                         :key="index"
+                        @click.prevent="$router.push({ path: `/contact/detail/${contact.contact_id}` })"
                     >
                         <div class="item">
                             <h5>{{ contact.firstname + " " + contact.name }}</h5>
@@ -79,6 +90,7 @@
                         class="info-box"
                         v-for="order in results.orders"
                         :key="order.order_id"
+                        @click.prevent="$router.push({ name: 'DevisDetail', params: { id: order.order_id } })"
                     >
                         <div class="item">
                             <label class="font-14 font-light">{{ order.order_id }}</label>
@@ -116,6 +128,7 @@
                         class="info-box"
                         v-for="event in results.events"
                         :key="event.event_id"
+                        @click.prevent="$router.push({ path: `/event/detail/${event.event_id}` })"
                     >
                         <div class="item">
                             <label class="font-14 font-light">{{ event.event_id }}</label>
@@ -167,6 +180,8 @@ export default {
 
     import loadMore from './load-more'
 
+    defineEmits(['close'])
+
     const props = defineProps({
         show: {
             required: false,
@@ -206,6 +221,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.close {
+    position: absolute;
+    color: #000;
+    width: 18.9px;
+    height: 2.01px;
+    right: 11.59px;
+    top: 3px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    &:hover {
+        opacity: .8;
+    }
+}
 .search-enter-from {
     opacity: 0;
     height: 0;
