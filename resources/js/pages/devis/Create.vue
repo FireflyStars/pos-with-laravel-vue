@@ -219,7 +219,7 @@
                         <div class="col-4">
                           <ul class="nav flex-column">
                             <li class="nav-item" v-for="(ouvrage, index) in zone.installOuvrage.ouvrages" :key="index">
-                              <a class="nav-link custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': index == 0}" :data-id="'ouvrage-'+ouvrage.id" href="javascript:;"
+                              <a class="nav-link custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': index == 0}" :data-id="'zone-' + zoneIndex +'-installation-ouvrage-'+index" href="javascript:;"
                                 @click="activeOuvrage"
                               >
                                 <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ ouvrage.name }}
@@ -261,7 +261,7 @@
                       </div>
                       <!-- Tab panes -->
                       <div class="tab-content ouvrage-tab-content">
-                        <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" v-for="(ouvrage, ouvrageIndex) in zone.installOuvrage.ouvrages" :key="ouvrageIndex" :id="'ouvrage-'+ouvrage.id">
+                        <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" v-for="(ouvrage, ouvrageIndex) in zone.installOuvrage.ouvrages" :key="ouvrageIndex" :id="'zone-'+ zoneIndex +'-installation-ouvrage-'+ouvrageIndex">
                           <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
                           <!-- ouvrage description -->
                           <ul class="ps-3" v-if="ouvrage.textchargeaffaire !=''">
@@ -275,7 +275,7 @@
                           </ul>
                           <!-- Ouvrage Task -->
                           <div class="ouvrage-task" v-for="(task, taskIndex) in ouvrage.tasks" :key="taskIndex">
-                            <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'ouvrage-'+ouvrage.id+'-task-'+taskIndex" @click="activeOuvrageTask">
+                            <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'zone-'+ zoneIndex +'-installation-ouvrage-'+ouvrageIndex+'-task-'+taskIndex" @click="activeOuvrageTask">
                               <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ task.name }}
                             </div>
                             <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'ouvrage-'+ouvrage.id+'-task-'+taskIndex">
@@ -392,7 +392,7 @@
                         <div class="col-4">
                           <ul class="nav flex-column">
                             <li class="nav-item" v-for="(ouvrage, index) in zone.securityOuvrage.ouvrages" :key="index">
-                              <a class="nav-link custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': index == 0}" :data-id="'ouvrage-'+ouvrage.id" href="javascript:;"
+                              <a class="nav-link custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': index == 0}" :data-id="'zone-'+zoneIndex+'-securite-ouvrage-'+index" href="javascript:;"
                                 @click="activeOuvrage"
                               >
                                 <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ ouvrage.name }}
@@ -434,7 +434,7 @@
                       </div>
                       <!-- Tab panes -->
                       <div class="tab-content ouvrage-tab-content">
-                        <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" v-for="(ouvrage, ouvrageIndex) in zone.securityOuvrage.ouvrages" :key="ouvrageIndex" :id="'ouvrage-'+ouvrage.id">
+                        <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" v-for="(ouvrage, ouvrageIndex) in zone.securityOuvrage.ouvrages" :key="ouvrageIndex" :id="'zone-'+ zoneIndex +'-securite-ouvrage-' + ouvrageIndex">
                           <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
                           <!-- ouvrage description -->
                           <ul class="ps-3" v-if="ouvrage.textchargeaffaire !=''">
@@ -448,10 +448,10 @@
                           </ul>
                           <!-- Ouvrage Task -->
                           <div class="ouvrage-task" v-for="(task, taskIndex) in ouvrage.tasks" :key="taskIndex">
-                            <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'ouvrage-'+ouvrage.id+'-task-'+taskIndex" @click="activeOuvrageTask">
+                            <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'zone-'+zoneIndex+'-securite-ouvrage-'+ouvrageIndex+'-task-'+taskIndex" @click="activeOuvrageTask">
                               <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ task.name }}
                             </div>
-                            <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'ouvrage-'+ouvrage.id+'-task-'+taskIndex">
+                            <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'zone-'+zoneIndex+'-securite-ouvrage-'+ouvrageIndex+'-task-'+taskIndex">
                               <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
                               <!-- task description -->
                               <ul class="ps-3" v-if="task.textchargeaffaire !=''">
@@ -565,7 +565,7 @@
                         <div class="col-4">
                           <ul class="nav flex-column">
                             <li class="nav-item" v-for="(ouvrage, index) in zone.prestationOuvrage.ouvrages" :key="index">
-                              <a class="nav-link custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': index == 0}" :data-id="'ouvrage-'+ouvrage.id" href="javascript:;"
+                              <a class="nav-link custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': index == 0}" :data-id="'zone-'+zoneIndex + '-prestation-ouvrage-' + index" href="javascript:;"
                                 @click="activeOuvrage"
                               >
                                 <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ ouvrage.name }}
@@ -607,7 +607,7 @@
                       </div>
                       <!-- Tab panes -->
                       <div class="tab-content ouvrage-tab-content">
-                        <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" v-for="(ouvrage, ouvrageIndex) in zone.prestationOuvrage.ouvrages" :key="ouvrageIndex" :id="'ouvrage-'+ouvrage.id">
+                        <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" v-for="(ouvrage, ouvrageIndex) in zone.prestationOuvrage.ouvrages" :key="ouvrageIndex" :id="'zone-'+zoneIndex + '-prestation-ouvrage-' + index">
                           <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
                           <!-- ouvrage description -->
                           <ul class="ps-3" v-if="ouvrage.textchargeaffaire !=''">
@@ -621,10 +621,10 @@
                           </ul>
                           <!-- Ouvrage Task -->
                           <div class="ouvrage-task" v-for="(task, taskIndex) in ouvrage.tasks" :key="taskIndex">
-                            <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'ouvrage-'+ouvrage.id+'-task-'+taskIndex" @click="activeOuvrageTask">
+                            <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'zone-' + zoneIndex + '-prestation-ouvrage-' + ouvrageIndex+'-task-'+taskIndex" @click="activeOuvrageTask">
                               <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ task.name }}
                             </div>
-                            <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'ouvrage-'+ouvrage.id+'-task-'+taskIndex">
+                            <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'zone-' + zoneIndex + '-prestation-ouvrage-' + ouvrageIndex+'-task-'+taskIndex">
                               <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
                               <!-- task description -->
                               <ul class="ps-3" v-if="task.textchargeaffaire !=''">
@@ -1431,26 +1431,25 @@ export default {
 
     // activate the ouvrage
     const activeOuvrage = (event)=>{
-      document.querySelectorAll('.nav .custom-option').forEach((item)=>{
-        item.classList.remove('active');
-      })
-      document.querySelectorAll('.tab-pane').forEach((item)=>{
-        item.classList.remove('active');
-      })
-      event.target.classList.add('active');
-      document.getElementById(event.target.getAttribute('data-id')).classList.add('active');
+      // document.querySelectorAll('.nav .custom-option').forEach((item)=>{
+      //   item.classList.remove('active');
+      // })
+      // document.querySelectorAll('.tab-pane').forEach((item)=>{
+      //   item.classList.remove('active');
+      // })
+      event.target.classList.toggle('active');
+      document.getElementById(event.target.getAttribute('data-id')).classList.toggle('active');
     }
     // activate the task
     const activeOuvrageTask = (event)=>{
-      document.querySelectorAll('.task-header.custom-option').forEach((item)=>{
-        item.classList.remove('active');
-      })      
-      event.target.classList.add('active');
-
-      document.querySelectorAll('.task-body').forEach((item)=>{
-        item.classList.remove('show');
-      })      
-      document.getElementById(event.target.getAttribute('data-id')).classList.add('show');
+      // document.querySelectorAll('.task-header.custom-option').forEach((item)=>{
+      //   item.classList.remove('active');
+      // })      
+      event.target.classList.toggle('active');
+      // document.querySelectorAll('.task-body').forEach((item)=>{
+      //   item.classList.remove('show');
+      // })      
+      document.getElementById(event.target.getAttribute('data-id')).classList.toggle('show');
     }
     // remove ouvrage from ouvrages
     const removeOuvrage = (zoneIndex, ouvrageType, ouvrageIndex)=>{
