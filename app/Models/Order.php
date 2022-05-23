@@ -59,10 +59,9 @@ class Order extends Model
         return $this->belongsTo(Affiliate::class);
     }
 
-    public function updateState($order_state_id,$user_id=null){
-    
+    public function updateState($order_state_id, $user_id=null){
         if($user_id==null)
-        $user_id=Auth::user()->id;
+            $user_id=Auth::user()->id;
         $previous_order_state_id=$this->order_state_id;
         if($this->order_state_id!=$order_state_id){
             $this->order_state_id=$order_state_id;
@@ -72,7 +71,6 @@ class Order extends Model
             $orderHistory->order_id=$this->id;
             $this->save();
             $orderHistory->save();
-       
             $this->l('ORDER STATE UPDATED','Order #'.$this->id.': status changed '.($previous_order_state_id==null?'':'from '.$previous_order_state_id).' to '.$order_state_id,$user_id);
         }
     }

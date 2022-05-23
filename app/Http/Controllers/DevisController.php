@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Traits\Tools;
 use App\Models\OrderState;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +11,7 @@ use Carbon\Carbon;
 
 class DevisController extends Controller
 {
-    //
+    use Tools;
 
     public function loadList(Request $request){
 
@@ -160,9 +161,9 @@ class DevisController extends Controller
                     ->join('ouvrage_metier', 'ouvrage_metier.id', '=', 'ouvrages.ouvrage_metier_id')
                     ->join('units', 'units.id', '=', 'ouvrages.unit_id');
         if($request->search != ''){
-            $query =    $query->where('name', 'like', '%'.$request->search.'%')
-                        ->orWhere('codelcdt', 'like', '%'.$request->search.'%')
-                        ->orWhere('textchargeaffaire', 'like', '%'.$request->search.'%');
+            $query =    $query->where('ouvrages.name', 'like', '%'.$request->search.'%')
+                        ->orWhere('ouvrages.codelcdt', 'like', '%'.$request->search.'%')
+                        ->orWhere('ouvrages.textchargeaffaire', 'like', '%'.$request->search.'%');
         }
         if($request->type != '')
             $query =    $query->where('type', $request->type);
@@ -213,7 +214,7 @@ class DevisController extends Controller
     public function storeDevis(Request $request){
         $orderData = [
             'lang_id'           => 1,
-            'affiliate_id'      => auth()->user->affiliate_id,
+            'affiliate_id'      => auth()->user->affiliate->id,
             'reponsable_id'     => auth()->user->id,
             'order_state_id '   => 2,
             'total '            => ($request->totalPriceForInstall + $request->totalPriceForSecurity + $request->totalPriceForSecurity),
@@ -221,6 +222,7 @@ class DevisController extends Controller
             'customer_id'       => $request->customer['id'],
             'datecommande'      => Carbon::now(),
             'signed_by_customer'=> 0,
+            'reference'         => $this->passwdGen(10,'NO_NUMERIC'),
             'created_at'        => Carbon::now(),
             'updated_at'        => Carbon::now(),
         ];

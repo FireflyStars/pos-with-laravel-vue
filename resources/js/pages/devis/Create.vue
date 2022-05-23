@@ -264,14 +264,14 @@
                         <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" v-for="(ouvrage, ouvrageIndex) in zone.installOuvrage.ouvrages" :key="ouvrageIndex" :id="'ouvrage-'+ouvrage.id">
                           <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
                           <!-- ouvrage description -->
-                          <ul class="ps-3">
-                            <li class="mulish-regular font-10">Kindly note that we will only accept POS payment option on delivery</li>
-                            <li class="mulish-regular font-10">You have to make payment before opening package</li>
-                            <li class="mulish-regular font-10">Once the seal is broken, item can only be returned if damaged or defective </li>
+                          <ul class="ps-3" v-if="ouvrage.textchargeaffaire !=''">
+                            <li class="mulish-regular font-10">
+                              {{ ouvrage.textchargeaffaire }}
+                            </li>
                           </ul>
                           <h3 class="mt-3 mulish-light fw-light text-custom-success font-14">TEXTE POUR CLIENTS</h3>
                           <ul class="ps-3">
-                            <li class="mulish-regular font-10 custom-text-danger">{{ ouvrage.customerText }}</li>
+                            <li class="mulish-regular font-10 custom-text-danger"  v-if="ouvrage.customerText !=''">{{ ouvrage.customerText }}</li>
                           </ul>
                           <!-- Ouvrage Task -->
                           <div class="ouvrage-task" v-for="(task, taskIndex) in ouvrage.tasks" :key="taskIndex">
@@ -280,14 +280,16 @@
                             </div>
                             <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'ouvrage-'+ouvrage.id+'-task-'+taskIndex">
                               <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
-                              <!-- ouvrage description -->
+                              <!-- task description -->
                               <ul class="ps-3">
-                                <li class="mulish-regular font-10">Kindly note that we will only accept POS payment option on delivery</li>
+                                <li class="mulish-regular font-10">
+                                  {{ task.textchargeaffaire }}
+                                </li>
                               </ul>
                               <h3 class="mt-3 mulish-light fw-light text-custom-success font-14">TEXTE POUR CLIENTS</h3>
                               <ul class="ps-3">
                                 <li class="mulish-regular font-10 custom-text-danger">{{ task.customerText }}</li>
-                              </ul>
+                              </ul>                              
                               <div class="w-100 ps-3">
                                 <table class="table w-100 details-table m-0">
                                   <tbody>
@@ -432,14 +434,14 @@
                         <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" v-for="(ouvrage, ouvrageIndex) in zone.securityOuvrage.ouvrages" :key="ouvrageIndex" :id="'ouvrage-'+ouvrage.id">
                           <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
                           <!-- ouvrage description -->
-                          <ul class="ps-3">
-                            <li class="mulish-regular font-10">Kindly note that we will only accept POS payment option on delivery</li>
-                            <li class="mulish-regular font-10">You have to make payment before opening package</li>
-                            <li class="mulish-regular font-10">Once the seal is broken, item can only be returned if damaged or defective </li>
+                          <ul class="ps-3" v-if="ouvrage.textchargeaffaire !=''">
+                            <li class="mulish-regular font-10">
+                              {{ ouvrage.textchargeaffaire }}
+                            </li>
                           </ul>
                           <h3 class="mt-3 mulish-light fw-light text-custom-success font-14">TEXTE POUR CLIENTS</h3>
                           <ul class="ps-3">
-                            <li class="mulish-regular font-10 custom-text-danger">{{ ouvrage.customerText }}</li>
+                            <li class="mulish-regular font-10 custom-text-danger"  v-if="ouvrage.customerText !=''">{{ ouvrage.customerText }}</li>
                           </ul>
                           <!-- Ouvrage Task -->
                           <div class="ouvrage-task" v-for="(task, taskIndex) in ouvrage.tasks" :key="taskIndex">
@@ -448,9 +450,11 @@
                             </div>
                             <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'ouvrage-'+ouvrage.id+'-task-'+taskIndex">
                               <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
-                              <!-- ouvrage description -->
+                              <!-- task description -->
                               <ul class="ps-3">
-                                <li class="mulish-regular font-10">Kindly note that we will only accept POS payment option on delivery</li>
+                                <li class="mulish-regular font-10">
+                                  {{ task.textchargeaffaire }}
+                                </li>
                               </ul>
                               <h3 class="mt-3 mulish-light fw-light text-custom-success font-14">TEXTE POUR CLIENTS</h3>
                               <ul class="ps-3">
@@ -600,14 +604,14 @@
                         <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" v-for="(ouvrage, ouvrageIndex) in zone.prestationOuvrage.ouvrages" :key="ouvrageIndex" :id="'ouvrage-'+ouvrage.id">
                           <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
                           <!-- ouvrage description -->
-                          <ul class="ps-3">
-                            <li class="mulish-regular font-10">Kindly note that we will only accept POS payment option on delivery</li>
-                            <li class="mulish-regular font-10">You have to make payment before opening package</li>
-                            <li class="mulish-regular font-10">Once the seal is broken, item can only be returned if damaged or defective </li>
+                          <ul class="ps-3" v-if="ouvrage.textchargeaffaire !=''">
+                            <li class="mulish-regular font-10">
+                              {{ ouvrage.textchargeaffaire }}
+                            </li>
                           </ul>
                           <h3 class="mt-3 mulish-light fw-light text-custom-success font-14">TEXTE POUR CLIENTS</h3>
                           <ul class="ps-3">
-                            <li class="mulish-regular font-10 custom-text-danger">{{ ouvrage.customerText }}</li>
+                            <li class="mulish-regular font-10 custom-text-danger"  v-if="ouvrage.customerText !=''">{{ ouvrage.customerText }}</li>
                           </ul>
                           <!-- Ouvrage Task -->
                           <div class="ouvrage-task" v-for="(task, taskIndex) in ouvrage.tasks" :key="taskIndex">
@@ -618,7 +622,9 @@
                               <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
                               <!-- ouvrage description -->
                               <ul class="ps-3">
-                                <li class="mulish-regular font-10">Kindly note that we will only accept POS payment option on delivery</li>
+                                <li class="mulish-regular font-10">
+                                  {{ task.textchargeaffaire }}
+                                </li>
                               </ul>
                               <h3 class="mt-3 mulish-light fw-light text-custom-success font-14">TEXTE POUR CLIENTS</h3>
                               <ul class="ps-3">
@@ -1432,18 +1438,18 @@ export default {
     // remove ouvrage from ouvrages
     const removeOuvrage = (zoneIndex, ouvrageType, ouvrageIndex)=>{
       Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
+        title: 'Es-tu sûr?',
+        text: "Vous ne pourrez pas revenir en arrière !",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#42A71E',
         cancelButtonColor: '#E8581B',
-        confirmButtonText: 'Yes, delete it!'
+        confirmButtonText: 'Oui, supprimez-le!'
       }).then((result) => {
         if (result.isConfirmed) {
           Swal.fire(
-            'Deleted!',
-            'The ouvrage has been deleted.',
+            'Supprimé!',
+            "Louvrage a été supprimé.",
             'success'
           )
           if(ouvrageType == 1){
@@ -1467,18 +1473,18 @@ export default {
     // remove detail from task
     const removeOuvrageDetail = (zoneIndex, ouvrageType, ouvrageIndex, taskIndex, detailIndex)=>{
       Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
+        title: 'Es-tu sûr?',
+        text: "Vous ne pourrez pas revenir en arrière !",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#42A71E',
         cancelButtonColor: '#E8581B',
-        confirmButtonText: 'Yes, delete it!'
+        confirmButtonText: 'Oui, supprimez-le!'
       }).then((result) => {
         if (result.isConfirmed) {
           Swal.fire(
-            'Deleted!',
-            'The detail has been deleted.',
+            'Supprimé!',
+            'Le détail a été supprimé.',
             'success'
           )
           if(ouvrageType == 1){
