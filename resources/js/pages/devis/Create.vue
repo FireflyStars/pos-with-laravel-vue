@@ -281,7 +281,7 @@
                             <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'zone-'+ zoneIndex +'-installation-ouvrage-'+ouvrageIndex+'-task-'+taskIndex">
                               <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
                               <!-- task description -->
-                              <ul class="ps-3" v-if="task.textchargeaffaire !=''">
+                              <ul class="ps-3" v-if="task.textchargeaffaire != ''">
                                 <li class="mulish-regular font-10">
                                   {{ task.textchargeaffaire }}
                                 </li>
@@ -1358,7 +1358,7 @@ export default {
         form.value.zones[task.zoneIndex].installOuvrage.ouvrages[task.ouvrageId].tasks.push({
           name: task.name,
           customerText: task.customerText,
-          tectchargeaffaire: task.tectchargeaffaire,
+          textchargeaffaire: task.textchargeaffaire,
           unit_id: task.unit_id,
           qty: task.qty,
           details: []
@@ -1367,7 +1367,7 @@ export default {
         form.value.zones[task.zoneIndex].securityOuvrage.ouvrages[task.ouvrageId].tasks.push({
           name: task.name,
           customerText: task.customerText,
-          tectchargeaffaire: task.tectchargeaffaire,
+          textchargeaffaire: task.textchargeaffaire,
           unit_id: task.unit_id,
           qty: task.qty,
           details: []
@@ -1376,7 +1376,7 @@ export default {
         form.value.zones[task.zoneIndex].prestationOuvrage.ouvrages[task.ouvrageId].tasks.push({
           name: task.name,
           customerText: task.customerText,
-          tectchargeaffaire: task.tectchargeaffaire,
+          textchargeaffaire: task.textchargeaffaire,
           unit_id: task.unit_id,
           qty: task.qty,
           details: []

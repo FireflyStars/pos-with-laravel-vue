@@ -137,7 +137,6 @@ export default {
             }
         }
         .result-panel{
-            overflow-y: auto;
             .btns{
                 .custom-btn{
                     width: 96px;
