@@ -278,7 +278,7 @@
                             <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'zone-'+ zoneIndex +'-installation-ouvrage-'+ouvrageIndex+'-task-'+taskIndex" @click="activeOuvrageTask">
                               <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ task.name }}
                             </div>
-                            <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'ouvrage-'+ouvrage.id+'-task-'+taskIndex">
+                            <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'zone-'+ zoneIndex +'-installation-ouvrage-'+ouvrageIndex+'-task-'+taskIndex">
                               <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
                               <!-- task description -->
                               <ul class="ps-3" v-if="task.textchargeaffaire !=''">
@@ -543,7 +543,7 @@
                   <div class="ouvrage-section prestation-ouvrages bg-white px-4 py-3 mt-2 mb-2">
                     <div class="ouvrage-header d-flex">
                       <div class="col-7">
-                        <div class="col-5 d-flex align-items-center cursor-pointer toggle-btn" :id="'zone'" @click="togglePanel">
+                        <div class="col-5 d-flex align-items-center cursor-pointer toggle-btn" @click="togglePanel">
                           <span class="prestation-icon me-2"></span> 
                           <input type="text" @blur="zone.prestationOuvrage.edit = false" v-if="zone.prestationOuvrage.edit" class="form-control form-control-sm" v-model="zone.prestationOuvrage.name">
                           <span v-else class="me-4" @dblclick="zone.prestationOuvrage.edit = true">{{ zone.prestationOuvrage.name }}</span>                          
@@ -607,7 +607,7 @@
                       </div>
                       <!-- Tab panes -->
                       <div class="tab-content ouvrage-tab-content">
-                        <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" v-for="(ouvrage, ouvrageIndex) in zone.prestationOuvrage.ouvrages" :key="ouvrageIndex" :id="'zone-'+zoneIndex + '-prestation-ouvrage-' + index">
+                        <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" v-for="(ouvrage, ouvrageIndex) in zone.prestationOuvrage.ouvrages" :key="ouvrageIndex" :id="'zone-'+zoneIndex + '-prestation-ouvrage-' + ouvrageIndex">
                           <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
                           <!-- ouvrage description -->
                           <ul class="ps-3" v-if="ouvrage.textchargeaffaire !=''">
@@ -1431,24 +1431,28 @@ export default {
 
     // activate the ouvrage
     const activeOuvrage = (event)=>{
-      // document.querySelectorAll('.nav .custom-option').forEach((item)=>{
-      //   item.classList.remove('active');
-      // })
-      // document.querySelectorAll('.tab-pane').forEach((item)=>{
-      //   item.classList.remove('active');
-      // })
+      document.querySelectorAll('.nav .custom-option').forEach((item)=>{
+        if(item.getAttribute('data-id') != event.target.getAttribute('data-id'))
+            item.classList.remove('active');
+      })
+      document.querySelectorAll('.tab-pane').forEach((item)=>{
+        if(item.id != event.target.getAttribute('data-id'))
+          item.classList.remove('active');
+      })
       event.target.classList.toggle('active');
       document.getElementById(event.target.getAttribute('data-id')).classList.toggle('active');
     }
     // activate the task
     const activeOuvrageTask = (event)=>{
-      // document.querySelectorAll('.task-header.custom-option').forEach((item)=>{
-      //   item.classList.remove('active');
-      // })      
+      document.querySelectorAll('.task-header.custom-option').forEach((item)=>{
+        if(item.getAttribute('data-id') != event.target.getAttribute('data-id'))
+          item.classList.remove('active');
+      })      
       event.target.classList.toggle('active');
-      // document.querySelectorAll('.task-body').forEach((item)=>{
-      //   item.classList.remove('show');
-      // })      
+      document.querySelectorAll('.task-body').forEach((item)=>{
+        if(item.id != event.target.getAttribute('data-id'))
+          item.classList.remove('show');
+      })      
       document.getElementById(event.target.getAttribute('data-id')).classList.toggle('show');
     }
     // remove ouvrage from ouvrages
