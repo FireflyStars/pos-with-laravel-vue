@@ -111,6 +111,8 @@ Route::group([
     Route::post('/get-ouvrage', [DevisController::class,'getOuvrage'])->middleware('auth')->name('get.ouvrage');
     Route::post('/get-suppliers', [DevisController::class,'getSuppliers'])->middleware('auth')->name('get.taxes');
     Route::post('/store-devis', [DevisController::class,'storeDevis'])->middleware('auth')->name('store.devis');
+    Route::post('/get-info-for-emtpy-ouvrage', [DevisController::class,'getInfoForEmtpyOuvrage'])->middleware('auth')->name('get.info.for.empty.ouvrage');
+    Route::post('/get-units', [DevisController::class,'getUnits'])->middleware('auth')->name('get.unit');
     // End Devis
 
     // Customer

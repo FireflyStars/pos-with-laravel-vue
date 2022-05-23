@@ -10,13 +10,17 @@
                         </svg>
                     </div>
                     <div class="search-body">
-                        <div class="d-flex justify-content-center mt-5">
-                            <div class="search-part d-flex align-items-center justify-content-between px-3">
-                                <input v-model="query" type="text" @keyup.enter="searchOuvrage" ref="queryElement" class="w-100" placeholder="Rechercher dans base ouvrage">
-                                <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M8.25982 0.0710449C10.2565 0.0710449 12.1713 0.890046 13.5832 2.34788C14.995 3.80571 15.7882 5.78295 15.7882 7.84464C15.7882 9.7701 15.1048 11.5401 13.9814 12.9035L14.2941 13.2264H15.2091L21.0001 19.206L19.2628 21L13.4718 15.0203V14.0755L13.1591 13.7526C11.793 14.9566 10.0559 15.6181 8.25982 15.6182C6.26317 15.6182 4.3483 14.7992 2.93645 13.3414C1.52461 11.8836 0.731445 9.90633 0.731445 7.84464C0.731445 5.78295 1.52461 3.80571 2.93645 2.34788C4.3483 0.890046 6.26317 0.0710449 8.25982 0.0710449ZM8.25982 2.46292C5.36429 2.46292 3.04787 4.8548 3.04787 7.84464C3.04787 10.8345 5.36429 13.2264 8.25982 13.2264C11.1553 13.2264 13.4718 10.8345 13.4718 7.84464C13.4718 4.8548 11.1553 2.46292 8.25982 2.46292Z" fill="black"/>
-                                </svg>
+                        <div class="d-flex mt-5">
+                            <div class="col-2"></div>
+                            <div class="col-8">
+                                <div class="search-part d-flex align-items-center justify-content-between px-3 m-auto">
+                                    <input v-model="query" type="text" @keyup.enter="searchOuvrage" ref="queryElement" class="w-100" placeholder="Rechercher dans base ouvrage">
+                                    <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8.25982 0.0710449C10.2565 0.0710449 12.1713 0.890046 13.5832 2.34788C14.995 3.80571 15.7882 5.78295 15.7882 7.84464C15.7882 9.7701 15.1048 11.5401 13.9814 12.9035L14.2941 13.2264H15.2091L21.0001 19.206L19.2628 21L13.4718 15.0203V14.0755L13.1591 13.7526C11.793 14.9566 10.0559 15.6181 8.25982 15.6182C6.26317 15.6182 4.3483 14.7992 2.93645 13.3414C1.52461 11.8836 0.731445 9.90633 0.731445 7.84464C0.731445 5.78295 1.52461 3.80571 2.93645 2.34788C4.3483 0.890046 6.26317 0.0710449 8.25982 0.0710449ZM8.25982 2.46292C5.36429 2.46292 3.04787 4.8548 3.04787 7.84464C3.04787 10.8345 5.36429 13.2264 8.25982 13.2264C11.1553 13.2264 13.4718 10.8345 13.4718 7.84464C13.4718 4.8548 11.1553 2.46292 8.25982 2.46292Z" fill="black"/>
+                                    </svg>
+                                </div>
                             </div>
+                            <div class="col-2 mulish-regular font-16 d-flex align-items-center cursor-pointer" @click="openEmptyOuvrageModal">Ouvrage Vide</div>
                         </div>
                         <div class="result-panel mt-4">
                             <div v-if="step == 1">
@@ -92,7 +96,7 @@ export default {
     props: {
         modelValue: Object
     },
-    emits: ['selectedOuvrage'],
+    emits: ['selectedOuvrage', 'openEmptyOuvrageModal'],
     components:{
     },
     setup(props, { emit }){
@@ -105,7 +109,6 @@ export default {
             id: '',
             qtyOuvrage: 1,
             name: '',
-            textchargeaffaire: '',            
             textchargeaffaire: '',            
         });
         
@@ -130,7 +133,6 @@ export default {
             })
         }
         const showModal = ref(false);
-
         const openModal = (index)=>{
             step.value = 1;
             zoneIndex.value = index;
@@ -170,7 +172,13 @@ export default {
                 zoneIndex: zoneIndex.value
             });
         };
-
+        const openEmptyOuvrageModal = ()=>{
+            emit('openEmptyOuvrageModal', {
+                zoneIndex: zoneIndex.value,
+                type: 1,
+            });
+            closeModal();
+        }
         return {
             query,
             step,
@@ -182,7 +190,8 @@ export default {
             closeModal,
             openModal,
             selectOuvrage,
-            confirm
+            confirm,
+            openEmptyOuvrageModal
         }
     }
 
