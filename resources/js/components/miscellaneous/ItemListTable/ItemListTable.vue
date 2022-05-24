@@ -14,7 +14,24 @@
     </div>
     <transition-group tag="div" class="list"  name="list" appear>
         <template v-for="row,index in lists" :key="index">
-        <div class="list-row" @click.self="selectrow(row.id,index)" :class="{current_sel:row.id==CURRENT_SELECTED}">
+            <div>
+        <div class="list-row list-row-group" v-if="grouped_by!=''&&showGroupHeader(ifnull(row[grouped_by]))" @click="toggleGroupVisible(row[grouped_by])" >
+             <template v-for="col,indexcol in table_def.columns_def" :key="`${indexcol}_${grouped_by}`">
+                 <div class="list-col almarai_700_normal" v-if="col.id==grouped_by" :style="col.css" :class="colClasses(col,row)">
+                      <span v-if="col.type=='date'">{{formatDate(row[col.id],'DD/MM/YY')}}</span>
+                      <span v-else-if="col.type=='html'" v-html="ifnull(row[col.id])"></span>
+                      <slot v-else-if="col.type=='component'" :name="col.id" :row="row"></slot>
+                      <span v-else>{{ifnull(row[col.id])}}</span>
+                 </div>
+                 <div  class="list-col almarai_700_normal" :style="col.css" :class="colClasses(col,row)" v-else>
+                       <span v-if="indexcol==1">{{countGroupItem(grouped_by,row[grouped_by])}}</span>
+                     <span v-else>&nbsp;</span>
+                   
+                     </div>
+             </template>
+        </div>
+        
+        <div class="list-row" @click.self="selectrow(row.id,index)" :class="{current_sel:row.id==CURRENT_SELECTED}" v-if="isGroupVisible(row[grouped_by])!=false" >
              <template v-for="col,indexcol in table_def.columns_def" :key="indexcol">
                  <div class="list-col almarai_700_normal" :style="col.css" :class="colClasses(col,row)"  @click="selectrow(row.id,col.type=='checkbox'?'line_select':index)">
                      <span v-if="col.type=='date'">{{formatDate(row[col.id],'DD/MM/YY')}}</span>
@@ -25,19 +42,19 @@
                      </div>
              </template>
         </div>
+            </div>
         </template>
     </transition-group>
     <div class="list-footer">
         <div v-if="typeof lists!='undefined'" class="justify-align-content-start align-items-center">
             
-            {{lists.length}} ITEMS
+            {{`${lists.length} ${lists.length!=1?table_def.translations.footer_items:table_def.translations.footer_item}`}}
         </div>
     </div>
     <div class="d-flex justify-content-center">
         <span class="loadmore mulish_400_normal" @click="loadmore">Charger plus</span>
     </div>
 </div>
-
 </template>
 <script>
 import { ref, onMounted, nextTick, computed, watch } from 'vue';
@@ -67,6 +84,9 @@ export default {
         const store=useStore();
         const identifier=props.table_def.identifier;//table identifier
         const droppos=ref({top:"20px",right:'auto',bottom:'auto',left:'0',transformOrigin:'top center'});
+        const grouped_by=ref('');
+        let   groupval='';
+        const openedGroup=ref([]);
       
 
         onMounted(()=>{
@@ -111,11 +131,45 @@ export default {
         });
         const lists=computed(()=>{
             let lists=store.getters[`${ITEM_LIST_MODULE}${ITEM_LIST_GET_LISTS}`];
-            if(typeof lists[identifier]!="undefined")
+            if(typeof lists[identifier]!="undefined"){
+                groupval="";
+                if(grouped_by.value!=''){
+                    let list=_.cloneDeep(lists[identifier]);
+                    const newlist=groupTogether(list,grouped_by.value);
+                    return newlist;
+                }
                 return lists[identifier];
+            }
 
                 return [];
             });
+        //group together
+
+        const groupTogether=(list,grouped_by)=>{
+            const map=groupBy(list,obj=>obj[grouped_by]);
+            let newlist=ref([]);
+            map.forEach((val, key, map)=>{
+                  for(const i in val){
+                      newlist.value.push(val[i]);
+                  }
+            })
+            
+            return newlist.value;
+        }    
+        //group by method
+        const  groupBy=(list, keyGetter)=>{
+                const map = new Map();
+                list.forEach((item) => {
+                    const key = keyGetter(item);
+                    const collection = map.get(key);
+                    if (!collection) {
+                        map.set(key, [item]);
+                    } else {
+                        collection.push(item);
+                    }
+                });
+                return map;
+            }
         //set sortby
         const sortby=(col,multiple_col)=>{
             store.dispatch(`${ITEM_LIST_MODULE}${ITEM_LIST_SORT}`,{col:col,multiple_col:multiple_col});
@@ -337,7 +391,41 @@ export default {
         const filterdate=(data)=>{
                  store.dispatch(`${ITEM_LIST_MODULE}${ITEM_LIST_FILTER}`,{col:data.col,word:data.date});
         }
+        const showGroupHeader=(val)=>{
+            if(val==groupval){
+                return false;
+            }
+            groupval=val;
+            return true;
+        }
+        const countGroupItem=(grouped_by,val)=>{
+            let c=0;
 
+                for(const i in lists.value){
+                    if(lists.value[i][grouped_by]==val){
+                        c++;
+                    }
+                }
+                return `${c} ${c!=1?props.table_def.translations.group_items:props.table_def.translations.group_item}`;
+        }
+        const isGroupVisible=(group)=>{
+            if(grouped_by.value=='')
+            return true;
+            let opened=openedGroup.value.filter(g=>g==group);
+            if(opened.length>0)
+            return true;
+
+            return false;
+        }
+        const toggleGroupVisible=(group)=>{
+            if(isGroupVisible(group)){
+                openedGroup.value=openedGroup.value.filter(g=>g!=group);
+            }else{
+                openedGroup.value.push(group);
+            }
+
+            
+        }
       return{
           table_def:props.table_def,
           lists,
@@ -363,6 +451,11 @@ export default {
           sortings,
           droppos,
           filterdate,
+          grouped_by,
+          showGroupHeader,
+          countGroupItem,
+          isGroupVisible,
+          toggleGroupVisible
       }
 
     }
@@ -474,6 +567,10 @@ export default {
         &:hover{
             background-color: transparent;
         }
+}
+.list-row-group{
+     background: #ECECEC;
+     cursor:pointer;
 }
 .list-col{
     flex:1;

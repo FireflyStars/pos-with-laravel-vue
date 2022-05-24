@@ -43,7 +43,7 @@ class CibleController extends Controller
 
     }
 
-    public function loadcible(Request $request,$naf_selection,$customer_statut_id){
+    public function loadcible(Request $request,$naf_selection,$customer_statut_id,$type){
 
         $user=Auth::user();
     
@@ -59,8 +59,16 @@ class CibleController extends Controller
             ->whereNull('customers.deleted_at')
             ->where('customers.active','=',1);
         })
-        ->leftJoin('addresses','contacts.address_id','=','addresses.id')
+        ->leftJoin('addresses',function($join) use ($type){
+            $join->on('contacts.address_id','=','addresses.id');
+            if($type=='Courrier'){
+                $join->where('addresses.address1','<>','')
+                    ->where('addresses.postcode','<>','')
+                    ->where('addresses.city','<>','');
+            }
+        })
         ->where('contacts.type','=',$customer_statut->name)
+     
         ->whereNull('contacts.deleted_at')
         ->get();
         foreach($contacts as &$contact){

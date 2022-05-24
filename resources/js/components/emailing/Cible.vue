@@ -284,7 +284,7 @@ export default {
         
          selections.value= computed(()=>store.getters[`${CIBLE_MODULE}${CIBLE_GET_SELECTION}`]);
         const toggleCible=(naf,statut)=>{
-                store.dispatch(`${CIBLE_MODULE}${CIBLE_TOGGLE}`,{naf:naf,statut:statut});
+                store.dispatch(`${CIBLE_MODULE}${CIBLE_TOGGLE}`,{naf:naf,statut:statut,type:route.params.type});
         }
         const toggleCampagne=(campagne_id)=>{
                   store.dispatch(`${CIBLE_MODULE}${CIBLE_CAMPAGNE_TOGGLE}`,{campagne_id});

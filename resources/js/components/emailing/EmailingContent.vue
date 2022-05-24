@@ -118,7 +118,7 @@
                         ENREGISTRER
                     </button>
 
-                    <button
+                    <button v-if="route.params.type.toLowerCase()!='email'"
                         class="button-valider type extravalidbtn"
                         type="button"
                         @click.prevent="saveFlyerPdf"
@@ -297,7 +297,8 @@ export default {
             imageurl,
             fields,
             email_agence,
-            phone_agence
+            phone_agence,
+            route,
             
         };
     },

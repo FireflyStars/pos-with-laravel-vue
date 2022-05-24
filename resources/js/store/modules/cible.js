@@ -155,7 +155,7 @@ export const cible= {
                     commit(CIBLE_SET_SELECTION,payload);
                     dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Chargement des cibles en cours...'], {root: true});
             
-                    axios.get(`/cible/loadcible/${payload.naf}/${payload.statut}`).then((response)=>{
+                    axios.get(`/cible/loadcible/${payload.naf}/${payload.statut}/${payload.type}`).then((response)=>{
                      commit(CIBLE_ADD_TO_ALL_CONTACTS,{ 
                         statut:payload.statut,
                         naf:payload.naf,

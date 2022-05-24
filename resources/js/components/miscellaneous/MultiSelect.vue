@@ -9,7 +9,7 @@
     :class="[{ 'dark': dark }, ...classes.split(',')]"
     >
 
-        <label for="" class="label">{{ title }}</label>
+        <label for="" class="label" v-if="title!=''">{{ title }}</label>
 
         <div class="select-box">
             <div class="selected" @click="toggleActiveItem($attrs.id || 'multiSelect')">
