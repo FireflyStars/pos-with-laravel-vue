@@ -123,7 +123,8 @@
                         type="button"
                         @click.prevent="saveFlyerPdf"
                     >
-                         VALIDER 
+                        VALIDER
+                        <Icon name="spinner" v-show="loading" style="font-size: 10px;" />
                     </button>
                 </div>
             </div>
@@ -195,7 +196,7 @@ export default {
 
         const my_name = localStorage.getItem("category");
    
-        
+        const loading = ref(false)
         const idtemplate = localStorage.getItem("imagetemplate");
         const email_agence=ref('');
         const phone_agence=ref('');
@@ -206,7 +207,7 @@ export default {
         const fields=ref({});
         const subject = ref('');
 
-        const router =useRouter();
+        const router = useRouter();
 
         const {
             errors,
@@ -218,12 +219,15 @@ export default {
 
         const saveFlyerPdf = async () => {
             try {
+                loading.value = true
                 await axios.post(`/save-flyer-pdf/${props.cible_id}`, {
                     input_coord: phone_agence.value,
                     input_email: email_agence.value
                 })
+                loading.value = false
             }
             catch(e) {
+                loading.value = false
                 throw e
             }
         }
@@ -279,6 +283,7 @@ export default {
         });
 
         return {
+            loading,
             showcontainer,
             errors,
             company,

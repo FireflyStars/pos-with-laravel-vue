@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Traits\Tools;
 use App\Models\OrderState;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +11,7 @@ use Carbon\Carbon;
 
 class DevisController extends Controller
 {
-    //
+    use Tools;
 
     public function loadList(Request $request){
 
@@ -135,7 +136,7 @@ class DevisController extends Controller
         $ouvrage = DB::table('ouvrages')
                     ->select(
                         'unit_id as unit', 'textcustomer as customerText', 'name', 'id',
-                        'textchargeaffaire', 'textoperator'
+                        'textchargeaffaire', 'textoperator', 'ouvrage_metier_id', 'ouvrage_prestation_id', 'ouvrage_toit_id'
                         )
                     ->where('id', $request->id)->first();
         $ouvrage->qty = 0;
@@ -179,9 +180,9 @@ class DevisController extends Controller
                     ->join('ouvrage_metier', 'ouvrage_metier.id', '=', 'ouvrages.ouvrage_metier_id')
                     ->join('units', 'units.id', '=', 'ouvrages.unit_id');
         if($request->search != ''){
-            $query =    $query->where('name', 'like', '%'.$request->search.'%')
-                        ->orWhere('codelcdt', 'like', '%'.$request->search.'%')
-                        ->orWhere('textchargeaffaire', 'like', '%'.$request->search.'%');
+            $query =    $query->where('ouvrages.name', 'like', '%'.$request->search.'%')
+                        ->orWhere('ouvrages.codelcdt', 'like', '%'.$request->search.'%')
+                        ->orWhere('ouvrages.textchargeaffaire', 'like', '%'.$request->search.'%');
         }
         if($request->type != '')
             $query =    $query->where('type', $request->type);
@@ -227,12 +228,32 @@ class DevisController extends Controller
     }
 
     /**
+     * Get info to add empty ouvrage
+     */
+    public function getInfoForEmtpyOuvrage(){
+        return response()->json([
+            'units' =>  DB::table('units')->select('code as display', 'id as value')->get(),
+            'toits' =>  DB::table('ouvrage_toit')->select('name as display', 'id as value')->get(),
+            'metiers' =>  DB::table('ouvrage_metier')->select('name as display', 'id as value')->get(),
+            'prestations' =>  DB::table('ouvrage_prestation')->select('name as display', 'id as value')->get(),
+        ]);
+    }
+
+    /**
+     * Get units
+     */
+    public function getUnits(){
+        return response()->json([
+            DB::table('units')->select('code as display', 'id as value')->get()
+        ]);
+    }
+    /**
      * Save a new devis
      */
     public function storeDevis(Request $request){
         $orderData = [
             'lang_id'           => 1,
-            'affiliate_id'      => auth()->user->affiliate_id,
+            'affiliate_id'      => auth()->user->affiliate->id,
             'reponsable_id'     => auth()->user->id,
             'order_state_id '   => 2,
             'total '            => ($request->totalPriceForInstall + $request->totalPriceForSecurity + $request->totalPriceForSecurity),
@@ -240,6 +261,7 @@ class DevisController extends Controller
             'customer_id'       => $request->customer['id'],
             'datecommande'      => Carbon::now(),
             'signed_by_customer'=> 0,
+            'reference'         => $this->passwdGen(10,'NO_NUMERIC'),
             'created_at'        => Carbon::now(),
             'updated_at'        => Carbon::now(),
         ];
@@ -276,6 +298,9 @@ class DevisController extends Controller
                         'unit_id'           => $ouvrage['unit'],
                         'qty'               => $ouvrage['qty'],
                         'order_cat_id'      => $orderCatId,
+                        'ouvrage_prestation_id'=> $ouvrage['ouvrage_prestation_id'],
+                        'ouvrage_toit_id'   => $ouvrage['ouvrage_toit_id'],
+                        'ouvrage_metier_id' => $ouvrage['ouvrage_metier_id'],
                         'textcustomer'      => $ouvrage['customerText'],
                         'textchargeaffaire' => $ouvrage['textchargeaffaire'],
                         'textoperator'      => $ouvrage['textoperator'],

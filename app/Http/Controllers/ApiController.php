@@ -1427,249 +1427,199 @@ public function SaveEvent(Request $request){
 
 
 
-public function SaveDevis(Request $request){
-
-
+  public function SaveDevis(Request $request){
     $Parameters=$request->post('Parameters');
     $SessionID=$request->post('SessionID');
     $AccountKey=$request->post('AccountKey');
-
-
     //start validation
     $valid=$this->isValidAccountKeySessionID($request);
     if($valid!==true)return $valid;
     $isLoggedIn=$this->checkLogin($request);
 
     if($isLoggedIn===true){
-    if(!isset($Parameters['event_id'])||$this->isBlank($Parameters['event_id'])){
-        return $this->response(0,null,'	ID d\'événement manquant');
-    }
+      if(!isset($Parameters['event_id'])||$this->isBlank($Parameters['event_id']))
+          return $this->response(0,null,'	ID d\'événement manquant');
 
-    if(isset($Parameters['order_zones'])&&is_array($Parameters['order_zones'])){
-       if(!empty($Parameters['order_zones'])){
-           //order zones
-           foreach($Parameters['order_zones'] as $order_zone){
-            if(!isset($order_zone['latitude'])||$this->isBlank($order_zone['latitude'])){
+      if(isset($Parameters['order_zones'])&&is_array($Parameters['order_zones'])){
+        if(!empty($Parameters['order_zones'])){
+            //order zones
+          foreach($Parameters['order_zones'] as $order_zone){
+            if(!isset($order_zone['latitude']) || $this->isBlank($order_zone['latitude']))
                 return $this->response(0,null,'La latitude de la zone est requise.');
-            }
-            if(!isset($order_zone['longitude'])||$this->isBlank($order_zone['longitude'])){
+
+            if(!isset($order_zone['longitude'])||$this->isBlank($order_zone['longitude']))
                 return $this->response(0,null,'La longitude de la zone est requise.');
-            }
-       
-            if(!isset($order_zone['name'])||$this->isBlank($order_zone['name'])){
-                return $this->response(0,null,'Le nom de la zone est requis.');
-            }
-     
-            //ged details
-
-                if(isset($order_zone['ged_details'])&&is_array($order_zone['ged_details'])){
-                    //ged details
-                    foreach($order_zone['ged_details'] as $ged_detail){
-                        if((!isset($ged_detail['description'])||$this->isBlank($ged_detail['description']))&&(!isset($ged_detail['data'])||$this->isBlank($ged_detail['data']))){
-                            return $this->response(0,null,'Détails ged non valides','Au moins une donnée de fichier ou une description est requise.');
-                        }
-
-                        if(isset($ged_detail['data'])&&!$this->isBlank($ged_detail['data']))
-                            if(!isset($ged_detail['human_readable_filename'])||$this->isBlank($ged_detail['human_readable_filename'])){
-                                return $this->response(0,null,'	Le nom du fichier de détails Ged est requis.');
-                            }
-                        if(!isset($ged_detail['latitude'])||$this->isBlank($ged_detail['latitude'])){
-                            return $this->response(0,null,'La latitude de détail Ged est requise.');
-                        }
-                        if(!isset($ged_detail['longitude'])||$this->isBlank($ged_detail['longitude'])){
-                            return $this->response(0,null,'La longitude de détail Ged est requise.');
-                        }
-    
-                    }
-                }
-            
-
-           }
-       }
-    }
-
-
-
-
-  
-        $lcdtapp_api_instance=$this->getApiInstance($AccountKey,$SessionID);
-        $event=Event::find($Parameters['event_id']);
-        $order=null;
-        if(isset($Parameters['order_id'])&&$Parameters['order_id']!=null){
-            $order=Order::where('id','=',$Parameters['order_id'])->where('affiliate_id','=',$lcdtapp_api_instance->user->affiliate->id)->first();
-            if($order==null)
-                return $this->response(0,null,'Commande introuvable.');
-    
-            if($event->affiliate_id!=$lcdtapp_api_instance->user->affiliate->id){
-                return $this->response(0,null,'Impossible de sauvegarder', 'événement non affecté à la franchise de l\'utilisateur actuel.');
-            }
-           
-        }
-
- //remove logo data before saving log       
-$params=$Parameters;
-if(isset($params['order_zones'])&&is_array($params['order_zones'])){
-    if(!empty($params['order_zones'])){
-        foreach($params['order_zones'] as &$order_zone){
-            if(isset($order_zone['ged_details'])){
-                foreach($order_zone['ged_details'] as &$ged_detail){
-                    $ged_detail['data']='REMOVED FOR LCDTLOG..';
-                }
-            }
-        }
-    }
-}
-
- $this->l('API SAVE DEVIS',json_encode($params),$lcdtapp_api_instance->user->id);
-
-
-
-        if(isset($Parameters['order_zones'])&&is_array($Parameters['order_zones'])){
-            if(!empty($Parameters['order_zones'])){
-                //order zones
-                foreach($Parameters['order_zones'] as $order_zone){
-                    if(!isset($order_zone['id'])||$order_zone['id']==null){
-                        $orderZone=new OrderZone();
-                    }else{
-                        $orderZone=OrderZone::find($order_zone['id']);
-                        if($orderZone==null){
-                            return $this->response(0,null,'Impossible de sauvegarder ', 'Order zone id '.$order_zone['id'].' pas trouvé.');
-                        }
-
-                        if($order!=null&&$order->id>0 && $orderZone->order_id!=$order->id){
-                            return $this->response(0,null,'Impossible de sauvegarder ', 'Order zone id '.$orderZone->id.' non lié à la commande '.$order->id.'.');
-                        }
-                    }
         
-              
-                
-                    if(isset($order_zone['ged_details'])){
-                       
-                        foreach($order_zone['ged_details'] as $ged_detail){
-                        
-                            if($ged_detail['id']>0){
-                                    $gedDetails=GedDetail::find($ged_detail['id']);
-                                    if($gedDetails==null)
-                                        return $this->response(0,null,'Impossible de sauvegarder', 'Détail Ged avec identifiant '.$ged_detail['id'].' pas trouvé.');
-                                    $ged=Ged::find($gedDetails->ged_id);
-                                    if($order!=null&&$order->id>0 && $ged->order_id!=$order->id)
-                                        return $this->response(0,null,'Impossible de sauvegarder', 'Détail Ged avec identifiant '.$ged_detail['id'].' non lié à la commande '.$order->id.'.');
-                            }
+            if(!isset($order_zone['name'])||$this->isBlank($order_zone['name']))
+                return $this->response(0,null,'Le nom de la zone est requis.');
+      
+            //ged details
+            if(isset($order_zone['ged_details'])&&is_array($order_zone['ged_details'])){
+              //ged details
+              foreach($order_zone['ged_details'] as $ged_detail){
+                if((!isset($ged_detail['description'])||$this->isBlank($ged_detail['description']))&&(!isset($ged_detail['data'])||$this->isBlank($ged_detail['data']))){
+                  return $this->response(0,null,'Détails ged non valides','Au moins une donnée de fichier ou une description est requise.');
+                }
+                if(isset($ged_detail['data'])&&!$this->isBlank($ged_detail['data']))
+                  if(!isset($ged_detail['human_readable_filename'])||$this->isBlank($ged_detail['human_readable_filename'])){
+                    return $this->response(0,null,'	Le nom du fichier de détails Ged est requis.');
+                  }
+                if(!isset($ged_detail['latitude'])||$this->isBlank($ged_detail['latitude'])){
+                  return $this->response(0,null,'La latitude de détail Ged est requise.');
+                }
+                if(!isset($ged_detail['longitude'])||$this->isBlank($ged_detail['longitude'])){
+                  return $this->response(0,null,'La longitude de détail Ged est requise.');
+                }
+              }
+            }
+          }
+        }
+      }
+      $lcdtapp_api_instance = $this->getApiInstance($AccountKey,$SessionID);
+      $event  = Event::find($Parameters['event_id']);
+      $order  = null;
+      if(isset($Parameters['order_id'])&&$Parameters['order_id']!=null){
+        $order=Order::where('id','=',$Parameters['order_id'])->where('affiliate_id','=',$lcdtapp_api_instance->user->affiliate->id)->first();
+        if($order==null)
+          return $this->response(0,null,'Commande introuvable.');
+        if($event->affiliate_id!=$lcdtapp_api_instance->user->affiliate->id)
+          return $this->response(0,null,'Impossible de sauvegarder', 'événement non affecté à la franchise de l\'utilisateur actuel.');
+      }
+      //remove logo data before saving log       
+      $params = $Parameters;
+      if(isset($params['order_zones'])&&is_array($params['order_zones'])){
+        if(!empty($params['order_zones'])){
+          foreach($params['order_zones'] as &$order_zone){
+            if(isset($order_zone['ged_details'])){
+              foreach($order_zone['ged_details'] as &$ged_detail){
+                $ged_detail['data']='REMOVED FOR LCDTLOG..';
+              }
+            }
+          }
+        }
+      }
+      $this->l('API SAVE DEVIS',json_encode($params),$lcdtapp_api_instance->user->id);
+      if(isset($Parameters['order_zones'])&&is_array($Parameters['order_zones'])){
+        if(!empty($Parameters['order_zones'])){
+          //order zones
+          foreach($Parameters['order_zones'] as $order_zone){
+            if(!isset($order_zone['id'])||$order_zone['id']==null){
+                $orderZone=new OrderZone();
+            }else{
+              $orderZone=OrderZone::find($order_zone['id']);
+              if($orderZone==null){
+                return $this->response(0,null,'Impossible de sauvegarder ', 'Order zone id '.$order_zone['id'].' pas trouvé.');
+              }
 
-                            if(isset($ged_detail['order_ouvrage_id'])&&!$this->isBlank($ged_detail['order_ouvrage_id'])){
-                                if(!isset($ged_detail['timeline'])||!in_array($ged_detail['timeline'],['AVANT','APRES']))
-                                return $this->response(0,null,'Impossible de sauvegarder', 'Veuillez spécifier un calendrier valide pour l\'identifiant de l\'ouvrage de commande '.$ged_detail['order_ouvrage_id'].'.');
-                            }
-                        }
+              if($order!=null&&$order->id>0 && $orderZone->order_id!=$order->id){
+                return $this->response(0,null,'Impossible de sauvegarder ', 'Order zone id '.$orderZone->id.' non lié à la commande '.$order->id.'.');
+              }
+            }
+            if(isset($order_zone['ged_details'])){
+              foreach($order_zone['ged_details'] as $ged_detail){
+                if($ged_detail['id']>0){
+                  $gedDetails=GedDetail::find($ged_detail['id']);
+                  if($gedDetails==null)
+                    return $this->response(0,null,'Impossible de sauvegarder', 'Détail Ged avec identifiant '.$ged_detail['id'].' pas trouvé.');
+                  $ged=Ged::find($gedDetails->ged_id);
+                  if($order!=null&&$order->id>0 && $ged->order_id!=$order->id)
+                    return $this->response(0,null,'Impossible de sauvegarder', 'Détail Ged avec identifiant '.$ged_detail['id'].' non lié à la commande '.$order->id.'.');
+                }
+                if(isset($ged_detail['order_ouvrage_id'])&&!$this->isBlank($ged_detail['order_ouvrage_id'])){
+                  if(!isset($ged_detail['timeline'])||!in_array($ged_detail['timeline'],['AVANT','APRES']))
+                    return $this->response(0,null,'Impossible de sauvegarder', 'Veuillez spécifier un calendrier valide pour l\'identifiant de l\'ouvrage de commande '.$ged_detail['order_ouvrage_id'].'.');
+                }
+              }
+            }
+          }
+        }
+      }
+      //end validation
 
+      //if validation successful, save
+      if($order==null){
+        $order=new Order();
+        $order->generateReference();
+        $order->affiliate_id= $lcdtapp_api_instance->user->affiliate->id;
+        $order->address_id = $event->address_id;
+        $order->lang_id= !isset($Parameters['lang_id']) ? 1: $Parameters['lang_id'];
+        $order->customer_id =$event->customer_id;
+      }
+      $order->save();
+      $event->order()->associate($order->fresh())->save();
+      //update state if necessary
+      if($Parameters['order_state_id'] == null){
+        $order->updateState(1, $lcdtapp_api_instance->user_id);//update order to status affaire
+      }else{
+        $order->updateState($Parameters['order_state_id'],$lcdtapp_api_instance->user_id);//save devis in another status
+      }
+      if(isset($Parameters['order_zones']) && is_array($Parameters['order_zones'])){
+        if(!empty($Parameters['order_zones'])){
+            //order zones
+            foreach($Parameters['order_zones'] as $order_zone){
+                if(!isset($order_zone['id'])||$this->isBlank($order_zone['id'])||$order_zone['id']==null){
+                    $orderZone=new OrderZone();
+                    $orderZone->order_id=$order->id;
+                }else{
+                    $orderZone=OrderZone::find($order_zone['id']);
+                }
+                $orderZone->name=$order_zone['name'];
+                $orderZone->description=isset($order_zone['description'])?$order_zone['description']:'';
+                $orderZone->hauteur=$order_zone['hauteur'];
+                $orderZone->moyenacces_id=$order_zone['moyenacces_id'];
+                $orderZone->latitude= $order_zone['latitude'];
+                $orderZone->longitude= $order_zone['longitude'];
+                $orderZone->save();
+
+                if(isset($order_zone['ged_details'])){
+                  foreach($order_zone['ged_details'] as $ged_detail){
+                    if(!isset($ged_detail['id'])||$this->isBlank($ged_detail['id'])||$ged_detail['id']==null){
+                      $gedDetail=new GedDetail();
+                      //find existing ged to link to ged detail
+                      $ged=Ged::where('user_id','=',$lcdtapp_api_instance->user->id)->where('customer_id','=',$event->customer_id)->where('order_id','=',$order->id)->first();
+                      if($ged==null){
+                        //new ged
+                        $ged=new Ged();
+                        $ged->customer_id=$event->customer_id;
+                        $ged->order_id=$order->id;
+                        $ged->user_id=$lcdtapp_api_instance->user->id;
+                        $ged->save();
+                      }
+                      $gedDetail->ged_id=$ged->id;
+                      $gedDetail->user_id=$lcdtapp_api_instance->user->id;
+                    }else{
+                      $gedDetail=GedDetail::find($ged_detail['id']);   
                     }
+                    $gedDetail->order_ouvrage_id=isset($ged_detail['order_ouvrage_id'])?$ged_detail['order_ouvrage_id']:0;
+                    $gedDetail->timeline=isset($ged_detail['order_ouvrage_id'])?$ged_detail['timeline']:null;
+                    $gedDetail->ged_category_id=isset($ged_detail['ged_category_id'])?$ged_detail['ged_category_id']:0;
+                    $gedDetail->order_zone_id=$orderZone->id;
+                    $gedDetail->description=isset($ged_detail['description'])?$ged_detail['description']:'';
+                    $gedDetail->longitude=isset($ged_detail['longitude'])?$ged_detail['longitude']:'';
+                    $gedDetail->latitude=isset($ged_detail['latitude'])?$ged_detail['latitude']:'';
+                    $gedDetail->save();
+                    $gedDetail=$gedDetail->fresh();//retreve fresh object with all fields
+              
+                    if( $gedDetail->file==null){//files can only be stored once to avoid duplicates;
+                      if(isset($ged_detail['data'])&&!$this->isBlank($ged_detail['data'])){
+                        $storedFile=$this->storeFile($ged_detail['data'],$ged_detail['human_readable_filename'],$gedDetail->id);
+                        $gedDetail->file=$storedFile->file;
+                        $gedDetail->type=$storedFile->type;
+                        $gedDetail->storage_path=$storedFile->storage_path;
+                        $gedDetail->human_readable_filename=$storedFile->human_readable_filename;
+                      }
+                    }
+                    $gedDetail->save();
+                  }
                 }
             }
         }
-
-       
-            //end validation
-            //if validation successful, save
-
-     
-
-            if($order==null){
-                $order=new Order();
-                $order->generateReference();
-                $order->affiliate_id=$lcdtapp_api_instance->user->affiliate->id;
-                $order->address_id=$event->address_id;
-                $order->lang_id=!isset($Parameters['lang_id'])?1:$Parameters['lang_id'];
-                $order->customer_id=$event->customer_id;
-         
-            }
-                $order->save();
-            
-                $event->order()->associate($order->fresh())->save();
-                //update state if necessary
-                if($Parameters['order_state_id']==null){
-                    $order->updateState(1,$lcdtapp_api_instance->user_id);//update order to status affaire
-                }else{
-                    $order->updateState($Parameters['order_state_id'],$lcdtapp_api_instance->user_id);//save devis in another status
-                }
-
-            if(isset($Parameters['order_zones'])&&is_array($Parameters['order_zones'])){
-                if(!empty($Parameters['order_zones'])){
-                    //order zones
-                    foreach($Parameters['order_zones'] as $order_zone){
-                        if(!isset($order_zone['id'])||$this->isBlank($order_zone['id'])||$order_zone['id']==null){
-                            $orderZone=new OrderZone();
-                            $orderZone->order_id=$order->id;
-                        }else{
-                            $orderZone=OrderZone::find($order_zone['id']);
-                        }
-     
-                
-                        $orderZone->name=$order_zone['name'];
-                        $orderZone->description=isset($order_zone['description'])?$order_zone['description']:'';
-                        $orderZone->hauteur=$order_zone['hauteur'];
-                        $orderZone->moyenacces_id=$order_zone['moyenacces_id'];
-                        $orderZone->latitude= $order_zone['latitude'];
-                        $orderZone->longitude= $order_zone['longitude'];
-                        $orderZone->save();
-    
-                        if(isset($order_zone['ged_details'])){
-                            foreach($order_zone['ged_details'] as $ged_detail){
-
-                                if(!isset($ged_detail['id'])||$this->isBlank($ged_detail['id'])||$ged_detail['id']==null){
-                                    $gedDetail=new GedDetail();
-                                    //find existing ged to link to ged detail
-                                    $ged=Ged::where('user_id','=',$lcdtapp_api_instance->user->id)->where('customer_id','=',$event->customer_id)->where('order_id','=',$order->id)->first();
-                                    if($ged==null){
-                                        //new ged
-                                        $ged=new Ged();
-                                        $ged->customer_id=$event->customer_id;
-                                        $ged->order_id=$order->id;
-                                        $ged->user_id=$lcdtapp_api_instance->user->id;
-                                        $ged->save();
-                                    }
-                                    $gedDetail->ged_id=$ged->id;
-                                    $gedDetail->user_id=$lcdtapp_api_instance->user->id;
-                                }else{
-                                    $gedDetail=GedDetail::find($ged_detail['id']);   
-                                }
-                                $gedDetail->order_ouvrage_id=isset($ged_detail['order_ouvrage_id'])?$ged_detail['order_ouvrage_id']:0;
-                                $gedDetail->timeline=isset($ged_detail['order_ouvrage_id'])?$ged_detail['timeline']:null;
-                                $gedDetail->ged_category_id=isset($ged_detail['ged_category_id'])?$ged_detail['ged_category_id']:0;
-                                $gedDetail->order_zone_id=$orderZone->id;
-                                $gedDetail->description=isset($ged_detail['description'])?$ged_detail['description']:'';
-                                $gedDetail->longitude=isset($ged_detail['longitude'])?$ged_detail['longitude']:'';
-                                $gedDetail->latitude=isset($ged_detail['latitude'])?$ged_detail['latitude']:'';
-                                $gedDetail->save();
-                                $gedDetail=$gedDetail->fresh();//retreve fresh object with all fields
-                        
-                                if( $gedDetail->file==null){//files can only be stored once to avoid duplicates;
-                                    if(isset($ged_detail['data'])&&!$this->isBlank($ged_detail['data'])){
-                                      
-                                        $storedFile=$this->storeFile($ged_detail['data'],$ged_detail['human_readable_filename'],$gedDetail->id);
-                                        $gedDetail->file=$storedFile->file;
-                                        $gedDetail->type=$storedFile->type;
-                                        $gedDetail->storage_path=$storedFile->storage_path;
-                                        $gedDetail->human_readable_filename=$storedFile->human_readable_filename;
-                                    }
-                                }
-                                $gedDetail->save();
-                            }
-    
-                            
-    
-                        }
-                    }
-                }
-            }
-
-     
-
-              return $this->response(1,$order->fresh());
-
+      }
+      return $this->response(1,$order->fresh());
     }else{
         return $isLoggedIn;
     }
-}
+  }
 public function SaveDevisTechnician(Request $request){
     $Parameters=$request->post('Parameters');
     $SessionID=$request->post('SessionID');

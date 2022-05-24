@@ -26,8 +26,8 @@ trait GedFileProcessor
         $orderzone=$gedDetail->orderZone()->first();
         $getcategory=$gedDetail->gedCategory()->first();
         $orderouvrage=$gedDetail->orderOuvrage()->first();
-        $Path='GED'.($ged!=null?'/GED_'.$ged->id:'').($orderzone!=null?'/Z_'. preg_replace( '/[\W]/', '',$orderzone->name):'').($getcategory!=null?'/CAT_'. preg_replace( '/[\W]/', '',$getcategory->name):'')
-        .($orderouvrage!=null?'/OUV_'. preg_replace( '/[\W]/', '',$orderouvrage->name):'');
+        $Path = 'GED'. ( $ged != null ? ( '/GED_'.$ged->id ) : '' ) .( $orderzone != null ? ( '/Z_'. preg_replace( '/[\W]/', '',$orderzone->name)) : '' ).( $getcategory != null ? ( '/CAT_'.preg_replace( '/[\W]/', '' , $getcategory->name )) : '' )
+        . ( $orderouvrage != null ? ('/OUV_'.preg_replace( '/[\W]/', '',$orderouvrage->name)) : '');
         Storage::disk('local')->makeDirectory('public/'.$Path);
         return $Path;
     }
@@ -108,20 +108,18 @@ trait GedFileProcessor
         return $uuid_filename;
             
     }
+    
     //TODO: get urls for files given ged_detail
     public function getFileUrls($gedDetail){
-          
-
-            if(in_array($gedDetail->type,$this->allowedImageFileExts)){
-                return array(
-                    'original'=>getenv('APP_URL').Storage::url( $gedDetail->storage_path.'/'.$gedDetail->file.($gedDetail->type!=''?'.'.$gedDetail->type:'')),
-                    'medium'=>getenv('APP_URL').Storage::url( $gedDetail->storage_path.'/'.$gedDetail->file.'_medium'.($gedDetail->type!=''?'.'.$gedDetail->type:'')),
-                    'small'=>getenv('APP_URL').Storage::url( $gedDetail->storage_path.'/'.$gedDetail->file.'_small'.($gedDetail->type!=''?'.'.$gedDetail->type:'')),
-                );
-            }else{
-                return array('original'=>getenv('APP_URL').Storage::url( $gedDetail->storage_path.'/'.$gedDetail->file.($gedDetail->type!=''?'.'.$gedDetail->type:'')));
-            }
-
+        if(in_array($gedDetail->type,$this->allowedImageFileExts)){
+            return array(
+                'original'=>getenv('APP_URL').Storage::url( $gedDetail->storage_path.'/'.$gedDetail->file.($gedDetail->type!=''?'.'.$gedDetail->type:'')),
+                'medium'=>getenv('APP_URL').Storage::url( $gedDetail->storage_path.'/'.$gedDetail->file.'_medium'.($gedDetail->type!=''?'.'.$gedDetail->type:'')),
+                'small'=>getenv('APP_URL').Storage::url( $gedDetail->storage_path.'/'.$gedDetail->file.'_small'.($gedDetail->type!=''?'.'.$gedDetail->type:'')),
+            );
+        }else{
+            return array('original'=>getenv('APP_URL').Storage::url( $gedDetail->storage_path.'/'.$gedDetail->file.($gedDetail->type!=''?'.'.$gedDetail->type:'')));
+        }
     }
 }
  

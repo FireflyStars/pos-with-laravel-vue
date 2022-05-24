@@ -219,7 +219,7 @@
                         <div class="col-4">
                           <ul class="nav flex-column">
                             <li class="nav-item" v-for="(ouvrage, index) in zone.installOuvrage.ouvrages" :key="index">
-                              <a class="nav-link custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': index == 0}" :data-id="'ouvrage-'+ouvrage.id" href="javascript:;"
+                              <a class="nav-link custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': index == 0}" :data-id="'zone-' + zoneIndex +'-installation-ouvrage-'+index" href="javascript:;"
                                 @click="activeOuvrage"
                               >
                                 <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ ouvrage.name }}
@@ -261,31 +261,33 @@
                       </div>
                       <!-- Tab panes -->
                       <div class="tab-content ouvrage-tab-content">
-                        <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" v-for="(ouvrage, ouvrageIndex) in zone.installOuvrage.ouvrages" :key="ouvrageIndex" :id="'ouvrage-'+ouvrage.id">
+                        <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" v-for="(ouvrage, ouvrageIndex) in zone.installOuvrage.ouvrages" :key="ouvrageIndex" :id="'zone-'+ zoneIndex +'-installation-ouvrage-'+ouvrageIndex">
                           <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
                           <!-- ouvrage description -->
-                          <ul class="ps-3">
-                            <li class="mulish-regular font-10">Kindly note that we will only accept POS payment option on delivery</li>
-                            <li class="mulish-regular font-10">You have to make payment before opening package</li>
-                            <li class="mulish-regular font-10">Once the seal is broken, item can only be returned if damaged or defective </li>
+                          <ul class="ps-3" v-if="ouvrage.textchargeaffaire !=''">
+                            <li class="mulish-regular font-10">
+                              {{ ouvrage.textchargeaffaire }}
+                            </li>
                           </ul>
                           <h3 class="mt-3 mulish-light fw-light text-custom-success font-14">TEXTE POUR CLIENTS</h3>
-                          <ul class="ps-3">
+                          <ul class="ps-3" v-if="ouvrage.customerText !=''">
                             <li class="mulish-regular font-10 custom-text-danger">{{ ouvrage.customerText }}</li>
                           </ul>
                           <!-- Ouvrage Task -->
                           <div class="ouvrage-task" v-for="(task, taskIndex) in ouvrage.tasks" :key="taskIndex">
-                            <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'ouvrage-'+ouvrage.id+'-task-'+taskIndex" @click="activeOuvrageTask">
+                            <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'zone-'+ zoneIndex +'-installation-ouvrage-'+ouvrageIndex+'-task-'+taskIndex" @click="activeOuvrageTask">
                               <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ task.name }}
                             </div>
-                            <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'ouvrage-'+ouvrage.id+'-task-'+taskIndex">
+                            <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'zone-'+ zoneIndex +'-installation-ouvrage-'+ouvrageIndex+'-task-'+taskIndex">
                               <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
-                              <!-- ouvrage description -->
-                              <ul class="ps-3">
-                                <li class="mulish-regular font-10">Kindly note that we will only accept POS payment option on delivery</li>
+                              <!-- task description -->
+                              <ul class="ps-3" v-if="task.textchargeaffaire != ''">
+                                <li class="mulish-regular font-10">
+                                  {{ task.textchargeaffaire }}
+                                </li>
                               </ul>
                               <h3 class="mt-3 mulish-light fw-light text-custom-success font-14">TEXTE POUR CLIENTS</h3>
-                              <ul class="ps-3">
+                              <ul class="ps-3" v-if="task.customerText !=''">
                                 <li class="mulish-regular font-10 custom-text-danger">{{ task.customerText }}</li>
                               </ul>
                               <div class="w-100 ps-3">
@@ -294,38 +296,38 @@
                                     <tr v-for="(detail, detailIndex) in task.details" :key="detailIndex">
                                       <td valign="middle">
                                         <div class="custom-option d-flex align-items-center">
-                                          <span class="option-icon me-3"></span> {{ detail.type }}
+                                          <span class="option-icon me-3"></span> {{ detail.name }}
                                         </div>
                                       </td>
                                       <td valign="middle">{{ detail.qtyOuvrage }}</td>
-                                      <td>
+                                      <td valign="middle">
                                         <input type="text" v-model="detail.qty" class="w-100 form-control form-control-sm custom-text-danger">
                                       </td>
                                       <td valign="middle">{{ detail.unit }}</td>
                                       <td valign="middle" class="text-center" v-if="detail.type != 'MO'"></td>
-                                      <td v-else>
+                                      <td valign="middle" v-else>
                                         <div class="d-flex align-items-center">
                                           <input type="text" v-model="detail.numberH" class="w-100 form-control form-control-sm custom-text-danger">hr
                                         </div>
                                       </td>
-                                      <td>
+                                      <td valign="middle">
                                         <div class="d-flex align-items-center">
                                           <input type="text" v-model="detail.unitPrice" class="w-100 form-control form-control-sm custom-text-danger">€
                                         </div>
                                       </td>
-                                      <td v-if="detail.type != 'MO'">
+                                      <td valign="middle" v-if="detail.type != 'MO'">
                                         <div class="d-flex align-items-center">
                                           <input type="text" v-model="detail.marge" class="w-100 form-control form-control-sm custom-text-danger">%
                                         </div>
                                       </td>
                                       <td v-else></td>
                                       <td valign="middle">{{ detail.totalPrice }}€</td>
-                                      <td>
+                                      <td valign="middle">
                                         <select class="w-100 form-control form-control-sm custom-text-danger" v-model="ouvrage.tax">
                                           <option :value="tax.value" v-for="(tax, taxIndex) in taxes" :key="taxIndex">{{ tax.display }} %</option>
                                         </select>                                          
                                       </td>
-                                      <td>
+                                      <td valign="middle">
                                         <svg class="cursor-pointer" @click="removeOuvrageDetail(zoneIndex, 2, ouvrageIndex, taskIndex, detailIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M17 6H22V8H20V21C20 21.2652 19.8946 21.5196 19.7071 21.7071C19.5196 21.8946 19.2652 22 19 22H5C4.73478 22 4.48043 21.8946 4.29289 21.7071C4.10536 21.5196 4 21.2652 4 21V8H2V6H7V3C7 2.73478 7.10536 2.48043 7.29289 2.29289C7.48043 2.10536 7.73478 2 8 2H16C16.2652 2 16.5196 2.10536 16.7071 2.29289C16.8946 2.48043 17 2.73478 17 3V6ZM18 8H6V20H18V8ZM13.414 14L15.182 15.768L13.768 17.182L12 15.414L10.232 17.182L8.818 15.768L10.586 14L8.818 12.232L10.232 10.818L12 12.586L13.768 10.818L15.182 12.232L13.414 14ZM9 4V6H15V4H9Z" fill="black"/>
                                         </svg>
@@ -357,6 +359,9 @@
                               </div>
                             </div>
                           </div>
+                          <div v-if="ouvrage.tasks.length == 0" class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openTaskModal(zoneIndex, 1, ouvrageIndex)">
+                            <span class="plus-icon me-2"></span> AJOUTER ACTION
+                          </div>                                                
                         </div>
                       </div>
                     </div>
@@ -387,7 +392,7 @@
                         <div class="col-4">
                           <ul class="nav flex-column">
                             <li class="nav-item" v-for="(ouvrage, index) in zone.securityOuvrage.ouvrages" :key="index">
-                              <a class="nav-link custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': index == 0}" :data-id="'ouvrage-'+ouvrage.id" href="javascript:;"
+                              <a class="nav-link custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': index == 0}" :data-id="'zone-'+zoneIndex+'-securite-ouvrage-'+index" href="javascript:;"
                                 @click="activeOuvrage"
                               >
                                 <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ ouvrage.name }}
@@ -429,31 +434,33 @@
                       </div>
                       <!-- Tab panes -->
                       <div class="tab-content ouvrage-tab-content">
-                        <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" v-for="(ouvrage, ouvrageIndex) in zone.securityOuvrage.ouvrages" :key="ouvrageIndex" :id="'ouvrage-'+ouvrage.id">
+                        <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" v-for="(ouvrage, ouvrageIndex) in zone.securityOuvrage.ouvrages" :key="ouvrageIndex" :id="'zone-'+ zoneIndex +'-securite-ouvrage-' + ouvrageIndex">
                           <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
                           <!-- ouvrage description -->
-                          <ul class="ps-3">
-                            <li class="mulish-regular font-10">Kindly note that we will only accept POS payment option on delivery</li>
-                            <li class="mulish-regular font-10">You have to make payment before opening package</li>
-                            <li class="mulish-regular font-10">Once the seal is broken, item can only be returned if damaged or defective </li>
+                          <ul class="ps-3" v-if="ouvrage.textchargeaffaire !=''">
+                            <li class="mulish-regular font-10">
+                              {{ ouvrage.textchargeaffaire }}
+                            </li>
                           </ul>
                           <h3 class="mt-3 mulish-light fw-light text-custom-success font-14">TEXTE POUR CLIENTS</h3>
-                          <ul class="ps-3">
+                          <ul class="ps-3" v-if="ouvrage.customerText !=''">
                             <li class="mulish-regular font-10 custom-text-danger">{{ ouvrage.customerText }}</li>
                           </ul>
                           <!-- Ouvrage Task -->
                           <div class="ouvrage-task" v-for="(task, taskIndex) in ouvrage.tasks" :key="taskIndex">
-                            <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'ouvrage-'+ouvrage.id+'-task-'+taskIndex" @click="activeOuvrageTask">
+                            <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'zone-'+zoneIndex+'-securite-ouvrage-'+ouvrageIndex+'-task-'+taskIndex" @click="activeOuvrageTask">
                               <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ task.name }}
                             </div>
-                            <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'ouvrage-'+ouvrage.id+'-task-'+taskIndex">
+                            <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'zone-'+zoneIndex+'-securite-ouvrage-'+ouvrageIndex+'-task-'+taskIndex">
                               <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
-                              <!-- ouvrage description -->
-                              <ul class="ps-3">
-                                <li class="mulish-regular font-10">Kindly note that we will only accept POS payment option on delivery</li>
+                              <!-- task description -->
+                              <ul class="ps-3" v-if="task.textchargeaffaire !=''">
+                                <li class="mulish-regular font-10">
+                                  {{ task.textchargeaffaire }}
+                                </li>
                               </ul>
                               <h3 class="mt-3 mulish-light fw-light text-custom-success font-14">TEXTE POUR CLIENTS</h3>
-                              <ul class="ps-3">
+                              <ul class="ps-3" v-if="task.customerText !=''">
                                 <li class="mulish-regular font-10 custom-text-danger">{{ task.customerText }}</li>
                               </ul>
                               <div class="w-100 ps-3">
@@ -462,38 +469,38 @@
                                     <tr v-for="(detail, detailIndex) in task.details" :key="detailIndex">
                                       <td valign="middle">
                                         <div class="custom-option d-flex align-items-center">
-                                          <span class="option-icon me-3"></span> {{ detail.type }}
+                                          <span class="option-icon me-3"></span> {{ detail.name }}
                                         </div>
                                       </td>
                                       <td valign="middle">{{ detail.qtyOuvrage }}</td>
-                                      <td>
+                                      <td valign="middle">
                                         <input type="text" v-model="detail.qty" class="w-100 form-control form-control-sm custom-text-danger">
                                       </td>
                                       <td valign="middle">{{ detail.unit }}</td>
                                       <td valign="middle" class="text-center" v-if="detail.type != 'MO'"></td>
-                                      <td v-else>
+                                      <td valign="middle" v-else>
                                         <div class="d-flex align-items-center">
                                           <input type="text" v-model="detail.numberH" class="w-100 form-control form-control-sm custom-text-danger">hr
                                         </div>
                                       </td>
-                                      <td>
+                                      <td valign="middle">
                                         <div class="d-flex align-items-center">
                                           <input type="text" v-model="detail.unitPrice" class="w-100 form-control form-control-sm custom-text-danger">€
                                         </div>
                                       </td>
-                                      <td v-if="detail.type != 'MO'">
+                                      <td valign="middle" v-if="detail.type != 'MO'">
                                         <div class="d-flex align-items-center">
                                           <input type="text" v-model="detail.marge" class="w-100 form-control form-control-sm custom-text-danger">%
                                         </div>
                                       </td>
                                       <td v-else></td>
                                       <td valign="middle">{{ detail.totalPrice }}€</td>
-                                      <td>
+                                      <td valign="middle">
                                         <select class="w-100 form-control form-control-sm custom-text-danger" v-model="ouvrage.tax">
                                           <option :value="tax.value" v-for="(tax, taxIndex) in taxes" :key="taxIndex">{{ tax.display }} %</option>
                                         </select>                                          
                                       </td>
-                                      <td>
+                                      <td valign="middle">
                                         <svg class="cursor-pointer" @click="removeOuvrageDetail(zoneIndex, 2, ouvrageIndex, taskIndex, detailIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M17 6H22V8H20V21C20 21.2652 19.8946 21.5196 19.7071 21.7071C19.5196 21.8946 19.2652 22 19 22H5C4.73478 22 4.48043 21.8946 4.29289 21.7071C4.10536 21.5196 4 21.2652 4 21V8H2V6H7V3C7 2.73478 7.10536 2.48043 7.29289 2.29289C7.48043 2.10536 7.73478 2 8 2H16C16.2652 2 16.5196 2.10536 16.7071 2.29289C16.8946 2.48043 17 2.73478 17 3V6ZM18 8H6V20H18V8ZM13.414 14L15.182 15.768L13.768 17.182L12 15.414L10.232 17.182L8.818 15.768L10.586 14L8.818 12.232L10.232 10.818L12 12.586L13.768 10.818L15.182 12.232L13.414 14ZM9 4V6H15V4H9Z" fill="black"/>
                                         </svg>
@@ -525,6 +532,9 @@
                               </div>
                             </div>
                           </div>
+                          <div v-if="ouvrage.tasks.length == 0" class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openTaskModal(zoneIndex, 2, ouvrageIndex)">
+                            <span class="plus-icon me-2"></span> AJOUTER ACTION
+                          </div>                             
                         </div>
                       </div>
                     </div>
@@ -533,7 +543,7 @@
                   <div class="ouvrage-section prestation-ouvrages bg-white px-4 py-3 mt-2 mb-2">
                     <div class="ouvrage-header d-flex">
                       <div class="col-7">
-                        <div class="col-5 d-flex align-items-center cursor-pointer toggle-btn" :id="'zone'" @click="togglePanel">
+                        <div class="col-5 d-flex align-items-center cursor-pointer toggle-btn" @click="togglePanel">
                           <span class="prestation-icon me-2"></span> 
                           <input type="text" @blur="zone.prestationOuvrage.edit = false" v-if="zone.prestationOuvrage.edit" class="form-control form-control-sm" v-model="zone.prestationOuvrage.name">
                           <span v-else class="me-4" @dblclick="zone.prestationOuvrage.edit = true">{{ zone.prestationOuvrage.name }}</span>                          
@@ -555,7 +565,7 @@
                         <div class="col-4">
                           <ul class="nav flex-column">
                             <li class="nav-item" v-for="(ouvrage, index) in zone.prestationOuvrage.ouvrages" :key="index">
-                              <a class="nav-link custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': index == 0}" :data-id="'ouvrage-'+ouvrage.id" href="javascript:;"
+                              <a class="nav-link custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': index == 0}" :data-id="'zone-'+zoneIndex + '-prestation-ouvrage-' + index" href="javascript:;"
                                 @click="activeOuvrage"
                               >
                                 <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ ouvrage.name }}
@@ -597,31 +607,33 @@
                       </div>
                       <!-- Tab panes -->
                       <div class="tab-content ouvrage-tab-content">
-                        <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" v-for="(ouvrage, ouvrageIndex) in zone.prestationOuvrage.ouvrages" :key="ouvrageIndex" :id="'ouvrage-'+ouvrage.id">
+                        <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" v-for="(ouvrage, ouvrageIndex) in zone.prestationOuvrage.ouvrages" :key="ouvrageIndex" :id="'zone-'+zoneIndex + '-prestation-ouvrage-' + ouvrageIndex">
                           <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
                           <!-- ouvrage description -->
-                          <ul class="ps-3">
-                            <li class="mulish-regular font-10">Kindly note that we will only accept POS payment option on delivery</li>
-                            <li class="mulish-regular font-10">You have to make payment before opening package</li>
-                            <li class="mulish-regular font-10">Once the seal is broken, item can only be returned if damaged or defective </li>
+                          <ul class="ps-3" v-if="ouvrage.textchargeaffaire !=''">
+                            <li class="mulish-regular font-10">
+                              {{ ouvrage.textchargeaffaire }}
+                            </li>
                           </ul>
                           <h3 class="mt-3 mulish-light fw-light text-custom-success font-14">TEXTE POUR CLIENTS</h3>
-                          <ul class="ps-3">
+                          <ul class="ps-3" v-if="ouvrage.customerText !=''">
                             <li class="mulish-regular font-10 custom-text-danger">{{ ouvrage.customerText }}</li>
                           </ul>
                           <!-- Ouvrage Task -->
                           <div class="ouvrage-task" v-for="(task, taskIndex) in ouvrage.tasks" :key="taskIndex">
-                            <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'ouvrage-'+ouvrage.id+'-task-'+taskIndex" @click="activeOuvrageTask">
+                            <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'zone-' + zoneIndex + '-prestation-ouvrage-' + ouvrageIndex+'-task-'+taskIndex" @click="activeOuvrageTask">
                               <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ task.name }}
                             </div>
-                            <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'ouvrage-'+ouvrage.id+'-task-'+taskIndex">
+                            <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'zone-' + zoneIndex + '-prestation-ouvrage-' + ouvrageIndex+'-task-'+taskIndex">
                               <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
-                              <!-- ouvrage description -->
-                              <ul class="ps-3">
-                                <li class="mulish-regular font-10">Kindly note that we will only accept POS payment option on delivery</li>
+                              <!-- task description -->
+                              <ul class="ps-3" v-if="task.textchargeaffaire !=''">
+                                <li class="mulish-regular font-10">
+                                  {{ task.textchargeaffaire }}
+                                </li>
                               </ul>
                               <h3 class="mt-3 mulish-light fw-light text-custom-success font-14">TEXTE POUR CLIENTS</h3>
-                              <ul class="ps-3">
+                              <ul class="ps-3" v-if="task.customerText !=''">
                                 <li class="mulish-regular font-10 custom-text-danger">{{ task.customerText }}</li>
                               </ul>
                               <div class="w-100 ps-3">
@@ -630,38 +642,38 @@
                                     <tr v-for="(detail, detailIndex) in task.details" :key="detailIndex">
                                       <td valign="middle">
                                         <div class="custom-option d-flex align-items-center">
-                                          <span class="option-icon me-3"></span> {{ detail.type }}
+                                          <span class="option-icon me-3"></span> {{ detail.name }}
                                         </div>
                                       </td>
                                       <td valign="middle">{{ detail.qtyOuvrage }}</td>
-                                      <td>
+                                      <td valign="middle">
                                         <input type="text" v-model="detail.qty" class="w-100 form-control form-control-sm custom-text-danger">
                                       </td>
                                       <td valign="middle">{{ detail.unit }}</td>
                                       <td valign="middle" class="text-center" v-if="detail.type != 'MO'"></td>
-                                      <td v-else>
+                                      <td valign="middle" v-else>
                                         <div class="d-flex align-items-center">
                                           <input type="text" v-model="detail.numberH" class="w-100 form-control form-control-sm custom-text-danger">hr
                                         </div>
                                       </td>
-                                      <td>
+                                      <td valign="middle">
                                         <div class="d-flex align-items-center">
                                           <input type="text" v-model="detail.unitPrice" class="w-100 form-control form-control-sm custom-text-danger">€
                                         </div>
                                       </td>
-                                      <td v-if="detail.type != 'MO'">
+                                      <td valign="middle" v-if="detail.type != 'MO'">
                                         <div class="d-flex align-items-center">
                                           <input type="text" v-model="detail.marge" class="w-100 form-control form-control-sm custom-text-danger">%
                                         </div>
                                       </td>
                                       <td v-else></td>
                                       <td valign="middle">{{ detail.totalPrice }}€</td>
-                                      <td>
+                                      <td valign="middle">
                                         <select class="w-100 form-control form-control-sm custom-text-danger" v-model="ouvrage.tax">
                                           <option :value="tax.value" v-for="(tax, taxIndex) in taxes" :key="taxIndex">{{ tax.display }} %</option>
-                                        </select>
+                                        </select>                                          
                                       </td>
-                                      <td>
+                                      <td valign="middle">
                                         <svg class="cursor-pointer" @click="removeOuvrageDetail(zoneIndex, 2, ouvrageIndex, taskIndex, detailIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M17 6H22V8H20V21C20 21.2652 19.8946 21.5196 19.7071 21.7071C19.5196 21.8946 19.2652 22 19 22H5C4.73478 22 4.48043 21.8946 4.29289 21.7071C4.10536 21.5196 4 21.2652 4 21V8H2V6H7V3C7 2.73478 7.10536 2.48043 7.29289 2.29289C7.48043 2.10536 7.73478 2 8 2H16C16.2652 2 16.5196 2.10536 16.7071 2.29289C16.8946 2.48043 17 2.73478 17 3V6ZM18 8H6V20H18V8ZM13.414 14L15.182 15.768L13.768 17.182L12 15.414L10.232 17.182L8.818 15.768L10.586 14L8.818 12.232L10.232 10.818L12 12.586L13.768 10.818L15.182 12.232L13.414 14ZM9 4V6H15V4H9Z" fill="black"/>
                                         </svg>
@@ -693,6 +705,9 @@
                               </div>
                             </div>
                           </div>
+                          <div v-if="ouvrage.tasks.length == 0" class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openTaskModal(zoneIndex, 3, ouvrageIndex)">
+                            <span class="plus-icon me-2"></span> AJOUTER ACTION
+                          </div>                             
                         </div>
                       </div>
                     </div>
@@ -789,15 +804,17 @@
         </div>
         <input type="file" @change="previewFile" accept="image/*" ref="file" multiple class="d-none">
         <zoom-modal ref="zoomModal"></zoom-modal>
-        <SecuriteModal ref="securiteModal" @selectedOuvrage="selectedOuvrage"></SecuriteModal>
-        <InstallationModal ref="installationModal" @selectedOuvrage="selectedOuvrage"></InstallationModal>
-        <PrestationModal ref="prestationModal" @selectedOuvrage="selectedOuvrage"></PrestationModal>
-        <ProductModal ref="productModal" @selectedProduct="selectedProduct"></ProductModal>
+        <SecuriteModal ref="securiteModal" @selectedOuvrage="selectedOuvrage" @openEmptyOuvrageModal="openEmptyOuvrageModal"></SecuriteModal>
+        <InstallationModal ref="installationModal" @selectedOuvrage="selectedOuvrage" @openEmptyOuvrageModal="openEmptyOuvrageModal"></InstallationModal>
+        <PrestationModal ref="prestationModal" @selectedOuvrage="selectedOuvrage" @openEmptyOuvrageModal="openEmptyOuvrageModal"></PrestationModal>
+        <ProductModal ref="productModal" @selectedProduct="selectedProduct" @openEmptyProductModal="openEmptyProductModal"></ProductModal>
         <SupplierModal ref="supplierModal" @selectedSupplier="selectedSupplier"></SupplierModal>
         <LaborModal ref="laborModal" @selectedLabor="selectedLabor"></LaborModal>
         <TaskModal ref="taskModal" @selectedTask="selectedTask"></TaskModal>
         <InterimModal ref="interimModal" @selectedInterim="selectedInterim"></InterimModal>
         <AddressModal ref="addressModal" @addedNewAddress="addedNewAddress"></AddressModal>
+        <EmptyOuvrageModal ref="emptyOuvrageModal" @selectedEmptyOuvrage="selectedEmptyOuvrage"></EmptyOuvrageModal>
+        <EmptyProductModal ref="emptyProductModal" @selectedEmptyProduct="selectedEmptyProduct"></EmptyProductModal>
       </div>
     </transition>
   </router-view>
@@ -816,6 +833,8 @@ import LaborModal from '../../components/miscellaneous/LaborModal';
 import ProductModal from '../../components/miscellaneous/ProductModal';
 import AddressModal from '../../components/miscellaneous/AddressModal';
 import TaskModal from '../../components/miscellaneous/TaskModal';
+import EmptyOuvrageModal from '../../components/miscellaneous/EmptyOuvrageModal';
+import EmptyProductModal from '../../components/miscellaneous/EmptyProductModal';
 import Swal from 'sweetalert2';
 import {     
   DISPLAY_LOADER,
@@ -838,7 +857,9 @@ export default {
     ProductModal,
     InterimModal,
     LaborModal,
-    TaskModal
+    TaskModal,
+    EmptyOuvrageModal,
+    EmptyProductModal
   },
   setup() {
     const store = useStore();
@@ -867,6 +888,8 @@ export default {
     const interimModal = ref(null);
     const productModal = ref(null);
     const addressModal = ref(null);
+    const emptyOuvrageModal = ref(null);
+    const emptyProductModal = ref(null);
     const taskModal = ref(null);
     const gedCatId = ref(0);
     const gedCats = ref([]);
@@ -1335,7 +1358,7 @@ export default {
         form.value.zones[task.zoneIndex].installOuvrage.ouvrages[task.ouvrageId].tasks.push({
           name: task.name,
           customerText: task.customerText,
-          tectchargeaffaire: task.tectchargeaffaire,
+          textchargeaffaire: task.textchargeaffaire,
           unit_id: task.unit_id,
           qty: task.qty,
           details: []
@@ -1344,7 +1367,7 @@ export default {
         form.value.zones[task.zoneIndex].securityOuvrage.ouvrages[task.ouvrageId].tasks.push({
           name: task.name,
           customerText: task.customerText,
-          tectchargeaffaire: task.tectchargeaffaire,
+          textchargeaffaire: task.textchargeaffaire,
           unit_id: task.unit_id,
           qty: task.qty,
           details: []
@@ -1353,7 +1376,7 @@ export default {
         form.value.zones[task.zoneIndex].prestationOuvrage.ouvrages[task.ouvrageId].tasks.push({
           name: task.name,
           customerText: task.customerText,
-          tectchargeaffaire: task.tectchargeaffaire,
+          textchargeaffaire: task.textchargeaffaire,
           unit_id: task.unit_id,
           qty: task.qty,
           details: []
@@ -1409,41 +1432,44 @@ export default {
     // activate the ouvrage
     const activeOuvrage = (event)=>{
       document.querySelectorAll('.nav .custom-option').forEach((item)=>{
-        item.classList.remove('active');
+        if(item.getAttribute('data-id') != event.target.getAttribute('data-id'))
+            item.classList.remove('active');
       })
       document.querySelectorAll('.tab-pane').forEach((item)=>{
-        item.classList.remove('active');
+        if(item.id != event.target.getAttribute('data-id'))
+          item.classList.remove('active');
       })
-      event.target.classList.add('active');
-      document.getElementById(event.target.getAttribute('data-id')).classList.add('active');
+      event.target.classList.toggle('active');
+      document.getElementById(event.target.getAttribute('data-id')).classList.toggle('active');
     }
     // activate the task
     const activeOuvrageTask = (event)=>{
       document.querySelectorAll('.task-header.custom-option').forEach((item)=>{
-        item.classList.remove('active');
+        if(item.getAttribute('data-id') != event.target.getAttribute('data-id'))
+          item.classList.remove('active');
       })      
-      event.target.classList.add('active');
-
+      event.target.classList.toggle('active');
       document.querySelectorAll('.task-body').forEach((item)=>{
-        item.classList.remove('show');
+        if(item.id != event.target.getAttribute('data-id'))
+          item.classList.remove('show');
       })      
-      document.getElementById(event.target.getAttribute('data-id')).classList.add('show');
+      document.getElementById(event.target.getAttribute('data-id')).classList.toggle('show');
     }
     // remove ouvrage from ouvrages
     const removeOuvrage = (zoneIndex, ouvrageType, ouvrageIndex)=>{
       Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
+        title: 'Es-tu sûr?',
+        text: "Vous ne pourrez pas revenir en arrière !",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#42A71E',
         cancelButtonColor: '#E8581B',
-        confirmButtonText: 'Yes, delete it!'
+        confirmButtonText: 'Oui, supprimez-le!'
       }).then((result) => {
         if (result.isConfirmed) {
           Swal.fire(
-            'Deleted!',
-            'The ouvrage has been deleted.',
+            'Supprimé!',
+            "Louvrage a été supprimé.",
             'success'
           )
           if(ouvrageType == 1){
@@ -1467,18 +1493,18 @@ export default {
     // remove detail from task
     const removeOuvrageDetail = (zoneIndex, ouvrageType, ouvrageIndex, taskIndex, detailIndex)=>{
       Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
+        title: 'Es-tu sûr?',
+        text: "Vous ne pourrez pas revenir en arrière !",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#42A71E',
         cancelButtonColor: '#E8581B',
-        confirmButtonText: 'Yes, delete it!'
+        confirmButtonText: 'Oui, supprimez-le!'
       }).then((result) => {
         if (result.isConfirmed) {
           Swal.fire(
-            'Deleted!',
-            'The detail has been deleted.',
+            'Supprimé!',
+            'Le détail a été supprimé.',
             'success'
           )
           if(ouvrageType == 1){
@@ -1514,6 +1540,69 @@ export default {
     const PDFDevis = ()=>{
 
     }
+    // open empty ouvrage modal
+    const openEmptyOuvrageModal = (data)=>{
+      emptyOuvrageModal.value.openModal(data);
+    }
+    // emits for selected ouvrage
+    const selectedEmptyOuvrage = (type, zIndex, emptyOuvrage)=>{
+      if( type == 1 ){
+        form.value.zones[zIndex].installOuvrage.ouvrages.push(emptyOuvrage);
+        document.querySelector('.installation-ouvrages').classList.add('open');
+      }
+      if( type == 2 ){
+        form.value.zones[zIndex].securityOuvrage.ouvrages.push(emptyOuvrage);
+        document.querySelector('.security-ouvrages').classList.add('open');
+      }
+      if(type == 3){
+        form.value.zones[zIndex].prestationOuvrage.ouvrages.push(emptyOuvrage);
+        document.querySelector('.prestation-ouvrages').classList.add('open');
+      }       
+    }
+    // open empty product modal
+    const openEmptyProductModal = (data)=>{
+      emptyProductModal.value.openModal(data);
+    }
+    // emits for selected ouvrage
+    const selectedEmptyProduct = (data, emptyProduct)=>{
+      if(emptyProduct.ouvrageType == 1){
+        form.value.zones[data.zoneIndex].installOuvrage.ouvrages[data.ouvrageId].tasks[data.taskId].details.push({
+          qty: 1,
+          tax: 0,
+          unitPrice: parseInt(emptyProduct.productPrice),
+          marge: 0,
+          type: emptyProduct.type,
+          unit: emptyProduct.unit,
+          qtyOuvrage: data.qtyOuvrage,
+          totalPrice: parseInt(emptyProduct.productPrice),
+          numberH: 0,
+        });
+      }else if(emptyProduct.ouvrageType == 2){
+        form.value.zones[data.zoneIndex].securityOuvrage.ouvrages[data.ouvrageId].tasks[data.taskId].details.push({
+          qty: 1,
+          tax: 0,
+          unitPrice: parseFloat(emptyProduct.productPrice),
+          marge: 0,
+          type: emptyProduct.type,
+          unit: emptyProduct.unit,
+          qtyOuvrage: data.qtyOuvrage,
+          totalPrice: parseInt(emptyProduct.productPrice),
+          numberH: 0,
+        });
+      }else{
+        form.value.zones[data.zoneIndex].prestationOuvrage.ouvrages[data.ouvrageId].tasks[data.taskId].details.push({
+          qty: 1,
+          tax: 0,
+          unitPrice: parseFloat(emptyProduct.productPrice),
+          marge: 0,
+          type: emptyProduct.type,
+          unit: emptyProduct.unit,
+          qtyOuvrage: data.qtyOuvrage,
+          totalPrice: parseInt(emptyProduct.productPrice),
+          numberH: 0,
+        });
+      }      
+    }
     return {
       breadcrumbs,
       taxes,
@@ -1531,6 +1620,8 @@ export default {
       laborModal,
       interimModal,
       taskModal,
+      emptyOuvrageModal,
+      emptyProductModal,
       addFileToGed,
       previewFile,
       removeImage,
@@ -1565,7 +1656,11 @@ export default {
       removeOuvrage,
       removeOuvrageDetail,
       storeDevis,
-      PDFDevis
+      PDFDevis,
+      openEmptyOuvrageModal,
+      selectedEmptyOuvrage,
+      openEmptyProductModal,
+      selectedEmptyProduct
     }
   },
 }

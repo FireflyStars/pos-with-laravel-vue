@@ -197,7 +197,7 @@ class CompagneController extends Controller
 
     public function download_resource_file(Request $request)
     {
-        $path = $request->resource;
+        $path = ltrim($request->resource, '/');
         $filename = $request->filename;
         return response()->download(Storage::path('public/' . $path), $filename);
     }
@@ -1623,7 +1623,12 @@ class CompagneController extends Controller
         $filedepliant=json_decode($cc->filedepliant);
         $fields->file_depliant=$filedepliant;
       
-        return array('fields' => $fields,'image' => $cc->imagetemplate,'campagneCategory' => $cc);
+        return array(
+            'fields'           => $fields,
+            'image2'           => $cc->imagetemplate,
+            'image'            => $cc->urlimageflyerpage1,
+            'campagneCategory' => $cc
+        );
     }
 
 

@@ -17,12 +17,12 @@
                                         <input type="text" v-model="task.name" placeholder="Nom" class="form-control form-control-sm">
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group mt-3">
                                     <div class="col-12">
                                         <input type="text" v-model="task.textchargeaffaire" placeholder="Texte Chargé d affaire" class="form-control form-control-sm">
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group mt-3">
                                     <div class="col-12">
                                         <input type="text" v-model="task.cusomerText" placeholder="Texte Commerical" class="form-control form-control-sm">
                                     </div>
@@ -137,7 +137,6 @@ export default {
             }
         }
         .result-panel{
-            overflow-y: auto;
             .btns{
                 .custom-btn{
                     width: 96px;

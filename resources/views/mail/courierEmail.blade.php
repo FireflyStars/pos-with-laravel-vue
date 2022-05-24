@@ -11,12 +11,12 @@ Letter: <a href="{{ $url . '/download-resource-file?resource=' . $campagne->urll
     {{ $url . '/download-resource-file?resource=' . $campagne->urllettre . '&filename=letter' }}
 </a>
 
-Deplyant: <a href="{{ $url . '/download-resource-file?resource=' . optional($campagne_category->filedepliant)->first()['download_link'] . '&filename=deplyant.pdf' }}">
-    {{ $url . '/download-resource-file?resource=' . optional($campagne_category->filedepliant)->first()['download_link'] . '&filename=deplyant' }}
+Deplyant: <a href="{{ $url . '/download-resource-file?resource=' . $filedepliant . '&filename=deplyant.pdf' }}">
+    {{ $url . '/download-resource-file?resource=' . $filedepliant . '&filename=deplyant' }}
 </a>
 
-Envelop: <a href="{{ $url . '/download-resource-file?resource=' . optional($campagne_category->fileenveloppe)->first()['download_link'] . '&filename=envelop.pdf' }}">
-    {{ $url . '/download-resource-file?resource=' . optional($campagne_category->fileenveloppe)->first()['download_link'] . '&filename=envelop' }}
+Envelop: <a href="{{ $url . '/download-resource-file?resource=' . $fileenveloppe . '&filename=envelop.pdf' }}">
+    {{ $url . '/download-resource-file?resource=' . $fileenveloppe . '&filename=envelop' }}
 </a>
 
 Csv: <a href="{{ $url . '/download-resource-file?resource=' . $campagne->urlcsv . '&filename=Cilbe Info.csv' }}">

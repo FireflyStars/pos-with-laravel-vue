@@ -5,6 +5,13 @@
 
             <div class="card-body">
 
+                <div 
+                    class="close"
+                    @click="$emit('close')"
+                >
+                    &times;    
+                </div>
+
                 <section class="societe" v-if="results?.customers?.length">
                     <div class="header">
                         <h4>Sociéte</h4>
@@ -23,10 +30,12 @@
                         </div>
                         <div class="label-info">
                             <label>{{ customer.raisonsociale }}</label>
+                            <label>{{ customer.email }}</label>
+
                         </div>
                         <div class="label-info">
                             <label>{{ customer.raisonsociale2 }}</label>
-                            <label>{{ customer.email }}</label>
+                            <label>{{ customer.telephone }}</label>
                         </div>
                         <div 
                             class="tag tag-contact-type"
@@ -171,6 +180,8 @@ export default {
 
     import loadMore from './load-more'
 
+    defineEmits(['close'])
+
     const props = defineProps({
         show: {
             required: false,
@@ -210,6 +221,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.close {
+    position: absolute;
+    color: #000;
+    width: 18.9px;
+    height: 2.01px;
+    right: 11.59px;
+    top: 3px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    &:hover {
+        opacity: .8;
+    }
+}
 .search-enter-from {
     opacity: 0;
     height: 0;
