@@ -51,17 +51,17 @@ Route::post('/save-mail-csv/{campagne}', [CompagneController::class, 'generate_m
 Route::post('/validate-and-send-email/{campagne}', [CompagneController::class, 'validate_and_send_email']);
 Route::get('/download-resource-file', [CompagneController::class, 'download_resource_file']);
 
-Route::view('flyer-pdf', 'flyer', [
-    'builder' => (new page_builder),
-    'data'    => (new CompagneController)->fields_Pdf(465)
-]);
+// Route::view('flyer-pdf', 'flyer', [
+//     'builder' => (new page_builder),
+//     'data'    => (new CompagneController)->fields_Pdf(465)
+// ]);
 
-Route::view('letter-pdf', 'letter', [
-    'builder' => (new page_builder),
-    'data'    => (new CompagneController)->lettredata_pdf(465),
-    'campagne'  => Campagne::first(),
-    'affiliate' => User::first()->affiliate
-]);
+// Route::view('letter-pdf', 'letter', [
+//     'builder' => (new page_builder),
+//     'data'    => (new CompagneController)->lettredata_pdf(465),
+//     'campagne'  => Campagne::first(),
+//     'affiliate' => User::first()->affiliate
+// ]);
 
 Route::post('/api',[ApiController::class,'index'])->middleware('cors')->name('api');
 
