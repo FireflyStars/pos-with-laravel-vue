@@ -136,26 +136,19 @@
                           <span class="roof-icon me-2"></span> Accès toiture
                         </div>
                         <div class="d-flex mt-3 ms-4">
-                          <SelectBox :label="''" 
-                              v-model="zone.roofAccess" 
-                              :options="[ 
-                                  { display:'Intérieur', value: 'Intérieur' }, 
-                                  { display:'Extérieur', value: 'Extérieur' },
-                                  { display:'Pas d’accès', value: 'Pas d’accès' }
-                              ]"
-                              :name="'roofAccess'"
-                              :classnames="'col-5'"
-                          />
-                          <SelectBox v-if="zone.roofAccess == 'Pas d’accès'" :label="''" 
-                              v-model="zone.roofAccess1" 
-                              :options="[ 
-                                  { display:'Echelle', value: 'Echelle' }, 
-                                  { display:'Echafaudage', value: 'Echafaudage' },
-                                  { display:'Nacelle', value: 'Nacelle' }
-                              ]"
-                              :name="'roofAccess_second'"
-                              :classnames="'col-5 ms-2'"
-                          />
+                          <div class="col-6">
+                            <SelectBox :label="''" 
+                                v-model="zone.roofAccess" 
+                                :options="roofAccesses"
+                                :name="'roofAccess'+zoneIndex"
+                                :classnames="'col-12'"
+                                :placeholder="'Accessible'"
+                            />
+                          </div>
+                          <div class="col-1"></div>
+                          <div class="col-5">
+                            <input type="text" v-model="zone.height" class="form-control" placeholder="Hauteur m">
+                          </div>
                         </div>
                       </div>
                       <div class="col-6 px-3 d-flex">
@@ -305,6 +298,11 @@
                                       </td>
                                       <td valign="middle">{{ detail.unit }}</td>
                                       <td valign="middle" class="text-center" v-if="detail.type != 'MO'"></td>
+                                      <td valign="middle" class="text-center" v-else-if="detail.type == 'COMMANDE FOURNISSEUR'">
+                                        <svg width="20" height="25" viewBox="0 0 20 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                          <path d="M19.9981 5.41835C19.9972 5.4093 19.9956 5.40049 19.994 5.39168C19.9935 5.38875 19.9932 5.38571 19.9926 5.38278C19.9905 5.37226 19.9877 5.36199 19.9847 5.35186C19.9843 5.35064 19.9841 5.34932 19.9837 5.34809C19.9804 5.33767 19.9766 5.3275 19.9724 5.31751C19.972 5.31649 19.9717 5.31541 19.9713 5.31438C19.9672 5.30484 19.9626 5.2956 19.9578 5.2865C19.957 5.28498 19.9563 5.28341 19.9555 5.2819C19.9509 5.27343 19.9457 5.26531 19.9405 5.25724C19.9391 5.25519 19.9379 5.25303 19.9366 5.25103C19.9314 5.24349 19.9258 5.23635 19.92 5.22921C19.9182 5.22686 19.9165 5.22441 19.9146 5.22211C19.9075 5.21365 19.8998 5.20558 19.892 5.19775C19.8913 5.19702 19.8907 5.19623 19.8899 5.1955L14.6769 0.107436C14.676 0.106556 14.675 0.105822 14.674 0.104941C14.6662 0.097456 14.6581 0.0902153 14.6497 0.0834149C14.6469 0.0812133 14.644 0.0793542 14.6412 0.0772505C14.6343 0.0720157 14.6274 0.0667808 14.6201 0.0620352C14.6176 0.0603718 14.6149 0.059002 14.6123 0.0573875C14.6045 0.052544 14.5967 0.0477495 14.5885 0.0434932C14.5867 0.0425636 14.5848 0.0417808 14.583 0.0409002C14.5739 0.0363503 14.5647 0.0319472 14.5552 0.0280822C14.554 0.027593 14.5527 0.0272505 14.5515 0.0267613C14.5414 0.0227984 14.5311 0.0190802 14.5206 0.0159491C14.5192 0.0155577 14.5179 0.0153131 14.5165 0.0149217C14.5062 0.0119863 14.4957 0.0092955 14.4851 0.00719178C14.4819 0.00655577 14.4786 0.00631115 14.4754 0.00577299C14.4666 0.00425636 14.4577 0.00273973 14.4486 0.0018591C14.4361 0.000636008 14.4236 0 14.411 0H1.97995C0.88822 0 0 0.866928 0 1.93249V23.0675C0 24.1331 0.88822 25 1.97995 25H18.02C19.1118 25 20 24.1331 20 23.0675V5.45499C20 5.44271 19.9993 5.43048 19.9981 5.41835ZM14.787 1.25274L18.7165 5.08806H16.015C15.3379 5.08806 14.787 4.55039 14.787 3.88943V1.25274ZM18.02 24.2661H1.97995C1.30281 24.2661 0.75188 23.7285 0.75188 23.0675V1.93249C0.75188 1.27153 1.30281 0.733855 1.97995 0.733855H14.0351V3.88943C14.0351 4.95499 14.9233 5.82192 16.015 5.82192H19.2481V23.0675C19.2481 23.7285 18.6972 24.2661 18.02 24.2661Z" fill="black"/>
+                                        </svg>
+                                      </td>
                                       <td valign="middle" v-else>
                                         <div class="d-flex align-items-center">
                                           <input type="text" v-model="detail.numberH" class="w-100 form-control form-control-sm custom-text-danger">hr
@@ -323,7 +321,7 @@
                                       <td v-else></td>
                                       <td valign="middle">{{ detail.totalPrice }}€</td>
                                       <td valign="middle">
-                                        <select class="w-100 form-control form-control-sm custom-text-danger" v-model="ouvrage.tax">
+                                        <select style="min-width: 40px" class="w-100 form-control form-control-sm custom-text-danger" v-model="detail.tax">
                                           <option :value="tax.value" v-for="(tax, taxIndex) in taxes" :key="taxIndex">{{ tax.display }} %</option>
                                         </select>                                          
                                       </td>
@@ -478,6 +476,11 @@
                                       </td>
                                       <td valign="middle">{{ detail.unit }}</td>
                                       <td valign="middle" class="text-center" v-if="detail.type != 'MO'"></td>
+                                      <td valign="middle" class="text-center" v-else-if="detail.type == 'COMMANDE FOURNISSEUR'">
+                                        <svg width="20" height="25" viewBox="0 0 20 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                          <path d="M19.9981 5.41835C19.9972 5.4093 19.9956 5.40049 19.994 5.39168C19.9935 5.38875 19.9932 5.38571 19.9926 5.38278C19.9905 5.37226 19.9877 5.36199 19.9847 5.35186C19.9843 5.35064 19.9841 5.34932 19.9837 5.34809C19.9804 5.33767 19.9766 5.3275 19.9724 5.31751C19.972 5.31649 19.9717 5.31541 19.9713 5.31438C19.9672 5.30484 19.9626 5.2956 19.9578 5.2865C19.957 5.28498 19.9563 5.28341 19.9555 5.2819C19.9509 5.27343 19.9457 5.26531 19.9405 5.25724C19.9391 5.25519 19.9379 5.25303 19.9366 5.25103C19.9314 5.24349 19.9258 5.23635 19.92 5.22921C19.9182 5.22686 19.9165 5.22441 19.9146 5.22211C19.9075 5.21365 19.8998 5.20558 19.892 5.19775C19.8913 5.19702 19.8907 5.19623 19.8899 5.1955L14.6769 0.107436C14.676 0.106556 14.675 0.105822 14.674 0.104941C14.6662 0.097456 14.6581 0.0902153 14.6497 0.0834149C14.6469 0.0812133 14.644 0.0793542 14.6412 0.0772505C14.6343 0.0720157 14.6274 0.0667808 14.6201 0.0620352C14.6176 0.0603718 14.6149 0.059002 14.6123 0.0573875C14.6045 0.052544 14.5967 0.0477495 14.5885 0.0434932C14.5867 0.0425636 14.5848 0.0417808 14.583 0.0409002C14.5739 0.0363503 14.5647 0.0319472 14.5552 0.0280822C14.554 0.027593 14.5527 0.0272505 14.5515 0.0267613C14.5414 0.0227984 14.5311 0.0190802 14.5206 0.0159491C14.5192 0.0155577 14.5179 0.0153131 14.5165 0.0149217C14.5062 0.0119863 14.4957 0.0092955 14.4851 0.00719178C14.4819 0.00655577 14.4786 0.00631115 14.4754 0.00577299C14.4666 0.00425636 14.4577 0.00273973 14.4486 0.0018591C14.4361 0.000636008 14.4236 0 14.411 0H1.97995C0.88822 0 0 0.866928 0 1.93249V23.0675C0 24.1331 0.88822 25 1.97995 25H18.02C19.1118 25 20 24.1331 20 23.0675V5.45499C20 5.44271 19.9993 5.43048 19.9981 5.41835ZM14.787 1.25274L18.7165 5.08806H16.015C15.3379 5.08806 14.787 4.55039 14.787 3.88943V1.25274ZM18.02 24.2661H1.97995C1.30281 24.2661 0.75188 23.7285 0.75188 23.0675V1.93249C0.75188 1.27153 1.30281 0.733855 1.97995 0.733855H14.0351V3.88943C14.0351 4.95499 14.9233 5.82192 16.015 5.82192H19.2481V23.0675C19.2481 23.7285 18.6972 24.2661 18.02 24.2661Z" fill="black"/>
+                                        </svg>
+                                      </td>
                                       <td valign="middle" v-else>
                                         <div class="d-flex align-items-center">
                                           <input type="text" v-model="detail.numberH" class="w-100 form-control form-control-sm custom-text-danger">hr
@@ -496,7 +499,7 @@
                                       <td v-else></td>
                                       <td valign="middle">{{ detail.totalPrice }}€</td>
                                       <td valign="middle">
-                                        <select class="w-100 form-control form-control-sm custom-text-danger" v-model="ouvrage.tax">
+                                        <select style="min-width: 40px" class="w-100 form-control form-control-sm custom-text-danger" v-model="detail.tax">
                                           <option :value="tax.value" v-for="(tax, taxIndex) in taxes" :key="taxIndex">{{ tax.display }} %</option>
                                         </select>                                          
                                       </td>
@@ -651,6 +654,11 @@
                                       </td>
                                       <td valign="middle">{{ detail.unit }}</td>
                                       <td valign="middle" class="text-center" v-if="detail.type != 'MO'"></td>
+                                      <td valign="middle" class="text-center" v-else-if="detail.type == 'COMMANDE FOURNISSEUR'">
+                                        <svg width="20" height="25" viewBox="0 0 20 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                          <path d="M19.9981 5.41835C19.9972 5.4093 19.9956 5.40049 19.994 5.39168C19.9935 5.38875 19.9932 5.38571 19.9926 5.38278C19.9905 5.37226 19.9877 5.36199 19.9847 5.35186C19.9843 5.35064 19.9841 5.34932 19.9837 5.34809C19.9804 5.33767 19.9766 5.3275 19.9724 5.31751C19.972 5.31649 19.9717 5.31541 19.9713 5.31438C19.9672 5.30484 19.9626 5.2956 19.9578 5.2865C19.957 5.28498 19.9563 5.28341 19.9555 5.2819C19.9509 5.27343 19.9457 5.26531 19.9405 5.25724C19.9391 5.25519 19.9379 5.25303 19.9366 5.25103C19.9314 5.24349 19.9258 5.23635 19.92 5.22921C19.9182 5.22686 19.9165 5.22441 19.9146 5.22211C19.9075 5.21365 19.8998 5.20558 19.892 5.19775C19.8913 5.19702 19.8907 5.19623 19.8899 5.1955L14.6769 0.107436C14.676 0.106556 14.675 0.105822 14.674 0.104941C14.6662 0.097456 14.6581 0.0902153 14.6497 0.0834149C14.6469 0.0812133 14.644 0.0793542 14.6412 0.0772505C14.6343 0.0720157 14.6274 0.0667808 14.6201 0.0620352C14.6176 0.0603718 14.6149 0.059002 14.6123 0.0573875C14.6045 0.052544 14.5967 0.0477495 14.5885 0.0434932C14.5867 0.0425636 14.5848 0.0417808 14.583 0.0409002C14.5739 0.0363503 14.5647 0.0319472 14.5552 0.0280822C14.554 0.027593 14.5527 0.0272505 14.5515 0.0267613C14.5414 0.0227984 14.5311 0.0190802 14.5206 0.0159491C14.5192 0.0155577 14.5179 0.0153131 14.5165 0.0149217C14.5062 0.0119863 14.4957 0.0092955 14.4851 0.00719178C14.4819 0.00655577 14.4786 0.00631115 14.4754 0.00577299C14.4666 0.00425636 14.4577 0.00273973 14.4486 0.0018591C14.4361 0.000636008 14.4236 0 14.411 0H1.97995C0.88822 0 0 0.866928 0 1.93249V23.0675C0 24.1331 0.88822 25 1.97995 25H18.02C19.1118 25 20 24.1331 20 23.0675V5.45499C20 5.44271 19.9993 5.43048 19.9981 5.41835ZM14.787 1.25274L18.7165 5.08806H16.015C15.3379 5.08806 14.787 4.55039 14.787 3.88943V1.25274ZM18.02 24.2661H1.97995C1.30281 24.2661 0.75188 23.7285 0.75188 23.0675V1.93249C0.75188 1.27153 1.30281 0.733855 1.97995 0.733855H14.0351V3.88943C14.0351 4.95499 14.9233 5.82192 16.015 5.82192H19.2481V23.0675C19.2481 23.7285 18.6972 24.2661 18.02 24.2661Z" fill="black"/>
+                                        </svg>
+                                      </td>
                                       <td valign="middle" v-else>
                                         <div class="d-flex align-items-center">
                                           <input type="text" v-model="detail.numberH" class="w-100 form-control form-control-sm custom-text-danger">hr
@@ -669,7 +677,7 @@
                                       <td v-else></td>
                                       <td valign="middle">{{ detail.totalPrice }}€</td>
                                       <td valign="middle">
-                                        <select class="w-100 form-control form-control-sm custom-text-danger" v-model="ouvrage.tax">
+                                        <select style="min-width: 40px" class="w-100 form-control form-control-sm custom-text-danger" v-model="detail.tax">
                                           <option :value="tax.value" v-for="(tax, taxIndex) in taxes" :key="taxIndex">{{ tax.display }} %</option>
                                         </select>                                          
                                       </td>
@@ -893,6 +901,7 @@ export default {
     const taskModal = ref(null);
     const gedCatId = ref(0);
     const gedCats = ref([]);
+    const roofAccesses = ref([]);
     const form = ref({
       customer: {
         id: '',
@@ -926,8 +935,8 @@ export default {
         {
           edit: false,
           name: 'Zone 1',
-          roofAccess: 'Intérieur',
-          roofAccess1: 'Echelle',
+          roofAccess: 0,
+          height: '',
           gedCats: [],
           installOuvrage: {
             name: 'Installation',
@@ -1065,6 +1074,7 @@ export default {
       axios.post('/get-ged-categories').then((res)=>{
         gedCats.value = res.data.gedCats;
         taxes.value = res.data.taxes;
+        roofAccesses.value = res.data.roofAccesses;
         form.value.zones.forEach(element => {
           element.gedCats = res.data.gedCats;
         });
@@ -1080,10 +1090,12 @@ export default {
     const previewFile = ()=>{
       let images = file.value.files;
       for (let i = 0; i < images.length; i++) {
+        console.log(images[i]);
         let reader = new FileReader();
         reader.onload = (e) => {
           form.value.zones[zoneIndex.value].gedCats[gedCatId.value][0].items.push({
             base64data: reader.result,
+            fileName: images[i],
           })
         };
         reader.readAsDataURL(images[i]);
@@ -1149,7 +1161,7 @@ export default {
       form.value.customer = data;
 
       // loading customer addresses
-      store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Loading customer addresses..']);
+      store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Chargement des adresses des clients..']);
       axios.post('/get-customer-addresses', { customer_id: data.id }).then((res)=>{
         customerAddresses.value = res.data;
       }).catch((error)=>{
@@ -1170,7 +1182,7 @@ export default {
 
     // get details for a ouvrage selected
     const selectedOuvrage = (data)=>{
-      store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Adding selected Ouvrage..']);
+      store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Ajout de l`Ouvrage sélectionné..']);
       axios.post('/get-ouvrage', { id: data.ouvrageId, qtyOuvrage: data.qtyOuvrage }).then((res)=>{
         if( data.type == 'installation' ){
           form.value.zones[data.zoneIndex].installOuvrage.ouvrages.push(res.data);
@@ -1240,7 +1252,8 @@ export default {
           tax: supplier.tax,
           unitPrice: 0,
           marge: 0,
-          type: 'supplier',
+          type: supplier.type,
+          base64: supplier.base64,
           unit: 'UN',
           qtyOuvrage: supplier.qtyOuvrage,
           totalPrice: 0,
@@ -1252,7 +1265,7 @@ export default {
           tax: supplier.tax,
           unitPrice: 0,
           marge: 0,
-          type: 'supplier',
+          type: supplier.type,
           unit: 'UN',
           qtyOuvrage: supplier.qtyOuvrage,
           totalPrice: 0,
@@ -1264,7 +1277,7 @@ export default {
           tax: supplier.tax,
           unitPrice: 0,
           marge: 0,
-          type: 'supplier',
+          type: supplier.type,
           unit: 'UN',
           qtyOuvrage: supplier.qtyOuvrage,
           totalPrice: 0,
@@ -1389,8 +1402,8 @@ export default {
       form.value.zones.push(
         {
           name: 'zone '+ (form.value.zones.length+1),
-          roofAccess: 'Intérieur',
-          roofAccess1: 'Echelle',
+          roofAccess: 0,
+          height: '',
           edit: false,
           gedCats: gedCats.value,
           installOuvrage: {
@@ -1424,9 +1437,27 @@ export default {
 
     // remove a zone
     const removeZone = (selectedIndex)=>{
-      form.value.zones = form.value.zones.filter((item, index)=>{
-        return index != selectedIndex;
-      });
+      Swal.fire({
+        title: 'Es-tu sûr?',
+        text: "Vous ne pourrez pas revenir en arrière !",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#42A71E',
+        cancelButtonColor: '#E8581B',
+        cancelButtonText: 'annuler',
+        confirmButtonText: 'Oui, supprimez-le!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          form.value.zones = form.value.zones.filter((item, index)=>{
+            return index != selectedIndex;
+          });
+          Swal.fire(
+            'Supprimé!',
+            "Louvrage a été supprimé.",
+            'success'
+          )          
+        }
+      });      
     }
 
     // activate the ouvrage
@@ -1464,6 +1495,7 @@ export default {
         showCancelButton: true,
         confirmButtonColor: '#42A71E',
         cancelButtonColor: '#E8581B',
+        cancelButtonText: 'annuler',
         confirmButtonText: 'Oui, supprimez-le!'
       }).then((result) => {
         if (result.isConfirmed) {
@@ -1488,7 +1520,7 @@ export default {
             });            
           }
         }
-      })      
+      });
     }
     // remove detail from task
     const removeOuvrageDetail = (zoneIndex, ouvrageType, ouvrageIndex, taskIndex, detailIndex)=>{
@@ -1499,6 +1531,7 @@ export default {
         showCancelButton: true,
         confirmButtonColor: '#42A71E',
         cancelButtonColor: '#E8581B',
+        cancelButtonText: 'annuler',        
         confirmButtonText: 'Oui, supprimez-le!'
       }).then((result) => {
         if (result.isConfirmed) {
@@ -1527,7 +1560,7 @@ export default {
     }
     // save Devis
     const storeDevis = ()=>{
-      store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Storing a Devis...']);
+      store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Stocker un Devis...']);
       axios.post('/store-devis', form.value).then((res)=>{
         console.log(res.data);
       }).catch((error)=>{
@@ -1606,6 +1639,7 @@ export default {
     return {
       breadcrumbs,
       taxes,
+      roofAccesses,
       customerAddresses,
       devisCreateStep,
       form,
@@ -1736,6 +1770,7 @@ export default {
       box-shadow: none;
       background: transparent;
       text-align: center;
+      padding: 0;
       &:focus{
         outline: none;
         box-shadow: none;        

@@ -12,15 +12,20 @@
                         <div class="result-panel">
                             <div class="ouvrage-wrap">
                                 <div class="ouvrage-item">
-                                    <h3 class="mt-3 mulish-extrabold font-16">Ajout produit vide</h3>
+                                    <h3 class="mt-3 mulish-extrabold font-16 px-5">Ajout produit vide</h3>
                                     <div class="almarai-light font-14 text-justify mt-5 px-5">
                                         Mise en place d'un complexe de sur toiture de type ONDUCLAIR RENOV FC avec isolation comprenant nettoyage du support, mise en place isolation polystyrène 50mm et plaque polystyrène opaque compris fixation 
                                     </div>
                                     <div class="d-flex justify-content-between px-5 mt-3">
                                         <div class="col-6 d-flex justify-content-between">
                                             <div class="form-group col-5">
-                                                <label for="unit">Unité</label>
-                                                <input type="text" id="unit" @change="setUnitCode" v-model="product.unit_id" class="form-control">
+                                                <SelectBox :label="'Unité'" 
+                                                    v-model="product.unit_id" 
+                                                    :options="units"
+                                                    :name="'Unité'"
+                                                    :classnames="'w-100'"
+                                                    :placeholder="'Unité'"
+                                                />  
                                             </div>
                                             <div class="form-group col-5">
                                                 <label for="unit">Quantité</label>
@@ -62,7 +67,7 @@
     </Teleport>
 </template>
 <script>
-    import {ref, onMounted} from 'vue';
+    import {ref, onMounted, watch} from 'vue';
     import axios from 'axios';
     import SelectBox from '../../components/miscellaneous/SelectBox';
     export default {
@@ -106,11 +111,11 @@
                 showModal.value = false;
                 emit('selectedEmptyProduct', data.value, product.value);
             }        
-            const setUnitCode = ()=>{
+            watch(() => product, (newValue, oldValue) => {
                 product.value.unit = units.value.filter((item)=>{
                     return item.value = product.value.unit_id
                 }).display;
-            }
+            },{ deep: true });
             return {
                 units,
                 product,
@@ -118,7 +123,6 @@
                 openModal,
                 closeModal,
                 confirm,
-                setUnitCode
             }
         }
     }
@@ -194,7 +198,6 @@
     background: rgba(0, 0, 0, 0.3);
     .search-panel{
         width: 600px;
-        height: 500px;
         .search-header{
             .close-icon{
                 position: absolute;
@@ -224,18 +227,6 @@
                     background: #A1FA9F;
                     color: #3E9A4D;
                 }
-            }
-        }
-        .search-part{
-            width: 332px;
-            height: 39px;
-            border: 1px solid #000000;
-            border-radius: 10px;
-            input,
-            input:focus{
-                border: none;
-                outline: none;
-                box-shadow: none;
             }
         }
         .ouvrage-wrap{

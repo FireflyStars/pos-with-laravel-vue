@@ -11,53 +11,41 @@
                     </div>
                     <div class="search-body">
                         <div class="result-panel mt-4">
-                            <div class="px-2">
-                                <div class="d-flex px-3 justify-content-between">
-                                    <div class="col-5">
-                                        <SelectBox :label="''" 
-                                            v-model="supplier.vendor" 
-                                            :options="suppliers"
-                                            :name="'Fournisseur'"
-                                            :classnames="'w-100'"
-                                            :placeholder="'Fournisseur'"
-                                        />
-                                    </div>
-                                    <div class="col-5">
-                                        <input type="text" v-model="supplier.amountExcludeTax" placeholder="Montant HT" class="form-control form-control-sm">
-                                    </div>
+                            <div class="d-flex justify-content-between">
+                                <div class="col-5">
+                                    <SelectBox :label="''" 
+                                        v-model="supplier.supplier_id" 
+                                        :options="suppliers"
+                                        :name="'Fournisseur'"
+                                        :classnames="'w-100'"
+                                        :placeholder="'Fournisseur'"
+                                    />
                                 </div>
-                                <div class="d-flex px-3 mt-3 justify-content-between">
-                                    <div class="col-5">
-                                        <input type="date" v-model="supplier.date" placeholder="Date" class="form-control form-control-sm">
-                                    </div>
-                                    <div class="col-5">
-                                        <SelectBox :label="''" 
-                                            v-model="supplier.tax" 
-                                            :options="taxes"
-                                            :name="'Taxe'"
-                                            :classnames="'w-100'"
-                                            :placeholder="'Taxe'"
-                                        />                                        
-                                    </div>
+                                <div class="col-5">
+                                    <input type="text" v-model="supplier.amountExcludeTax" placeholder="Montant HT" class="form-control form-control-sm">
                                 </div>
-                                <div class="d-flex px-3 mt-3 justify-content-between">
-                                    <div class="col-5">
-                                        <SelectBox :label="''" 
-                                            v-model="supplier.file" 
-                                            :options="[ 
-                                                { display:'Intérieur', value: 'Intérieur' }, 
-                                                { display:'Extérieur', value: 'Extérieur' },
-                                                { display:'Pas d’accès', value: 'Pas d’accès' }
-                                            ]"
-                                            :name="'Fichier'"
-                                            :classnames="'w-100'"
-                                            :placeholder="'Fichier'"
-                                        />                                        
-                                    </div>
-                                    <div class="col-5">
-                                        <input type="date" v-model="supplier.marge" placeholder="Marge" class="form-control form-control-sm">
-                                    </div>                                    
+                            </div>
+                            <div class="d-flex mt-3 justify-content-between">
+                                <div class="col-5">
+                                    <input type="date" v-model="supplier.date" placeholder="Date" class="form-control form-control-sm">
                                 </div>
+                                <div class="col-5">
+                                    <SelectBox :label="''" 
+                                        v-model="supplier.tax" 
+                                        :options="taxes"
+                                        :name="'Taxe'"
+                                        :classnames="'w-100'"
+                                        :placeholder="'Taxe'"
+                                    />                                        
+                                </div>
+                            </div>
+                            <div class="d-flex mt-3 justify-content-between">
+                                <div class="col-5">
+                                    <input type="file" @change="readFile" accept="application/pdf" id="commande-file">
+                                </div>
+                                <div class="col-5">
+                                    <input type="text" v-model="supplier.marge" placeholder="Marge" class="form-control form-control-sm">
+                                </div>                                    
                             </div>
                             <div class="btns mt-4 d-flex justify-content-between px-5">
                                 <button class="custom-btn btn-cancel" @click="closeModal">Annuler</button>
@@ -99,11 +87,12 @@ export default {
             showModal.value = !showModal.value;
         }
         const supplier = ref({
-            vendor: '',
-            amountExcludeTax: '',
-            date: '',
+            supplier_id: '',
+            type: 'COMMANDE FOURNISSEUR',
+            totalPrice: '',
+            base64: '',
+            datesupplier: '',
             tax: '',
-            file: '',
             marge: '',
             zoneIndex: '',
             ouvrageType: '',
@@ -112,23 +101,33 @@ export default {
             qtyOuvrage: '',
         })
         const showModal = ref(false);
-        const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage, taxes)=>{
+        const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage, tax)=>{
             supplier.value.zoneIndex = zoneIndex;
             supplier.value.ouvrageType = ouvrageType;
             supplier.value.ouvrageId = ouvrageId;
             supplier.value.taskId = taskId;
             supplier.value.qtyOuvrage = qtyOuvrage;
             showModal.value = !showModal.value;
-            taxes.value = taxes;
+            taxes.value = tax;
         }  
         const selectSupplier = (index)=>{
             showModal.value = false;
             emit('selectedSupplier', supplier.value);
         }
+        const readFile = (event)=>{
+            let file = event.target.files[0];
+            let reader = new FileReader();
+            reader.onload = (e) => {
+               supplier.value.base64 = reader.result; 
+            };
+            reader.readAsDataURL(file);
+        }
         return {
             taxes,
+            suppliers,
             supplier,
             showModal,
+            readFile,
             closeModal,
             openModal,
             selectSupplier,
@@ -173,8 +172,7 @@ export default {
     z-index: 11;
     background: rgba(0, 0, 0, 0.3);
     .search-panel{
-        width: 700px;
-        height: 500px;
+        width: 600px;
         padding: 40px 35px;
         .search-header{
             .close-icon{
@@ -184,8 +182,6 @@ export default {
             }
         }
         .result-panel{
-            height: 400px;
-            overflow-y: auto;
             .btns{
                 .custom-btn{
                     width: 96px;

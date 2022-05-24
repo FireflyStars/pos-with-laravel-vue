@@ -8,6 +8,9 @@ use App\Models\OrderState;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Auth;
+
 
 class DevisController extends Controller
 {
@@ -97,7 +100,8 @@ class DevisController extends Controller
         }
         return response()->json([
             'gedCats'   => $categories->groupBy('id'),
-            'taxes'     => DB::table('taxes')->select('id as value', DB::raw('taux * 100 as display'))->get(),
+            'taxes'     => DB::table('taxes')->select('id as value', DB::raw('CEIL(taux * 100) as display'))->get(),
+            'roofAccesses'     => DB::table('moyenacces')->select('id as value', 'name as display')->get(),
         ]);
     }
 
@@ -232,10 +236,10 @@ class DevisController extends Controller
      */
     public function getInfoForEmtpyOuvrage(){
         return response()->json([
-            'units' =>  DB::table('units')->select('code as display', 'id as value')->get(),
-            'toits' =>  DB::table('ouvrage_toit')->select('name as display', 'id as value')->get(),
-            'metiers' =>  DB::table('ouvrage_metier')->select('name as display', 'id as value')->get(),
-            'prestations' =>  DB::table('ouvrage_prestation')->select('name as display', 'id as value')->get(),
+            'units'         =>  DB::table('units')->select('code as display', 'id as value')->get(),
+            'toits'         =>  DB::table('ouvrage_toit')->select('name as display', 'id as value')->get(),
+            'metiers'       =>  DB::table('ouvrage_metier')->select('name as display', 'id as value')->get(),
+            'prestations'   =>  DB::table('ouvrage_prestation')->select('name as display', 'id as value')->get(),
         ]);
     }
 
@@ -251,10 +255,45 @@ class DevisController extends Controller
      * Save a new devis
      */
     public function storeDevis(Request $request){
+        foreach ($request->zones as $zone) {
+            foreach ($zone['gedCats'] as $gedCat) {
+                foreach ($gedCat[0]['items'] as $file) {
+                    $data = $file['base64data'];
+                    if ( preg_match('/^data:image\/(\w+);base64,/', $data, $type) ) {
+                        $data = substr($data, strpos($data, ',') + 1);
+                        $type = strtolower($type[1]); // jpg, png, gif
+                    }else if(preg_match('/^data:text\/(\w+);base64,/', $data, $type)){
+                        $data = substr($data, strpos($data, ',') + 1);
+                        $type = 'txt';
+                    }else if(preg_match('/^data:application\/rtf;base64,/', $data, $type)){
+                        $data = substr($data, strpos($data, ',') + 1);
+                        $type = 'rtf';
+                    }else if(preg_match('/^data:application\/pdf;base64,/', $data, $type)){
+                        $data = substr($data, strpos($data, ',') + 1);
+                        $type = 'pdf';
+                    }else if(preg_match('/^data:application\/octet-stream;base64,/', $data, $type)){
+                        $data = substr($data, strpos($data, ',') + 1);
+                        $type = 'docx';
+                    }else if(preg_match('/^data:application\/msword;base64,/', $data, $type)){
+                        $data = substr($data, strpos($data, ',') + 1);
+                        $type = 'doc';
+                    }else{
+                        throw new \Exception('did not match data URI with allowed data');
+                    }
+                    if(!File::isDirectory(public_path('GED/'))){
+                        File::makeDirectory(public_path('GED/'), 0755, true, true);
+                    }
+                    $data = str_replace( ' ', '+', $data );
+                    $data = base64_decode($data);                    
+                    $uuid_filename = DB::select('select UUID() AS uuid')[0]->uuid;
+                    file_put_contents(public_path("/GED/{$uuid_filename}.{$type}"), $data);
+                }
+            }
+        }
         $orderData = [
             'lang_id'           => 1,
-            'affiliate_id'      => auth()->user->affiliate->id,
-            'reponsable_id'     => auth()->user->id,
+            'affiliate_id'      => Auth::user()->affiliate->id,
+            'reponsable_id'     => Auth::id(),
             'order_state_id '   => 2,
             'total '            => ($request->totalPriceForInstall + $request->totalPriceForSecurity + $request->totalPriceForSecurity),
             'address_id'        => $request->address['id'],
@@ -273,8 +312,8 @@ class DevisController extends Controller
                 'latitude'      =>  '',
                 'longitude'     =>  '',
                 'description'   =>  '',
-                'hauteur'       =>  0,
-                'moyenacces_id' =>  '',
+                'hauteur'       =>  $zone['height'],
+                'moyenacces_id' =>  $zone['roofAccess'],
                 'name'          =>  $zone['name'],
                 'created_at'    =>  Carbon::now(),
                 'updated_at'    =>  Carbon::now(),
@@ -332,7 +371,6 @@ class DevisController extends Controller
                                 'textcustomer'      => '',
                                 'textchargeaffaire' => '',
                                 'textoperator'      => '',
-                                'orderfile'         => '',
                                 'qty'               => $detail['qty'],
                                 'numberh'           => $detail['numberH'],
                                 'unitprice'         => $detail['unitPrice'],
@@ -345,32 +383,24 @@ class DevisController extends Controller
                                 'unit_id'           => $detail['unit_id'],
                                 'priceachat'        => $detail['productPrice'],
                             ];
+                            if($detail['type'] == 'COMMANDE FOURNISSEUR'){
+                                if(preg_match('/^data:application\/pdf;base64,/', $detail['base64'], $type)){
+                                    $data = substr($detail['base64'], strpos($detail['base64'], ',') + 1);
+                                    $type = 'pdf';
+                                    if(!File::isDirectory(public_path('SupplierOrder/'))){
+                                        File::makeDirectory(public_path('SupplierOrder/'), 0755, true, true);
+                                    }
+                                    $data = str_replace( ' ', '+', $data );
+                                    $data = base64_decode($data);                    
+                                    $uuid_filename = DB::select('select UUID() AS uuid')[0]->uuid;
+                                    $orderFilePath = "/SupplierOrder/{$uuid_filename}.{$type}";
+                                    file_put_contents(public_path($orderFilePath), $data);                                
+                                    $detailData['orderfile'] = $orderFilePath;
+                                }
+                            }
                             DB::table('order_ouvrage_detail')->insert($detailData);
                         }
                     }
-                }
-            }
-            foreach ($zone['gedCats'] as $gedCat) {
-                foreach ($gedCat[0]['items'] as $file) {
-                    $data = $file['base64data'];
-                    if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
-                        $data = substr($data, strpos($data, ',') + 1);
-                        $type = strtolower($type[1]); // jpg, png, gif
-                    
-                        if (!in_array($type, [ 'jpg', 'jpeg', 'gif', 'png' ])) {
-                            throw new \Exception('invalid image type');
-                        }
-                        $data = str_replace( ' ', '+', $data );
-                        $data = base64_decode($data);
-                    
-                        if ($data === false) {
-                            throw new \Exception('base64_decode failed');
-                        }
-                    } else {
-                        throw new \Exception('did not match data URI with image data');
-                    }
-                    $uuid_filename = DB::select('select UUID() AS uuid')[0]->uuid;
-                    file_put_contents(public_path('/GED'.$uuid_filename).".{$type}", $data);
                 }
             }
         }
