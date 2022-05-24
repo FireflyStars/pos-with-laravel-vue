@@ -33,8 +33,6 @@ trait GedFileProcessor
     }
 
     public function storeFile($datauri_string,$filename,$gedDetail_id){
-
-       
         //check file extension
         $file_extension='';
         $pathinfo=pathinfo($filename);
@@ -42,25 +40,23 @@ trait GedFileProcessor
           $file_extension=$pathinfo['extension'];
         }
         if($file_extension==''){
-                //if no extension then try to check data for image
-                //check for PNG,JPEG,TIFF and GIF
-                $data=explode(';',$datauri_string);
-         
-                $data=$data[0];
-                $data=explode('/',$data);
-                if(isset($data[1])){
+            //if no extension then try to check data for image
+            //check for PNG,JPEG,TIFF and GIF
+            $data=explode(';',$datauri_string);
+        
+            $data=$data[0];
+            $data=explode('/',$data);
+            if(isset($data[1])){
 
-                    if(in_array(strtolower($data[1]),$this->allowedImageFileExts)){
-                            $file_extension=$data[1];
-                            if($data[1]=='jpeg'){
-                                $file_extension='jpg';
-                            }
+                if(in_array(strtolower($data[1]),$this->allowedImageFileExts)){
+                    $file_extension=$data[1];
+                    if($data[1]=='jpeg'){
+                        $file_extension='jpg';
                     }
-
                 }
+
             }
-        
-        
+        }
             
         $path=$this->getDirectoryNameByGedDetailId($gedDetail_id);
         $data=explode(';',$datauri_string);    

@@ -1090,12 +1090,11 @@ export default {
     const previewFile = ()=>{
       let images = file.value.files;
       for (let i = 0; i < images.length; i++) {
-        console.log(images[i]);
         let reader = new FileReader();
         reader.onload = (e) => {
           form.value.zones[zoneIndex.value].gedCats[gedCatId.value][0].items.push({
             base64data: reader.result,
-            fileName: images[i],
+            fileName: images[i].name,
           })
         };
         reader.readAsDataURL(images[i]);

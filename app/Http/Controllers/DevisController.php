@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
 use App\Traits\Tools;
 use App\Models\OrderState;
 use Illuminate\Http\Request;
@@ -10,7 +9,11 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
-
+use App\Models\Ged;
+use App\Models\Order;
+use App\Models\OrderZone;
+use App\Models\GedCategory;
+use App\Models\GedDetail;
 
 class DevisController extends Controller
 {
@@ -255,41 +258,6 @@ class DevisController extends Controller
      * Save a new devis
      */
     public function storeDevis(Request $request){
-        foreach ($request->zones as $zone) {
-            foreach ($zone['gedCats'] as $gedCat) {
-                foreach ($gedCat[0]['items'] as $file) {
-                    $data = $file['base64data'];
-                    if ( preg_match('/^data:image\/(\w+);base64,/', $data, $type) ) {
-                        $data = substr($data, strpos($data, ',') + 1);
-                        $type = strtolower($type[1]); // jpg, png, gif
-                    }else if(preg_match('/^data:text\/(\w+);base64,/', $data, $type)){
-                        $data = substr($data, strpos($data, ',') + 1);
-                        $type = 'txt';
-                    }else if(preg_match('/^data:application\/rtf;base64,/', $data, $type)){
-                        $data = substr($data, strpos($data, ',') + 1);
-                        $type = 'rtf';
-                    }else if(preg_match('/^data:application\/pdf;base64,/', $data, $type)){
-                        $data = substr($data, strpos($data, ',') + 1);
-                        $type = 'pdf';
-                    }else if(preg_match('/^data:application\/octet-stream;base64,/', $data, $type)){
-                        $data = substr($data, strpos($data, ',') + 1);
-                        $type = 'docx';
-                    }else if(preg_match('/^data:application\/msword;base64,/', $data, $type)){
-                        $data = substr($data, strpos($data, ',') + 1);
-                        $type = 'doc';
-                    }else{
-                        throw new \Exception('did not match data URI with allowed data');
-                    }
-                    if(!File::isDirectory(public_path('GED/'))){
-                        File::makeDirectory(public_path('GED/'), 0755, true, true);
-                    }
-                    $data = str_replace( ' ', '+', $data );
-                    $data = base64_decode($data);                    
-                    $uuid_filename = DB::select('select UUID() AS uuid')[0]->uuid;
-                    file_put_contents(public_path("/GED/{$uuid_filename}.{$type}"), $data);
-                }
-            }
-        }
         $orderData = [
             'lang_id'           => 1,
             'affiliate_id'      => Auth::user()->affiliate->id,
@@ -306,6 +274,20 @@ class DevisController extends Controller
         ];
 
         $orderId = DB::table('orders')->insertGetId($orderData);
+        if(
+            ! Ged::where('user_id','=',Auth::id())
+                ->where('customer_id', $request->customer['id'])
+                ->where('order_id', $orderId)->exists()
+        ){
+            $zedData = [
+                'customer_id'   =>  $request->customer['id'],
+                'user_id'       =>  Auth::id(),
+                'order_id'      =>  $orderId,
+                'created_at'    =>  Carbon::now(),
+                'updated_at'    =>  Carbon::now(),
+            ];        
+            $gedId = DB::table('geds')->insertGetId($zedData);
+        }
         foreach ($request->zones as $zone) {
             $zoneData = [
                 'order_id'      =>  $orderId,
@@ -319,6 +301,30 @@ class DevisController extends Controller
                 'updated_at'    =>  Carbon::now(),
             ];
             $zoneId = DB::table('order_zones')->insertGetId($zoneData);
+            // save ged details
+            foreach ($zone['gedCats'] as $gedCatId=> $gedCat) {
+                foreach ($gedCat[0]['items'] as $file) {
+                    $gedDetail = new GedDetail();
+                    $gedDetail->ged_id = $gedId;
+                    $gedDetail->order_zone_id = $zoneId;
+                    $gedDetail->ged_category_id = $gedCatId;
+                    $gedDetail->user_id = Auth::id();
+                    $gedDetail->save();
+                    $gedDetail = $gedDetail->fresh();//retreve fresh object with all fields
+
+                    $file['base64data'];
+                    if( $gedDetail->file == null){//files can only be stored once to avoid duplicates;
+                        if(isset($file['base64data']) && !$this->isBlank($file['base64data'])){
+                            $storedFile = $this->storeFile($file['base64data'], $file['fileName'], $gedDetail->id);
+                            $gedDetail->file = $storedFile->file;
+                            $gedDetail->type = $storedFile->type;
+                            $gedDetail->storage_path = $storedFile->storage_path;
+                            $gedDetail->human_readable_filename = $storedFile->human_readable_filename;
+                        }
+                    }
+                    $gedDetail->save();
+                }
+            }            
             if( count($zone['installOuvrage']['ouvrages']) ){
                 $installationCat = [
                     'order_zone_id' =>  $zoneId,
