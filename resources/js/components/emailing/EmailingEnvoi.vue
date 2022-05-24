@@ -256,6 +256,7 @@ export default {
             fulldata: "",
             type: "",
             store: useStore(),
+            todoText:"",
         };
     },
 

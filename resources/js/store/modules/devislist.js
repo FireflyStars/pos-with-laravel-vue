@@ -21,6 +21,12 @@ export const devislist= {
                 }
 
             },
+            translations:{
+              group_item:'devis',
+              group_items:'devis',
+              footer_item:'ITEM',
+              footer_items:'ITEMS'
+            },
             item_route_name:"DevisDetail",// the route to trigger when a line is click 
             max_per_page:10,//required          
             identifier:"devislist_all",//required

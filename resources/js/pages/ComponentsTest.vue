@@ -33,7 +33,7 @@
                                 <div class="col m-2">
                                     <multi-select 
                                         id="multiSelect"
-                                        title="Statut"
+                                       
                                         width="116px"
                                         tagBackground="orange"
                                         tagColor="white"
