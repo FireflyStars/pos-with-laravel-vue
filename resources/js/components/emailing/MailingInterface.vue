@@ -13,7 +13,7 @@
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
     >
-        <form class="space-y-6" v-if="show === 'lettre'" >
+        <form class="space-y-6" v-if="show === 'lettre'">
             <div class="container">
              
                 <div class="row">
@@ -123,20 +123,23 @@
                             ></LettreAccompagnement>
                         </div>
                         </div>
-                        <button
+                        <!-- <button
                             class="button-valider type"
                             @click="exportToPDF()"
                         >
                             ENREGISTRER
-                        </button>
+                        </button> -->
 
-                    <button
-                        class="button-valider type extravalidbtn"
-                        type="button"
-                        @click="validate">
-                         <span>VALIDER</span>
-                         <Icon name="spinner" v-show="loading" style="font-size: 10px;"  />
-                    </button>
+                        <button
+                            class="button-valider type extravalidbtn"
+                            :class="{ 'cursor-not-allowed': loading || fetching }"
+                            type="button"
+                            @click="validate"
+                            :disabled="loading || fetching"
+                        >
+                            <span>VALIDER</span>
+                            <Icon name="spinner" v-show="loading" style="font-size: 10px;"  />
+                        </button>
 
                     </div>
                 </div>
@@ -242,10 +245,12 @@
                             >
                             </TemplateFlyer>
                         </div>
+
                         <button
                             class="button-valider type"
                             type="submit"
                             v-on:click="validate"
+                            
                         >
                             <span>VALIDER</span>
                             <Icon name="spinner" v-show="loading" style="font-size: 10px;"  />
@@ -312,6 +317,7 @@ export default {
         const my_name = localStorage.getItem("category");
 
         const loading = ref(false)
+        const fetching = ref(false)
         const input_expediteur = ref("La Compagnie des Toitsxxx");
         const input_adresse = ref("1 Rue Jean-Baptiste Colbert");
         const input_coord = ref("01 60 65 04 70");
@@ -338,15 +344,21 @@ export default {
         });
         onMounted(() => {
           
-          const campagne_id=route.params.cible_id;
-
+            const campagne_id = route.params.cible_id;
+            
+            fetching.value = true
             axios
                 .get("/lettredata/" + campagne_id)
-                .then((res) => {
-                    input_content.value = res.data.content;
-                         console.log(input_content.value);
-                         state.content=input_content.value;
-                });
+                .then(({ data }) => {
+                    input_content.value = data.content
+                    state.content = input_content.value
+                    fetching.value = false
+                })
+                .catch(e => {
+                    fetching.value = false
+                })
+
+
         });
    
         const state = reactive({
@@ -473,23 +485,24 @@ export default {
         }
 
         async function validate() {
+            
+            if(loading.value || fetching.value) return
 
             if(show == 'lettre') {
                 try {
                     loading.value = true
-                    await axios.post(`/save-letter-pdf/${props.cible_id}`, {
+                    await axios.post(`/save-letter-settings/${props.cible_id}`, {
                         input_coord: input_coord.value,
                         input_email: input_email.value,
                         input_content: input_content.value,
                     })
                     loading.value = false
+                    router.go(-1)
                 }
                 catch(e) {
                     loading.value = false
                     throw e
                 }
-
-                router.go(-1)
 
                 return
 

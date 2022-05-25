@@ -9,7 +9,6 @@
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
         
         body {
@@ -17,6 +16,8 @@
             width: 100%;
             height: 100%;
             font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
         .contenu {
@@ -35,6 +36,7 @@
             word-wrap: break-word !important;
             line-height: 1.7;
             padding-right: 4rem;
+            text-align: justify;
         }
 
         .text_footer {
@@ -82,23 +84,27 @@
     @foreach ($campagne->campagneCible as $cible)
         <?php
             $break_rule = $loop->last ? 'avoid-page': 'always';
-            $background = $builder->convert_base64(rtrim(public_path(), '/') . '/' . 'images/letter-background.jpg');
+            $background = $builder->convert_base64(rtrim(public_path(), '/') . '/' . 'images/background_letter.jpg');
         ?>
-
         <div    
             class="template-email" 
             style="
                 page-break-after: {{ $break_rule }} !important;
-                background: url('{{ $background }}');
-                background-repeat: no-repeat;
-                background-size: cover;
-                background-position: left top;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
             "
         >
+            <img 
+                src="{{ $background }}" 
+                alt="Letter Background" 
+                style="width: 100%; height: 100%; position: fixed; z-index: -1; object-fit: cover;"
+            >
             
             <div class="contenu">
         
-                <div style="margin-top: 6rem;">
+                <div style="margin-top: 7rem;">
                     <div class="column" style="float: left">
                         <div>
                             <b>LA COMPAGNIE DES TOITS</b>
@@ -113,10 +119,12 @@
                     <div class="column" style="margin-top: 4.2rem; float: left; margin-left: 6rem;">
                         <div>{{ $cible->company }}</div>
                         <div>{{ $cible->firstname . " " . $cible->lastname }}</div>
-                        <div>{{ $cible->address1 . " " . $cible->address2 }}</div>
+                        @if($cible->address1)<div>{{ $cible->address1 }}</div>@endif
+                        @if($cible->address2)<div>{{ $cible->address2 }}</div>@endif
+                        @if($cible->address3)<div>{{ $cible->address3 }}</div>@endif
                         <div>{{ $cible->postcode . " " . $cible->city }}</div>
                         <div style="margin-top: 3rem;">
-                            {{ optional($campagne->affiliate)->city }}, {{ now()->locale('fr_FR')}}
+                            {{ optional($campagne->affiliate)->city }}, {{ now()->format('d/m/Y') }}
                         </div>
                     </div>
                 </div>
@@ -127,7 +135,7 @@
                     {{ optional($cible->contact)->gender ?? 'Mrs' }},
                 </div>
 
-                <div class="content">
+                <div class="content" style="margin-right: 4rem;">
                     {!! $campagne->lettreaccompagnement !!}
                 </div>
 

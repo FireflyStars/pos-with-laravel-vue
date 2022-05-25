@@ -171,9 +171,12 @@
 
                         <button
                             class="button type"
+                            :class="{ 'cursor-not-allowed': loading }"
                             v-on:click="validateAndSendEmail"
+                            :disabled="loading"
                         >
-                            VALIDER
+                            <span>VALIDER</span>
+                            <Icon name="spinner" v-show="loading" style="font-size: 10px;"  />
                         </button>
 
                     </div>
@@ -239,6 +242,7 @@ export default {
 
 
         const validateAndSendEmail = async () => {
+            if(loading.value) return
             try {
                 loading.value = true
                 await axios.post(`/validate-and-send-email/${props.cible_id}`)
@@ -249,15 +253,6 @@ export default {
                 throw e
             }
         }
-
-
-
-
-
-
-
-
-
 
 
    const showcontainer = ref(false);
@@ -322,6 +317,7 @@ export default {
         }
 
         return {
+            loading,
             validateAndSendEmail,
             showcontainer,
             check_name,
@@ -467,6 +463,10 @@ export default {
     width: 117px;
     height: 100%;
     margin-left: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
 }
 .type {
     font-size: x-small;

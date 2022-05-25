@@ -46,7 +46,10 @@ Route::get('/search', [SearchController::class, 'search']);
 Route::get('/search-append', [SearchController::class, 'search_append']);
 
 Route::post('/save-letter-pdf/{campagne}', [CompagneController::class, 'save_letter_pdf']);
+Route::post('/save-letter-settings/{campagne}', [CompagneController::class, 'save_letter_settings']);
+Route::get('/stream-letter-pdf/{campagne}', [CompagneController::class, 'stream_letter_pdf']);
 Route::post('/save-flyer-pdf/{campagne}', [CompagneController::class, 'save_flyer_pdf']);
+Route::get('/stream-flyer-pdf/{campagne}', [CompagneController::class, 'stream_flyer_pdf']);
 Route::post('/save-mail-csv/{campagne}', [CompagneController::class, 'generate_mail_csv_and_store']);
 Route::post('/validate-and-send-email/{campagne}', [CompagneController::class, 'validate_and_send_email']);
 Route::get('/download-resource-file', [CompagneController::class, 'download_resource_file']);
