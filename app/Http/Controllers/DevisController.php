@@ -299,8 +299,8 @@ class DevisController extends Controller
         foreach ($request->zones as $zone) {
             $zoneData = [
                 'order_id'      =>  $orderId,
-                'latitude'      =>  '',
-                'longitude'     =>  '',
+                'latitude'      =>  $request->address['lat'],
+                'longitude'     =>  $request->address['lon'],
                 'description'   =>  '',
                 'hauteur'       =>  $zone['height'],
                 'moyenacces_id' =>  $zone['roofAccess'],

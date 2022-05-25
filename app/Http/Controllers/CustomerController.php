@@ -129,7 +129,7 @@ class CustomerController extends Controller
                     ->select( 'customers.company', 'customers.raisonsociale', 'group.Name as group',
                         DB::raw('CONCAT(customers.firstname, " ", customers.name) as contact'),
                         'customers.telephone', 'customers.email', 'customers.naf', 'customers.siret',
-                        'taxes.taux as tax', 'customers.id'
+                        DB::raw('taxes.taux * 100 as tax'), 'customers.id'
                     )->where('customers.firstname', 'like', '%'.$request->search.'%')->orWhere('customers.name', 'like', '%'.$request->search.'%');
 
         return response()->json([
@@ -145,7 +145,7 @@ class CustomerController extends Controller
         $addresses = DB::table('addresses')->join('address_type', 'addresses.address_type_id', '=', 'address_type.id')
                     ->select( 
                         DB::raw('CONCAT(addresses.firstname, " ", addresses.lastname) as name'), 'addresses.address1', 'addresses.address2',
-                        'addresses.postcode', 'addresses.city', 'address_type.name as addressType', 'addresses.id'
+                        'addresses.postcode', 'addresses.city', 'address_type.name as addressType', 'addresses.id', 'latitude as lat', 'longitude as lon'
                     )
                     ->where('customer_id', $request->customer_id)
                     ->get();

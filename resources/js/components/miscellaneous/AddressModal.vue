@@ -51,13 +51,13 @@
                                     </div>
                                 </div>
                                 <div class="col-6 ps-3 d-flex">
-                                    <div class="col-4">
+                                    <div class="col-8">
                                         <div class="form-group">
                                             <label for="">CODE POSTAL</label>
-                                            <input type="text" v-model="address.postCode" class="form-control">
+                                            <input type="text" ref="googleAddressInput" v-model="address.postcode" class="form-control">
                                         </div>
                                     </div>
-                                    <div class="col-8 ps-3">
+                                    <div class="col-4 ps-3">
                                         <div class="form-group">
                                             <label for="">VILLE</label>
                                             <input type="text" v-model="address.city" class="form-control">
@@ -88,7 +88,7 @@
 </template>
 <script>
 
-import {onMounted, ref} from 'vue';
+import {nextTick, onMounted, ref} from 'vue';
 import axios from 'axios';
 import SelectBox from '../../components/miscellaneous/SelectBox';
 import {     
@@ -109,6 +109,7 @@ export default {
     },
     setup(props, { emit }){
         const store = useStore();
+        const googleAddressInput = ref(null);
         const addressTypes = ref([]);
         const address = ref(
             {
@@ -122,6 +123,8 @@ export default {
                 address3: '',
                 postcode: '',
                 city: '',
+                lat: '',
+                lon: '',
             }
         );
         onMounted(()=>{
@@ -131,13 +134,36 @@ export default {
                 console.log(errors);
             }).finally(()=>{
 
-            })            
+            })    
         })
+        // google address autocomplete for delivery address
+        const setAddress = ( address_components )=>{
+            address_components.forEach(component => {
+                const type = component.types[0];
+                if(type == "postal_code"){
+                    address.value.postcode = component.long_name
+                }else if(type == "locality"){
+                    address.value.city = component.long_name
+                }else if(type == "street_number"){
+                    form.value.address1 = component.long_name
+                }
+            });
+        }        
         const closeModal = ()=>{
             showModal.value = !showModal.value;
         }
         const showModal = ref(false);
         const openModal = (id)=>{
+            setTimeout(() => {
+                console.log(googleAddressInput.value);
+                const addr = new google.maps.places.Autocomplete(googleAddressInput.value);
+                addr.addListener("place_changed", () => {
+                    const place = addr.getPlace();
+                    address.value.lat = place.geometry.location.lat();
+                    address.value.lon = place.geometry.location.lng();
+                    setAddress(place.address_components);
+                });
+            }, 100);
             address.value.customerID = id;
             showModal.value = !showModal.value;
         }  
@@ -151,8 +177,10 @@ export default {
                     address1: address.value.address1,
                     address2: address.value.address2,
                     addressType: res.data.addressType,
-                    postcode: address.value.postCode,
+                    postcode: address.value.postcode,
                     city: address.value.city,
+                    lat: address.value.city,
+                    lon: address.value.city,
                 });
                 showModal.value = false;                
             }).catch((error)=>{
@@ -161,9 +189,11 @@ export default {
                 store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
             })            
         }
+        
         return {
             showModal,
             address,
+            googleAddressInput,
             addressTypes,
             closeModal,
             openModal,

@@ -19,7 +19,10 @@
               </div>
             </div>
             <ul class="m-0 p-0 breadcrumb mt-3" v-if="breadcrumbs.length">
-              <li class="breadcrumb-item almarai-extrabold font-18" v-for="(breadcrumb, index) in breadcrumbs" :key="index">{{ breadcrumb }}</li>
+              <li class="breadcrumb-item almarai-extrabold font-18 cursor-pointer" 
+                v-for="(breadcrumb, index) in breadcrumbs" 
+                @click="goToStep(index)"
+                :key="index">{{ breadcrumb }}</li>
             </ul>
             <div class="choose-customer-panel d-flex mt-3" v-if="devisCreateStep == 'choose_customer'">
               <div class="col-5 bg-white p-3 rounded">
@@ -869,7 +872,8 @@ export default {
     const store = useStore();
     const router = useRouter();
     const breadcrumbs = ref(['Choix client']);
-    const devisCreateStep = ref('choose_customer');
+    // const devisCreateStep = ref('choose_customer');
+    const devisCreateStep = ref('choose_address');
     watchEffect(()=>{
       if(devisCreateStep.value == 'choose_customer'){
         breadcrumbs.value = ['Choix client'];
@@ -919,6 +923,8 @@ export default {
         postcode: '',
         city: '',
         addressType: '',
+        lat: '',
+        lon: '',
       },
       totalHoursForInstall: 0,
       totalPriceForInstall: 0,
@@ -1177,6 +1183,13 @@ export default {
       form.value.address = data;
     }
 
+    const goToStep = (index)=>{
+      if(index == 1){
+        devisCreateStep.value = 'choose_customer';
+      }else{
+        devisCreateStep.value = 'choose_address';
+      }
+    }
     // get details for a ouvrage selected
     const selectedOuvrage = (data)=>{
       store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Ajout de l`Ouvrage sélectionné..']);
@@ -1672,7 +1685,7 @@ export default {
       openProductModal,
       openTaskModal,
 
-
+      goToStep,
       addNewCustomer,
       selectedCustomer,
       chooseOtherCustomer, // handler to choose other customer
