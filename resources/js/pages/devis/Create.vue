@@ -13,7 +13,7 @@
                   <span class="ms-3 font-22 almarai_extrabold_normal_normal">Nouveau Devis</span>
                 </h1>
               </div>
-              <div class="col-6 d-flex">
+              <div class="col-6 d-flex" v-if="devisCreateStep == 'create_devis'">
                 <button class="btn btn-save me-3 text-white" @click="storeDevis">Sauvegarder</button>
                 <button class="btn btn-pdf text-white rounded-3" @click="PDFDevis">PDF</button>
               </div>
@@ -187,6 +187,7 @@
                       </div>
                     </div>
                   </div>
+
                   <div class="ouvrage-section installation-ouvrages bg-white px-4 py-3 mt-2 mb-2">
                     <div class="ouvrage-header d-flex">
                       <div class="col-7">
@@ -868,7 +869,7 @@ export default {
     const store = useStore();
     const router = useRouter();
     const breadcrumbs = ref(['Choix client']);
-    const devisCreateStep = ref('create_devis');
+    const devisCreateStep = ref('choose_customer');
     watchEffect(()=>{
       if(devisCreateStep.value == 'choose_customer'){
         breadcrumbs.value = ['Choix client'];
