@@ -65,15 +65,15 @@
                             </template>
                                
                                     
-                                    <hr/>
-                                     <div class="row">
-                                        <div class="col group_input" v-if="typeof fields.Email_agence!='undefined'&&fields.Email_agence.active==1">
-                                            <b>{{fields.Email_agence.name}}:</b> <input class="mt-2" type="text" v-model="email_agence"/>
-                                        </div>
-                                        <div class="col group_input"  v-if="typeof fields.Telephone_agence!='undefined'&&fields.Telephone_agence.active==1">
-                                            <b>{{fields.Telephone_agence.name}}</b> <input class="mt-2" type="text" v-model="phone_agence"/>
-                                        </div> 
-                                    </div>
+                            <hr/>
+                            <div class="row">
+                                <div class="col group_input" v-if="typeof fields.Email_agence!='undefined'&&fields.Email_agence.active==1">
+                                    <b>{{fields.Email_agence.name}}:</b> <input class="mt-2" type="text" v-model="email_agence"/>
+                                </div>
+                                <div class="col group_input"  v-if="typeof fields.Telephone_agence!='undefined'&&fields.Telephone_agence.active==1">
+                                    <b>{{fields.Telephone_agence.name}}</b> <input class="mt-2" type="text" v-model="phone_agence"/>
+                                </div> 
+                            </div>
                                 
                         </div>
                     </div>
@@ -246,13 +246,14 @@ export default {
             .then(({ data }) => {
 
                 if(data.ok==1) {
-                    router.push({
-                        name: "envoi",
-                        params: {
-                            cible_id: `${route.params.cible_id}`,
-                            type: route.params.type,
-                        },
-                    })
+                    // router.push({
+                    //     name: "envoi",
+                    //     params: {
+                    //         cible_id: `${route.params.cible_id}`,
+                    //         type: route.params.type,
+                    //     },
+                    // })
+                    router.go(-1)
                     loading.value = false
                 }
 
