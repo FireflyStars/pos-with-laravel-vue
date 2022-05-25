@@ -25,8 +25,18 @@ export const devislist= {
               group_item:'devis',
               group_items:'devis',
               footer_item:'ITEM',
-              footer_items:'ITEMS'
+              footer_items:'ITEMS',
+              no_batch_action:"Aucune action par lot n'est disponible.",
             },
+            highlight_row:{
+                  where:[
+                    {col:'id',value:10},
+                    {col:'nbheure',value:6},
+                  ], 
+                  backgroundColor:'#f7c5af',
+                  color:'#fd3b35'
+                }
+            ,
             item_route_name:"DevisDetail",// the route to trigger when a line is click 
             max_per_page:10,//required          
             identifier:"devislist_all",//required
@@ -41,7 +51,6 @@ export const devislist= {
                     type:"checkbox",
                     class:"",
                     header_class:"",
-                    event:``,   
                     sort:false,
                     filter:false,
                     css:{
@@ -54,10 +63,11 @@ export const devislist= {
                  type:"string",
                  class:"",
                  header_class:"",
-                 event:null,   
                  sort:true,
                  filter:true,
                  table:'orders',
+                 prefix:"",
+                 suffix:"",
                },     
                
               {
@@ -66,10 +76,11 @@ export const devislist= {
                 type:"string",
                 class:"",
                 header_class:"",
-                event:null,
                 sort:true,
                 filter:true,   
-                having:true
+                having:true,
+                prefix:"",
+                suffix:"",
               },
               {
                 id:"contact",
@@ -77,10 +88,11 @@ export const devislist= {
                 type:"html",
                 class:"",
                 header_class:"",
-                event:null,
                 sort:true,
                 filter:true,   
-                having:true
+                having:true,
+                prefix:"",
+                suffix:"",
               },
               {
                 id:"address",
@@ -88,10 +100,11 @@ export const devislist= {
                 type:"html",
                 class:"",
                 header_class:"",
-                event:null,
                 sort:true,
                 filter:true,   
-                having:true
+                having:true,
+                prefix:"",
+                suffix:"",
               },
               {
                 id:"created_at",
@@ -100,10 +113,9 @@ export const devislist= {
                 format:"DD/MM/YY",
                 class:"",
                 header_class:"",
-                event:null,
                 sort:true,
                 filter:true,   
-                table:'orders'
+                table:'orders',
               },
  
               {
@@ -112,11 +124,12 @@ export const devislist= {
                 type:"string",
                 class:"",
                 header_class:"",
-                event:null,
                 sort:true,
                 filter:true,   
                 having:true,
-                filter_options:[]
+                filter_options:[],
+                prefix:"",
+                suffix:"",
               },
               {
                 id:"order_state_id",
@@ -124,7 +137,6 @@ export const devislist= {
                 type:"component",
                 class:"",
                 header_class:"",
-                event:null,
                 sort:true,
                 filter:true,   
                 filter_options:[]
@@ -138,30 +150,36 @@ export const devislist= {
                 event:null,
                 sort:true,
                 filter:true,   
-                having:true
+                having:true,
+                prefix:"",
+                suffix:"",
 
               },
               {
-                id:"mo",
+                id:"nbheure",
                 display_name:"MO",
-                type:"string",
-                class:"",
+                type:"number",
+                class:"justify-content-center",
                 header_class:"",
-                event:null,
                 sort:true,
                 filter:true, 
-                having:true  
+                having:true,
+                prefix:"",
+                suffix:" hr",
+                group_total:true  
  
               },
               {
-                id:"montant",
+                id:"total",
                 display_name:"MONTANT",
                 type:"price",
                 class:"justify-content-center",
                 header_class:"",
-                event:null,
                 sort:true,
                 filter:true,   
+                group_total:true,
+                prefix:"",
+                suffix:"",  
  
               },
             ]

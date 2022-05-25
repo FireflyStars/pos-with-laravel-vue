@@ -14,35 +14,37 @@
     </div>
     <transition-group tag="div" class="list"  name="list" appear>
         <template v-for="row,index in lists" :key="index">
-            <div>
+           
         <div class="list-row list-row-group" v-if="grouped_by!=''&&showGroupHeader(ifnull(row[grouped_by]))" @click="toggleGroupVisible(row[grouped_by])" >
              <template v-for="col,indexcol in table_def.columns_def" :key="`${indexcol}_${grouped_by}`">
-                 <div class="list-col almarai_700_normal" v-if="col.id==grouped_by" :style="col.css" :class="colClasses(col,row)">
-                      <span v-if="col.type=='date'">{{formatDate(row[col.id],'DD/MM/YY')}}</span>
-                      <span v-else-if="col.type=='html'" v-html="ifnull(row[col.id])"></span>
-                      <slot v-else-if="col.type=='component'" :name="col.id" :row="row"></slot>
-                      <span v-else>{{ifnull(row[col.id])}}</span>
-                 </div>
-                 <div  class="list-col almarai_700_normal" :style="col.css" :class="colClasses(col,row)" v-else>
-                       <span v-if="indexcol==1">{{countGroupItem(grouped_by,row[grouped_by])}}</span>
-                     <span v-else>&nbsp;</span>
+                <div class="list-col almarai_700_normal" v-if="col.id==grouped_by" :style="col.css" :class="colClasses(col,row)">
+                    <span v-if="col.type=='date'">{{formatDate(row[col.id],'DD/MM/YY')}}</span>
+                    <span v-else-if="col.type=='html'" v-html="`${col.prefix} ${ifnull(row[col.id])} ${col.suffix}`"></span>
+                    <span v-else-if="col.type=='price'">{{`${col.prefix} ${formatPrice(row[col.id])} ${col.suffix}`}}</span>
+                    <slot v-else-if="col.type=='component'" :name="col.id" :row="row"></slot>
+                    <span v-else>{{`${col.prefix} ${ifnull(sanitise(row[col.id],col))} ${col.suffix}`}}</span>
+                </div>
+                <div  class="list-col almarai_700_normal" :style="col.css" :class="colClasses(col,row)" v-else>
+                    <span v-if="indexcol==1">{{countGroupItem(grouped_by,row[grouped_by])}}</span>
+                    <span v-else>&nbsp;</span>
                    
-                     </div>
+                </div>
              </template>
         </div>
         
-        <div class="list-row" @click.self="selectrow(row.id,index)" :class="{current_sel:row.id==CURRENT_SELECTED}" v-if="isGroupVisible(row[grouped_by])!=false" >
+        <div class="list-row" @click.self="selectrow(row.id,index)" :style="styleRow(row)" :class="{current_sel:row.id==CURRENT_SELECTED}" v-if="isGroupVisible(row[grouped_by])!=false" >
              <template v-for="col,indexcol in table_def.columns_def" :key="indexcol">
-                 <div class="list-col almarai_700_normal" :style="col.css" :class="colClasses(col,row)"  @click="selectrow(row.id,col.type=='checkbox'?'line_select':index)">
-                     <span v-if="col.type=='date'">{{formatDate(row[col.id],'DD/MM/YY')}}</span>
-                     <check-box v-else-if="col.type=='checkbox'" :name="col.id" :id="row[col.id]" @change="checkboxclicked" :checked="row.id==CURRENT_SELECTED||MULTI_CHECKED.includes(row.id)"/>
-                      <span v-else-if="col.type=='html'" v-html="ifnull(row[col.id])"></span>
-                      <slot v-else-if="col.type=='component'" :name="col.id" :row="row"></slot>
-                     <span v-else>{{ifnull(row[col.id])}}</span>
-                     </div>
+                <div class="list-col almarai_700_normal" :style="col.css" :class="colClasses(col,row)"  @click="selectrow(row.id,col.type=='checkbox'?'line_select':index)">
+                    <span v-if="col.type=='date'">{{formatDate(row[col.id],'DD/MM/YY')}}</span>
+                    <check-box v-else-if="col.type=='checkbox'" :name="col.id" :id="row[col.id]" @change="checkboxclicked" :checked="row.id==CURRENT_SELECTED||MULTI_CHECKED.includes(row.id)"/>
+                    <span v-else-if="col.type=='html'" v-html="`${col.prefix} ${ifnull(row[col.id])} ${col.suffix}`"></span>
+                    <span v-else-if="col.type=='price'">{{`${col.prefix} ${formatPrice(row[col.id])} ${col.suffix}`}}</span>
+                    <slot v-else-if="col.type=='component'" :name="col.id" :row="row"></slot>
+                    <span v-else>{{`${col.prefix} ${ifnull(sanitise(row[col.id],col))} ${col.suffix}`}}</span>
+                </div>
              </template>
         </div>
-            </div>
+           
         </template>
     </transition-group>
     <div class="list-footer">
@@ -59,7 +61,7 @@
 <script>
 import { ref, onMounted, nextTick, computed, watch } from 'vue';
 import { useStore } from 'vuex';
-import { formatDate } from '../../helpers/helpers';
+import { formatDate,formatPrice } from '../../helpers/helpers';
 import { DISPLAY_LOADER, HIDE_LOADER, ITEM_LIST_FILTER, ITEM_LIST_GET_COLUMN_FILTERS, ITEM_LIST_GET_CURRENT, ITEM_LIST_GET_LISTS, ITEM_LIST_GET_SORT, ITEM_LIST_GET_TABLES, ITEM_LIST_LOAD_MORE, ITEM_LIST_MODULE, ITEM_LIST_MULTI_CHECK, ITEM_LIST_MULTI_CHECK_LISTS, ITEM_LIST_MULTI_UNCHECK, ITEM_LIST_RESET_MULTI_CHECK, ITEM_LIST_SELECT_CURRENT, ITEM_LIST_SET_TABLE, ITEM_LIST_SET_TABLEDEF, ITEM_LIST_SORT, ITEM_LIST_TABLEDEF, ITEM_LIST_TABLE_RELOAD, LOADER_MODULE } from '../../../store/types/types';
 import { useRouter } from 'vue-router';
 import ItemListDateFilter from './ItemListDateFilter.vue';
@@ -84,7 +86,7 @@ export default {
         const store=useStore();
         const identifier=props.table_def.identifier;//table identifier
         const droppos=ref({top:"20px",right:'auto',bottom:'auto',left:'0',transformOrigin:'top center'});
-        const grouped_by=ref('');
+        const grouped_by=ref('order_state_id');
         let   groupval='';
         const openedGroup=ref([]);
       
@@ -284,12 +286,17 @@ export default {
             }
 
         const ifnull=(val)=>{
-            if(val==null||val=='')
+            if(val===null||val===''||typeof val ==="undefined")
             return '--';
 
             return val;
         }
+        const sanitise=(val,col)=>{
+            if(col.type==="number"&&isNaN(val))
+            return NaN;
 
+            return val;
+        }
         const showLoader=(msg)=>{
             store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, msg]);
         }
@@ -423,8 +430,17 @@ export default {
             }else{
                 openedGroup.value.push(group);
             }
+        }
 
-            
+        const colTotal=(group)=>{
+            return 0;
+        }
+        const styleRow=(row)=>{
+            if(typeof props.table_def.highlight_row !="undefined")
+            for(const i in props.table_def.highlight_row.where){
+                if(row[props.table_def.highlight_row.where[i]['col']]===props.table_def.highlight_row.where[i]['value'])
+                return `background-color:${props.table_def.highlight_row.backgroundColor};color:${props.table_def.highlight_row.color};`
+           }
         }
       return{
           table_def:props.table_def,
@@ -433,6 +449,7 @@ export default {
           headerClasses,
           colClasses,
           formatDate,
+          formatPrice,
           checkboxclicked,
           checkboxallclicked,
           selectrow,
@@ -455,7 +472,10 @@ export default {
           showGroupHeader,
           countGroupItem,
           isGroupVisible,
-          toggleGroupVisible
+          toggleGroupVisible,
+          colTotal,
+          sanitise,
+          styleRow
       }
 
     }
@@ -617,7 +637,7 @@ export default {
         width: 100%;
     }
     .list-move{
-        transition:all 0.9s ease;
+        transition:all 0.3s ease;
     }
     .loadmore{
         text-decoration: underline;

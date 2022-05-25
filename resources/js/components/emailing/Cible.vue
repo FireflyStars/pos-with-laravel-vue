@@ -101,9 +101,7 @@
                                     </p>
                                     <p class="color">
                                         <strong class="font">{{formatPrice(total_price)}}</strong>
-                                        <span class="emphasized size-mail">
-                                            euros HT</span
-                                        >
+                                        <span class="emphasized size-mail">&nbsp;HT</span>
                                     </p>
                                 </div>
 

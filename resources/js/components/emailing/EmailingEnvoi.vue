@@ -91,7 +91,7 @@
                     </p>
                     <p class="color">
                         <strong class="font">{{formatPrice(campagne_price*count_cible)}}</strong>
-                        <span class="emphasized size-mail"> euros HT</span>
+                        <span class="emphasized size-mail">&nbsp;HT</span>
                     </p>
                 </div>
                 <button class="button-envoyer type" @click="sendLettre()">
@@ -116,7 +116,7 @@
                     </p>
                     <p class="color">
                         <strong class="font">{{formatPrice(campagne_price*count_cible)}}</strong>
-                        <span class="emphasized size-mail"> euros HT</span>
+                        <span class="emphasized size-mail">&nbsp;HT</span>
                     </p>
                 </div>
                 <button class="button-envoyer type" @click="requestsend()">
@@ -155,7 +155,7 @@
                     </p>
                     <p class="color">
                         <strong class="font">{{formatPrice(campagne_price*count_cible)}}</strong>
-                        <span class="emphasized size-mail"> euros HT</span>
+                        <span class="emphasized size-mail">&nbsp;HT</span>
                     </p>
                 </div>
 
@@ -191,7 +191,7 @@
                     </p>
                     <p class="color">
                         <strong class="font">{{formatPrice(campagne_price*count_cible)}}</strong>
-                        <span class="emphasized size-mail"> euros HT</span>
+                        <span class="emphasized size-mail">&nbsp;HT</span>
                     </p>
                 </div>
 
