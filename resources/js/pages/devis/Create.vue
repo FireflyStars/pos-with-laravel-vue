@@ -1184,7 +1184,7 @@ export default {
     }
 
     const goToStep = (index)=>{
-      if(index == 1){
+      if(index == 0){
         devisCreateStep.value = 'choose_customer';
       }else{
         devisCreateStep.value = 'choose_address';
