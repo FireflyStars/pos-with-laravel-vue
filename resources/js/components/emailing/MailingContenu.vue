@@ -176,7 +176,6 @@
                             :disabled="loading"
                         >
                             <span>VALIDER</span>
-                            <Icon name="spinner" v-show="loading" style="font-size: 10px;"  />
                         </button>
 
                     </div>
@@ -202,8 +201,19 @@ import SideBar from "../layout/SideBar";
 import Main from "../Main.vue";
 import useCompanies from "../../composables/companies";
 import { useRoute } from 'vue-router';
+import { useStore } from 'vuex'
+import {
+    DISPLAY_LOADER,
+    HIDE_LOADER,
+    LOADER_MODULE, 
+    TOASTER_GET_ALL,
+    TOASTER_MESSAGE,
+    TOASTER_MODULE,
+    TOASTER_REMOVE_TOAST
+} from '../../store/types/types'
 
 export default {
+
     components: {
         Main,
         SideBar,
@@ -230,7 +240,9 @@ export default {
         const textflyer = ref ('');
         const loading = ref(false)
          
-        const route=useRoute();
+        const store = useStore()
+        const route = useRoute()
+
         const {
             courrier,
             courrier_lettre,
@@ -244,13 +256,27 @@ export default {
         const validateAndSendEmail = async () => {
             if(loading.value) return
             try {
+                store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Loading...']);
                 loading.value = true
                 await axios.post(`/validate-and-send-email/${props.cible_id}`)
                 loading.value = false
+                store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
+                    type: 'success',
+                    message: 'Envoi de votre campagne COURRIER au service Marketing',
+                    ttl: 5,
+                });
             }
             catch(e) {
                 loading.value = false
+                store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
+                    type: 'danger',
+                    message: 'Something went wrong',
+                    ttl: 5,
+                });
                 throw e
+            }
+            finally {
+                store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`);
             }
         }
 

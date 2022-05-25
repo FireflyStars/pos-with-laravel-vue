@@ -283,31 +283,30 @@ export default {
             const id = route.params.cible_id;
 
             
-            localStorage.setItem("id_campagne",id);
-                getCampagneCampagneCategory(id).then((response)=>{
-                
-                     campagne_price.value=response.data.campagnesCategory.price;
-                        showcontainer.value = true;
-                });
+            localStorage.setItem("id_campagne", id)
+            getCampagneCampagneCategory(id).then((response)=>{
+                campagne_price.value=response.data.campagnesCategory.price
+                showcontainer.value = true
+            })
             
             store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [
                 true,
                 "Chargement en cours..",
-            ]);
+            ])
 
             axios.post('/get-affiliate-detail',{})
                 .then((res)=>{
                     if(res.data.affiliate){
                         let obj = {};
                         obj.text = res.data.affiliate.email;
-                        todos.value.push(obj);
+                        todos.value.push(obj)
 
                     }
                 }).catch((err)=>{
                     console.log(err)
                 }).finally(()=>{
 
-                });
+                })
 
             axios
                 .get("/getCount_cible/" + id)
