@@ -16,16 +16,17 @@ use App\Models\CustomerNaf;
 use App\Models\page_builder;
 use Illuminate\Http\Request;
 use App\Models\CampagneCible;
+use App\Models\CompagneCible;
 use App\Models\CustomerStatut;
-use App\Models\CampagneCategory;
 // use Codedge\Fpdf\Fpdf\Fpdf;
+use App\Models\CampagneCategory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\App;
 use App\Models\CampagneCibleStatuts;
-use App\Notifications\CourierNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use App\Notifications\CourierNotification;
 
 class CompagneController extends Controller
 {
@@ -37,18 +38,7 @@ class CompagneController extends Controller
 
     public function save_letter_pdf(Request $request, Campagne $campagne) 
     {
-        $campagne->update([
-            'email' => $request->input_email,
-            'phone' => $request->input_coord
-        ]); 
-
-        if($request->has('input_content')) 
-        {
-            $campagne->campagneCategory()->update([
-                'lettreaccompagnement' => $request->input_content
-            ]);
-        }
-        
+       
         $pdf = App::make('dompdf.wrapper');
 
         $pdf->setOptions([
@@ -78,12 +68,50 @@ class CompagneController extends Controller
 
     }
 
-    public function save_flyer_pdf(Request $request, Campagne $campagne) 
+    public function save_letter_settings(Request $request, Campagne $campagne) 
     {
         $campagne->update([
             'email' => $request->input_email,
             'phone' => $request->input_coord
-        ]);    
+        ]); 
+
+        if($request->has('input_content')) 
+        {
+            $campagne->campagneCategory()->update([
+                'lettreaccompagnement' => $request->input_content
+            ]);
+        }
+        
+        return response()->json(200);
+
+    }
+
+    public function stream_letter_pdf(Request $request, Campagne $campagne) 
+    {
+        
+        $pdf = App::make('dompdf.wrapper');
+
+        $pdf->setOptions([
+            'enable_php'           => true,
+            'isRemoteEnabled'      => true, 
+            'isHtml5ParserEnabled' => true, 
+        ]);
+
+        $pdf->loadView(
+            'letter', [
+                'campagne'  => $campagne,
+                'builder'   => (new page_builder),
+                'affiliate' => $request->user()->affiliate,
+                'data'      => (new CompagneController)->lettredata_pdf($campagne->id),
+            ]
+        );
+
+        return $pdf->stream();
+
+    }
+
+    public function save_flyer_pdf(Campagne $campagne) 
+    {
 
         $pdf = App::make('dompdf.wrapper');
 
@@ -111,12 +139,35 @@ class CompagneController extends Controller
         return response()->json($file_path, 200);
     }
 
+    public function stream_flyer_pdf(Campagne $campagne) 
+    {
 
-    public function validate_and_send_email(Campagne $campagne) 
+        $pdf = App::make('dompdf.wrapper');
+
+        $pdf->setOptions([
+            'enable_php'           => true,
+            'isRemoteEnabled'      => true, 
+            'isHtml5ParserEnabled' => true, 
+        ]);
+
+        $pdf->loadView(
+            'flyer', [
+                'builder' => (new page_builder),
+                'data'    => (new CompagneController)->fields_Pdf($campagne->id)
+            ]
+        );
+
+        return $pdf->stream();
+
+    }
+
+    public function validate_and_send_email(Request $request, Campagne $campagne) 
     {
 
         $this->generate_mail_csv_and_store($campagne);
-        
+        $this->save_flyer_pdf($campagne);
+        $this->save_letter_pdf($request, $campagne);    
+
         $user = User::find(1);
 
         $user->notify(new CourierNotification($campagne));
@@ -886,15 +937,15 @@ class CompagneController extends Controller
      */
     public function contentform(Request $request, $id)
     {
-      $c=Campagne::find($id);
-      $c->email=$request->post('email');
-      $c->phone=$request->post('phone');
-      $c->save();
+
+        $c=Campagne::find($id);
+        $c->email=$request->post('email');
+        $c->phone=$request->post('phone');
+        $c->save();
 
         return response()->json([
-                'ok' => 1,
-
-            ]);
+            'ok' => 1
+        ]);
 
     }
 

@@ -36,6 +36,11 @@
 
 <body>
 
+    {{-- background-image: url('{{ //$backgroundImage }}'); 
+    background-size: cover; 
+    background-position: top; 
+    background-repeat: no-repeat; --}}
+
     @for ($i = 0; $i < 2; $i++)
         
         @php
@@ -53,13 +58,14 @@
             class="container"
             style="
                 page-break-after: {{ $break_rule }} !important;
-                background-image: url('{{ $backgroundImage }}'); 
-                background-size: contain; 
-                background-position: top left; 
-                background-repeat: no-repeat;
                 position: relative;
             "
         >
+            <img 
+                src="{{ $backgroundImage }}" 
+                alt="Flyer background"
+                style="width: 100%; height: 100%; object-fit: cover; position: fixed; z-index: -1"
+            >
             @if ($i == 1)
 
                 @foreach ($data['fields'] as $key => $item)
@@ -67,7 +73,7 @@
                     @php $item = (array) $item; @endphp
                     @if (isset($item['active']) && $item['active'] == 1)
                         @php
-                           $y = $item['y'] - 100; 
+                           $y = $item['y'] - 85; 
                         @endphp
                         <span 
                             class="item" 

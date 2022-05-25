@@ -112,12 +112,15 @@
                 <div class="row rigth">
                     <button
                         class="button-valider type"
+                        :class="{ 'cursor-not-allowed': loading }"
                         type="button"
                         v-on:click="saveCompany"
+                        :disabled="loading"
                     >
-                        ENREGISTRER
+                        VALIDER
+                        <Icon name="spinner" v-show="loading" style="font-size: 10px;" />
                     </button>
-
+                    <!-- 
                     <button v-if="route.params.type.toLowerCase()!='email'"
                         class="button-valider type extravalidbtn"
                         type="button"
@@ -125,7 +128,7 @@
                     >
                         VALIDER
                         <Icon name="spinner" v-show="loading" style="font-size: 10px;" />
-                    </button>
+                    </button> -->
                 </div>
             </div>
         </form>
@@ -233,25 +236,31 @@ export default {
         }
  
 
-        function saveCompany(e) {
+        function saveCompany() {
             
+            if(loading.value) return
+
+            loading.value = true
             
             axios.post("/contentform/" + route.params.cible_id,{email:email_agence.value,phone:phone_agence.value})
-            .then((res) => {
-                console.log(res.data);
-                if(res.data.ok==1)
-                router.push({
-                    name: "envoi",
-                    params: {
-                        cible_id: `${route.params.cible_id}`,
-                        type: route.params.type,
-                    },
-                });
+            .then(({ data }) => {
 
-            }).catch((err)=>{
+                if(data.ok==1) {
+                    router.push({
+                        name: "envoi",
+                        params: {
+                            cible_id: `${route.params.cible_id}`,
+                            type: route.params.type,
+                        },
+                    })
+                    loading.value = false
+                }
 
-            }).finally(()=>{
+            }).catch(() => {
+                loading.value = false
 
+            }).finally(() => {
+                loading.value = false
             })
        
         }
