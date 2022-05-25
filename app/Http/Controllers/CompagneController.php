@@ -70,17 +70,18 @@ class CompagneController extends Controller
 
     public function save_letter_settings(Request $request, Campagne $campagne) 
     {
-        $campagne->update([
+
+        $data = [
             'email' => $request->input_email,
             'phone' => $request->input_coord
-        ]); 
-
+        ];
+        
         if($request->has('input_content')) 
         {
-            $campagne->campagneCategory()->update([
-                'lettreaccompagnement' => $request->input_content
-            ]);
+            $data['lettreaccompagnement'] = $request->input_content;
         }
+
+        $campagne->update($data); 
         
         return response()->json(200);
 
@@ -872,15 +873,15 @@ class CompagneController extends Controller
      */
     public function getCompgneCibleSelected($id)
     {
-        $cibles = DB::table('campagne_cible')->where('campagne_id' ,"=", $id)
-                                            ->where('deleted_at','=',NULL)
-                                            ->groupBy('industrie')
-                                            ->groupBy('statut')
-                                            ->get(
-                                                [
-                                                'industrie',
-                                                'statut',
-                                            ]);
+        $cibles = DB::table('campagne_cible')
+        ->where('campagne_id' ,"=", $id)
+        ->where('deleted_at','=',NULL)
+        ->groupBy('industrie')
+        ->groupBy('statut')
+        ->get([
+            'industrie',
+            'statut',
+        ]);
 
         if($cibles) {
             $array_cible = [];
@@ -1597,44 +1598,63 @@ class CompagneController extends Controller
                 ] ;
         }
         return response()->json([
-                    'data1' => $array_data1,
-                    'data2' => $array_data2,
-                    'data3' => $array_data3
-                ]);
+            'data1' => $array_data1,
+            'data2' => $array_data2,
+            'data3' => $array_data3
+        ]);
     }
      /**
      * Get lettredata
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function lettredata($id){
-        $campagne=Campagne::find($id);
+    public function lettredata($id)
+    {
 
+        $campagne=Campagne::find($id);
         $campagne_category=CampagneCategory::find($campagne->campagne_category_id);
+
+
+        $content = is_null($campagne->lettreaccompagnement) 
+        ? $campagne_category->lettreaccompagnement 
+        : $campagne->lettreaccompagnement;
+
         return response()->json([
-                'content' => $campagne_category->lettreaccompagnement,
-            ]);
+            'content' => $content,
+            'email'   => $campagne->email,
+            'phone'   => $campagne->phone  
+        ]);
 
     }
 
-    public function lettredata_pdf($id){
+    public function lettredata_pdf($id)
+    {
         $campagne=Campagne::find($id);
         $campagne_category=CampagneCategory::find($campagne->campagne_category_id);
+
+
+        $content = is_null($campagne->lettreaccompagnement) 
+        ? $campagne_category->lettreaccompagnement 
+        : $campagne->lettreaccompagnement;
+
         return [
-            'content' => $campagne_category->lettreaccompagnement,
+            'content' => $content,
         ];
     }
 
 
-    public function fields(Request $request,$id){
+    public function fields($id)
+    {
         $c=Campagne::find($id);
       
         $affiliate=$c->affiliate;
         $cc=$c->campagneCategory;
+        $telephone = !is_null($c->phone) ? $c->phone : $affiliate->telephone;
+        $email = !is_null($c->email) ? $c->email : $affiliate->reponseaddress;
         $fields=json_decode($cc->fields);
         $fields->Nom_agence->value=$affiliate->name;
-        $fields->Telephone_agence->value=$affiliate->telephone;
-        $fields->Email_agence->value=$affiliate->reponseaddress;
+        $fields->Telephone_agence->value=$telephone;
+        $fields->Email_agence->value=$email;
         $fields->Prenom_dirigeant->value=$affiliate->firstnamedirector;
         $fields->Nom_dirigeant->value=$affiliate->namedirector;
         $fields->Email_dirigeant->value=$affiliate->email;
@@ -1647,9 +1667,14 @@ class CompagneController extends Controller
         $filedepliant=json_decode($cc->filedepliant);
         $fields->file_depliant=$filedepliant;
       
-       
-    
-        return response()->json(array('fields'=>$fields,'image'=>$cc->imagetemplate,'campagneCategory'=>$cc));
+        return response()->json(
+            array(
+                'fields' => $fields, 
+                'image' => $cc->imagetemplate,
+                'campagneCategory' => $cc
+            )
+        );
+
     }
 
     public function fields_Pdf($id) 
@@ -1658,10 +1683,12 @@ class CompagneController extends Controller
       
         $affiliate=$c->affiliate;
         $cc=$c->campagneCategory;
+        $telephone = !is_null($c->phone) ? $c->phone : $affiliate->telephone;
+        $email = !is_null($c->email) ? $c->email : $affiliate->reponseaddress;
         $fields=json_decode($cc->fields);
         $fields->Nom_agence->value=$affiliate->name;
-        $fields->Telephone_agence->value=$affiliate->telephone;
-        $fields->Email_agence->value=$affiliate->reponseaddress;
+        $fields->Telephone_agence->value=$telephone;
+        $fields->Email_agence->value=$email;
         $fields->Prenom_dirigeant->value=$affiliate->firstnamedirector;
         $fields->Nom_dirigeant->value=$affiliate->namedirector;
         $fields->Email_dirigeant->value=$affiliate->email;
@@ -1683,7 +1710,8 @@ class CompagneController extends Controller
     }
 
 
-    public function downloadPdfFile(Request $request){
+    public function downloadPdfFile(Request $request)
+    {
         $path=$request->get('path');
         $filename=$request->get('filename');
         return response()->download(Storage::path('public/'.$path), $filename);

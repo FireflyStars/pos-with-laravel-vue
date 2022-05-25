@@ -79,6 +79,7 @@
                                         v-model="input_coord"
                                         @keyup.prevent="submit"
                                         name="coord"
+                                        :disabled="fetching || loading"
                                     />
                                     <label class="fix_width_tiret">-</label>
                                     <input
@@ -87,6 +88,7 @@
                                         v-model="input_email"
                                         @keyup.prevent="submit"
                                         name="email"
+                                        :disabled="fetching || loading"
                                     />
                                 </div>
                             </div>
@@ -306,7 +308,8 @@ export default {
         },
         cible_id: {
             type: [Number, String],
-        }
+        },
+
     },
     data: () => ({
         pdfsrc: "../../images/EmailingAudit.pdf",
@@ -337,30 +340,32 @@ export default {
       
         let show = route.params.show;
         const showcontainer = ref(false);
+        
         onMounted(() => {
             nextTick(() => {
                 showcontainer.value = true;
             });
         });
+
         onMounted(() => {
           
-            const campagne_id = route.params.cible_id;
+            const campagne_id = route.params.cible_id
             
             fetching.value = true
-            axios
-                .get("/lettredata/" + campagne_id)
-                .then(({ data }) => {
-                    input_content.value = data.content
-                    state.content = input_content.value
-                    fetching.value = false
-                })
-                .catch(e => {
-                    fetching.value = false
-                })
-
+            axios.get("/lettredata/" + campagne_id)
+            .then(({ data }) => {
+                input_content.value = data.content
+                input_coord.value = data.phone
+                input_email.value = data.email
+                state.content = input_content.value
+                fetching.value = false
+            })
+            .catch(e => {
+                fetching.value = false
+            })
 
         });
-   
+
         const state = reactive({
             curTheme: "snow",
             showEditor: true,
@@ -388,6 +393,7 @@ export default {
                 input_content.value = current_val;
             }
         );
+
         function submitFlyer(e) {
             if (e.target.name == "contact") {
                 input_flyer_contact.value = e.target.value;
@@ -417,6 +423,7 @@ export default {
                 input_email.value = e.target.value;
             }
         }
+
         function exportToPDF() {
             store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [
                 true,
@@ -497,7 +504,13 @@ export default {
                         input_content: input_content.value,
                     })
                     loading.value = false
-                    router.go(-1)
+                    router.push({
+                        name: 'mailingContenu',
+                        params: {
+                            cible_id: props.cible_id,
+                            type: route.params.type
+                        }
+                    })
                 }
                 catch(e) {
                     loading.value = false
@@ -520,6 +533,7 @@ export default {
 
         return {
             loading,
+            fetching,
             errors,
             company,
             type,
