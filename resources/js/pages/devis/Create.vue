@@ -227,12 +227,7 @@
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
                               <select class="form-control form-control-sm custom-text-danger" v-model="ouvrage.unit">
-                                <option value="1">L</option>
-                                <option value="2">HR</option>
-                                <option value="3">UNIT</option>
-                                <option value="4">KG</option>
-                                <option value="5">M</option>
-                                <option value="6">M2</option>
+                                <option v-for="(unit, unitIndex) in units" :value="unit.value" :key="unitIndex">{{ unit.display }}</option>
                               </select>
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
@@ -884,6 +879,7 @@ export default {
       }
     })
     const taxes = ref([]);
+    const units = ref([]);
     const customerAddresses = ref([]);
     const zoneIndex = ref(0);
     const file = ref(null);
@@ -904,7 +900,7 @@ export default {
     const roofAccesses = ref([]);
     const form = ref({
       customer: {
-        id: '',
+        id: 1,
         company: 'La boulangerie',
         raisonsocial: 'de la plangne',
         group: 'Lagardere',
@@ -915,7 +911,7 @@ export default {
         siret: '4654654646546546',
       },
       address: {
-        id: '',
+        id: 1,
         name: '',
         address1: '',
         address2: '',
@@ -1074,6 +1070,7 @@ export default {
       axios.post('/get-ged-categories').then((res)=>{
         gedCats.value = res.data.gedCats;
         taxes.value = res.data.taxes;
+        units.value = res.data.units;
         roofAccesses.value = res.data.roofAccesses;
         form.value.zones.forEach(element => {
           element.gedCats = res.data.gedCats;
@@ -1561,7 +1558,11 @@ export default {
     const storeDevis = ()=>{
       store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Stocker un Devis...']);
       axios.post('/store-devis', form.value).then((res)=>{
-        console.log(res.data);
+        if(res.data.success){
+          router.push({
+            name: 'LandingPage'
+          });
+        }
       }).catch((error)=>{
         console.log(error);
       }).finally(()=>{
@@ -1638,6 +1639,7 @@ export default {
     return {
       breadcrumbs,
       taxes,
+      units,
       roofAccesses,
       customerAddresses,
       devisCreateStep,

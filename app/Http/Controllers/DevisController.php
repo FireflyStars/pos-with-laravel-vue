@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Traits\Tools;
+use App\Traits\GedFileProcessor;
 use App\Models\OrderState;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +20,7 @@ use App\Models\GedDetail;
 class DevisController extends Controller
 {
     use Tools;
+    use GedFileProcessor;
 
     public function loadList(Request $request){
 
@@ -104,6 +106,7 @@ class DevisController extends Controller
         }
         return response()->json([
             'gedCats'   => $categories->groupBy('id'),
+            'units'     => DB::table('units')->select('id as value', 'code as display')->get(),
             'taxes'     => DB::table('taxes')->select('id as value', DB::raw('CEIL(taux * 100) as display'))->get(),
             'roofAccesses'     => DB::table('moyenacces')->select('id as value', 'name as display')->get(),
         ]);
@@ -262,9 +265,9 @@ class DevisController extends Controller
         $orderData = [
             'lang_id'           => 1,
             'affiliate_id'      => Auth::user()->affiliate->id,
-            'reponsable_id'     => Auth::id(),
-            'order_state_id '   => 2,
-            'total '            => ($request->totalPriceForInstall + $request->totalPriceForSecurity + $request->totalPriceForSecurity),
+            'responsable_id'     => Auth::id(),
+            'order_state_id'   => 2,
+            'total'            => ($request->totalPriceForInstall + $request->totalPriceForSecurity + $request->totalPriceForSecurity),
             'address_id'        => $request->address['id'],
             'customer_id'       => $request->customer['id'],
             'datecommande'      => Carbon::now(),
@@ -288,7 +291,11 @@ class DevisController extends Controller
                 'updated_at'    =>  Carbon::now(),
             ];        
             $gedId = DB::table('geds')->insertGetId($zedData);
-        }
+        }else{
+            $gedId = Ged::where('user_id','=',Auth::id())
+                        ->where('customer_id', $request->customer['id'])
+                        ->where('order_id', $orderId)->value('id');
+        }   
         foreach ($request->zones as $zone) {
             $zoneData = [
                 'order_id'      =>  $orderId,
@@ -315,7 +322,7 @@ class DevisController extends Controller
 
                     $file['base64data'];
                     if( $gedDetail->file == null){//files can only be stored once to avoid duplicates;
-                        if(isset($file['base64data']) && !$this->isBlank($file['base64data'])){
+                        if( !empty($file['base64data']) ){
                             $storedFile = $this->storeFile($file['base64data'], $file['fileName'], $gedDetail->id);
                             $gedDetail->file = $storedFile->file;
                             $gedDetail->type = $storedFile->type;
@@ -364,14 +371,12 @@ class DevisController extends Controller
                             'textchargeaffaire'     => $task['textchargeaffaire'],
                             'textoperator'          => $task['textoperator'],
                             'qty'                   => $task['qty'],
-                            'unit_id'               => $task['unit_id'],
-                            'created_at'            => Carbon::now(),
-                            'updated_at'            => Carbon::now()
+                            'unit_id'               => $task['unit_id']
                         ];
                         $orderOuvrageTaskId = DB::table('order_ouvrage_task')->insertGetId($orderOuvrageTask);
                         foreach ($task['details'] as $detailIndex => $detail) {
                             $detailData = [
-                                'ouvrage_task_id'   => $orderOuvrageTaskId,
+                                'order_ouvrage_task_id'   => $orderOuvrageTaskId,
                                 'product_id'        => $detail['productId'],
                                 'type'              => $detail['type'],
                                 'name'              => $detail['name'],
@@ -410,18 +415,18 @@ class DevisController extends Controller
                     }
                 }
             }
-            if( count($zone['securiteOuvrage']['ouvrages']) ){
-                $installationCat = [
+            if( count($zone['securityOuvrage']['ouvrages']) ){
+                $securityCat = [
                     'order_zone_id' =>  $zoneId,
                     'type'          =>  '',
-                    'name'          =>  $zone['securiteOuvrage']['name'],
+                    'name'          =>  $zone['securityOuvrage']['name'],
                     'textcustomer'  =>  '',
                     'textoperator'  =>  '',
                     'created_at'    =>  Carbon::now(),
                     'updated_at'    =>  Carbon::now()
                 ];
-                $orderCatId = DB::table('order_cat')->insertGetId($installationCat);
-                foreach ($zone['securiteOuvrage']['ouvrages'] as $ouvrage) {
+                $orderCatId = DB::table('order_cat')->insertGetId($securityCat);
+                foreach ($zone['securityOuvrage']['ouvrages'] as $ouvrage) {
                     $ouvrageData = [
                         'order_id'          => $orderId,
                         'order_zone_id'     => $zoneId,
@@ -495,7 +500,7 @@ class DevisController extends Controller
                 }
             }
             if( count($zone['prestationOuvrage']['ouvrages']) ){
-                $installationCat = [
+                $prestationCat = [
                     'order_zone_id' =>  $zoneId,
                     'type'          =>  '',
                     'name'          =>  $zone['prestationOuvrage']['name'],
@@ -504,7 +509,7 @@ class DevisController extends Controller
                     'created_at'    =>  Carbon::now(),
                     'updated_at'    =>  Carbon::now()
                 ];
-                $orderCatId = DB::table('order_cat')->insertGetId($installationCat);
+                $orderCatId = DB::table('order_cat')->insertGetId($prestationCat);
                 foreach ($zone['prestationOuvrage']['ouvrages'] as $ouvrage) {
                     $ouvrageData = [
                         'order_id'          => $orderId,
@@ -579,6 +584,6 @@ class DevisController extends Controller
                 }
             }
         }
-        return response()->json();
+        return response()->json(['success'=> true]);
     }
 }
