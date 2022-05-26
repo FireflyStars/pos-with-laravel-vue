@@ -34,9 +34,10 @@ class DevisController extends Controller
         ->select(['orders.*',
         'events.id as evnt',
         'users.name as responsable', 
+        DB::raw("DATE_FORMAT(orders.created_at, '%Y-%m-%d') as created_at"),
         DB::raw("CONCAT(customers.company,' ',customers.firstname,' ',customers.name) as customer"),
-        DB::raw("CONCAT(contacts.firstname,' ',contacts.name,'<br/>',contacts.mobile) as contact"),
-        DB::raw("CONCAT(addresses.address1, IF(addresses.address2<>'', '<br/>',''),addresses.address2,'<br/>',addresses.postcode,' ',addresses.city) as address")])
+        DB::raw("TRIM(CONCAT(contacts.firstname,' ',contacts.name,'<br/>',contacts.mobile)) as contact"),
+        DB::raw("TRIM(CONCAT(addresses.address1, IF(addresses.address2<>'', '<br/>',''),addresses.address2,'<br/>',addresses.postcode,' ',addresses.city)) as address")])
           ->join('customers',function($join){
             $join->on('customers.id','=','orders.customer_id');
         })->join('events',function($join){

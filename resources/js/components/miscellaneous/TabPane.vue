@@ -73,7 +73,7 @@
     .tab-view{
         min-height: 550px;
         align-items: center;justify-content: center;
-        overflow-x: auto;
+        position: relative;
     }
 
 </style>

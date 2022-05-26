@@ -40,9 +40,7 @@ export const devislist= {
             item_route_name:"DevisDetail",// the route to trigger when a line is click 
             max_per_page:10,//required          
             identifier:"devislist_all",//required
-            filter:"true",// required boolean
-            grouped_rows:false,// required boolean
-            grouped_rows_def:{},//required empty object is grouping is not required
+            filter:true,// required boolean
             rearrange_columns:true,// required boolean
             columns_def:[
                 {
@@ -93,6 +91,7 @@ export const devislist= {
                 having:true,
                 prefix:"",
                 suffix:"",
+                allow_groupby:true,
               },
               {
                 id:"address",
@@ -116,6 +115,7 @@ export const devislist= {
                 sort:true,
                 filter:true,   
                 table:'orders',
+                allow_groupby:true,
               },
  
               {
@@ -130,6 +130,7 @@ export const devislist= {
                 filter_options:[],
                 prefix:"",
                 suffix:"",
+                allow_groupby:true,
               },
               {
                 id:"order_state_id",
@@ -139,7 +140,8 @@ export const devislist= {
                 header_class:"",
                 sort:true,
                 filter:true,   
-                filter_options:[]
+                filter_options:[],
+                allow_groupby:true,
               },
               {
                 id:"action_co",
