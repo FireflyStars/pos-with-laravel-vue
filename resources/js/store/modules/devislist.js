@@ -166,8 +166,8 @@ export const devislist= {
                 having:true,
                 prefix:"",
                 suffix:" hr",
-                group_total:true  
- 
+                group_total:true,  
+                footer_total:true
               },
               {
                 id:"total",
@@ -178,6 +178,7 @@ export const devislist= {
                 sort:true,
                 filter:true,   
                 group_total:true,
+                footer_total:true,
                 prefix:"",
                 suffix:"",  
  

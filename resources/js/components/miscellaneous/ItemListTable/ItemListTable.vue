@@ -17,15 +17,17 @@
            
         <div class="list-row list-row-group" v-if="grouped_by!=''&&showGroupHeader(ifnull(row[grouped_by]))" @click="toggleGroupVisible(row[grouped_by])" >
              <template v-for="col,indexcol in table_def.columns_def" :key="`${indexcol}_${grouped_by}`">
-                <div class="list-col almarai_700_normal" v-if="col.id==grouped_by" :style="col.css" :class="colClasses(col,row)">
+                <div class="list-col almarai_700_normal" v-if="col.id==grouped_by" :style="col.css" :class="colRowClasses(col,row)">
                     <span v-if="col.type=='date'">{{formatDate(row[col.id],'DD/MM/YY')}}</span>
                     <span v-else-if="col.type=='html'" v-html="`${col.prefix} ${ifnull(row[col.id])} ${col.suffix}`"></span>
                     <span v-else-if="col.type=='price'">{{`${col.prefix} ${formatPrice(row[col.id])} ${col.suffix}`}}</span>
                     <slot v-else-if="col.type=='component'" :name="col.id" :row="row"></slot>
                     <span v-else>{{`${col.prefix} ${ifnull(sanitise(row[col.id],col))} ${col.suffix}`}}</span>
                 </div>
-                <div  class="list-col almarai_700_normal" :style="col.css" :class="colClasses(col,row)" v-else>
+                <div  class="list-col almarai_700_normal" :style="col.css" :class="colRowClasses(col,row)" v-else>
                     <span v-if="indexcol==1">{{countGroupItem(grouped_by,row[grouped_by])}}</span>
+                    <span v-else-if="col.group_total===true&&col.type=='price'">{{`${col.prefix} ${formatPrice(colTotal(row[grouped_by],col.id))} ${col.suffix}`}}</span>
+                    <span v-else-if="col.group_total===true">{{`${col.prefix} ${colTotal(row[grouped_by],col.id)} ${col.suffix}`}}</span>
                     <span v-else>&nbsp;</span>
                    
                 </div>
@@ -34,7 +36,7 @@
         
         <div class="list-row" @click.self="selectrow(row.id,index)" :style="styleRow(row)" :class="{current_sel:row.id==CURRENT_SELECTED}" v-if="isGroupVisible(row[grouped_by])!=false" >
              <template v-for="col,indexcol in table_def.columns_def" :key="indexcol">
-                <div class="list-col almarai_700_normal" :style="col.css" :class="colClasses(col,row)"  @click="selectrow(row.id,col.type=='checkbox'?'line_select':index)">
+                <div class="list-col almarai_700_normal" :style="col.css" :class="colRowClasses(col,row)"  @click="selectrow(row.id,col.type=='checkbox'?'line_select':index)">
                     <span v-if="col.type=='date'">{{formatDate(row[col.id],'DD/MM/YY')}}</span>
                     <check-box v-else-if="col.type=='checkbox'" :name="col.id" :id="row[col.id]" @change="checkboxclicked" :checked="row.id==CURRENT_SELECTED||MULTI_CHECKED.includes(row.id)"/>
                     <span v-else-if="col.type=='html'" v-html="`${col.prefix} ${ifnull(row[col.id])} ${col.suffix}`"></span>
@@ -48,10 +50,18 @@
         </template>
     </transition-group>
     <div class="list-footer">
-        <div v-if="typeof lists!='undefined'" class="justify-align-content-start align-items-center">
-            
-            {{`${lists.length} ${lists.length!=1?table_def.translations.footer_items:table_def.translations.footer_item}`}}
-        </div>
+ 
+                   <template v-for="col,indexcol in table_def.columns_def" :key="indexcol">
+                        <div class="list-col  almarai_700_normal" :style="col.css" :class="colClasses(col)">
+                                  <span v-if="indexcol==1"> {{`${lists.length} ${lists.length!=1?table_def.translations.footer_items:table_def.translations.footer_item}`}}</span>
+                                        <span v-else-if="col.footer_total===true&&col.type=='price'">{{`${col.prefix} ${formatPrice(colTotalAll(col.id))} ${col.suffix}`}}</span>
+                                        <span v-else-if="col.footer_total===true">{{`${col.prefix} ${colTotalAll(col.id)} ${col.suffix}`}}</span>
+                                      <span v-else>&nbsp;</span>
+                        </div>
+                   </template>
+              
+         
+   
     </div>
     <div class="d-flex justify-content-center">
         <span class="loadmore mulish_400_normal" @click="loadmore">Charger plus</span>
@@ -86,7 +96,7 @@ export default {
         const store=useStore();
         const identifier=props.table_def.identifier;//table identifier
         const droppos=ref({top:"20px",right:'auto',bottom:'auto',left:'0',transformOrigin:'top center'});
-        const grouped_by=ref('order_state_id');
+        const grouped_by=ref('');
         let   groupval='';
         const openedGroup=ref([]);
       
@@ -241,7 +251,7 @@ export default {
 
             return header_class;
         }
-         const colClasses=(col,row)=>{
+         const colRowClasses=(col,row)=>{
             let col_class=col.class;
             if(col.type=="checkbox")
             col_class=`${col_class} justify-content-center`;
@@ -249,6 +259,12 @@ export default {
             if(ifnull(row[col.id])=='--')
             col_class=`${col_class} justify-content-center`;
 
+            return col_class;
+        }
+        const colClasses=(col)=>{
+            let col_class=col.class;
+           
+        
             return col_class;
         }
          const selectrow=(id,colname)=>{
@@ -432,8 +448,25 @@ export default {
             }
         }
 
-        const colTotal=(group)=>{
-            return 0;
+        const colTotal=(val,col)=>{
+                let total=0;
+
+                for(const i in lists.value){
+                    if(lists.value[i][grouped_by.value]==val){
+                        total+=lists.value[i][col];
+                    }
+                }
+
+            return total;
+        }
+        const colTotalAll=(col)=>{
+               let total=0;
+
+                for(const i in lists.value){
+                        total+=lists.value[i][col];
+                }
+
+            return total;
         }
         const styleRow=(row)=>{
             if(typeof props.table_def.highlight_row !="undefined")
@@ -448,6 +481,7 @@ export default {
           filterColumn,
           headerClasses,
           colClasses,
+          colRowClasses,
           formatDate,
           formatPrice,
           checkboxclicked,
@@ -475,7 +509,8 @@ export default {
           toggleGroupVisible,
           colTotal,
           sanitise,
-          styleRow
+          styleRow,
+          colTotalAll
       }
 
     }
@@ -624,6 +659,7 @@ export default {
         transform-origin: right center;
         opacity: 1;
         transform: scale(1);
+   
     }
     .list-leave-to{
         transform-origin: right center;
@@ -631,8 +667,8 @@ export default {
         transform: scale(0.6);
     }
     .list-leave-active{
+               transition: all 1s ease;
          transform-origin: right center;
-        transition: all 1s ease;
         position:absolute;     
         width: 100%;
     }
