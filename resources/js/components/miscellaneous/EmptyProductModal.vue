@@ -20,20 +20,19 @@
                                         <div class="col-6 d-flex justify-content-between">
                                             <div class="form-group col-5">
                                                 <SelectBox :label="'Unité'" 
-                                                    v-model="product.unit_id" 
-                                                    :options="units"
-                                                    :name="'Unité'"
-                                                    :classnames="'w-100'"
-                                                    :placeholder="'Unité'"
-                                                />  
+                                                v-model="product.unitId" 
+                                                :options="units"
+                                                :name="'unitId'"
+                                                :classnames="'w-100'"
+                                                />                                                
                                             </div>
                                             <div class="form-group col-5">
-                                                <label for="unit">Quantité</label>
+                                                <label for="quanty">Quantité</label>
                                                 <input type="text" v-model="product.qty" class="form-control">
                                             </div>
                                         </div>
                                         <div class="form-group col-5">
-                                            <label for="unit">&nbsp;</label>
+                                            <label for="type">&nbsp;</label>
                                             <input type="text" v-model="product.type" class="form-control">
                                         </div>
                                     </div>
@@ -67,8 +66,7 @@
     </Teleport>
 </template>
 <script>
-    import {ref, onMounted, watch} from 'vue';
-    import axios from 'axios';
+    import {ref, watch} from 'vue';
     import SelectBox from '../../components/miscellaneous/SelectBox';
     export default {
         name: 'EmptyProductModal',
@@ -80,7 +78,7 @@
             const data = ref({});
             const units = ref({});
             const product = ref({
-                unit_id: '',
+                unitId: '',
                 unit: '',
                 qty: '',
                 type: 'PRODUIT VIDE',
@@ -92,28 +90,18 @@
                 showModal.value = !showModal.value;
             }
             const showModal = ref(false);
-            const openModal = (value)=>{
+            const openModal = (value, unitsData)=>{
                 data.value = value;
+                units.value = unitsData;
                 showModal.value = !showModal.value;
             }  
-            onMounted(()=>{
-                if(units.value.length == 0){
-                    axios.post('/get-units').then((res)=>{
-                        units.value = res.data;
-                    }).catch((error)=>{
-                        console.log(error);
-                    }).finally(()=>{
-    
-                    });
-                }
-            })
             const confirm = ()=>{
                 showModal.value = false;
                 emit('selectedEmptyProduct', data.value, product.value);
             }        
             watch(() => product, (newValue, oldValue) => {
                 product.value.unit = units.value.filter((item)=>{
-                    return item.value = product.value.unit_id
+                    return item.value = product.value.unitId
                 }).display;
             },{ deep: true });
             return {

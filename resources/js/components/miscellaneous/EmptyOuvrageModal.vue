@@ -146,18 +146,16 @@
                 showModal.value = !showModal.value;
             }  
             onMounted(()=>{
-                if(toits.value.length == 0){
-                    axios.post('/get-info-for-emtpy-ouvrage').then((res)=>{
-                        units.value = res.data.units;
-                        toits.value = res.data.toits;
-                        prestations.value = res.data.prestations;
-                        metiers.value = res.data.metiers;
-                    }).catch((error)=>{
-                        console.log(error);
-                    }).finally(()=>{
-    
-                    });
-                }
+                axios.post('/get-info-for-emtpy-ouvrage').then((res)=>{
+                    units.value = res.data.units;
+                    toits.value = res.data.toits;
+                    prestations.value = res.data.prestations;
+                    metiers.value = res.data.metiers;
+                }).catch((error)=>{
+                    console.log(error);
+                }).finally(()=>{
+
+                });
             })
             const confirm = ()=>{
                 showModal.value = false;
