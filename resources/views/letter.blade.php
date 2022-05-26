@@ -118,7 +118,7 @@
 
                     <div class="column" style="margin-top: 4.2rem; float: left; margin-left: 6rem;">
                         <div>{{ $cible->company }}</div>
-                        <div>{{ $cible->firstname . " " . $cible->lastname }}</div>
+                        <div>{{ $cible->firstname . " " . $cible->name }}</div>
                         @if($cible->address1)<div>{{ $cible->address1 }}</div>@endif
                         @if($cible->address2)<div>{{ $cible->address2 }}</div>@endif
                         @if($cible->address3)<div>{{ $cible->address3 }}</div>@endif
@@ -136,7 +136,7 @@
                 </div>
 
                 <div class="content" style="margin-right: 4rem;">
-                    {!! $campagne->lettreaccompagnement !!}
+                    {!! $data['content'] !!}
                 </div>
 
             </div>

@@ -1631,7 +1631,7 @@ class CompagneController extends Controller
         $campagne_category=CampagneCategory::find($campagne->campagne_category_id);
 
 
-        $content = is_null($campagne->lettreaccompagnement) 
+        $content = is_null($campagne->lettreaccompagnement) || $campagne->lettreaccompagnement == ''
         ? $campagne_category->lettreaccompagnement 
         : $campagne->lettreaccompagnement;
 
