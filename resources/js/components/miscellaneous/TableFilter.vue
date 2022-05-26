@@ -2,12 +2,12 @@
     <div 
     class="custom-filter-dropdown "
     :class="classes"
-    :styles="{ ...styles }"
+    :style="styles"
     :tabindex="tabindex">
         
         <div class="selected text-end filter-buttons">
             <BaseButton 
-                title="Reinitialisation"
+                title="Réinitialisation"
                 @click.prevent="resetFilter"
                 :classes="{'almarai_700_bold':true}"
             />
@@ -68,8 +68,9 @@
                     :name="select.label"
                     :label="`${select.label}:`"
                     v-model="selectedOptionItems[index]"
-                    :styles="{ width: '196px !important', marginTop: '1.125rem', marginLeft: 0, heigth: '1.132rem' }"
+                    :styles="{ width: '196px !important', marginTop: '1.125rem', marginLeft: 0,color:'#868686',fontSize:'14px' }"
                 />
+
 
                 <BaseButton
                     class="validate-button text-title"
@@ -102,10 +103,7 @@ export default {
             type: Array,
             required: false,
         },
-        selectedOptions: {
-            type: [Object, Array],
-            required: false
-        },
+       
         tabindex: {
             type: Number,
             required: false,
@@ -113,16 +111,13 @@ export default {
         },
         classes: String,
         styles: {
-            type: Object,
-            default: () => {}
+            type: String,
+            default: ''
         }
     },
 
     emits: [
-        'update:checkboxOptions',
-        'update:selectOptions',
-        'update:selectedOptions',
-        'validate'
+        'onChange'
     ],
 
     setup(props, { emit, attrs }) {
@@ -132,7 +127,6 @@ export default {
         const isActive = ref(false)
         const defaultBackground = 'lawgreen'
         const defaultColor = '#47454b'
-
         const customActiveColor = computed(() => {
             return isActive.value ? attrs.activeColor || defaultColor : ''
         })
@@ -141,11 +135,15 @@ export default {
         })
 
         const id = computed(() => attrs.id || 'filtersMain')
-        const selectedOptionItems = computed(() => props.selectedOptions)
+       
+        const selectedOptionItems=ref({});
+
+        let checkboxOptions = [ ...props.checkboxOptions ]
+        let selectedOptions = { ...props.selectedOptions }
 
         const resetFilter = () => {
-            const checkboxOptions = [ ...props.checkboxOptions ]
-            const selectedOptions = { ...props.selectedOptions }
+             checkboxOptions = [ ...props.checkboxOptions ]
+
 
             checkboxOptions.forEach((checkbox, index) => {
                 checkbox.options.forEach((option, optionIndex) => {
@@ -153,12 +151,11 @@ export default {
                 })
             })
 
-            Object.entries(selectedOptions).forEach((item, index) => {
-                selectedOptions[index] = ''
+            Object.entries(selectedOptionItems.value).forEach((item, index) => {
+                   selectedOptionItems.value[index]='';
             })
-
-            emit('update:checkboxOptions', checkboxOptions)
-            emit('update:selectedOptions', selectedOptions)
+   
+           emit('onChange', {checkboxOptions,selectedOptions:selectedOptionItems.value});
             
             isActive.value = false
 
@@ -167,14 +164,14 @@ export default {
         }
 
         const updateSelectedCheckboxes = ({ id, value }, parentId) => {
-            const checkboxOptions = [ ...props.checkboxOptions ]
+             checkboxOptions = [ ...props.checkboxOptions ]
             let checkboxIndex = checkboxOptions.findIndex(checkbox => checkbox.id == parentId)
 
             if(checkboxIndex != -1) {
                 let optionIndex = checkboxOptions[checkboxIndex].options.findIndex(option => option.id == id)
                 if(optionIndex != -1) {
                     checkboxOptions[checkboxIndex].options[optionIndex].check = value
-                    emit('update:checkboxOptions', checkboxOptions)
+                
                 }
             }
         }
@@ -182,7 +179,10 @@ export default {
         
         const validate = () => {
             isActive.value = true
-            emit('validate')
+            
+            
+            emit('onChange', {checkboxOptions,selectedOptions:selectedOptionItems.value});
+            
             toggleActiveItem(id.value)
         }
        
@@ -207,19 +207,16 @@ export default {
 
 .filter-buttons {
     display: flex;
-    justify-items: flex-start;
-    align-items: center;
-    gap: 1rem;
+    justify-content: space-between;
 }
 
 .custom-filter-dropdown {
-    position: relative;
+    position: absolute;
     text-align: left;
     outline: none;
     width: 307px;
     max-height: 1000px;
     line-height: 47px;
-    float: right;
 }
 .custom-filter-dropdown .items {
     color: #47454b;

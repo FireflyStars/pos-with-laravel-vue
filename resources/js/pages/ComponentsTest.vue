@@ -50,9 +50,9 @@
                                 <div class="col m-2">
                                     <h4 class="text-center">App Filters</h4>
                                     <table-filter
-                                        v-model:checkboxOptions="filterCheckboxOptions"
-                                        v-model:selectOptions="filterSelectOptions"
-                                        v-model:selectedOptions="filterSelectedOptions"
+                                        :checkboxOptions="filterCheckboxOptions"
+                                        :selectOptions="filterSelectOptions"
+                                
                                         activeBackground="orange"
                                         activeColor="white"
                                         transformOrigin="top"
@@ -60,8 +60,9 @@
                                         :dropdownStyles="{}"
                                         classes=""
                                         :styles="{}"
-                                        @validate="validateFilters"
+                                        @onChange="validateFilters"
                                     />
+                     
                                 </div>
 
                             </div>
@@ -205,28 +206,23 @@ export default {
 
         })
 
-        const selectBoxOptions = reactive([
+        const selectBoxOptions = ref([
             { value:'1', display: 'One' },
             { value:'2', display:'Two' }
         ])
 
-        const options = reactive([
+        const options = ref([
             { id: 1, value: 'Perdu', check: false},
             { id: 2, value: 'Gagne', check: false},
             { id: 3, value: 'Abondonne', check: false},
             { id: 4, value: 'Laravel', check: false},
         ]);
 
-        const filterSelectedOptions = reactive({
-            0: '',
-            1: ''
-        })
         const filterCheckboxOptions =  ref([
             {
-                id: 1,
                 name: 'Champs',
                 options: [
-                    { id: 1, value: 'no devis', check: false },
+                    { id: 'nodevis', value: 'no devis', check: false },
                     { id: 2, value: 'client', check: false },
                     { id: 3, value: 'contact', check: false },
                     { id: 4, value: 'chantier', check: false },
@@ -237,7 +233,7 @@ export default {
             },
         ])
 
-        const filterSelectOptions = reactive([
+        const filterSelectOptions = ref([
             {
                 label: 'Grouper par',
                 options: [
@@ -247,8 +243,8 @@ export default {
             },
         ])
 
-        const validateFilters = () => {
-            console.log(filterSelectedOptions)
+        const validateFilters = (val) => {
+            console.log(val);
             console.log('validated')
         }
         const checkboxUpdated = (val) => {
@@ -265,7 +261,6 @@ export default {
             selectBoxOptions,
             filterSelectOptions,
             filterCheckboxOptions,
-            filterSelectedOptions,
             checkboxUpdated
         }
     },

@@ -1,5 +1,16 @@
 <template>
-   
+    <table-filter v-if="table_def.filter==true"
+            :checkboxOptions="columnSelection"
+            :selectOptions="listGroup"
+            activeBackground="var(--lcdtOrange)"
+            activeColor="white"
+            transformOrigin="top"
+            dropdownClasses=""
+            :dropdownStyles="{}"
+            classes=""
+            styles="z-index:1;top:-62px;right:0;"
+            @onChange="onTableFilerChange"
+        ></table-filter>  
 <div :id="table_def.identifier">
     <div class="list-header">
         <template v-for="item,index in table_def.columns_def" :key="index">
@@ -14,7 +25,7 @@
     </div>
     <transition-group tag="div" class="list"  name="list" appear>
         <template v-for="row,index in lists" :key="index">
-           
+           <div>
         <div class="list-row list-row-group" v-if="grouped_by!=''&&showGroupHeader(ifnull(row[grouped_by]))" @click="toggleGroupVisible(row[grouped_by])" >
              <template v-for="col,indexcol in table_def.columns_def" :key="`${indexcol}_${grouped_by}`">
                 <div class="list-col almarai_700_normal" v-if="col.id==grouped_by" :style="col.css" :class="colRowClasses(col,row)">
@@ -46,7 +57,7 @@
                 </div>
              </template>
         </div>
-           
+           </div>
         </template>
     </transition-group>
     <div class="list-footer">
@@ -75,13 +86,15 @@ import { formatDate,formatPrice } from '../../helpers/helpers';
 import { DISPLAY_LOADER, HIDE_LOADER, ITEM_LIST_FILTER, ITEM_LIST_GET_COLUMN_FILTERS, ITEM_LIST_GET_CURRENT, ITEM_LIST_GET_LISTS, ITEM_LIST_GET_SORT, ITEM_LIST_GET_TABLES, ITEM_LIST_LOAD_MORE, ITEM_LIST_MODULE, ITEM_LIST_MULTI_CHECK, ITEM_LIST_MULTI_CHECK_LISTS, ITEM_LIST_MULTI_UNCHECK, ITEM_LIST_RESET_MULTI_CHECK, ITEM_LIST_SELECT_CURRENT, ITEM_LIST_SET_TABLE, ITEM_LIST_SET_TABLEDEF, ITEM_LIST_SORT, ITEM_LIST_TABLEDEF, ITEM_LIST_TABLE_RELOAD, LOADER_MODULE } from '../../../store/types/types';
 import { useRouter } from 'vue-router';
 import ItemListDateFilter from './ItemListDateFilter.vue';
+import TableFilter from "../TableFilter.vue";
 
 export default {
 
     
     name: "ItemListTable",
     components:{
-        ItemListDateFilter
+        ItemListDateFilter,
+        TableFilter
     },
     props: { 
         table_def: {
@@ -131,7 +144,43 @@ export default {
                 showLoader('Veuillez patienter. Chargement en cours...');
                 store.dispatch(`${ITEM_LIST_MODULE}${ITEM_LIST_TABLEDEF}`,table).finally(()=>hideLoader());
         
-        })
+        });
+        const grouperPar = ref({});
+        const onTableFilerChange=(val)=>{
+            grouped_by.value=val.selectedOptions[0];
+        }
+        const columnSelection =  ref([
+            {
+                id: "champsvisible",
+                name: 'Champs',
+                options: [
+                    { id: 'nodevis', value: 'no devis', check: false },
+                    { id: 2, value: 'client', check: false },
+                    { id: 3, value: 'contact', check: false },
+                    { id: 4, value: 'chantier', check: false },
+                    { id: 5, value: 'date creation', check: false },
+                    { id: 6, value: 'responsable', check: false },
+                    { id: 7, value: 'status', check: false },
+                ],
+            },
+        ])
+
+        const listGroup = ref([
+            {
+                label: 'Grouper par',
+                options: [
+                    { value: '', display: 'Aucune' }
+             
+                ],
+            },
+             //can add more here
+        ]);
+        for(const i in props.table_def.columns_def){
+            if(props.table_def.columns_def[i].allow_groupby===true){
+                listGroup.value[0].options.push({value:props.table_def.columns_def[i].id,display:props.table_def.columns_def[i].display_name});
+            }
+        }
+
          const loadmore=()=>{
              showLoader('Veuillez patienter.')
             store.dispatch(`${ITEM_LIST_MODULE}${ITEM_LIST_LOAD_MORE}`).finally(()=>hideLoader());
@@ -510,7 +559,11 @@ export default {
           colTotal,
           sanitise,
           styleRow,
-          colTotalAll
+          colTotalAll,
+          grouperPar,
+          listGroup,
+          columnSelection,
+          onTableFilerChange
       }
 
     }
