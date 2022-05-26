@@ -150,7 +150,7 @@ class DevisController extends Controller
                         'textchargeaffaire', 'textoperator', 'ouvrage_metier_id', 'ouvrage_prestation_id', 'ouvrage_toit_id'
                         )
                     ->where('id', $request->id)->first();
-        $ouvrage->qty = 0;
+        $ouvrage->qty = $request->qtyOuvrage;
         $ouvrage->totalHour = 0;
         $ouvrage->avg = 0;
         $ouvrage->qtyOuvrage = $request->qtyOuvrage;
@@ -218,8 +218,7 @@ class DevisController extends Controller
                         ->orWhere('products.reference', 'like', '%'.$request->search.'%')
                         ->orWhere('products.description', 'like', '%'.$request->search.'%');
         }
-        if($request->type != '')
-            $query =    $query->where('products.type', $request->type);
+        $query =    $query->where('products.type', 'PRODUIT');
         return response()->json(
             $query->select(
                 'products.id', 'products.name',

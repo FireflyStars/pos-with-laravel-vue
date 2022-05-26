@@ -73,6 +73,9 @@ export default {
             task.value.zoneIndex = zoneIndex;
             task.value.ouvrageType = ouvrageType;
             task.value.ouvrageId = ouvrageId;
+            task.value.name = '';
+            task.value.textchargeaffaire = '';
+            task.value.customerText = '';
             showModal.value = !showModal.value;
         }  
         const selectTask = ()=>{

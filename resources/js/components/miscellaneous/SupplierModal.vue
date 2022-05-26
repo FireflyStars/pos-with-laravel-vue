@@ -88,6 +88,7 @@ export default {
         }
         const supplier = ref({
             supplier_id: '',
+            name: 'FOURNISSEUR',
             type: 'COMMANDE FOURNISSEUR',
             totalPrice: '',
             base64: '',
@@ -102,11 +103,21 @@ export default {
         })
         const showModal = ref(false);
         const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage, tax)=>{
-            supplier.value.zoneIndex = zoneIndex;
-            supplier.value.ouvrageType = ouvrageType;
-            supplier.value.ouvrageId = ouvrageId;
-            supplier.value.taskId = taskId;
-            supplier.value.qtyOuvrage = qtyOuvrage;
+            supplier.value = {
+                supplier_id: '',
+                type: 'COMMANDE FOURNISSEUR',
+                name: 'FOURNISSEUR',
+                totalPrice: '',
+                base64: '',
+                datesupplier: '',
+                tax: '',
+                marge: '',
+                zoneIndex: zoneIndex,
+                ouvrageType: ouvrageType,
+                ouvrageId: ouvrageId,
+                taskId: taskId,
+                qtyOuvrage: '',
+            }
             showModal.value = !showModal.value;
             taxes.value = tax;
         }  

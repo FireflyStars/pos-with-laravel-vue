@@ -84,9 +84,9 @@
                       </div>
                     </div>
                     <div class="d-flex">
-                        <div class="col-6 almarai-bold text-gray">{{ address.address1 }}</div>
-                        <div class="col-1 almarai-bold text-gray">{{ address.address2 }}</div>
-                        <div class="col-5 almarai-bold text-gray">{{ address.postcode }} {{ address.city }}</div>
+                        <div class="col-4 almarai-bold text-gray">{{ address.address1 }}</div>
+                        <div class="col-4 almarai-bold text-gray">{{ address.address2 }}</div>
+                        <div class="col-4 almarai-bold text-gray">{{ address.postcode }} {{ address.city }}</div>
                     </div>
                   </div>
                 </div>
@@ -113,9 +113,15 @@
                     </div>
                   </div>
                   <div class="col-5 me-3 price-section d-flex align-items-end">
-                    <span class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">15 hr</span>
-                    <span class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">15 000 €</span>
-                    <span class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">350 000 €</span>
+                    <span class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">
+                      {{ form.totalHoursForInstall + form.totalHoursForSecurity + form.totalHoursForPrestation }} hr
+                    </span>
+                    <span class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">
+                      {{ form.totalPriceForInstall + form.totalPriceForSecurity + form.totalPriceForPrestation }} €
+                    </span>
+                    <span class="col-4 fw-bold mulish-extra-bold font-16 text-black text-center">
+                      {{ form.totalPriceForInstall + form.totalPriceForSecurity + form.totalPriceForPrestation }} €
+                    </span>
                   </div>
                 </div>
                 <div class="zone-section" v-for="(zone, zoneIndex) in form.zones" :key="zoneIndex">
@@ -404,12 +410,7 @@
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
                               <select class="form-control form-control-sm custom-text-danger" v-model="ouvrage.unit">
-                                <option value="1">L</option>
-                                <option value="2">HR</option>
-                                <option value="3">UNIT</option>
-                                <option value="4">KG</option>
-                                <option value="5">M</option>
-                                <option value="6">M2</option>
+                                <option v-for="(unit, unitIndex) in units" :value="unit.value" :key="unitIndex">{{ unit.display }}</option>
                               </select>
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
@@ -582,12 +583,7 @@
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
                               <select class="form-control form-control-sm custom-text-danger" v-model="ouvrage.unit">
-                                <option value="1">L</option>
-                                <option value="2">HR</option>
-                                <option value="3">UNIT</option>
-                                <option value="4">KG</option>
-                                <option value="5">M</option>
-                                <option value="6">M2</option>
+                                <option v-for="(unit, unitIndex) in units" :value="unit.value" :key="unitIndex">{{ unit.display }}</option>
                               </select>
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
@@ -734,7 +730,7 @@
                     </div>
                     <div class="col-2 d-flex align-items-center">
                       <p class="w-100 text-center font-16 mulish-extrabold">
-                        2 jours
+                        0 jours
                       </p>
                     </div>
                   </div>
@@ -749,7 +745,7 @@
                     </div>
                     <div class="col-2 d-flex align-items-center">
                       <p class="w-100 text-center font-16 mulish-extrabold">
-                        5 000 €
+                        0 €
                       </p>
                     </div>
                   </div>
@@ -872,8 +868,7 @@ export default {
     const store = useStore();
     const router = useRouter();
     const breadcrumbs = ref(['Choix client']);
-    // const devisCreateStep = ref('choose_customer');
-    const devisCreateStep = ref('choose_address');
+    const devisCreateStep = ref('create_devis');
     watchEffect(()=>{
       if(devisCreateStep.value == 'choose_customer'){
         breadcrumbs.value = ['Choix client'];
@@ -934,6 +929,7 @@ export default {
       totalPriceForPrestation: 0,
       totalHoursForInterim: 0,
       totalPriceWithoutMarge: 0,
+      totalUnitPrice: 0,
       zones: [
         {
           edit: false,
@@ -977,7 +973,9 @@ export default {
       form.value.totalHoursForPrestation = 0;
       form.value.totalPriceForPrestation = 0;
       form.value.totalHoursForInterim = 0;
+      form.value.totalHoursForInterim = 0;
       form.value.totalPriceWithoutMarge = 0;
+      form.value.totalUnitPrice = 0;
       form.value.zones.forEach(zone=>{
         // install ouvrages
         zone.installOuvrage.totalHour = 0;
@@ -990,8 +988,8 @@ export default {
             task.details.forEach(detail=>{
               zone.installOuvrage.sumUnitPrice += parseInt(detail.unitPrice);
               if(detail.type == 'MO'){
-                detail.totalPrice = parseFloat(detail.numberH) * parseInt(detail.unitPrice);
-                detail.totalPriceWithoutMarge = parseFloat(detail.numberH) * parseInt(detail.unitPrice);
+                detail.totalPrice = parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty);
+                detail.totalPriceWithoutMarge = parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty);
               }else{
                 detail.totalPrice = parseInt(detail.qty) * parseInt(detail.unitPrice) * (parseInt(detail.marge)/100 + 1);
                 detail.totalPriceWithoutMarge = parseInt(detail.qty) * parseInt(detail.unitPrice);
@@ -1000,13 +998,14 @@ export default {
                 form.value.totalHoursForInterim += parseFloat(detail.numberH)
               ouvrage.total += parseInt(detail.totalPrice);
               ouvrage.totalWithoutMarge += detail.totalPriceWithoutMarge;
-              ouvrage.totalHour += parseFloat(detail.numberH);
+              ouvrage.totalHour += (parseFloat(detail.numberH) * parseInt(detail.qty) );
             })
           })
           zone.installOuvrage.totalHour += ouvrage.totalHour;
           zone.installOuvrage.totalPrice += ouvrage.total;
           form.value.totalPriceWithoutMarge += ouvrage.totalWithoutMarge;
         })
+        form.value.totalUnitPrice += zone.installOuvrage.sumUnitPrice;
         form.value.totalHoursForInstall += zone.installOuvrage.totalHour;
         form.value.totalPriceForInstall += zone.installOuvrage.totalPrice;
         // securite ouvrages
@@ -1020,8 +1019,8 @@ export default {
             task.details.forEach(detail=>{
               zone.securityOuvrage.sumUnitPrice += parseInt(detail.unitPrice);
               if(detail.type == 'MO'){
-                detail.totalPrice = parseFloat(detail.numberH) * parseInt(detail.unitPrice);
-                detail.totalPriceWithoutMarge = parseFloat(detail.numberH) * parseInt(detail.unitPrice);
+                detail.totalPrice = parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty);
+                detail.totalPriceWithoutMarge = parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty);
               }else{
                 detail.totalPrice = parseInt(detail.qty) * parseInt(detail.unitPrice) * (parseInt(detail.marge)/100 + 1);
                 detail.totalPriceWithoutMarge = parseInt(detail.qty) * parseInt(detail.unitPrice);
@@ -1037,6 +1036,7 @@ export default {
           zone.securityOuvrage.totalPrice += ouvrage.total;          
           form.value.totalPriceWithoutMarge += ouvrage.totalWithoutMarge;
         })
+        form.value.totalUnitPrice += zone.securityOuvrage.sumUnitPrice;
         form.value.totalHoursForSecurity += zone.securityOuvrage.totalHour;
         form.value.totalPriceForSecurity += zone.securityOuvrage.totalPrice;        
         // prestation ouvrages
@@ -1052,8 +1052,8 @@ export default {
               detail.sumUnitPrice = parseInt(detail.unitPrice);
               zone.prestationOuvrage.sumUnitPrice += parseInt(detail.unitPrice);
               if(detail.type == 'MO'){
-                detail.totalPrice = parseFloat(detail.numberH) * parseInt(detail.unitPrice);
-                detail.totalPriceWithoutMarge = parseFloat(detail.numberH) * parseInt(detail.unitPrice);
+                detail.totalPrice = parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty);
+                detail.totalPriceWithoutMarge = parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty);
               }else{
                 detail.totalPrice = parseInt(detail.qty) * parseInt(detail.unitPrice) * (parseInt(detail.marge)/100 + 1);
                 detail.totalPriceWithoutMarge = parseInt(detail.qty) * parseInt(detail.unitPrice);
@@ -1069,6 +1069,7 @@ export default {
           zone.prestationOuvrage.totalPrice += ouvrage.total;            
           form.value.totalPriceWithoutMarge += ouvrage.totalWithoutMarge;          
         })
+        form.value.totalUnitPrice += zone.prestationOuvrage.sumUnitPrice;
         form.value.totalHoursForPrestation += zone.prestationOuvrage.totalHour;
         form.value.totalPriceForPrestation += zone.prestationOuvrage.totalPrice;    
       })
@@ -1219,36 +1220,36 @@ export default {
         form.value.zones[product.zoneIndex].installOuvrage.ouvrages[product.ouvrageId].tasks[product.taskId].details.push({
           qty: 1,
           tax: product.tax,
-          unitPrice: parseInt(product.wholesale_price),
+          unitPrice: product.unitPrice,
           marge: 0,
           type: product.type,
           unit: product.unit,
           qtyOuvrage: product.qtyOuvrage,
-          totalPrice: parseInt(product.wholesale_price),
+          totalPrice: product.unitPrice * parseInt(product.unit),
           numberH: 0,
         });
       }else if(product.ouvrageType == 2){
         form.value.zones[product.zoneIndex].securityOuvrage.ouvrages[product.ouvrageId].tasks[product.taskId].details.push({
           qty: 1,
           tax: product.tax,
-          unitPrice: parseFloat(product.wholesale_price),
+          unitPrice: product.unitPrice,
           marge: 0,
           type: product.type,
           unit: product.unit,
           qtyOuvrage: product.qtyOuvrage,
-          totalPrice: parseInt(product.wholesale_price),
+          totalPrice: product.unitPrice * parseInt(product.unit),
           numberH: 0,
         });
       }else{
         form.value.zones[product.zoneIndex].prestationOuvrage.ouvrages[product.ouvrageId].tasks[product.taskId].details.push({
           qty: 1,
           tax: product.tax,
-          unitPrice: parseFloat(product.wholesale_price),
+          unitPrice: product.unitPrice,
           marge: 0,
           type: product.type,
           unit: product.unit,
           qtyOuvrage: product.qtyOuvrage,
-          totalPrice: parseInt(product.wholesale_price),
+          totalPrice: product.unitPrice * parseInt(product.unit),
           numberH: 0,
         });
       }

@@ -98,7 +98,7 @@ export default {
             ouvrageType: '',
             ouvrageId: 0,
             taskId: 0,
-            qtyOuvrage: 0,
+            qtyOuvrage: '',
         })
         const showModal = ref(false);
         const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
@@ -106,7 +106,11 @@ export default {
             interim.value.ouvrageType = ouvrageType;
             interim.value.ouvrageId = ouvrageId;
             interim.value.taskId = taskId;
-            interim.value.qtyOuvrage = qtyOuvrage;            
+            interim.value.qtyOuvrage = '';
+            interim.hours =  '';
+            interim.amountExcludeTax =  '';
+            interim.company =  '';
+            interim.tax =  '';
             showModal.value = !showModal.value;
             nextTick(()=>{
                 queryElement.value.focus();

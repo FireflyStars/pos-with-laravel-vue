@@ -124,6 +124,7 @@
                     type: product.type, 
                     unit: product.unit, 
                     numberh: product.numberh, 
+                    qtyOuvrage: '', 
                     ... data.value 
                 });
             }
