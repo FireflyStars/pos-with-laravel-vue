@@ -1608,14 +1608,12 @@ class CompagneController extends Controller
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function lettredata($id)
+    public function lettredata(Campagne $campagne)
     {
 
-        $campagne=Campagne::find($id);
         $campagne_category=CampagneCategory::find($campagne->campagne_category_id);
 
-
-        $content = is_null($campagne->lettreaccompagnement) 
+        $content = is_null($campagne->lettreaccompagnement) || $campagne->lettreaccompagnement == ''
         ? $campagne_category->lettreaccompagnement 
         : $campagne->lettreaccompagnement;
 
@@ -1643,14 +1641,12 @@ class CompagneController extends Controller
     }
 
 
-    public function fields($id)
+    public function fields(Campagne $campagne)
     {
-        $c=Campagne::find($id);
-      
-        $affiliate=$c->affiliate;
-        $cc=$c->campagneCategory;
-        $telephone = !is_null($c->phone) ? $c->phone : $affiliate->telephone;
-        $email = !is_null($c->email) ? $c->email : $affiliate->reponseaddress;
+        $affiliate=$campagne->affiliate;
+        $cc=$campagne->campagneCategory;
+        $telephone = !is_null($campagne->phone) && $campagne->phone != '' ? $campagne->phone : $affiliate->telephone;
+        $email = !is_null($campagne->email) && $campagne->email != '' ? $campagne->email : $affiliate->reponseaddress;
         $fields=json_decode($cc->fields);
         $fields->Nom_agence->value=$affiliate->name;
         $fields->Telephone_agence->value=$telephone;

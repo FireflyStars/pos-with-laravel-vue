@@ -133,9 +133,9 @@ Route::group([
     Route::get('/getTempname/{id}',[CompagneController::class, 'getTempname'])->middleware('auth')->name('getTempname');
     Route::get('/getContentImage/{id}',[CompagneController::class, 'getContentImage'])->middleware('auth')->name('getContentImage');
     Route::get('/imagefield/{id}',[CompagneController::class, 'imagefield'])->middleware('auth')->name('imagefield');
-    Route::get('/fields/{id}',[CompagneController::class, 'fields'])->middleware('auth')->name('fields');
+    Route::get('/fields/{campagne}',[CompagneController::class, 'fields'])->middleware('auth')->name('fields');
     Route::get('/download',[CompagneController::class, 'downloadPdfFile'])->middleware('auth')->name('downloadPdfFile');
-    Route::get('/lettredata/{id}',[CompagneController::class, 'lettredata'])->middleware('auth')->name('lettredata');
+    Route::get('/lettredata/{campagne}',[CompagneController::class, 'lettredata'])->middleware('auth')->name('lettredata');
     Route::post('/get-affiliate-detail',[LcdtFrontController::class,'getAffiliateDetail'])->middleware('auth')->name('get-affiliate-detail');
     Route::post('/get-campagne-details',[LcdtFrontController::class, 'getCampagneCategory'])->middleware('auth')->name('get-campagne-details');
     Route::post('/get-cible-emails',[LcdtFrontController::class,'getCibleEmails'])->middleware('auth')->name('get-cible-emails');
