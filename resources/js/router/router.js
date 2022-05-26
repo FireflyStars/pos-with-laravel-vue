@@ -132,6 +132,27 @@ const router = createRouter({
                 }
             ]
         },
+
+        {
+            path: "/emailing/producta",
+            name: "emailing-producta",
+            props: true,
+            component: () => import("../components/emailing/EmailingProductA.vue"),
+            meta: {
+                authenticated: true,
+            },
+        },
+        
+        {
+            path: "/emailing/producta-planner",
+            name: "emailing-producta-planner",
+            props: true,
+            component: () => import("../components/emailing/EmailingProductAPlanner.vue"),
+            meta: {
+                authenticated: true,
+            },
+        },
+
         {
             path: "/emailing/",
             name: "emailing",
