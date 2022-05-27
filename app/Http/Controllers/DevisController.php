@@ -157,7 +157,6 @@ class DevisController extends Controller
         $ouvrage->qtyOuvrage = $request->qtyOuvrage;
         $ouvrage->total = 0;
         $ouvrage->totalWithoutMarge = 0;
-        $totalHour = 0;
         $tasks = DB::table('ouvrage_task')
                 ->where('ouvrage_id', $request->id)
                 ->select('id', 'name', 'textcustomer as customerText', 'textchargeaffaire', 'textoperator', 'unit_id', 'qty')

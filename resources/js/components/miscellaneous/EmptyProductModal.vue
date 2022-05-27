@@ -80,7 +80,7 @@
             const product = ref({
                 unitId: '',
                 unit: '',
-                qty: '',
+                qty: 1,
                 type: 'PRODUIT VIDE',
                 name: '',
                 productPrice: 0,

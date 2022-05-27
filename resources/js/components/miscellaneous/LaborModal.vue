@@ -14,17 +14,7 @@
                             <div class="px-2">
                                 <div class="d-flex px-3 justify-content-between">
                                     <div class="col-5">
-                                        <SelectBox :label="''" 
-                                            v-model="labor.numberH" 
-                                            :options="[ 
-                                                { display:'Intérieur', value: 'Intérieur' }, 
-                                                { display:'Extérieur', value: 'Extérieur' },
-                                                { display:'Pas d’accès', value: 'Pas d’accès' }
-                                            ]"
-                                            :name="'workhours'"
-                                            :classnames="'w-100'"
-                                            :placeholder="'Nombre d’heure'"
-                                        />
+                                        <input type="text" v-model="labor.numberH" placeholder="Nombre d’heure" class="form-control form-control-sm">
                                     </div>
                                     <div class="col-5">
                                         <input type="text" v-model="labor.amountExcludeTax" placeholder="Montant HT" class="form-control form-control-sm">
@@ -36,11 +26,7 @@
                                     <div class="col-5">
                                         <SelectBox :label="''" 
                                             v-model="labor.tax" 
-                                            :options="[ 
-                                                { display:'Intérieur', value: 'Intérieur' }, 
-                                                { display:'Extérieur', value: 'Extérieur' },
-                                                { display:'Pas d’accès', value: 'Pas d’accès' }
-                                            ]"
+                                            :options="taxes"
                                             :name="'tax'"
                                             :classnames="'w-100'"
                                             :placeholder="'Taxe'"
@@ -78,6 +64,7 @@ export default {
         const closeModal = ()=>{
             showModal.value = !showModal.value;
         }
+        const taxes = ref([]);
         const labor = ref({
             zoneIndex: '',
             ouvrageType: '',
@@ -89,7 +76,7 @@ export default {
             qtyOuvrage: '',
         })
         const showModal = ref(false);
-        const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
+        const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage, tax, taxId)=>{
             labor.value.zoneIndex = zoneIndex;
             labor.value.ouvrageType = ouvrageType;
             labor.value.ouvrageId = ouvrageId;
@@ -97,18 +84,17 @@ export default {
             labor.value.qtyOuvrage = '';
             labor.numberH = '';
             labor.amountExcludeTax = '';
-            labor.tax = '';
+            labor.tax = taxId;
+            taxes.value = tax;
             showModal.value = !showModal.value;
-            nextTick(()=>{
-                queryElement.value.focus();
-            })
-        }  
+        }
         const selectLabor = ()=>{
             showModal.value = false;
             emit('selectedLabor', labor.value);
         }
         return {
             labor,
+            taxes,
             showModal,
             closeModal,
             openModal,

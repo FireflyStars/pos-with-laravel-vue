@@ -797,7 +797,7 @@
                   </div>
                   <div class="d-flex mt-3">
                     <div class="col-10 bold-title">
-                      Total M/V  Fourniseurs
+                      Total M/V Fourniseurs
                     </div>
                     <div class="col-2 font-14 fw-bold">€ {{ form.totalPriceWithoutMarge }}</div>
                   </div>
@@ -908,6 +908,7 @@ export default {
         contact: 'Thierry Gavois',
         telephone: '58 58 74 58 44',
         tax: '10%',
+        taxId: '1',
         naf: 'Boulangerie',
         siret: '4654654646546546',
       },
@@ -990,10 +991,10 @@ export default {
               zone.installOuvrage.sumUnitPrice += parseInt(detail.unitPrice);
               if(detail.type == 'MO'){
                 detail.totalPrice = (parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
-                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH) * parseFloat(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
+                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH) * parseFloat(detail.unitPrice) * parseInt(detail.qty));
               }else{
                 detail.totalPrice = (parseInt(detail.qty) * parseFloat(detail.unitPrice) * (parseInt(detail.marge)/100 + 1)).toFixed(2);
-                detail.totalPriceWithoutMarge = (parseInt(detail.qty) * parseFloat(detail.unitPrice)).toFixed(2);
+                detail.totalPriceWithoutMarge = (parseInt(detail.qty) * parseFloat(detail.unitPrice));
               }
               if(detail.type == 'Interim')     
                 form.value.totalHoursForInterim += parseFloat(detail.numberH)
@@ -1139,7 +1140,7 @@ export default {
     }
 
     const openLaborModal = (zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
-      laborModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage);
+      laborModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage, taxes.value, form.value.customer.taxId);
     }
     const openTaskModal = (zIndex, ouvrageType, ouvrageId)=>{
       taskModal.value.openModal(zIndex, ouvrageType, ouvrageId);
@@ -1560,11 +1561,6 @@ export default {
         confirmButtonText: 'Oui, supprimez-le!'
       }).then((result) => {
         if (result.isConfirmed) {
-          Swal.fire(
-            'Supprimé!',
-            'Le détail a été supprimé.',
-            'success'
-          )
           if(ouvrageType == 1){
             form.value.zones[zoneIndex].installOuvrage.ouvrages[ouvrageIndex].tasks[taskIndex].details = form.value.zones[zoneIndex].installOuvrage.ouvrages[ouvrageIndex].tasks[taskIndex].details.filter((item, index)=>{
               return detailIndex != index;
@@ -1580,6 +1576,11 @@ export default {
               return detailIndex != index;
             })            
           }
+          Swal.fire(
+            'Supprimé!',
+            'Le détail a été supprimé.',
+            'success'
+          )        
         }
       })        
     }
