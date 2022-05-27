@@ -36,7 +36,8 @@
                     v-for="item in template"
                     :key="item.id"
                 >
-                    <div class="img_container"  @click="SubCategory(item.id)">
+                
+                    <div class="img_container"  @click="SubCategory(item.id, item.name)">
                         <img
                             :src="`/storage/${item.url}`"
                             class="card-img-top body linear-gradient" :class="{'niveau3img' :item && item.niveau == 3}"
@@ -44,7 +45,7 @@
                     </div>
                     <div
                         class="card-body d-flex flex-column" :class="{'niveau3cardbody' :item && item.niveau == 3}"
-                        @click="SubCategory(item.id)"
+                        @click="SubCategory(item.id, item.name)"
                     >
                       
                         <h5 class="card-title text-uppercase card-title"  :class="{'niveau3cardtile' :item && item.niveau == 3}">
@@ -55,7 +56,7 @@
                                 <p class="card-text">{{ item.text }}</p>
                             </div>
 
-                            <div class="voir-plus" @click="SubCategory(item.id)">
+                            <div class="voir-plus" @click="SubCategory(item.id, item.name)">
                                     voir
                             </div>
 

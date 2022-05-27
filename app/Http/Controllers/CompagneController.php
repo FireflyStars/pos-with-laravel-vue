@@ -1661,6 +1661,7 @@ class CompagneController extends Controller
     public function fields(Campagne $campagne)
     {
         $affiliate=$campagne->affiliate;
+        
         $cc=$campagne->campagneCategory;
         $telephone = !is_null($campagne->phone) && $campagne->phone != '' ? $campagne->phone : $affiliate->telephone;
         $email = !is_null($campagne->email) && $campagne->email != '' ? $campagne->email : $affiliate->reponseaddress;
