@@ -3,12 +3,20 @@ Campagne Courrier
 
 {!! $campagne_category->infoimprimeur !!}
 
-Flyer: <a href="{{ $url . '/download-resource-file?resource=' . $campagne->urlflyer . '&filename=flyer.pdf' }}">
-    {{ $url . '/download-resource-file?resource=' . $campagne->urlflyer . '&filename=flyer' }}
+@php
+    $filenames = [
+        'flyer'  => 'flyer-' . date('dmY-hi') . '.pdf',
+        'letter' => 'lettre-' . date('dmY-hi') . '.pdf',
+        'csv'    => 'csv-' . date('dmY-hi') . '.csv'
+    ];
+@endphp
+
+Flyer: <a href="{{ $url . '/download-resource-file?resource=' . $campagne->urlflyer . '&filename=' . $filenames['flyer'] }}">
+    {{ $url . '/download-resource-file?resource=' . $campagne->urlflyer . '&filename=' . $filenames['flyer'] }}
 </a>
 
-Lettre: <a href="{{ $url . '/download-resource-file?resource=' . $campagne->urllettre . '&filename=letter.pdf' }}">
-    {{ $url . '/download-resource-file?resource=' . $campagne->urllettre . '&filename=letter' }}
+Lettre: <a href="{{ $url . '/download-resource-file?resource=' . $campagne->urllettre . '&filename=' . $filenames['letter'] }}">
+    {{ $url . '/download-resource-file?resource=' . $campagne->urllettre . '&filename=' . $filenames['letter'] }}
 </a>
 
 Dépliant: <a href="{{ $url . '/download-resource-file?resource=' . $filedepliant . '&filename=deplyant.pdf' }}">
@@ -19,8 +27,8 @@ Enveloppe: <a href="{{ $url . '/download-resource-file?resource=' . $fileenvelop
     {{ $url . '/download-resource-file?resource=' . $fileenveloppe . '&filename=envelop' }}
 </a>
 
-Csv: <a href="{{ $url . '/download-resource-file?resource=' . $campagne->urlcsv . '&filename=Cilbe Info.csv' }}">
-    {{ $url . '/download-resource-file?resource=' . $campagne->urlcsv . '&filename=csv' }}
+Csv: <a href="{{ $url . '/download-resource-file?resource=' . $campagne->urlcsv . '&filename=' . $filenames['csv'] }}">
+    {{ $url . '/download-resource-file?resource=' . $campagne->urlcsv . '&filename=' . $filenames['csv'] }}
 </a>
 
 

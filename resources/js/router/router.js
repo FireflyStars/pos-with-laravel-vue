@@ -132,7 +132,6 @@ const router = createRouter({
                 }
             ]
         },
-
         {
             path: "/emailing/producta",
             name: "emailing-producta",
