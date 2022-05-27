@@ -222,7 +222,7 @@
                         <div class="ouvrage-item" v-for="(ouvrage, ouvrageIndex) in zone.installOuvrage.ouvrages" :key="ouvrageIndex">
                           <div class="d-flex ouvrage-header">
                             <div class="col-4">
-                              <a class="nav-link custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': ouvrageIndex == (zone.installOuvrage.ouvrages.length - 1)}" :data-id="'zone-' + zoneIndex +'-installation-ouvrage-'+ouvrageIndex" href="javascript:;"
+                              <a class="ouvrage custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': ouvrageIndex == (zone.installOuvrage.ouvrages.length - 1)}" :data-id="'zone-' + zoneIndex +'-installation-ouvrage-'+ouvrageIndex" href="javascript:;"
                                   @click="activeOuvrage"
                                 >
                                   <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ ouvrage.name }}
@@ -393,7 +393,7 @@
                         <div class="ouvrage-item" v-for="(ouvrage, ouvrageIndex) in zone.securityOuvrage.ouvrages" :key="ouvrageIndex">
                           <div class="d-flex ouvrage-header">
                             <div class="col-4">
-                              <a class="nav-link custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': ouvrageIndex == (zone.securityOuvrage.ouvrages.length -1) }" :data-id="'zone-' + zoneIndex +'-installation-ouvrage-'+ouvrageIndex" href="javascript:;"
+                              <a class="ouvrage custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': ouvrageIndex == (zone.securityOuvrage.ouvrages.length -1) }" :data-id="'zone-' + zoneIndex +'-installation-ouvrage-'+ouvrageIndex" href="javascript:;"
                                   @click="activeOuvrage"
                                 >
                                   <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ ouvrage.name }}
@@ -564,7 +564,7 @@
                         <div class="ouvrage-item" v-for="(ouvrage, ouvrageIndex) in zone.prestationOuvrage.ouvrages" :key="ouvrageIndex">
                           <div class="d-flex ouvrage-header">
                             <div class="col-4">
-                              <a class="nav-link custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': ouvrageIndex == (zone.prestationOuvrage.ouvrages.length - 1 )}" :data-id="'zone-' + zoneIndex +'-installation-ouvrage-'+ouvrageIndex" href="javascript:;"
+                              <a class="ouvrage custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': ouvrageIndex == (zone.prestationOuvrage.ouvrages.length - 1 )}" :data-id="'zone-' + zoneIndex +'-installation-ouvrage-'+ouvrageIndex" href="javascript:;"
                                   @click="activeOuvrage"
                                 >
                                   <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ ouvrage.name }}
@@ -1508,7 +1508,7 @@ export default {
 
     // activate the ouvrage
     const activeOuvrage = (event)=>{
-      document.querySelectorAll('.custom-option').forEach((item)=>{
+      document.querySelectorAll('.ouvrage.custom-option').forEach((item)=>{
         if(item.getAttribute('data-id') != event.target.getAttribute('data-id'))
             item.classList.remove('active');
       })
