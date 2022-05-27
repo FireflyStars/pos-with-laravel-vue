@@ -171,9 +171,14 @@ class CompagneController extends Controller
         $this->save_letter_pdf($request, $campagne);    
 
         $emails = $this->get_settings_email();
-        $emails = $emails->explode(',', $emails);
+        $emails = explode(',', $emails);
+        foreach($emails as $mail) 
+        {
+            Notification::route('mail', $mail)
+            ->notify(new CourierNotification($campagne));
+        }
 
-        Notification::send($emails, new CourierNotification($campagne));
+        // Notification::send($emails, new CourierNotification($campagne));
 
         $campagne->update([
             'status' => 'CAMPAGNE ENVOYEE'
@@ -185,7 +190,7 @@ class CompagneController extends Controller
 
     private function get_settings_email()
     {
-        return DB::table('settings')->where('key', 'lcdt.email_imprimeur')->first();
+        return DB::table('settings')->where('key', 'lcdt.email_imprimeur')->first()->value;
     }
 
 
@@ -1625,9 +1630,10 @@ class CompagneController extends Controller
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function lettredata(Campagne $campagne)
+    public function lettredata($id)
     {
 
+        $campagne = Campagne::find($id);
         $campagne_category=CampagneCategory::find($campagne->campagne_category_id);
 
         $content = is_null($campagne->lettreaccompagnement) || $campagne->lettreaccompagnement == ''
@@ -1658,10 +1664,12 @@ class CompagneController extends Controller
     }
 
 
-    public function fields(Campagne $campagne)
+    public function fields($id)
     {
-        $affiliate=$campagne->affiliate;
         
+        $campagne = Campagne::find($id);
+
+        $affiliate=$campagne->affiliate;
         $cc=$campagne->campagneCategory;
         $telephone = !is_null($campagne->phone) && $campagne->phone != '' ? $campagne->phone : $affiliate->telephone;
         $email = !is_null($campagne->email) && $campagne->email != '' ? $campagne->email : $affiliate->reponseaddress;
