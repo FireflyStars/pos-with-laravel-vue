@@ -345,6 +345,33 @@
 
 <script setup>
     
+    import { onMounted, computed } from 'vue'
+    import { useStore } from 'vuex'
+    import {
+        CIBLE_MODULE,
+        GET_CAMPAGNE_CATEGORY
+    }
+    from '../../store/types/types'
+
+    const props = defineProps({
+        categoryId: {
+            type: [Number, String],
+            required: true
+        }
+    })
+
+    const store = useStore()
+
+    const category = computed(() => store.getters[`${CIBLE_MODULE}/campagneCategory`])
+
+    const getCategory = (id) => {
+        store.dispatch(`${[CIBLE_MODULE]}/${[GET_CAMPAGNE_CATEGORY]}`, id)
+    }
+
+    onMounted(() => {
+        getCategory(props.categoryId)
+    })
+
 </script>
 
 <style lang="scss" scoped>

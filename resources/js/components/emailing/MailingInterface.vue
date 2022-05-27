@@ -8,7 +8,7 @@
                     <side-bar />
 
                     <div class="col main-view container">
-                        <page-title icon="emailing" name="EMAILING" class="almarai_extrabold_normal_normal"/>
+                        <page-title icon="emailing" name="MARKETING" class="almarai_extrabold_normal_normal"/>
                             <transition
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
@@ -19,7 +19,7 @@
                 <div class="row">
                     <div class="col-lg-7">
                         <h3 class="margin-align">
-                            <a @click="goToHome()" class="link">Emailing</a> >
+                            <a @click="goToHome()" class="link">Marketing</a> >
                             {{ my_name }} > Cible > Contenu > Lettre
                             Accompagnement
                         </h3>
@@ -234,7 +234,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6 apercu" style="margin-top: 26px">
+                    <div class="col-lg-6 apercu">
                         <div class="bg-panel p-4">
                         <h6>APERÇU</h6>
                         <div>

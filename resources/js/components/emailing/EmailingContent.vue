@@ -1,7 +1,7 @@
 <template>
 
 
-        <div class="container-fluid h-100 bg-color" >
+        <div class="container-fluid h-100 bg-color">
                 <main-header />
 
                 <div class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100" >
@@ -9,7 +9,7 @@
                     <side-bar />
 
                     <div class="col main-view container">
-                        <page-title icon="emailing" name="EMAILING" class="almarai_extrabold_normal_normal"/>
+                        <page-title icon="emailing" name="Marketing" class="almarai_extrabold_normal_normal"/>
                           <transition
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
@@ -17,10 +17,10 @@
         <form class="space-y-6"  v-if="showcontainer">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-7">
+                    <div class="col-lg-6">
              
                         <h3 class="margin">
-                            <a @click="goToHome()" class="link">Emailing</a> >
+                            <a @click="goToHome()" class="link">Marketing</a> >
                             <a @click="goToPrestation()" class="link">{{
                                 my_name
                             }}</a>
@@ -78,13 +78,15 @@
                         </div>
                     </div>
                     <div
-                        class="col-lg-5 apercu d-table "
-                        style="margin-top: 65px"
+                        class="col-lg-6 apercu d-table"
                     >
                         <h6>APERÇU</h6>
                         <div style="position: relative; " class="bg-panel" >
-                        <img v-if="imageurl!=''"
-                            :src="`/storage/${imageurl}`" />
+                        <img 
+                            v-if="imageurl!=''"
+                            :src="`/storage/${imageurl}`" 
+                            style="width: 100%; height: 100%"
+                        />
                             <template v-for="item,index in fields" :key="index">
                                 <span 
                                     v-if="item.active==1" 

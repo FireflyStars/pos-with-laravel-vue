@@ -8,7 +8,7 @@
                     <side-bar />
 
                     <div class="col main-view container">
-                        <page-title icon="emailing" name="EMAILING" class="almarai_extrabold_normal_normal"/>
+                        <page-title icon="emailing" name="MARKETING" class="almarai_extrabold_normal_normal"/>
                            <transition
             enter-active-class="animate__animated animate__fadeIn"
             leave-active-class="animate__animated animate__fadeOut"
@@ -20,7 +20,7 @@
 
                 <div>
                     <h3 class="margin">
-                        <a @click="goToHome()" class="link">Emailing </a>>
+                        <a @click="goToHome()" class="link">Marketing </a>>
                         <a key="" @click="goToPrestation()" v-if="campagne_category.name" class="link" > {{ campagne_category.name }} > </a>
                         Cible
                     </h3>
@@ -38,7 +38,7 @@
                         <div  class="col nafname" v-if="j==0"></div>
                         <div  class="col statutname d-flex justify-content-center align-items-center" >{{statut.name}}</div>
                     </template>
-                    <div class="col  text-xs grey size emphasized d-flex justify-content-center align-items-center text-center">E-mails sélectionnés</div>
+                    <div class="col  text-xs grey size emphasized d-flex justify-content-center align-items-center text-center">Clients sélectionnés</div>
                 </div>
                 <div v-for="(naf, i) in nafs" :key="i" class="row">
                     
@@ -93,11 +93,10 @@
                             <div class="left col p-0" style="position: absolute; right: 0; bottom: 72px;">
                                 <div class="bloc_count">
                                     <p>
-                                        <strong class="font total">{{filtered_emails.length}}</strong>
+                                        <strong class="font total">{{filtered_emails.length}}&nbsp;</strong>
 
-                                        <span class="emphasized size-mail">
-                                            e-mails</span
-                                        >
+                                        <span class="emphasized size-mail" v-if="filtered_emails.length==1">client</span>
+                                         <span class="emphasized size-mail" v-else>clients</span>
                                     </p>
                                     <p class="color">
                                         <strong class="font">{{formatPrice(total_price)}}</strong>

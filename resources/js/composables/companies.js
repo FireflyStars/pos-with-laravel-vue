@@ -146,7 +146,7 @@ export default function useCompanies() {
         count_cible.value = response.data.count_cible;
     };
 
-    const SubCategory = async (id) => {
+    const SubCategory = async (id, name = '') => {
         // id = 4
         let response = await axios.get("/SubCategory/" + id);
         title.value = response.data.campagnesCategory;
@@ -164,16 +164,30 @@ export default function useCompanies() {
 
         if (my_ids.value.length == 0) {
             console.log("empty");
-        } else {
+        } 
+        else {
+
             if (my_ids.value.includes(`${selected_id.value}`)) {
                 myvar.value = true;
                 router.push({
                     name: "emailingprestations",
                     params: { id: `${selected_id.value}` },
                 });
-            } else {
+            } 
+            else {
                
                 if (template.value.length == 0) {
+
+                    if(type.value.toLowerCase() == 'produit') {
+                        router.push({
+                            name: 'marketing-producta',
+                            params: {
+                                categoryId: `${selected_id.value}`,
+                            }
+                        })
+                        return
+                    }
+
                     router.push({
                         name: "cible",
                         params: {

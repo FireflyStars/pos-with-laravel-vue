@@ -9,7 +9,7 @@
                     <side-bar />
 
                     <div class="col main-view container">
-                            <page-title icon="emailing" name="EMAILING" class="almarai_extrabold_normal_normal"/>
+                            <page-title icon="emailing" name="MARKETING" class="almarai_extrabold_normal_normal"/>
                           <transition
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
@@ -18,13 +18,13 @@
 
             <div v-if="myvar == true">
                 <h3 class="margin" v-for="data in campagnedata" :key="data.id">
-                    <a @click="goToHome()" class="link">Emailing </a> >
+                    <a @click="goToHome()" class="link">Marketing</a> >
                     {{ data.name }}
                 </h3>
             </div>
             <div v-if="myvar2 == true && myvar == false">
                 <h3 class="color margin" v-for="item in title" :key="item.id">
-                    <a @click="goToHome()" class="link">Emailing</a> >
+                    <a @click="goToHome()" class="link">Marketing</a> >
                     {{ item.name }}
                     
                 </h3>
@@ -36,7 +36,8 @@
                     v-for="item in template"
                     :key="item.id"
                 >
-                    <div class="img_container"  @click="SubCategory(item.id)">
+                
+                    <div class="img_container"  @click="SubCategory(item.id, item.name)">
                         <img
                             :src="`/storage/${item.url}`"
                             class="card-img-top body linear-gradient" :class="{'niveau3img' :item && item.niveau == 3}"
@@ -44,7 +45,7 @@
                     </div>
                     <div
                         class="card-body d-flex flex-column" :class="{'niveau3cardbody' :item && item.niveau == 3}"
-                        @click="SubCategory(item.id)"
+                        @click="SubCategory(item.id, item.name)"
                     >
                       
                         <h5 class="card-title text-uppercase card-title"  :class="{'niveau3cardtile' :item && item.niveau == 3}">
@@ -55,7 +56,7 @@
                                 <p class="card-text">{{ item.text }}</p>
                             </div>
 
-                            <div class="voir-plus" @click="SubCategory(item.id)">
+                            <div class="voir-plus" @click="SubCategory(item.id, item.name)">
                                     voir
                             </div>
 

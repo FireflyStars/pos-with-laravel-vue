@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use App\Notifications\CourierNotification;
+use Illuminate\Support\Facades\Notification;
 
 class CompagneController extends Controller
 {
@@ -169,9 +170,10 @@ class CompagneController extends Controller
         $this->save_flyer_pdf($campagne);
         $this->save_letter_pdf($request, $campagne);    
 
-        $user = User::find(1);
+        $emails = $this->get_settings_email();
+        $emails = $emails->explode(',', $emails);
 
-        $user->notify(new CourierNotification($campagne));
+        Notification::send($emails, new CourierNotification($campagne));
 
         $campagne->update([
             'status' => 'CAMPAGNE ENVOYEE'
@@ -179,6 +181,11 @@ class CompagneController extends Controller
 
         return response()->json("Email sent");
 
+    }
+
+    private function get_settings_email()
+    {
+        return DB::table('settings')->where('key', 'lcdt.email_imprimeur')->first();
     }
 
 
@@ -821,6 +828,9 @@ class CompagneController extends Controller
                         'statut' => $item->type,
                         'phone' => $item->mobile,
                         'email' => $item->email,
+                        'firstname'=>$item->firstname,
+                        'gender'=>$item->gender,
+                        'name'=>$item->name,
                         'created_at' => date("Y-m-d"),
                         'updated_at' => date("Y-m-d"),
                     ]);
@@ -855,6 +865,9 @@ class CompagneController extends Controller
                             'statut' => $item->statut,
                             'phone' => $item->phone,
                             'email' => $item->email,
+                               'firstname'=>$item->firstname,
+                           'gender'=>$item->gender,
+                        'name'=>$item->name,
                             'created_at' => date("Y-m-d"),
                             'updated_at' => date("Y-m-d"),
                         ]);
@@ -1648,6 +1661,7 @@ class CompagneController extends Controller
     public function fields(Campagne $campagne)
     {
         $affiliate=$campagne->affiliate;
+        
         $cc=$campagne->campagneCategory;
         $telephone = !is_null($campagne->phone) && $campagne->phone != '' ? $campagne->phone : $affiliate->telephone;
         $email = !is_null($campagne->email) && $campagne->email != '' ? $campagne->email : $affiliate->reponseaddress;

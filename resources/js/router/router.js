@@ -133,20 +133,20 @@ const router = createRouter({
             ]
         },
         {
-            path: "/emailing/producta",
-            name: "emailing-producta",
+            path: "/marketing/producta/:categoryId",
+            name: "marketing-producta",
             props: true,
-            component: () => import("../components/emailing/EmailingProductA.vue"),
+            component: () => import("../components/marketing/ProductA.vue"),
             meta: {
                 authenticated: true,
             },
         },
         
         {
-            path: "/emailing/producta-planner",
-            name: "emailing-producta-planner",
+            path: "/marketing/producta-planner",
+            name: "marketing-producta-planner",
             props: true,
-            component: () => import("../components/emailing/EmailingProductAPlanner.vue"),
+            component: () => import("../components/marketing/ProductAPlanner.vue"),
             meta: {
                 authenticated: true,
             },
@@ -172,7 +172,6 @@ const router = createRouter({
                 authenticated: true,
             },
         },
-
         {
             path: "/emailing/cible/:type/:categ_id/:data",
             name: "cible",
