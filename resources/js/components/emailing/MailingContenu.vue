@@ -9,7 +9,7 @@
                     <side-bar />
 
                     <div class="col main-view container">
-                        <page-title icon="emailing" name="EMAILING" class="almarai_extrabold_normal_normal"/>
+                        <page-title icon="emailing" name="MARKETING" class="almarai_extrabold_normal_normal"/>
                          <transition
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
@@ -18,7 +18,7 @@
      
             <div>
                 <h3 class="margin-align">
-                    Emailing > {{ my_name }} > Cible > Contenu
+                    Marketing > {{ my_name }} > Cible > Contenu
                 </h3>
             </div>
 

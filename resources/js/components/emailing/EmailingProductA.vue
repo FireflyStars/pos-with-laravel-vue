@@ -36,7 +36,7 @@
                                         <h3 
                                             class="margin-align m-0"
                                         >
-                                            Emailing > Categorie XXX
+                                            Marketing > Categorie XXX
                                         </h3>
 
                                         <base-button

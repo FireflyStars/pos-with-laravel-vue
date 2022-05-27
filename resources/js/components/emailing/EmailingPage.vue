@@ -9,7 +9,7 @@
 
 
                     <div class="col main-view container">
-                            <page-title icon="emailing" name="EMAILING" class="almarai_extrabold_normal_normal"/>
+                            <page-title icon="emailing" name="MARKETING" class="almarai_extrabold_normal_normal"/>
                             <transition
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"

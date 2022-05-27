@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use App\Models\Campagne;
 use App\Models\CampagneCategory;
 use App\Models\CampagneCible;
@@ -69,8 +70,10 @@ class CibleController extends Controller
         })
         ->where('contacts.type','=',$customer_statut->name)
      
-        ->whereNull('contacts.deleted_at')
-        ->get();
+        ->whereNull('contacts.deleted_at');
+        if($type=='Courrier')
+        $contacts=$contacts->where('addresses.id','<>',0);
+        $contacts=$contacts->get();
         foreach($contacts as &$contact){
             $contact->industrie=$naf_selection;
             $contact->statut=$customer_statut->name;
@@ -118,27 +121,35 @@ class CibleController extends Controller
             'name'=>$name.$campagne_id.'_'.date('Ymd')
         ]);
 
-        foreach($contacts as $contact)
+              foreach($contacts as $contact){
+                $address=Address::find($contact['address_id']);
+                    DB::table('campagne_cible')->insert
+                    ([
+                        'affiliate_id' => $user->affiliate->id,
+                        'cible_statut_id' => 1,
+                        'address_id' => $contact['address_id'],
+                        'customer_id' => $contact['customer_id'],
+                        'contact_id' =>$contact['id'],
+                        'campagne_old_id' => 0,
+                        'campagne_id' => $campagne_id,
+                        'industrie' =>  $contact['industrie'],
+                        'statut' => $contact['statut'],
+                        'phone' => $contact['mobile'],
+                        'email' => $contact['email'],
+                        'firstname'=>$contact['firstname'],
+                        'gender'=>$contact['gender'],
+                        'name'=>$contact['name'],
+                        'address1'=>$address!=null?$address->address1:'',
+                        'address2'=>$address!=null?$address->address2:'',
+                        'address3'=>$address!=null?$address->address3:'',
+                        'postcode'=>$address!=null?$address->postcode:'',
+                        'city'=>$address!=null?$address->city:'',
+                        'created_at' => date("Y-m-d"),
+                        'updated_at' => date("Y-m-d"),
+                    ]);
 
-            DB::table('campagne_cible')->insert
-            ([
-                'affiliate_id' => $user->affiliate->id,
-                'cible_statut_id' => 1,
-                'address_id' => 1,
-                'customer_id' => $contact['customer_id'],
-                'contact_id' =>$contact['id'],
-                'campagne_old_id' => 0,
-                'campagne_id' => $campagne_id,
-                'industrie' =>  $contact['industrie'],
-                'statut' => $contact['statut'],
-                'phone' => $contact['mobile'],
-                'email' => $contact['email'],
-                'created_at' => date("Y-m-d"),
-                'updated_at' => date("Y-m-d"),
-            ]);
-
-
-            return response()->json([
+                }
+        return response()->json([
                 'campagne_id' => $campagne_id
             ]);
 

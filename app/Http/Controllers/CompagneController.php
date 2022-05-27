@@ -828,6 +828,9 @@ class CompagneController extends Controller
                         'statut' => $item->type,
                         'phone' => $item->mobile,
                         'email' => $item->email,
+                        'firstname'=>$item->firstname,
+                        'gender'=>$item->gender,
+                        'name'=>$item->name,
                         'created_at' => date("Y-m-d"),
                         'updated_at' => date("Y-m-d"),
                     ]);
@@ -862,6 +865,9 @@ class CompagneController extends Controller
                             'statut' => $item->statut,
                             'phone' => $item->phone,
                             'email' => $item->email,
+                               'firstname'=>$item->firstname,
+                           'gender'=>$item->gender,
+                        'name'=>$item->name,
                             'created_at' => date("Y-m-d"),
                             'updated_at' => date("Y-m-d"),
                         ]);
