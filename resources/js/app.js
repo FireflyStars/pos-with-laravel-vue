@@ -30,7 +30,6 @@ const app=createApp(App)
     .use(router)
     .use(store)
     .use(VueClickAway);
-
     GlobalComponents(app);
 
     app.mount('#app');

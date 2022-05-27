@@ -230,8 +230,8 @@ class DevisController extends Controller
         return response()->json(
             $query->select(
                 'products.id', 'products.name',
-                'products.description', 'products.type', 'products.unit_id', DB::raw('CEIL(taxes.taux * 100) as tax'),
-                'products.reference', 'products.wholesale_price', 'products.type', 'units.code as unit'
+                'products.description', 'products.type', 'products.unit_id', /* DB::raw('CEIL(taxes.taux * 100) as tax'), */
+                'products.reference', 'products.wholesale_price', 'products.type', 'units.code as unit', 'products.taxe_id as tax'
             )->get()
         );
     }

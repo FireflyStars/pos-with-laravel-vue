@@ -11,7 +11,10 @@
                     </div>
                     <div class="search-body">
                         <div class="result-panel mt-4">
-                            <div class="d-flex justify-content-between">
+                            <div class="col-12">
+                                <input type="text" v-model="supplier.name" placeholder="Nom" class="form-control">
+                            </div>
+                            <div class="d-flex justify-content-between mt-3">
                                 <div class="col-5">
                                     <SelectBox :label="''" 
                                         v-model="supplier.supplier_id" 
@@ -22,12 +25,12 @@
                                     />
                                 </div>
                                 <div class="col-5">
-                                    <input type="text" v-model="supplier.amountExcludeTax" placeholder="Montant HT" class="form-control form-control-sm">
+                                    <input type="text" v-model="supplier.unitPrice" placeholder="Montant HT" class="form-control">
                                 </div>
                             </div>
                             <div class="d-flex mt-3 justify-content-between">
                                 <div class="col-5">
-                                    <input type="date" v-model="supplier.date" placeholder="Date" class="form-control form-control-sm">
+                                    <input type="date" v-model="supplier.date" placeholder="Date" class="form-control">
                                 </div>
                                 <div class="col-5">
                                     <SelectBox :label="''" 
@@ -39,13 +42,8 @@
                                     />                                        
                                 </div>
                             </div>
-                            <div class="d-flex mt-3 justify-content-between">
-                                <div class="col-5">
-                                    <input type="file" @change="readFile" accept="application/pdf" id="commande-file">
-                                </div>
-                                <div class="col-5">
-                                    <input type="text" v-model="supplier.marge" placeholder="Marge" class="form-control form-control-sm">
-                                </div>                                    
+                            <div class="col-12 mt-3">
+                                <input type="file" class="form-control" @change="readFile" accept="application/pdf" id="commande-file">
                             </div>
                             <div class="btns mt-4 d-flex justify-content-between px-5">
                                 <button class="custom-btn btn-cancel" @click="closeModal">Annuler</button>
@@ -88,9 +86,9 @@ export default {
         }
         const supplier = ref({
             supplier_id: '',
-            name: 'FOURNISSEUR',
+            name: '',
             type: 'COMMANDE FOURNISSEUR',
-            totalPrice: '',
+            unitPrice: '',
             base64: '',
             datesupplier: '',
             tax: '',
@@ -106,8 +104,8 @@ export default {
             supplier.value = {
                 supplier_id: '',
                 type: 'FOURNISSEUR',
-                name: 'FOURNISSEUR',
-                totalPrice: '',
+                name: '',
+                unitPrice: '',
                 base64: '',
                 datesupplier: '',
                 tax: '',
