@@ -36,12 +36,7 @@
                                         <h3 
                                             class="margin-align m-0"
                                         >
-<<<<<<< HEAD:resources/js/components/marketing/ProductA.vue
-                                        {{ category }}
-                                            Emailing > Categorie XXX
-=======
                                             Marketing > Categorie XXX
->>>>>>> 3dc321313d2cf6218a4643107991a71025e595a5:resources/js/components/emailing/EmailingProductA.vue
                                         </h3>
 
                                         <base-button
