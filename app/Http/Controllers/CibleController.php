@@ -87,9 +87,6 @@ class CibleController extends Controller
         $campagne_category_id = $request->post('campagne_category_id');
         $contacts=$request->post('contacts');
         $campagne_category = CampagneCategory::find($campagne_category_id);
-     
-
-
        
         $name=$campagne_category->name.'-';
                                             
@@ -116,34 +113,32 @@ class CibleController extends Controller
             'created_at' =>date("Y-m-d"),
             'updated_at' =>date("Y-m-d"),
         ]);
+
         DB::table('campagnes')->where('id','=',$campagne_id)->update([
             'name'=>$name.$campagne_id.'_'.date('Ymd')
         ]);
-   
-       
+
+        foreach($contacts as $contact)
+
+            DB::table('campagne_cible')->insert
+            ([
+                'affiliate_id' => $user->affiliate->id,
+                'cible_statut_id' => 1,
+                'address_id' => 1,
+                'customer_id' => $contact['customer_id'],
+                'contact_id' =>$contact['id'],
+                'campagne_old_id' => 0,
+                'campagne_id' => $campagne_id,
+                'industrie' =>  $contact['industrie'],
+                'statut' => $contact['statut'],
+                'phone' => $contact['mobile'],
+                'email' => $contact['email'],
+                'created_at' => date("Y-m-d"),
+                'updated_at' => date("Y-m-d"),
+            ]);
 
 
-              foreach($contacts as $contact)
-
-                    DB::table('campagne_cible')->insert
-                    ([
-                        'affiliate_id' => $user->affiliate->id,
-                        'cible_statut_id' => 1,
-                        'address_id' => 1,
-                        'customer_id' => $contact['customer_id'],
-                        'contact_id' =>$contact['id'],
-                        'campagne_old_id' => 0,
-                        'campagne_id' => $campagne_id,
-                        'industrie' =>  $contact['industrie'],
-                        'statut' => $contact['statut'],
-                        'phone' => $contact['mobile'],
-                        'email' => $contact['email'],
-                        'created_at' => date("Y-m-d"),
-                        'updated_at' => date("Y-m-d"),
-                    ]);
-
-
-        return response()->json([
+            return response()->json([
                 'campagne_id' => $campagne_id
             ]);
 

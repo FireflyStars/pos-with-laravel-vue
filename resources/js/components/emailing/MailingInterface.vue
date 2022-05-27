@@ -234,7 +234,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6 apercu" style="margin-top: 26px">
+                    <div class="col-lg-6 apercu">
                         <div class="bg-panel p-4">
                         <h6>APERÇU</h6>
                         <div>
