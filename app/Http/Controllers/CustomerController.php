@@ -129,7 +129,7 @@ class CustomerController extends Controller
                     ->select( 'customers.company', 'customers.raisonsociale', 'group.Name as group',
                         DB::raw('CONCAT(customers.firstname, " ", customers.name) as contact'),
                         'customers.telephone', 'customers.email', 'customers.naf', 'customers.siret',
-                        DB::raw('taxes.taux * 100 as tax'), 'customers.id'
+                        DB::raw('taxes.taux * 100 as tax'), 'customers.id', 'taxes.id as taxId'
                     )->where('customers.firstname', 'like', '%'.$request->search.'%')->orWhere('customers.name', 'like', '%'.$request->search.'%');
 
         return response()->json([

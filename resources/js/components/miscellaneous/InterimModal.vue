@@ -73,7 +73,6 @@
 <script>
 
 import {nextTick, ref} from 'vue';
-import axios from 'axios';
 import SelectBox from '../../components/miscellaneous/SelectBox';
 
 export default {
