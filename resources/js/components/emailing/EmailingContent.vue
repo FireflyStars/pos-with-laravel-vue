@@ -85,7 +85,6 @@
                         <img 
                             v-if="imageurl!=''"
                             :src="`/storage/${imageurl}`" 
-                            style="width: 100%; height: 100%"
                         />
                             <template v-for="item,index in fields" :key="index">
                                 <span 
