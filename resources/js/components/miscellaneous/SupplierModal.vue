@@ -111,7 +111,7 @@ export default {
                 base64: '',
                 datesupplier: '',
                 tax: '',
-                marge: '',
+                marge: 8,
                 zoneIndex: zoneIndex,
                 ouvrageType: ouvrageType,
                 ouvrageId: ouvrageId,

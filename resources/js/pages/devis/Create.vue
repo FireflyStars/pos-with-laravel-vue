@@ -332,7 +332,7 @@
                                         </select>                                          
                                       </td>
                                       <td valign="middle">
-                                        <svg class="cursor-pointer" @click="removeOuvrageDetail(zoneIndex, 2, ouvrageIndex, taskIndex, detailIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <svg class="cursor-pointer" @click="removeOuvrageDetail(zoneIndex, 1, ouvrageIndex, taskIndex, detailIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M17 6H22V8H20V21C20 21.2652 19.8946 21.5196 19.7071 21.7071C19.5196 21.8946 19.2652 22 19 22H5C4.73478 22 4.48043 21.8946 4.29289 21.7071C4.10536 21.5196 4 21.2652 4 21V8H2V6H7V3C7 2.73478 7.10536 2.48043 7.29289 2.29289C7.48043 2.10536 7.73478 2 8 2H16C16.2652 2 16.5196 2.10536 16.7071 2.29289C16.8946 2.48043 17 2.73478 17 3V6ZM18 8H6V20H18V8ZM13.414 14L15.182 15.768L13.768 17.182L12 15.414L10.232 17.182L8.818 15.768L10.586 14L8.818 12.232L10.232 10.818L12 12.586L13.768 10.818L15.182 12.232L13.414 14ZM9 4V6H15V4H9Z" fill="black"/>
                                         </svg>
                                       </td>
@@ -678,7 +678,7 @@
                                         </select>                                          
                                       </td>
                                       <td valign="middle">
-                                        <svg class="cursor-pointer" @click="removeOuvrageDetail(zoneIndex, 2, ouvrageIndex, taskIndex, detailIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <svg class="cursor-pointer" @click="removeOuvrageDetail(zoneIndex, 3, ouvrageIndex, taskIndex, detailIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M17 6H22V8H20V21C20 21.2652 19.8946 21.5196 19.7071 21.7071C19.5196 21.8946 19.2652 22 19 22H5C4.73478 22 4.48043 21.8946 4.29289 21.7071C4.10536 21.5196 4 21.2652 4 21V8H2V6H7V3C7 2.73478 7.10536 2.48043 7.29289 2.29289C7.48043 2.10536 7.73478 2 8 2H16C16.2652 2 16.5196 2.10536 16.7071 2.29289C16.8946 2.48043 17 2.73478 17 3V6ZM18 8H6V20H18V8ZM13.414 14L15.182 15.768L13.768 17.182L12 15.414L10.232 17.182L8.818 15.768L10.586 14L8.818 12.232L10.232 10.818L12 12.586L13.768 10.818L15.182 12.232L13.414 14ZM9 4V6H15V4H9Z" fill="black"/>
                                         </svg>
                                       </td>
@@ -989,16 +989,16 @@ export default {
             task.details.forEach(detail=>{
               zone.installOuvrage.sumUnitPrice += parseInt(detail.unitPrice);
               if(detail.type == 'MO'){
-                detail.totalPrice = parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty);
-                detail.totalPriceWithoutMarge = parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty);
+                detail.totalPrice = (parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
+                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH) * parseFloat(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
               }else{
-                detail.totalPrice = parseInt(detail.qty) * parseInt(detail.unitPrice) * (parseInt(detail.marge)/100 + 1);
-                detail.totalPriceWithoutMarge = parseInt(detail.qty) * parseInt(detail.unitPrice);
-              }  
+                detail.totalPrice = (parseInt(detail.qty) * parseFloat(detail.unitPrice) * (parseInt(detail.marge)/100 + 1)).toFixed(2);
+                detail.totalPriceWithoutMarge = (parseInt(detail.qty) * parseFloat(detail.unitPrice)).toFixed(2);
+              }
               if(detail.type == 'Interim')     
                 form.value.totalHoursForInterim += parseFloat(detail.numberH)
-              ouvrage.total += parseInt(detail.totalPrice);
-              ouvrage.totalWithoutMarge += detail.totalPriceWithoutMarge;
+              ouvrage.total += parseFloat(detail.totalPrice);
+              ouvrage.totalWithoutMarge += parseFloat(detail.totalPriceWithoutMarge);
               ouvrage.totalHour += (parseFloat(detail.numberH) * parseInt(detail.qty) );
             })
           })
@@ -1020,16 +1020,16 @@ export default {
             task.details.forEach(detail=>{
               zone.securityOuvrage.sumUnitPrice += parseInt(detail.unitPrice);
               if(detail.type == 'MO'){
-                detail.totalPrice = parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty);
-                detail.totalPriceWithoutMarge = parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty);
+                detail.totalPrice = (parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
+                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH) * parseFloat(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
               }else{
-                detail.totalPrice = parseInt(detail.qty) * parseInt(detail.unitPrice) * (parseInt(detail.marge)/100 + 1);
-                detail.totalPriceWithoutMarge = parseInt(detail.qty) * parseInt(detail.unitPrice);
-              }       
+                detail.totalPrice = (parseInt(detail.qty) * parseFloat(detail.unitPrice) * (parseInt(detail.marge)/100 + 1)).toFixed(2);
+                detail.totalPriceWithoutMarge = (parseInt(detail.qty) * parseFloat(detail.unitPrice)).toFixed(2);
+              }     
               if(detail.type == 'Interim')     
                 form.value.totalHoursForInterim += parseFloat(detail.numberH)              
-              ouvrage.total += parseInt(detail.totalPrice);    
-              ouvrage.totalWithoutMarge += detail.totalPriceWithoutMarge;
+              ouvrage.total += parseFloat(detail.totalPrice);    
+              ouvrage.totalWithoutMarge += parseFloat(detail.totalPriceWithoutMarge);
               ouvrage.totalHour += parseFloat(detail.numberH);
             })
           })
@@ -1053,16 +1053,16 @@ export default {
               detail.sumUnitPrice = parseInt(detail.unitPrice);
               zone.prestationOuvrage.sumUnitPrice += parseInt(detail.unitPrice);
               if(detail.type == 'MO'){
-                detail.totalPrice = parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty);
-                detail.totalPriceWithoutMarge = parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty);
+                detail.totalPrice = (parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
+                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH) * parseFloat(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
               }else{
-                detail.totalPrice = parseInt(detail.qty) * parseInt(detail.unitPrice) * (parseInt(detail.marge)/100 + 1);
-                detail.totalPriceWithoutMarge = parseInt(detail.qty) * parseInt(detail.unitPrice);
-              }       
+                detail.totalPrice = (parseInt(detail.qty) * parseFloat(detail.unitPrice) * (parseInt(detail.marge)/100 + 1)).toFixed(2);
+                detail.totalPriceWithoutMarge = (parseInt(detail.qty) * parseFloat(detail.unitPrice)).toFixed(2);
+              }
               if(detail.type == 'Interim')     
                 form.value.totalHoursForInterim += parseFloat(detail.numberH)              
-              ouvrage.total += parseInt(detail.totalPrice); 
-              ouvrage.totalWithoutMarge += detail.totalPriceWithoutMarge;
+              ouvrage.total += parseFloat(detail.totalPrice); 
+              ouvrage.totalWithoutMarge += parseFloat(detail.totalPriceWithoutMarge).toFixed(2);
               ouvrage.totalHour += parseFloat(detail.numberH);
             })
           })
@@ -1222,31 +1222,33 @@ export default {
           qty: 1,
           tax: product.tax,
           unitPrice: product.unitPrice,
-          marge: 0,
+          marge: 8,
           type: product.type,
           unit: product.unit,
           qtyOuvrage: product.qtyOuvrage,
           totalPrice: product.unitPrice * parseInt(product.unit),
           numberH: 0,
         });
-      }else if(product.ouvrageType == 2){
+      }
+      if(product.ouvrageType == 2){
         form.value.zones[product.zoneIndex].securityOuvrage.ouvrages[product.ouvrageId].tasks[product.taskId].details.push({
           qty: 1,
           tax: product.tax,
           unitPrice: product.unitPrice,
-          marge: 0,
+          marge: 8,
           type: product.type,
           unit: product.unit,
           qtyOuvrage: product.qtyOuvrage,
           totalPrice: product.unitPrice * parseInt(product.unit),
           numberH: 0,
         });
-      }else{
+      }
+      if(product.ouvrageType == 3){
         form.value.zones[product.zoneIndex].prestationOuvrage.ouvrages[product.ouvrageId].tasks[product.taskId].details.push({
           qty: 1,
           tax: product.tax,
           unitPrice: product.unitPrice,
-          marge: 0,
+          marge: 8,
           type: product.type,
           unit: product.unit,
           qtyOuvrage: product.qtyOuvrage,
@@ -1263,7 +1265,7 @@ export default {
           qty: 1,
           tax: supplier.tax,
           unitPrice: 0,
-          marge: 0,
+          marge: supplier.marge,
           type: supplier.type,
           name: supplier.name,
           base64: supplier.base64,
@@ -1272,12 +1274,13 @@ export default {
           totalPrice: 0,
           numberH: 0,
         });
-      }else if(supplier.ouvrageType == 2){
+      }
+      if(supplier.ouvrageType == 2){
         form.value.zones[supplier.zoneIndex].securityOuvrage.ouvrages[supplier.ouvrageId].tasks[supplier.taskId].details.push({
           qty: 1,
           tax: supplier.tax,
           unitPrice: 0,
-          marge: 0,
+          marge: supplier.marge,
           type: supplier.type,
           name: supplier.name,
           unit: 'UN',
@@ -1285,12 +1288,13 @@ export default {
           totalPrice: 0,
           numberH: 0,
         });
-      }else{
+      }
+      if(supplier.ouvrageType == 3){
         form.value.zones[supplier.zoneIndex].prestationOuvrage.ouvrages[supplier.ouvrageId].tasks[supplier.taskId].details.push({
           qty: 1,
           tax: supplier.tax,
           unitPrice: 0,
-          marge: 0,
+          marge: supplier.marge,
           type: supplier.type,
           name: supplier.name,
           unit: 'UN',
@@ -1307,31 +1311,33 @@ export default {
           qty: 1,
           tax: labor.tax,
           unitPrice: 0,
-          marge: 0,
+          marge: 8,
           type: 'Labor',
           unit: 'HR',
           qtyOuvrage: labor.qtyOuvrage,
           totalPrice: 0,
           numberH: 0,
         });
-      }else if(labor.ouvrageType == 2){
+      }
+      if(labor.ouvrageType == 2){
         form.value.zones[labor.zoneIndex].securityOuvrage.ouvrages[labor.ouvrageId].tasks[labor.taskId].details.push({
           qty: 1,
           tax: labor.tax,
           unitPrice: 0,
-          marge: 0,
+          marge: 8,
           type: 'Labor',
           unit: 'HR',
           qtyOuvrage: labor.qtyOuvrage,
           totalPrice: 0,
           numberH: 0,
         });
-      }else{
+      }
+      if(labor.ouvrageType == 3){
         form.value.zones[labor.zoneIndex].prestationOuvrage.ouvrages[labor.ouvrageId].tasks[labor.taskId].details.push({
           qty: 1,
           tax: labor.tax,
           unitPrice: 0,
-          marge: 0,
+          marge: 8,
           type: 'Labor',
           unit: 'HR',
           qtyOuvrage: labor.qtyOuvrage,
@@ -1347,31 +1353,33 @@ export default {
           qty: 1,
           tax: interim.tax,
           unitPrice: 0,
-          marge: 0,
+          marge: 8,
           type: 'Interim',
           unit: 'HR',
           qtyOuvrage: interim.qtyOuvrage,
           totalPrice: 0,
           numberH: 0,
         });
-      }else if(interim.ouvrageType == 2){
+      }
+      if(interim.ouvrageType == 2){
         form.value.zones[interim.zoneIndex].securityOuvrage.ouvrages[interim.ouvrageId].tasks[interim.taskId].details.push({
           qty: 1,
           tax: interim.tax,
           unitPrice: 0,
-          marge: 0,
+          marge: 8,
           type: 'Interim',
           unit: 'HR',
           qtyOuvrage: interim.qtyOuvrage,
           totalPrice: 0,
           numberH: 0,
         });
-      }else{
+      }
+      if(interim.ouvrageType == 3){
         form.value.zones[interim.zoneIndex].prestationOuvrage.ouvrages[interim.ouvrageId].tasks[interim.taskId].details.push({
           qty: 1,
           tax: interim.tax,
           unitPrice: 0,
-          marge: 0,
+          marge: 8,
           type: 'Interim',
           unit: 'HR',
           qtyOuvrage: interim.qtyOuvrage,
@@ -1391,7 +1399,8 @@ export default {
           qty: task.qty,
           details: []
         });
-      }else if(task.ouvrageType == 2){
+      }
+      if(task.ouvrageType == 2){
         form.value.zones[task.zoneIndex].securityOuvrage.ouvrages[task.ouvrageId].tasks.push({
           name: task.name,
           customerText: task.customerText,
@@ -1400,7 +1409,8 @@ export default {
           qty: task.qty,
           details: []
         });        
-      }else{
+      }
+      if(task.ouvrageType == 3){
         form.value.zones[task.zoneIndex].prestationOuvrage.ouvrages[task.ouvrageId].tasks.push({
           name: task.name,
           customerText: task.customerText,
@@ -1613,44 +1623,50 @@ export default {
     }
     // open empty product modal
     const openEmptyProductModal = (data)=>{
-      emptyProductModal.value.openModal(data);
+      emptyProductModal.value.openModal(data, units.value);
     }
     // emits for selected ouvrage
     const selectedEmptyProduct = (data, emptyProduct)=>{
-      if(emptyProduct.ouvrageType == 1){
+
+      if(data.ouvrageType == 1){
         form.value.zones[data.zoneIndex].installOuvrage.ouvrages[data.ouvrageId].tasks[data.taskId].details.push({
-          qty: 1,
+          qty: parseFloat(emptyProduct.qty),
           tax: 0,
-          unitPrice: parseInt(emptyProduct.productPrice),
-          marge: 0,
+          unitPrice: parseFloat(emptyProduct.productPrice),
+          marge: 8,
           type: emptyProduct.type,
+          name: emptyProduct.name,
           unit: emptyProduct.unit,
-          qtyOuvrage: data.qtyOuvrage,
-          totalPrice: parseInt(emptyProduct.productPrice),
+          qtyOuvrage: '',
+          totalPrice: parseFloat(emptyProduct.productPrice)*parseFloat(emptyProduct.qty)* 1.08,
           numberH: 0,
         });
-      }else if(emptyProduct.ouvrageType == 2){
+      }
+      if(data.ouvrageType == 2){
         form.value.zones[data.zoneIndex].securityOuvrage.ouvrages[data.ouvrageId].tasks[data.taskId].details.push({
-          qty: 1,
+          qty: parseFloat(emptyProduct.qty),
           tax: 0,
           unitPrice: parseFloat(emptyProduct.productPrice),
-          marge: 0,
+          marge: 8,
           type: emptyProduct.type,
+          name: emptyProduct.name,
           unit: emptyProduct.unit,
-          qtyOuvrage: data.qtyOuvrage,
-          totalPrice: parseInt(emptyProduct.productPrice),
+          qtyOuvrage: '',
+          totalPrice: parseFloat(emptyProduct.productPrice)*parseFloat(emptyProduct.qty)* 1.08,
           numberH: 0,
         });
-      }else{
+      }
+      if(data.ouvrageType == 3){
         form.value.zones[data.zoneIndex].prestationOuvrage.ouvrages[data.ouvrageId].tasks[data.taskId].details.push({
-          qty: 1,
+          qty: parseFloat(emptyProduct.qty),
           tax: 0,
           unitPrice: parseFloat(emptyProduct.productPrice),
-          marge: 0,
+          marge: 8,
           type: emptyProduct.type,
+          name: emptyProduct.name,
           unit: emptyProduct.unit,
-          qtyOuvrage: data.qtyOuvrage,
-          totalPrice: parseInt(emptyProduct.productPrice),
+          qtyOuvrage: '',
+          totalPrice: parseFloat(emptyProduct.productPrice)*parseFloat(emptyProduct.qty)* 1.08,
           numberH: 0,
         });
       }      

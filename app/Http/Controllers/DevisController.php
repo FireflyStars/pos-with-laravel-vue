@@ -157,6 +157,7 @@ class DevisController extends Controller
         $ouvrage->qtyOuvrage = $request->qtyOuvrage;
         $ouvrage->total = 0;
         $ouvrage->totalWithoutMarge = 0;
+        $totalHour = 0;
         $tasks = DB::table('ouvrage_task')
                 ->where('ouvrage_id', $request->id)
                 ->select('id', 'name', 'textcustomer as customerText', 'textchargeaffaire', 'textoperator', 'unit_id', 'qty')
@@ -169,14 +170,21 @@ class DevisController extends Controller
                             ->where('ouvrage_task_id', $task->id)
                             ->select(
                                 'ouvrage_detail.id', 'ouvrage_detail.numberh as numberH', 'ouvrage_detail.qty', 'units.id as unit_id',
-                                'products.type', 'units.code as unit', 'products.id as productId', 'products.name', 'products.taxe_id as tax', 'products.price as productPrice'
+                                'products.type', 'units.code as unit', 'products.id as productId', 'products.name', 'products.taxe_id as tax', 'products.wholesale_price as unitPrice'
                             )->get();
             foreach ($details as $detail) {
-                $detail->unitPrice = 0;
-                $detail->marge = 0;
-                $detail->totalPrice = 0;
-                $detail->qtyOuvrage = (int)$request->qtyOuvrage*((int)$detail->qty);
+                $detail->numberH = intval($request->qtyOuvrage) * floatval($detail->numberH);
+                $detail->qty = intval($detail->qty == 0 ? 1 : $detail->qty)*intval($request->qtyOuvrage);
+                $detail->marge = 8;
+                $detail->unitPrice = number_format($detail->unitPrice, 2);
+                $detail->qtyOuvrage = (int)$detail->qty;
                 $detail->totalPriceWithoutMarge = 0;
+                if($detail->type == "MO"){
+                    $detail->totalPrice = ($detail->numberH * $detail->unitPrice);
+                }else{
+                    $detail->totalPrice = ($detail->qty * $detail->unitPrice * (1.08));
+                }
+                $ouvrage->totalHour += $detail->numberH;
             }
             $task->details = $details;
         }
