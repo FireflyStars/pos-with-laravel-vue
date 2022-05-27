@@ -116,7 +116,7 @@
                         <div>{{ $campagne->phone }}</div>
                     </div>
 
-                    <div class="column" style="margin-top: 4.2rem; float: left; margin-left: 6rem;">
+                    <div class="column" style="margin-top: 2rem; float: left; margin-left: 10rem;">
                         <div>{{ $cible->company }}</div>
                         <div>{{ $cible->firstname . " " . $cible->name }}</div>
                         @if($cible->address1)<div>{{ $cible->address1 }}</div>@endif
@@ -132,7 +132,7 @@
                 <div class="clearfix"></div>
 
                 <div class="letter-recipient" style="margin: 3rem 0;">
-                    {{ optional($cible->contact)->gender ?? 'Mrs' }},
+                    {{ optional($cible->contact)->gender ?? 'CAMPAGNE ENVOYEE' }},
                 </div>
 
                 <div class="content" style="margin-right: 4rem;">

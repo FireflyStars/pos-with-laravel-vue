@@ -173,6 +173,10 @@ class CompagneController extends Controller
 
         $user->notify(new CourierNotification($campagne));
 
+        $campagne->update([
+            'status' => 'CAMPAGNE ENVOYEE'
+        ]);
+
         return response()->json("Email sent");
 
     }
@@ -1679,8 +1683,8 @@ class CompagneController extends Controller
       
         $affiliate=$c->affiliate;
         $cc=$c->campagneCategory;
-        $telephone = !is_null($c->phone) ? $c->phone : $affiliate->telephone;
-        $email = !is_null($c->email) ? $c->email : $affiliate->reponseaddress;
+        $telephone = !is_null($c->phone) && $c->phone != '' ? $c->phone : $affiliate->telephone;
+        $email = !is_null($c->email) && $c->email != '' ? $c->email : $affiliate->reponseaddress;
         $fields=json_decode($cc->fields);
         $fields->Nom_agence->value=$affiliate->name;
         $fields->Telephone_agence->value=$telephone;
