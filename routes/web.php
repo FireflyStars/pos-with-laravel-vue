@@ -104,6 +104,8 @@ Route::group([
     Route::post('/store-devis', [DevisController::class,'storeDevis'])->middleware('auth')->name('store.devis');
     Route::post('/get-info-for-emtpy-ouvrage', [DevisController::class,'getInfoForEmtpyOuvrage'])->middleware('auth')->name('get.info.for.empty.ouvrage');
     Route::post('/get-units', [DevisController::class,'getUnits'])->middleware('auth')->name('get.unit');
+    Route::post('/get-interim-data', [DevisController::class,'getInterimData'])->middleware('auth')->name('get.interim.data');
+    Route::post('/get-labor-data', [DevisController::class,'getLaborData'])->middleware('auth')->name('get.labor.data');
     // End Devis
 
     // Customer

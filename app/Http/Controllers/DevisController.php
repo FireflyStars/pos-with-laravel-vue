@@ -237,7 +237,7 @@ class DevisController extends Controller
     }
     
     /**
-     * Get Taxes
+     * Get Suppliers
      */
     public function getSuppliers(){
         return response()->json(
@@ -257,6 +257,24 @@ class DevisController extends Controller
         ]);
     }
 
+    /**
+     * Get some datas for Adding a interim Modal
+     * 
+     */
+    public function getInterimData(){
+        return response()->json([
+            'societes'  => DB::table('interim_societe')->select('id as value', 'name as display')->get(),
+            'taxes'     => DB::table('taxes')->select('id as value', DB::raw('CEIL(taux * 100) as display'))->get(),
+            'iterim'    => DB::table('products')->where('type', 'INTERIM')->select('wholesale_price as price', 'taxe_id as tax')->first()
+        ]);
+    }
+    /**
+     * Get MO product's price
+     * 
+     */
+    public function getLaborData(){
+        return response()->json(DB::table('products')->where('type', 'MO')->select('wholesale_price as price')->first());
+    }
     /**
      * Get units
      */

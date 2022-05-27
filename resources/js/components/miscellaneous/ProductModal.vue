@@ -122,6 +122,7 @@
                     tax: product.tax, 
                     unitPrice: product.wholesale_price, 
                     type: product.type, 
+                    name: product.name, 
                     unit: product.unit, 
                     numberh: product.numberh, 
                     qtyOuvrage: '', 

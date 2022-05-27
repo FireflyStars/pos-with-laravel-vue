@@ -14,48 +14,28 @@
                             <div class="px-2">
                                 <div class="d-flex px-3 justify-content-between">
                                     <div class="col-5">
-                                        <SelectBox :label="''" 
-                                            v-model="interim.hours" 
-                                            :options="[ 
-                                                { display:'Intérieur', value: 'Intérieur' }, 
-                                                { display:'Extérieur', value: 'Extérieur' },
-                                                { display:'Pas d’accès', value: 'Pas d’accès' }
-                                            ]"
-                                            :name="'workHours'"
-                                            :classnames="'w-100'"
-                                            :placeholder="'Nombre d’heure'"
-                                        />
+                                        <input type="text" v-model="interim.numberH" placeholder="Nombre d’heure" class="form-control form-control-sm">
                                     </div>
                                     <div class="col-5">
-                                        <input type="text" v-model="interim.amountExcludeTax" placeholder="Montant HT" class="form-control form-control-sm">
+                                        <input type="text" v-model="interim.total" readonly placeholder="Montant HT" class="form-control form-control-sm">
                                     </div>
                                 </div>
                                 <div class="d-flex px-3 mt-3 justify-content-between">
                                     <div class="col-5">
                                         <SelectBox :label="''" 
-                                            v-model="interim.company" 
-                                            :options="[ 
-                                                { display:'Intérieur', value: 'Intérieur' }, 
-                                                { display:'Extérieur', value: 'Extérieur' },
-                                                { display:'Pas d’accès', value: 'Pas d’accès' }
-                                            ]"
-                                            :name="'company'"
+                                            v-model="interim.societe" 
+                                            :options="societes"
+                                            :name="'societe'"
                                             :classnames="'w-100'"
-                                            :placeholder="'Société'"
-                                        />                                        
+                                        />
                                     </div>
                                     <div class="col-5">
                                         <SelectBox :label="''" 
                                             v-model="interim.tax" 
-                                            :options="[ 
-                                                { display:'Intérieur', value: 'Intérieur' }, 
-                                                { display:'Extérieur', value: 'Extérieur' },
-                                                { display:'Pas d’accès', value: 'Pas d’accès' }
-                                            ]"
+                                            :options="taxes"
                                             :name="'tax'"
                                             :classnames="'w-100'"
-                                            :placeholder="'Taxe'"
-                                        />                                        
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -72,8 +52,9 @@
 </template>
 <script>
 
-import {nextTick, ref} from 'vue';
+import {onMounted, ref, watch} from 'vue';
 import SelectBox from '../../components/miscellaneous/SelectBox';
+import axios from 'axios';
 
 export default {
     name: 'InterimModal',
@@ -88,11 +69,25 @@ export default {
         const closeModal = ()=>{
             showModal.value = !showModal.value;
         }
+        const societes = ref([]);
+        const taxes = ref([]);
+        onMounted(()=>{
+            axios.post('/get-interim-data').then((res)=>{
+                societes.value = res.data.societes;    
+                interim.value.tax = res.data.interim.tax
+                interim.value.price = res.data.interim.price
+                taxes.value = res.data.taxes;
+                console.log(res.data.interim);
+            }).catch((error)=>{
+                console.log()
+            })
+        })
         const interim = ref({
-            hours: '',
-            amountExcludeTax: '',
-            company: '',
-            tax: '',
+            numberH: '',
+            total: '',
+            price: 1,
+            societe: 0,
+            tax: 0,
             zoneIndex: 0,
             ouvrageType: '',
             ouvrageId: 0,
@@ -106,21 +101,25 @@ export default {
             interim.value.ouvrageId = ouvrageId;
             interim.value.taskId = taskId;
             interim.value.qtyOuvrage = '';
-            interim.hours =  '';
-            interim.amountExcludeTax =  '';
-            interim.company =  '';
-            interim.tax =  '';
+            interim.value.numberH =  '';
+            interim.value.total =  '';
+            interim.value.societe =  0;
+            interim.value.tax =  0;
             showModal.value = !showModal.value;
-            nextTick(()=>{
-                queryElement.value.focus();
-            })
         }  
         const selectInterim = (index)=>{
             showModal.value = false;
             emit('selectedInterim', interim.value);
         }
+        watch(() => interim.value.numberH, (newValue, oldValue) => {
+            console.log(newValue)
+            console.log(interim.value.price)            
+            interim.value.total = parseInt(newValue)* parseFloat(interim.value.price);
+        });        
         return {
             interim,
+            societes,
+            taxes,
             showModal,
             closeModal,
             openModal,
@@ -166,8 +165,7 @@ export default {
     z-index: 11;
     background: rgba(0, 0, 0, 0.3);
     .search-panel{
-        width: 700px;
-        height: 500px;
+        width: 500px;
         padding: 40px 35px;
         .search-header{
             .close-icon{
@@ -177,8 +175,6 @@ export default {
             }
         }
         .result-panel{
-            height: 400px;            
-            overflow-y: auto;
             .btns{
                 .custom-btn{
                     width: 96px;

@@ -17,7 +17,7 @@
                                         <input type="text" v-model="labor.numberH" placeholder="Nombre d’heure" class="form-control form-control-sm">
                                     </div>
                                     <div class="col-5">
-                                        <input type="text" v-model="labor.amountExcludeTax" placeholder="Montant HT" class="form-control form-control-sm">
+                                        <input type="text" v-model="labor.total" readonly placeholder="Montant HT" class="form-control form-control-sm">
                                     </div>
                                 </div>
                                 <div class="d-flex px-3 mt-3 justify-content-between">
@@ -47,7 +47,7 @@
 </template>
 <script>
 
-import {nextTick, ref} from 'vue';
+import {onMounted, ref, watch} from 'vue';
 import axios from 'axios';
 import SelectBox from '../../components/miscellaneous/SelectBox';
 
@@ -71,7 +71,8 @@ export default {
             ouvrageId: '',
             taskId: '',
             numberH: '',
-            amountExcludeTax: '',
+            total: '',
+            price: 1,
             tax: '',
             qtyOuvrage: '',
         })
@@ -82,9 +83,9 @@ export default {
             labor.value.ouvrageId = ouvrageId;
             labor.value.taskId = taskId;
             labor.value.qtyOuvrage = '';
-            labor.numberH = '';
-            labor.amountExcludeTax = '';
-            labor.tax = taxId;
+            labor.value.numberH = '';
+            labor.value.total = '';
+            labor.value.tax = taxId;
             taxes.value = tax;
             showModal.value = !showModal.value;
         }
@@ -92,6 +93,18 @@ export default {
             showModal.value = false;
             emit('selectedLabor', labor.value);
         }
+        onMounted(()=>{
+            axios.post('/get-labor-data').then((res)=>{
+                labor.value.price = res.data.price
+            }).catch((error)=>{
+                console.log(error);
+            })
+        })
+        watch(() => labor.value.numberH, (newValue, oldValue) => {
+            console.log(newValue)
+            console.log(labor.value.price)
+            labor.value.total = parseInt(newValue)* parseFloat(labor.value.price);
+        });          
         return {
             labor,
             taxes,
@@ -140,8 +153,7 @@ export default {
     z-index: 11;
     background: rgba(0, 0, 0, 0.3);
     .search-panel{
-        width: 700px;
-        height: 500px;
+        width: 500px;
         padding: 40px 35px;
         .search-header{
             .close-icon{
@@ -151,8 +163,6 @@ export default {
             }
         }
         .result-panel{
-            overflow-y: auto;
-            height: 400px;
             .btns{
                 .custom-btn{
                     width: 96px;
