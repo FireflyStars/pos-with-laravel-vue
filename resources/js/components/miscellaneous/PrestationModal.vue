@@ -148,7 +148,7 @@
                 showModal.value = !showModal.value;
             }
             const searchOuvrage = async ()=>{
-                store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Search Ouvrage...']);
+                store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Rechercher Ouvrage...']);
                 await axios.post('/search-ouvrage', {
                     search: query.value,
                     type: '',
@@ -179,7 +179,7 @@
             const nextStep = ()=>{
                 step.value = 2;
                 if(prestations.value.length == 0){
-                    store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Loading Ouvrages...']);            
+                    store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Chargement Prestation Ouvrages...']);            
                     axios.post('/get-prestation-ouvrages', { toit: selectedRoofType.value.id }).then((res)=>{
                         prestations.value = res.data;
                     }).catch((error)=>{

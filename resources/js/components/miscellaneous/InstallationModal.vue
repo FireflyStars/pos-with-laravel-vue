@@ -120,7 +120,7 @@ export default {
         }
         
         const searchOuvrage = async ()=>{
-            store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Search Ouvrage...']);
+            store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Rechercher Ouvrage...']);
             axios.post('/search-ouvrage', {
                 search: query.value,
                 type: '',
@@ -141,7 +141,7 @@ export default {
                 queryElement.value.focus();
             })
             if(ouvrages.value.length == 0){
-                store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Loading Installation Ouvrages...']);
+                store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Chargement Installation Ouvrages...']);
                 axios.post('/search-ouvrage', {
                     search: '',
                     type: 'INSTALLATION',

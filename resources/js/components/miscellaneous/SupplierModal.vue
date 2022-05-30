@@ -103,7 +103,7 @@ export default {
         const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage, tax)=>{
             supplier.value = {
                 supplier_id: '',
-                type: 'FOURNISSEUR',
+                type: 'COMMANDE FOURNISSEUR',
                 name: '',
                 unitPrice: '',
                 base64: '',

@@ -294,7 +294,7 @@ class DevisController extends Controller
             'affiliate_id'      => Auth::user()->affiliate->id,
             'responsable_id'     => Auth::id(),
             'order_state_id'   => 2,
-            'total'            => ($request->totalPriceForInstall + $request->totalPriceForSecurity + $request->totalPriceForSecurity),
+            'total'            => ($request->totalPriceForInstall + $request->totalPriceForSecurity + $request->totalPriceForPrestation),
             'address_id'        => $request->address['id'],
             'customer_id'       => $request->customer['id'],
             'datecommande'      => Carbon::now(),
@@ -413,7 +413,7 @@ class DevisController extends Controller
                                 'qty'               => $detail['qty'],
                                 'numberh'           => $detail['numberH'],
                                 'unitprice'         => $detail['unitPrice'],
-                                'qtyouvrage'        => $detail['qtyOuvrage'],
+                                'qtyouvrage'        => $detail['qtyOuvrage'] == '' ? 0 : $detail['qtyOuvrage'],
                                 'qtyunitouvrage'    => 1,
                                 'houvrage'          => 0,
                                 'marge'             => $detail['marge'],
@@ -422,7 +422,11 @@ class DevisController extends Controller
                                 'unit_id'           => $detail['unit_id'],
                                 'priceachat'        => $detail['productPrice'],
                             ];
-                            if($detail['type'] == 'FOURNISSEUR'){
+                            if($detail['type'] == 'INTERIM'){
+                                $detail['interim_societe_id']   = $detail['societe'];
+                            }
+                            if($detail['type'] == 'COMMANDE FOURNISSEUR'){
+                                $detail['suppler_id']   = $detail['supplerId'];
                                 if(preg_match('/^data:application\/pdf;base64,/', $detail['base64'], $type)){
                                     $data = substr($detail['base64'], strpos($detail['base64'], ',') + 1);
                                     $type = 'pdf';
