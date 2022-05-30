@@ -865,7 +865,7 @@ export default {
     const store = useStore();
     const router = useRouter();
     const breadcrumbs = ref(['Choix client']);
-    const devisCreateStep = ref('create_devis');
+    const devisCreateStep = ref('choose_customer');
     watchEffect(()=>{
       if(devisCreateStep.value == 'choose_customer'){
         breadcrumbs.value = ['Choix client'];
@@ -983,9 +983,14 @@ export default {
         zone.installOuvrage.ouvrages.forEach(ouvrage=>{
           ouvrage.total = 0;
           ouvrage.totalHour = 0;
+          ouvrage.qtyOuvrage = ouvrage.qty;
           ouvrage.tasks.forEach(task=>{
             task.details.forEach(detail=>{
               zone.installOuvrage.sumUnitPrice += parseInt(detail.unitPrice);
+              if(detail.original){
+                detail.qtyOuvrage = ouvrage.qtyOuvrage;
+                detail.qty = parseInt(ouvrage.qtyOuvrage)*parseInt(detail.originalDetailQty);
+              }              
               if(detail.type == 'MO'){
                 detail.totalPrice = (parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
                 detail.totalPriceWithoutMarge = (parseFloat(detail.numberH) * parseFloat(detail.unitPrice) * parseInt(detail.qty));
@@ -1021,9 +1026,14 @@ export default {
         zone.securityOuvrage.ouvrages.forEach(ouvrage=>{
           ouvrage.total = 0;
           ouvrage.totalHour = 0;
+          ouvrage.qtyOuvrage = ouvrage.qty;
           ouvrage.tasks.forEach(task=>{
             task.details.forEach(detail=>{
               zone.securityOuvrage.sumUnitPrice += parseInt(detail.unitPrice);
+              if(detail.original){
+                detail.qtyOuvrage = ouvrage.qty;
+                detail.qty = parseInt(ouvrage.qty)*parseInt(detail.originalDetailQty);
+              }           
               if(detail.type == 'MO'){
                 detail.totalPrice = (parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
                 detail.totalPriceWithoutMarge = (parseFloat(detail.numberH) * parseFloat(detail.unitPrice) * parseInt(detail.qty));
@@ -1059,11 +1069,15 @@ export default {
         zone.prestationOuvrage.ouvrages.forEach(ouvrage=>{
           ouvrage.total = 0;
           ouvrage.totalHour = 0;
-          
+          ouvrage.qtyOuvrage = ouvrage.qty;
           ouvrage.tasks.forEach(task=>{
             task.details.forEach(detail=>{
               detail.sumUnitPrice = parseInt(detail.unitPrice);
               zone.prestationOuvrage.sumUnitPrice += parseInt(detail.unitPrice);
+              if(detail.original){
+                detail.qtyOuvrage = ouvrage.qtyOuvrage;
+                detail.qty = parseInt(ouvrage.qtyOuvrage)*parseInt(detail.originalDetailQty);
+              }
               if(detail.type == 'MO'){
                 detail.totalPrice = (parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
                 detail.totalPriceWithoutMarge = (parseFloat(detail.numberH) * parseFloat(detail.unitPrice) * parseInt(detail.qty));

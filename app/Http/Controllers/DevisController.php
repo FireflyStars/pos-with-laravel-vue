@@ -173,8 +173,10 @@ class DevisController extends Controller
                             )->get();
             foreach ($details as $detail) {
                 $detail->numberH = intval($request->qtyOuvrage) * floatval($detail->numberH);
+                $detail->originalDetailQty = intval($detail->qty == 0 ? 1 : $detail->qty);
                 $detail->qty = intval($detail->qty == 0 ? 1 : $detail->qty)*intval($request->qtyOuvrage);
                 $detail->marge = 8;
+                $detail->original = true;
                 $detail->unitPrice = number_format($detail->unitPrice, 2);
                 $detail->qtyOuvrage = (int)$detail->qty;
                 $detail->totalPriceWithoutMarge = 0;
