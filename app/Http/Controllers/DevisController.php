@@ -492,7 +492,7 @@ class DevisController extends Controller
                         $orderOuvrageTaskId = DB::table('order_ouvrage_task')->insertGetId($orderOuvrageTask);
                         foreach ($task['details'] as $detailIndex => $detail) {
                             $detailData = [
-                                'ouvrage_task_id'   => $orderOuvrageTaskId,
+                                'order_ouvrage_task_id'   => $orderOuvrageTaskId,
                                 'product_id'        => $detail['productId'],
                                 'type'              => $detail['type'],
                                 'name'              => $detail['name'],
@@ -502,7 +502,7 @@ class DevisController extends Controller
                                 'qty'               => $detail['qty'],
                                 'numberh'           => $detail['numberH'],
                                 'unitprice'         => $detail['unitPrice'],
-                                'qtyouvrage'        => $detail['qtyOuvrage'],
+                                'qtyouvrage'        => $detail['qtyOuvrage'] == '' ? 0 : $detail['qtyOuvrage'],
                                 'qtyunitouvrage'    => 1,
                                 'houvrage'          => 0,
                                 'marge'             => $detail['marge'],
@@ -511,7 +511,12 @@ class DevisController extends Controller
                                 'unit_id'           => $detail['unit_id'],
                                 'priceachat'        => $detail['productPrice'],
                             ];
+                            if($detail['type'] == 'INTERIM'){
+                                $detail['interim_societe_id']   = $detail['societe'];
+                            }
                             if($detail['type'] == 'COMMANDE FOURNISSEUR'){
+                                $detail['suppler_id']   = $detail['supplerId'];
+                                $detail['datesupplier']   = $detail['datesupplier'];
                                 if(preg_match('/^data:application\/pdf;base64,/', $detail['base64'], $type)){
                                     $data = substr($detail['base64'], strpos($detail['base64'], ',') + 1);
                                     $type = 'pdf';
@@ -576,7 +581,7 @@ class DevisController extends Controller
                         $orderOuvrageTaskId = DB::table('order_ouvrage_task')->insertGetId($orderOuvrageTask);
                         foreach ($task['details'] as $detailIndex => $detail) {
                             $detailData = [
-                                'ouvrage_task_id'   => $orderOuvrageTaskId,
+                                'order_ouvrage_task_id'   => $orderOuvrageTaskId,
                                 'product_id'        => $detail['productId'],
                                 'type'              => $detail['type'],
                                 'name'              => $detail['name'],
@@ -586,7 +591,7 @@ class DevisController extends Controller
                                 'qty'               => $detail['qty'],
                                 'numberh'           => $detail['numberH'],
                                 'unitprice'         => $detail['unitPrice'],
-                                'qtyouvrage'        => $detail['qtyOuvrage'],
+                                'qtyouvrage'        => $detail['qtyOuvrage'] == '' ? 0 : $detail['qtyOuvrage'],
                                 'qtyunitouvrage'    => 1,
                                 'houvrage'          => 0,
                                 'marge'             => $detail['marge'],
@@ -595,7 +600,12 @@ class DevisController extends Controller
                                 'unit_id'           => $detail['unit_id'],
                                 'priceachat'        => $detail['productPrice'],
                             ];
+                            if($detail['type'] == 'INTERIM'){
+                                $detail['interim_societe_id']   = $detail['societe'];
+                            }
                             if($detail['type'] == 'COMMANDE FOURNISSEUR'){
+                                $detail['suppler_id']   = $detail['supplerId'];
+                                $detail['datesupplier']   = $detail['datesupplier'];
                                 if(preg_match('/^data:application\/pdf;base64,/', $detail['base64'], $type)){
                                     $data = substr($detail['base64'], strpos($detail['base64'], ',') + 1);
                                     $type = 'pdf';
