@@ -30,7 +30,7 @@
                             </div>
                             <div class="d-flex mt-3 justify-content-between">
                                 <div class="col-5">
-                                    <input type="date" v-model="supplier.date" placeholder="Date" class="form-control">
+                                    <input type="date" v-model="supplier.datesupplier" placeholder="Date" class="form-control">
                                 </div>
                                 <div class="col-5">
                                     <SelectBox :label="''" 

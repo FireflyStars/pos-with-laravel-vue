@@ -427,6 +427,7 @@ class DevisController extends Controller
                             }
                             if($detail['type'] == 'COMMANDE FOURNISSEUR'){
                                 $detail['suppler_id']   = $detail['supplerId'];
+                                $detail['datesupplier']   = $detail['datesupplier'];
                                 if(preg_match('/^data:application\/pdf;base64,/', $detail['base64'], $type)){
                                     $data = substr($detail['base64'], strpos($detail['base64'], ',') + 1);
                                     $type = 'pdf';
