@@ -4,7 +4,7 @@
             <transition name="list" appear>
                 <div class="search-panel m-auto bg-white">
                     <div class="search-header d-flex align-items-center justify-content-center position-relative almarai-extrabold font-22">
-                        <span class="devis-icon me-3"></span> Ajout commande fournisseur
+                        <span class="devis-icon me-3"></span> Ajout Interim
                         <svg @click="closeModal" class="close-icon cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M6.78812 5.2973C6.3976 4.90481 5.76444 4.90481 5.37392 5.2973C4.98339 5.6898 4.98339 6.32616 5.37392 6.71865L10.5883 11.9594L5.29289 17.2816C4.90237 17.6741 4.90237 18.3105 5.29289 18.703C5.68341 19.0955 6.31657 19.0955 6.7071 18.703L12.0025 13.3808L17.293 18.6979C17.6835 19.0904 18.3166 19.0904 18.7072 18.6979C19.0977 18.3054 19.0977 17.6691 18.7072 17.2766L13.4167 11.9594L18.6261 6.7237C19.0167 6.33121 19.0167 5.69485 18.6261 5.30235C18.2356 4.90986 17.6025 4.90986 17.2119 5.30235L12.0025 10.5381L6.78812 5.2973Z" fill="black"/>
                         </svg>
@@ -13,16 +13,18 @@
                         <div class="result-panel mt-4">
                             <div class="px-2">
                                 <div class="d-flex px-3 justify-content-between">
-                                    <div class="col-5">
+                                    <div class="col-5 form-group">
+                                        <label>Nombre d’heure</label>
                                         <input type="text" v-model="interim.numberH" placeholder="Nombre d’heure" class="form-control form-control-sm">
                                     </div>
-                                    <div class="col-5">
+                                    <div class="col-5 form-group">
+                                        <label>Montant HT</label>
                                         <input type="text" v-model="interim.total" readonly placeholder="Montant HT" class="form-control form-control-sm">
                                     </div>
                                 </div>
                                 <div class="d-flex px-3 mt-3 justify-content-between">
                                     <div class="col-5">
-                                        <SelectBox :label="''" 
+                                        <SelectBox :label="'Société'"  
                                             v-model="interim.societe" 
                                             :options="societes"
                                             :name="'societe'"
@@ -30,10 +32,11 @@
                                         />
                                     </div>
                                     <div class="col-5">
-                                        <SelectBox :label="''" 
+                                        <SelectBox :label="'Taxe'" 
                                             v-model="interim.tax" 
                                             :options="taxes"
                                             :name="'tax'"
+                                            :placeholder="'Taxe'"
                                             :classnames="'w-100'"
                                         />
                                     </div>
@@ -41,7 +44,7 @@
                             </div>
                             <div class="btns mt-4 d-flex justify-content-between px-5">
                                 <button class="custom-btn btn-cancel" @click="closeModal">Annuler</button>
-                                <button class="custom-btn btn-ok" @click="selectInterim">Suivant</button>
+                                <button class="custom-btn btn-ok" @click="selectInterim">Validé</button>
                             </div>
                         </div>
                     </div>
@@ -71,17 +74,6 @@ export default {
         }
         const societes = ref([]);
         const taxes = ref([]);
-        onMounted(()=>{
-            axios.post('/get-interim-data').then((res)=>{
-                societes.value = res.data.societes;    
-                interim.value.tax = res.data.interim.tax
-                interim.value.price = res.data.interim.price
-                taxes.value = res.data.taxes;
-                console.log(res.data.interim);
-            }).catch((error)=>{
-                console.log()
-            })
-        })
         const interim = ref({
             numberH: '',
             total: '',
@@ -93,9 +85,18 @@ export default {
             ouvrageId: 0,
             taskId: 0,
             qtyOuvrage: '',
+        })        
+        onMounted(()=>{
+            axios.post('/get-interim-data').then((res)=>{
+                societes.value = res.data.societes;    
+                interim.value.tax = res.data.interim.tax
+                interim.value.price = res.data.interim.price
+            }).catch((error)=>{
+                console.log()
+            })
         })
         const showModal = ref(false);
-        const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
+        const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage, tax)=>{
             interim.value.zoneIndex = zoneIndex;
             interim.value.ouvrageType = ouvrageType;
             interim.value.ouvrageId = ouvrageId;
@@ -105,6 +106,7 @@ export default {
             interim.value.total =  '';
             interim.value.societe =  0;
             interim.value.tax =  0;
+            taxes.value =  tax;
             showModal.value = !showModal.value;
         }  
         const selectInterim = (index)=>{
@@ -112,8 +114,6 @@ export default {
             emit('selectedInterim', interim.value);
         }
         watch(() => interim.value.numberH, (newValue, oldValue) => {
-            console.log(newValue)
-            console.log(interim.value.price)            
             interim.value.total = parseInt(newValue)* parseFloat(interim.value.price);
         });        
         return {

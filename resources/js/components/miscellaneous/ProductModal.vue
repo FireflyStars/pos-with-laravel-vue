@@ -77,7 +77,6 @@
                 ouvrageType: '',
                 ouvrageId: '',
                 taskId: '',
-                qtyOuvrage: '',
             });
             const products = ref([]);
             const query = ref('');
@@ -108,7 +107,6 @@
                 data.value.ouvrageType = ouvrageType;
                 data.value.ouvrageId = ouvrageId;
                 data.value.taskId = taskId;
-                data.value.qtyOuvrage = qtyOuvrage;
                 
                 showModal.value = !showModal.value;
                 nextTick(()=>{
@@ -125,7 +123,6 @@
                     name: product.name, 
                     unit: product.unit, 
                     numberh: product.numberh, 
-                    qtyOuvrage: '', 
                     ... data.value 
                 });
             }

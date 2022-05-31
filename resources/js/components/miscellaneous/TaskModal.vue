@@ -30,7 +30,7 @@
                             </div>
                             <div class="btns mt-4 d-flex justify-content-between px-5">
                                 <button class="custom-btn btn-cancel" @click="closeModal">Annuler</button>
-                                <button class="custom-btn btn-ok" @click="selectTask">Suivant</button>
+                                <button class="custom-btn btn-ok" @click="selectTask">Validé</button>
                             </div>
                         </div>
                     </div>

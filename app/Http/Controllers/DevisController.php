@@ -173,6 +173,7 @@ class DevisController extends Controller
                             )->get();
             foreach ($details as $detail) {
                 $detail->numberH = intval($request->qtyOuvrage) * floatval($detail->numberH);
+                $detail->originalNumberH = $detail->numberH;
                 $detail->originalDetailQty = intval($detail->qty == 0 ? 1 : $detail->qty);
                 $detail->qty = intval($detail->qty == 0 ? 1 : $detail->qty)*intval($request->qtyOuvrage);
                 $detail->marge = 8;
@@ -266,8 +267,7 @@ class DevisController extends Controller
     public function getInterimData(){
         return response()->json([
             'societes'  => DB::table('interim_societe')->select('id as value', 'name as display')->get(),
-            'taxes'     => DB::table('taxes')->select('id as value', DB::raw('CEIL(taux * 100) as display'))->get(),
-            'iterim'    => DB::table('products')->where('type', 'INTERIM')->select('wholesale_price as price', 'taxe_id as tax')->first()
+            'interim'    => DB::table('products')->where('type', 'INTERIM')->select('wholesale_price as price', 'taxe_id as tax')->first()
         ]);
     }
     /**
@@ -627,5 +627,42 @@ class DevisController extends Controller
             }
         }
         return response()->json(['success'=> true]);
+    }
+
+    /**
+     * Get Devis details
+     * 
+     */
+    public function getDevis($devisId){
+        $order = Order::find($devisId);
+        $zones = DB::table('order_zones')
+                    ->where('order_id', $devisId)
+                    ->select('id', 'latitude as lat', 'longitude as lon', 'order_id', 'name', 'hauteur as height', 'moyenacces_id as roofAccess')
+                    ->get();
+        $devis = [];
+        $devis['totalHoursForInstall'] = 0;
+        $devis['totalPriceForInstall'] = 0;
+        $devis['totalHoursForSecurity'] = 0;
+        $devis['totalPriceForSecurity'] = 0;
+        $devis['totalHoursForPrestation'] = 0;
+        $devis['totalPriceForPrestation'] = 0;
+        $devis['totalHoursForInterim'] = 0;
+        $devis['totalPriceWithoutMarge'] = 0;
+        $devis['totalUnitPrice'] = 0;
+        foreach ($zones as $zone) {
+            $devis['zones']['installOuvrage']['sumUnitPrice'] = 0;
+
+            $ouvrages = DB::table('order_ouvrages')
+                ->where('order_id', $devisId)->where('order_zone_id', $zone->id)
+                ->where('type', 'INSTALLATION')
+                ->select('unit_id', 'qty', 'ouvrage_prestation_id', 'ouvrage_metier_id', 'ouvrage_toit_id', 'textcustomer as customerText',
+                'textchargeaffaire', 'textoperator', 'name', 'type')
+                ->get();
+            foreach ($ouvrages as $ouvrage) {
+
+            }
+            $devis['zones']['installOuvrage']['ouvrages'] = $ouvrages;                
+        }
+        return response()->json($devisId);
     }
 }

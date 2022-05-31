@@ -180,6 +180,24 @@
     background-position: center;
     background-repeat: no-repeat;    
 }
+.clock-icon{
+    width: 55px;
+    height: 35px;
+    display: block;
+    background-image: url(../js/images/clock-icon.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;    
+}
+.book-icon{
+    width: 55px;   
+    height: 35px;
+    display: block;
+    background-image: url(../js/images/book-icon.svg);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;    
+}
 .ouvrage-section.open{
     .arrow-icon{
         background-image: url(../js/images/down-arrow.svg);

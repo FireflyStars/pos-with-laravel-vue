@@ -14,7 +14,7 @@
                         <span v-if="showbutton" @click='clearSearch' class="position-absolute"><i class="icon-close"></i></span>
                     </div>
                     <section class="nodata p-2" v-if ="Customers.length == 0">
-                        <p >we couldn't find any customers.</p>
+                        <p >nous n'avons trouvé aucun client.</p>
                     </section>
                 </div>
                 <ul  class="list-group list-group-flush" v-if ="Customers.length > 0" >

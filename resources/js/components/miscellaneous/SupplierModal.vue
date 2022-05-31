@@ -11,12 +11,13 @@
                     </div>
                     <div class="search-body">
                         <div class="result-panel mt-4">
-                            <div class="col-12">
+                            <div class="col-12 form-group">
+                                <label>Nom</label>
                                 <input type="text" v-model="supplier.name" placeholder="Nom" class="form-control">
                             </div>
                             <div class="d-flex justify-content-between mt-3">
                                 <div class="col-5">
-                                    <SelectBox :label="''" 
+                                    <SelectBox :label="'Fournisseur'" 
                                         v-model="supplier.supplier_id" 
                                         :options="suppliers"
                                         :name="'Fournisseur'"
@@ -24,16 +25,18 @@
                                         :placeholder="'Fournisseur'"
                                     />
                                 </div>
-                                <div class="col-5">
+                                <div class="col-5 form-group">
+                                    <label>Montant HT</label>
                                     <input type="text" v-model="supplier.unitPrice" placeholder="Montant HT" class="form-control">
                                 </div>
                             </div>
                             <div class="d-flex mt-3 justify-content-between">
-                                <div class="col-5">
+                                <div class="col-5 form-group">
+                                    <label>Date</label>
                                     <input type="date" v-model="supplier.datesupplier" placeholder="Date" class="form-control">
                                 </div>
                                 <div class="col-5">
-                                    <SelectBox :label="''" 
+                                    <SelectBox :label="'Taxe'" 
                                         v-model="supplier.tax" 
                                         :options="taxes"
                                         :name="'Taxe'"
@@ -47,7 +50,7 @@
                             </div>
                             <div class="btns mt-4 d-flex justify-content-between px-5">
                                 <button class="custom-btn btn-cancel" @click="closeModal">Annuler</button>
-                                <button class="custom-btn btn-ok" @click="selectSupplier">Suivant</button>
+                                <button class="custom-btn btn-ok" @click="selectSupplier">Validé</button>
                             </div>
                         </div>
                     </div>

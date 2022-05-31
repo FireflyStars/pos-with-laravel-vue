@@ -26,7 +26,7 @@
           <div class="choose-customer-panel d-flex mt-3" v-if="devisCreateStep == 'choose_customer'">
             <div class="col-5 bg-white p-3 rounded">
               <h2 class="almarai-extrabold font-22">Détail Client <span @click="addNewCustomer" class="ms-3 almarai-bold font-16 cursor-pointer text-decoration-underline text-custom-success">Nouveau</span></h2>
-              <SearchCustomer name="search" @selected="selectedCustomer" :droppos="{top:'auto',right:'auto',bottom:'auto',left:'0',transformOrigin:'top right'}" label="Search a customer" hint="disabled till 2021-09-10" ></SearchCustomer>
+              <SearchCustomer name="search" @selected="selectedCustomer" :droppos="{top:'auto',right:'auto',bottom:'auto',left:'0',transformOrigin:'top right'}" label="Rechercher client" hint="disabled till 2021-09-10" ></SearchCustomer>
             </div>
           </div>
           <div class="choose-address-panel mt-3" v-if="devisCreateStep == 'choose_address'">
@@ -288,7 +288,11 @@
                                       <tr v-for="(detail, detailIndex) in task.details" :key="detailIndex">
                                         <td valign="middle">
                                           <div class="custom-option d-flex align-items-center">
-                                            <span class="option-icon me-3"></span> {{ detail.name }}
+                                            <span 
+                                              :class="{ 'clock-icon': detail.type == 'MO' || detail.type == 'INTERIM',  
+                                                'book-icon' : detail.type == 'PRODUIT' || detail.type == 'Labor' || detail.type == 'COMMANDE FOURNISSEUR'
+                                              }"
+                                            ></span> {{ detail.name }}
                                           </div>
                                         </td>
                                         <td valign="middle">{{ detail.qtyOuvrage }}</td>
@@ -459,7 +463,11 @@
                                       <tr v-for="(detail, detailIndex) in task.details" :key="detailIndex">
                                         <td valign="middle">
                                           <div class="custom-option d-flex align-items-center">
-                                            <span class="option-icon me-3"></span> {{ detail.name }}
+                                            <span 
+                                              :class="{ 'clock-icon': detail.type == 'MO' || detail.type == 'INTERIM',  
+                                                'book-icon' : detail.type == 'PRODUIT' || detail.type == 'Labor' || detail.type == 'COMMANDE FOURNISSEUR'
+                                              }"
+                                            ></span> {{ detail.name }}
                                           </div>
                                         </td>
                                         <td valign="middle">{{ detail.qtyOuvrage }}</td>
@@ -630,7 +638,11 @@
                                       <tr v-for="(detail, detailIndex) in task.details" :key="detailIndex">
                                         <td valign="middle">
                                           <div class="custom-option d-flex align-items-center">
-                                            <span class="option-icon me-3"></span> {{ detail.name }}
+                                            <span 
+                                              :class="{ 'clock-icon': detail.type == 'MO' || detail.type == 'INTERIM',  
+                                                'book-icon' : detail.type == 'PRODUIT' || detail.type == 'Labor' || detail.type == 'COMMANDE FOURNISSEUR'
+                                              }"
+                                            ></span> {{ detail.name }}
                                           </div>
                                         </td>
                                         <td valign="middle">{{ detail.qtyOuvrage }}</td>
@@ -986,28 +998,34 @@ export default {
             task.details.forEach(detail=>{
               zone.installOuvrage.sumUnitPrice += parseInt(detail.unitPrice);
               if(detail.original){
-                detail.qtyOuvrage = ouvrage.qtyOuvrage;
-                detail.qty = parseInt(ouvrage.qtyOuvrage)*parseInt(detail.originalDetailQty);
-              }              
+                detail.qtyOuvrage = ouvrage.qty;
+                detail.qty = parseInt(ouvrage.qty)*parseInt(detail.originalDetailQty);
+                detail.numberH = parseFloat(detail.originalNumberH)* parseInt(detail.qty);
+              }           
               if(detail.type == 'MO'){
-                detail.totalPrice = (parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
-                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH) * parseFloat(detail.unitPrice) * parseInt(detail.qty));
+                if(detail.original){
+                  detail.totalPrice = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseInt(detail.unitPrice)).toFixed(2);
+                  detail.totalPriceWithoutMarge = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseFloat(detail.unitPrice));
+                }else{
+                  detail.totalPrice = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseInt(detail.unitPrice)* parseInt(detail.qty)).toFixed(2);
+                  detail.totalPriceWithoutMarge = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseFloat(detail.unitPrice)* parseInt(detail.qty));
+                }
               }else if( detail.type == 'Labor' ){
-                detail.totalPrice = (parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
-                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH) * parseFloat(detail.unitPrice));
+                detail.totalPrice = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
+                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseFloat(detail.unitPrice));
               }else if( detail.type == 'INTERIM'){
                 detail.totalPrice = (parseFloat(detail.qty) * parseInt(detail.unitPrice)*(1+ parseInt(detail.marge)/100)).toFixed(2);
-                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH) * parseFloat(detail.unitPrice));
+                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseFloat(detail.unitPrice));
               }
               else{
                 detail.totalPrice = (parseInt(detail.qty) * parseFloat(detail.unitPrice) * (parseInt(detail.marge)/100 + 1)).toFixed(2);
                 detail.totalPriceWithoutMarge = (parseInt(detail.qty) * parseFloat(detail.unitPrice));
-              }
+              }     
               if(detail.type == 'INTERIM')     
-                form.value.totalHoursForInterim += parseFloat(detail.numberH)
-              ouvrage.total += parseFloat(detail.totalPrice);
+                form.value.totalHoursForInterim += parseFloat(detail.numberH == '' ? '0' : detail.numberH)              
+              ouvrage.total += parseFloat(detail.totalPrice);    
               ouvrage.totalWithoutMarge += parseFloat(detail.totalPriceWithoutMarge);
-              ouvrage.totalHour += (parseFloat(detail.numberH) * parseInt(detail.qty) );
+              ouvrage.totalHour += parseFloat(detail.numberH == '' ? '0' : detail.numberH);
             })
           })
           zone.installOuvrage.totalHour += ouvrage.totalHour;
@@ -1030,27 +1048,33 @@ export default {
               zone.securityOuvrage.sumUnitPrice += parseInt(detail.unitPrice);
               if(detail.original){
                 detail.qtyOuvrage = ouvrage.qty;
+                detail.numberH = parseFloat(detail.originalNumberH)* parseInt(ouvrage.qty);
                 detail.qty = parseInt(ouvrage.qty)*parseInt(detail.originalDetailQty);
               }           
               if(detail.type == 'MO'){
-                detail.totalPrice = (parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
-                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH) * parseFloat(detail.unitPrice) * parseInt(detail.qty));
+                if(detail.original){
+                  detail.totalPrice = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseInt(detail.unitPrice)).toFixed(2);
+                  detail.totalPriceWithoutMarge = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseFloat(detail.unitPrice));
+                }else{
+                  detail.totalPrice = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseInt(detail.unitPrice)* parseInt(detail.qty)).toFixed(2);
+                  detail.totalPriceWithoutMarge = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseFloat(detail.unitPrice)* parseInt(detail.qty));
+                }
               }else if( detail.type == 'Labor' ){
-                detail.totalPrice = (parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
-                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH) * parseFloat(detail.unitPrice));
+                detail.totalPrice = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
+                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseFloat(detail.unitPrice));
               }else if( detail.type == 'INTERIM'){
                 detail.totalPrice = (parseFloat(detail.qty) * parseInt(detail.unitPrice)*(1+ parseInt(detail.marge)/100)).toFixed(2);
-                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH) * parseFloat(detail.unitPrice));
+                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseFloat(detail.unitPrice));
               }
               else{
                 detail.totalPrice = (parseInt(detail.qty) * parseFloat(detail.unitPrice) * (parseInt(detail.marge)/100 + 1)).toFixed(2);
                 detail.totalPriceWithoutMarge = (parseInt(detail.qty) * parseFloat(detail.unitPrice));
               }     
               if(detail.type == 'INTERIM')     
-                form.value.totalHoursForInterim += parseFloat(detail.numberH)              
+                form.value.totalHoursForInterim += parseFloat(detail.numberH == '' ? '0' : detail.numberH)              
               ouvrage.total += parseFloat(detail.totalPrice);    
               ouvrage.totalWithoutMarge += parseFloat(detail.totalPriceWithoutMarge);
-              ouvrage.totalHour += parseFloat(detail.numberH);
+              ouvrage.totalHour += parseFloat(detail.numberH == '' ? '0' : detail.numberH);
             })
           })
           zone.securityOuvrage.totalHour += ouvrage.totalHour;
@@ -1073,28 +1097,34 @@ export default {
               detail.sumUnitPrice = parseInt(detail.unitPrice);
               zone.prestationOuvrage.sumUnitPrice += parseInt(detail.unitPrice);
               if(detail.original){
-                detail.qtyOuvrage = ouvrage.qtyOuvrage;
-                detail.qty = parseInt(ouvrage.qtyOuvrage)*parseInt(detail.originalDetailQty);
-              }
+                detail.qtyOuvrage = ouvrage.qty;
+                detail.numberH = parseFloat(detail.originalNumberH)* parseInt(ouvrage.qty);
+                detail.qty = parseInt(ouvrage.qty)*parseInt(detail.originalDetailQty);
+              }           
               if(detail.type == 'MO'){
-                detail.totalPrice = (parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
-                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH) * parseFloat(detail.unitPrice) * parseInt(detail.qty));
+                if(detail.original){
+                  detail.totalPrice = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseInt(detail.unitPrice)).toFixed(2);
+                  detail.totalPriceWithoutMarge = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseFloat(detail.unitPrice));
+                }else{
+                  detail.totalPrice = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseInt(detail.unitPrice)* parseInt(detail.qty)).toFixed(2);
+                  detail.totalPriceWithoutMarge = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseFloat(detail.unitPrice)* parseInt(detail.qty));
+                }                
               }else if( detail.type == 'Labor' ){
-                detail.totalPrice = (parseFloat(detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
-                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH) * parseFloat(detail.unitPrice));
+                detail.totalPrice = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseInt(detail.unitPrice) * parseInt(detail.qty)).toFixed(2);
+                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseFloat(detail.unitPrice));
               }else if( detail.type == 'INTERIM'){
                 detail.totalPrice = (parseFloat(detail.qty) * parseInt(detail.unitPrice)*(1+ parseInt(detail.marge)/100)).toFixed(2);
-                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH) * parseFloat(detail.unitPrice));
+                detail.totalPriceWithoutMarge = (parseFloat(detail.numberH == '' ? '0' : detail.numberH) * parseFloat(detail.unitPrice));
               }
               else{
                 detail.totalPrice = (parseInt(detail.qty) * parseFloat(detail.unitPrice) * (parseInt(detail.marge)/100 + 1)).toFixed(2);
                 detail.totalPriceWithoutMarge = (parseInt(detail.qty) * parseFloat(detail.unitPrice));
-              }
+              }     
               if(detail.type == 'INTERIM')     
-                form.value.totalHoursForInterim += parseFloat(detail.numberH)              
-              ouvrage.total += parseFloat(detail.totalPrice); 
-              ouvrage.totalWithoutMarge += parseFloat(detail.totalPriceWithoutMarge).toFixed(2);
-              ouvrage.totalHour += parseFloat(detail.numberH);
+                form.value.totalHoursForInterim += parseFloat(detail.numberH == '' ? '0' : detail.numberH)              
+              ouvrage.total += parseFloat(detail.totalPrice);    
+              ouvrage.totalWithoutMarge += parseFloat(detail.totalPriceWithoutMarge);
+              ouvrage.totalHour += parseFloat(detail.numberH == '' ? '0' : detail.numberH);
             })
           })
           zone.prestationOuvrage.totalHour += ouvrage.totalHour;
@@ -1166,7 +1196,7 @@ export default {
     }
     
     const openInterimModal = (zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
-      interimModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage);
+      interimModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage, taxes.value);
     }
 
     const openLaborModal = (zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
@@ -1255,12 +1285,12 @@ export default {
         form.value.zones[product.zoneIndex].installOuvrage.ouvrages[product.ouvrageId].tasks[product.taskId].details.push({
           qty: 1,
           tax: product.tax,
-          unitPrice: parseInt(product.unitPrice).toFixed(2),
+          unitPrice: parseFloat(product.unitPrice).toFixed(2),
           marge: 8,
           type: product.type,
           name: product.name,
           unit: product.unit,
-          qtyOuvrage: product.qtyOuvrage,
+          qtyOuvrage: '',
           totalPrice: product.unitPrice * parseInt(product.unit),
           numberH: 0,
         });
@@ -1269,12 +1299,12 @@ export default {
         form.value.zones[product.zoneIndex].securityOuvrage.ouvrages[product.ouvrageId].tasks[product.taskId].details.push({
           qty: 1,
           tax: product.tax,
-          unitPrice: parseInt(product.unitPrice).toFixed(2),
+          unitPrice: parseFloat(product.unitPrice).toFixed(2),
           marge: 8,
           type: product.type,
           name: product.name,
           unit: product.unit,
-          qtyOuvrage: product.qtyOuvrage,
+          qtyOuvrage: '',
           totalPrice: product.unitPrice * parseInt(product.unit),
           numberH: 0,
         });
@@ -1283,13 +1313,13 @@ export default {
         form.value.zones[product.zoneIndex].prestationOuvrage.ouvrages[product.ouvrageId].tasks[product.taskId].details.push({
           qty: 1,
           tax: product.tax,
-          unitPrice: parseInt(product.unitPrice).toFixed(2),
+          unitPrice: parseFloat(product.unitPrice).toFixed(2),
           marge: 8,
           type: product.type,
           name: product.name,
           unit: product.unit,
-          qtyOuvrage: product.qtyOuvrage,
-          totalPrice: product.unitPrice * parseInt(product.unit),
+          qtyOuvrage: '',
+          totalPrice: product.unitPrice,
           numberH: 0,
         });
       }
@@ -1311,7 +1341,7 @@ export default {
           unit: 'UN',
           qtyOuvrage: supplier.qtyOuvrage,
           totalPrice: 0,
-          numberH: '',
+          numberH: 0,
         });
       }
       if(supplier.ouvrageType == 2){
@@ -1328,7 +1358,7 @@ export default {
           unit: 'UN',
           qtyOuvrage: supplier.qtyOuvrage,
           totalPrice: 0,
-          numberH: '',
+          numberH: 0,
         });
       }
       if(supplier.ouvrageType == 3){
@@ -1345,7 +1375,7 @@ export default {
           unit: 'UN',
           qtyOuvrage: supplier.qtyOuvrage,
           totalPrice: 0,
-          numberH: '',    
+          numberH: 0,
         });
       }
     }
@@ -1408,7 +1438,7 @@ export default {
           unit: 'HR',
           qtyOuvrage: interim.qtyOuvrage,
           totalPrice: interim.total,
-          numberH: '',
+          numberH: 0,
         });
       }
       if(interim.ouvrageType == 2){
@@ -1423,7 +1453,7 @@ export default {
           unit: 'HR',
           qtyOuvrage: interim.qtyOuvrage,
           totalPrice: interim.total,
-          numberH: '',
+          numberH: 0,
         });
       }
       if(interim.ouvrageType == 3){
@@ -1438,7 +1468,7 @@ export default {
           unit: 'HR',
           qtyOuvrage: interim.qtyOuvrage,
           totalPrice: interim.total,
-          numberH: '',
+          numberH: 0,
         });
       }
     }

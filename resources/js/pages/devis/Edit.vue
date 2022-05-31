@@ -839,7 +839,7 @@ import {
   LOADER_MODULE 
   } from '../../store/types/types';
 import axios from 'axios';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute  } from 'vue-router';
 import { useStore } from 'vuex';
 export default {
   components:{
@@ -862,6 +862,7 @@ export default {
   setup() {
     const store = useStore();
     const router = useRouter();
+    const route = useRoute();
     const breadcrumbs = ref(['Choix client']);
     const devisCreateStep = ref('choose_customer');
     watchEffect(()=>{
@@ -969,7 +970,6 @@ export default {
       form.value.totalPriceForSecurity = 0;
       form.value.totalHoursForPrestation = 0;
       form.value.totalPriceForPrestation = 0;
-      form.value.totalHoursForInterim = 0;
       form.value.totalHoursForInterim = 0;
       form.value.totalPriceWithoutMarge = 0;
       form.value.totalUnitPrice = 0;
@@ -1107,7 +1107,8 @@ export default {
       })
     });
     onMounted(()=>{
-      axios.post('/get-ged-categories').then((res)=>{
+      axios.post('/get-devis/'+ route.params.id ).then((res)=>{
+        console.log(res.data);
         gedCats.value = res.data.gedCats;
         taxes.value = res.data.taxes;
         units.value = res.data.units;

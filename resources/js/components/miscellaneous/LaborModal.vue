@@ -24,7 +24,7 @@
                                     <div class="col-5">
                                     </div>
                                     <div class="col-5">
-                                        <SelectBox :label="''" 
+                                        <SelectBox :label="'Taxe'" 
                                             v-model="labor.tax" 
                                             :options="taxes"
                                             :name="'tax'"
@@ -36,7 +36,7 @@
                             </div>
                             <div class="btns mt-4 d-flex justify-content-between px-5">
                                 <button class="custom-btn btn-cancel" @click="closeModal">Annuler</button>
-                                <button class="custom-btn btn-ok" @click="selectLabor">Suivant</button>
+                                <button class="custom-btn btn-ok" @click="selectLabor">Validé</button>
                             </div>
                         </div>
                     </div>
