@@ -18,10 +18,12 @@ use Illuminate\Http\Request;
 use App\Models\CampagneCible;
 use App\Models\CompagneCible;
 use App\Models\CustomerStatut;
-// use Codedge\Fpdf\Fpdf\Fpdf;
 use App\Models\CampagneCategory;
+// use Codedge\Fpdf\Fpdf\Fpdf;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\App;
+use App\Models\campagne_card_detail;
 use App\Models\CampagneCibleStatuts;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -35,6 +37,47 @@ class CompagneController extends Controller
     use Sarbacane;
 
     private $pdf;
+
+
+    public function store_campagne_product(CampagneCategory $campagne, Request $request) 
+    {
+        
+        if($campagne->cardDetail->count()) 
+        {
+            $campagne->cardDetail()->update([
+                'qty' => $campagne->cardDetail->qty + $request->qty
+            ]);
+        }
+        else 
+        {
+            $campagne->cardDetail()->create([
+                'productname' => $campagne->name,
+                'description' => $campagne->text,
+                'name'        => $campagne->name,
+                'qty'         => $request->qty,
+                'fields'      => $campagne->fields,
+                'price'       => $campagne->price,
+            ]);
+        }
+
+        $affiliate = $request->user()->affiliate->load('tax');
+        $campagne = $campagne->load('cardDetail');
+
+        return response()->json(
+            ['data' => compact('affiliate', 'campagne')]
+        );
+    
+    }
+
+    public function get_campagne_category(CampagneCategory $campagne, Request $request) 
+    {
+        $affiliate = $request->user()->affiliate->load('tax');
+        $campagne = $campagne->load('cardDetail');
+
+        return response()->json(
+            ['data' => compact('affiliate', 'campagne')]
+        );
+    }
 
 
     public function save_letter_pdf(Request $request, Campagne $campagne) 
@@ -737,9 +780,7 @@ class CompagneController extends Controller
     {
         $user = Auth::user();
       
-   
         $campagne_category_id = $request->for_template;
-
 
         $campagne_category = CampagneCategory::find($campagne_category_id);
         $name=$campagne_category->name.'-';
@@ -1661,6 +1702,44 @@ class CompagneController extends Controller
         return [
             'content' => $content,
         ];
+    }
+
+    public function fields_for_marketing(CampagneCategory $campagne, Request $request) 
+    {
+
+        $affiliate = $request->user()->affiliate;
+        $telephone = $affiliate->telephone;
+        $email = $affiliate->reponseaddress;
+
+        if(is_null($campagne->fields)) 
+        {
+            $fields = [];
+            $fields['Telephone_agence']['value'] = $telephone;
+            $fields['Email_agence']['value'] = $email;
+            $fields['personalize'] = false;
+            return response()->json($fields);
+        }
+
+        $fields = json_decode($campagne->fields);
+        
+        $fields->Nom_agence->value=$affiliate->name;
+        $fields->Telephone_agence->value=$telephone;
+        $fields->Email_agence->value=$email;
+        $fields->Prenom_dirigeant->value=$affiliate->firstnamedirector;
+        $fields->Nom_dirigeant->value=$affiliate->namedirector;
+        $fields->Email_dirigeant->value=$affiliate->email;
+        $fields->Portable_dirigeant->value=$affiliate->mobile;
+        $fields->Adresse_agence->value=$affiliate->address.' '.$affiliate->address2;
+        $fields->CP_agence->value=$affiliate->postcod;
+        $fields->Ville_agence->value=$affiliate->city;
+        $fields->Page_agence->value=$affiliate->urlagence;
+        $fields->Linkedin_agence->value=$affiliate->linkedin;
+        $filedepliant = json_decode($campagne->filedepliant);
+        $fields->file_depliant=$filedepliant;
+        $fields->personalize = true;
+
+        return response()->json($fields);
+
     }
 
 

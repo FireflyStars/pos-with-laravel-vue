@@ -53,6 +53,10 @@ Route::get('/stream-flyer-pdf/{campagne}', [CompagneController::class, 'stream_f
 Route::post('/save-mail-csv/{campagne}', [CompagneController::class, 'generate_mail_csv_and_store']);
 Route::post('/validate-and-send-email/{campagne}', [CompagneController::class, 'validate_and_send_email']);
 Route::get('/download-resource-file', [CompagneController::class, 'download_resource_file']);
+Route::get('/get-campagne-category/{campagne}', [CompagneController::class, 'get_campagne_category']);
+Route::post('/store-campagne-product/{campagne}', [CompagneController::class, 'store_campagne_product']);
+Route::get('/get-fields-marketing/{campagne}', [CompagneController::class, 'fields_for_marketing'])->middleware('auth')->name('fields_marketing');
+
 
 Route::post('/api',[ApiController::class,'index'])->middleware('cors')->name('api');
 
@@ -138,7 +142,7 @@ Route::group([
     Route::get('/imagefield/{id}',[CompagneController::class, 'imagefield'])->middleware('auth')->name('imagefield');
     Route::get('/fields/{id}',[CompagneController::class, 'fields'])->middleware('auth')->name('fields');
     Route::get('/download',[CompagneController::class, 'downloadPdfFile'])->middleware('auth')->name('downloadPdfFile');
-    Route::get('/lettredata/{campagne}',[CompagneController::class, 'lettredata'])->middleware('auth')->name('lettredata');
+    Route::get('/lettredata/{id}',[CompagneController::class, 'lettredata'])->middleware('auth')->name('lettredata');
     Route::post('/get-affiliate-detail',[LcdtFrontController::class,'getAffiliateDetail'])->middleware('auth')->name('get-affiliate-detail');
     Route::post('/get-campagne-details',[LcdtFrontController::class, 'getCampagneCategory'])->middleware('auth')->name('get-campagne-details');
     Route::post('/get-cible-emails',[LcdtFrontController::class,'getCibleEmails'])->middleware('auth')->name('get-cible-emails');

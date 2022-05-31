@@ -243,17 +243,13 @@ export default {
 
             loading.value = true
             
-            axios.post("/contentform/" + route.params.cible_id,{email:email_agence.value,phone:phone_agence.value})
+            axios.post("/contentform/" + route.params.cible_id, {
+                email: email_agence.value,
+                phone: phone_agence.value
+            })
             .then(({ data }) => {
 
                 if(data.ok==1) {
-                    // router.push({
-                    //     name: "envoi",
-                    //     params: {
-                    //         cible_id: `${route.params.cible_id}`,
-                    //         type: route.params.type,
-                    //     },
-                    // })
                     router.go(-1)
                     loading.value = false
                 }
