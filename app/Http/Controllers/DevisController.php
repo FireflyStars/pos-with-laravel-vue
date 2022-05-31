@@ -173,8 +173,10 @@ class DevisController extends Controller
                             )->get();
             foreach ($details as $detail) {
                 $detail->numberH = intval($request->qtyOuvrage) * floatval($detail->numberH);
+                $detail->originalDetailQty = intval($detail->qty == 0 ? 1 : $detail->qty);
                 $detail->qty = intval($detail->qty == 0 ? 1 : $detail->qty)*intval($request->qtyOuvrage);
                 $detail->marge = 8;
+                $detail->original = true;
                 $detail->unitPrice = number_format($detail->unitPrice, 2);
                 $detail->qtyOuvrage = (int)$detail->qty;
                 $detail->totalPriceWithoutMarge = 0;
@@ -292,7 +294,7 @@ class DevisController extends Controller
             'affiliate_id'      => Auth::user()->affiliate->id,
             'responsable_id'     => Auth::id(),
             'order_state_id'   => 2,
-            'total'            => ($request->totalPriceForInstall + $request->totalPriceForSecurity + $request->totalPriceForSecurity),
+            'total'            => ($request->totalPriceForInstall + $request->totalPriceForSecurity + $request->totalPriceForPrestation),
             'address_id'        => $request->address['id'],
             'customer_id'       => $request->customer['id'],
             'datecommande'      => Carbon::now(),
@@ -411,7 +413,7 @@ class DevisController extends Controller
                                 'qty'               => $detail['qty'],
                                 'numberh'           => $detail['numberH'],
                                 'unitprice'         => $detail['unitPrice'],
-                                'qtyouvrage'        => $detail['qtyOuvrage'],
+                                'qtyouvrage'        => $detail['qtyOuvrage'] == '' ? 0 : $detail['qtyOuvrage'],
                                 'qtyunitouvrage'    => 1,
                                 'houvrage'          => 0,
                                 'marge'             => $detail['marge'],
@@ -420,7 +422,12 @@ class DevisController extends Controller
                                 'unit_id'           => $detail['unit_id'],
                                 'priceachat'        => $detail['productPrice'],
                             ];
-                            if($detail['type'] == 'FOURNISSEUR'){
+                            if($detail['type'] == 'INTERIM'){
+                                $detail['interim_societe_id']   = $detail['societe'];
+                            }
+                            if($detail['type'] == 'COMMANDE FOURNISSEUR'){
+                                $detail['suppler_id']   = $detail['supplerId'];
+                                $detail['datesupplier']   = $detail['datesupplier'];
                                 if(preg_match('/^data:application\/pdf;base64,/', $detail['base64'], $type)){
                                     $data = substr($detail['base64'], strpos($detail['base64'], ',') + 1);
                                     $type = 'pdf';
@@ -485,7 +492,7 @@ class DevisController extends Controller
                         $orderOuvrageTaskId = DB::table('order_ouvrage_task')->insertGetId($orderOuvrageTask);
                         foreach ($task['details'] as $detailIndex => $detail) {
                             $detailData = [
-                                'ouvrage_task_id'   => $orderOuvrageTaskId,
+                                'order_ouvrage_task_id'   => $orderOuvrageTaskId,
                                 'product_id'        => $detail['productId'],
                                 'type'              => $detail['type'],
                                 'name'              => $detail['name'],
@@ -495,7 +502,7 @@ class DevisController extends Controller
                                 'qty'               => $detail['qty'],
                                 'numberh'           => $detail['numberH'],
                                 'unitprice'         => $detail['unitPrice'],
-                                'qtyouvrage'        => $detail['qtyOuvrage'],
+                                'qtyouvrage'        => $detail['qtyOuvrage'] == '' ? 0 : $detail['qtyOuvrage'],
                                 'qtyunitouvrage'    => 1,
                                 'houvrage'          => 0,
                                 'marge'             => $detail['marge'],
@@ -504,7 +511,12 @@ class DevisController extends Controller
                                 'unit_id'           => $detail['unit_id'],
                                 'priceachat'        => $detail['productPrice'],
                             ];
+                            if($detail['type'] == 'INTERIM'){
+                                $detail['interim_societe_id']   = $detail['societe'];
+                            }
                             if($detail['type'] == 'COMMANDE FOURNISSEUR'){
+                                $detail['suppler_id']   = $detail['supplerId'];
+                                $detail['datesupplier']   = $detail['datesupplier'];
                                 if(preg_match('/^data:application\/pdf;base64,/', $detail['base64'], $type)){
                                     $data = substr($detail['base64'], strpos($detail['base64'], ',') + 1);
                                     $type = 'pdf';
@@ -569,7 +581,7 @@ class DevisController extends Controller
                         $orderOuvrageTaskId = DB::table('order_ouvrage_task')->insertGetId($orderOuvrageTask);
                         foreach ($task['details'] as $detailIndex => $detail) {
                             $detailData = [
-                                'ouvrage_task_id'   => $orderOuvrageTaskId,
+                                'order_ouvrage_task_id'   => $orderOuvrageTaskId,
                                 'product_id'        => $detail['productId'],
                                 'type'              => $detail['type'],
                                 'name'              => $detail['name'],
@@ -579,7 +591,7 @@ class DevisController extends Controller
                                 'qty'               => $detail['qty'],
                                 'numberh'           => $detail['numberH'],
                                 'unitprice'         => $detail['unitPrice'],
-                                'qtyouvrage'        => $detail['qtyOuvrage'],
+                                'qtyouvrage'        => $detail['qtyOuvrage'] == '' ? 0 : $detail['qtyOuvrage'],
                                 'qtyunitouvrage'    => 1,
                                 'houvrage'          => 0,
                                 'marge'             => $detail['marge'],
@@ -588,7 +600,12 @@ class DevisController extends Controller
                                 'unit_id'           => $detail['unit_id'],
                                 'priceachat'        => $detail['productPrice'],
                             ];
+                            if($detail['type'] == 'INTERIM'){
+                                $detail['interim_societe_id']   = $detail['societe'];
+                            }
                             if($detail['type'] == 'COMMANDE FOURNISSEUR'){
+                                $detail['suppler_id']   = $detail['supplerId'];
+                                $detail['datesupplier']   = $detail['datesupplier'];
                                 if(preg_match('/^data:application\/pdf;base64,/', $detail['base64'], $type)){
                                     $data = substr($detail['base64'], strpos($detail['base64'], ',') + 1);
                                     $type = 'pdf';

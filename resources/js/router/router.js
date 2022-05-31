@@ -29,8 +29,17 @@ const router = createRouter({
         },
         {
             path:'/devis/create',
-            name:'devis',
+            name:'CreateDevis',
             component: () => import('../pages/devis/Create'),
+            meta:{
+                authenticated: true
+            },
+
+        },
+        {
+            path:'/devis/edit/:id',
+            name:'EditDevis',
+            component: () => import('../pages/devis/Edit'),
             meta:{
                 authenticated: true
             },

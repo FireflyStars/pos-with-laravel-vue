@@ -117,7 +117,7 @@ export default {
             showModal.value = !showModal.value;
         }
         const searchOuvrage = async ()=>{
-            store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Search Ouvrage...']);
+            store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Rechercher Ouvrage...']);
             axios.post('/search-ouvrage', {
                 search: query.value,
                 type: '',
@@ -138,7 +138,7 @@ export default {
                 queryElement.value.focus();
             })
             if(ouvrages.value.length == 0){
-                store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Loading Sécurité Ouvrages...']);
+                store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Chargement Sécurité Ouvrages...']);
                 axios.post('/search-ouvrage', {
                     search: query.value,
                     type: 'SECURITE',

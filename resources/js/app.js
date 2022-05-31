@@ -19,8 +19,7 @@ axios.interceptors.response.use(
 
         if (error.response.status !== 401&&error.response.status !== 419) return Promise.reject(error)
         sessionStorage.clear();
-        store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,{message:'Session expired. Please login again.',ttl:8,type:'danger'});
-        //window.location='/';
+        store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,{message:'La session a expiré. Veuillez vous reconnecter.',ttl:8,type:'danger'});
         router.push({
             name:'Login',
         })

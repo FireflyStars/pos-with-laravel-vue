@@ -9,11 +9,11 @@
             <div class="col-6">
               <h1 class="d-flex align-items-center m-0">
                 <span class="devis-icon"></span>
-                <span class="ms-3 font-22 almarai_extrabold_normal_normal">Nouveau Devis</span>
+                <span class="ms-3 font-22 almarai_extrabold_normal_normal">Modifier le modèle</span>
               </h1>
             </div>
             <div class="col-6 d-flex" v-if="devisCreateStep == 'create_devis'">
-              <button class="btn btn-save me-3 text-white" @click="storeDevis">Sauvegarder</button>
+              <button class="btn btn-save me-3 text-white" @click="storeDevis">Mise à jour</button>
               <button class="btn btn-pdf text-white rounded-3" @click="PDFDevis">PDF</button>
             </div>
           </div>
