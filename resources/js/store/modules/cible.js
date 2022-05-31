@@ -3,9 +3,38 @@ import { resolveDirective } from 'vue';
 import {
     TOASTER_MESSAGE,
     TOASTER_GET_ALL,
-    TOASTER_ADD_TOAST, TOASTER_REMOVE_TOAST, CIBLE_SET_CAMPAGNE_CATEGORY_ID, CIBLE_INIT,CIBLE_SET_CUSTOMER_STATUT, CIBLE_SET_NAF, CIBLE_SET_PREVIOUS_CAMPAGNE_LIST, CIBLE_GET_CUSTOMER_STATUT, CIBLE_GET_NAF, CIBLE_TOGGLE, CIBLE_SET_SELECTION, CIBLE_UNSET_SELECTION, CIBLE_GET_SELECTION, HIDE_LOADER, LOADER_MODULE, DISPLAY_LOADER, CIBLE_ADD_TO_ALL_CONTACTS, CIBLE_GET_ALL_CONTACTS, CIBLE_GET_PREVIOUS_CAMPAGNE_LIST, CIBLE_CAMPAGNE_TOGGLE, CIBLE_SET_CAMPAGNE_SELECTION, CIBLE_UNSET_CAMPAGNE_SELECTION, CIBLE_GET_CAMPAGNE_SELECTION, CIBLE_SET_UNIQUE_CONTACTS, CIBLE_GET_UNIQUE_CONTACTS, CIBLE_GET_UNSELECTED_EMAILS, CIBLE_SET_UNSELECTED_EMAIL, CIBLE_UNSET_UNSELECTED_EMAIL, CIBLE_GET_FILTERED_EMAILS, CIBLE_SET_FILTERED_EMAILS, CIBLE_SET_PRICE, CIBLE_GET_PRICE, CIBLE_CREATE_CAMPAGNE, TOASTER_MODULE, CIBLE_SET_CAMPAGNE_CATEGORY, CIBLE_GET_CAMPAGNE_CATEGORY, CIBLE_RESET_STATE,
+    TOASTER_ADD_TOAST, 
+    TOASTER_REMOVE_TOAST, 
+    CIBLE_SET_CAMPAGNE_CATEGORY_ID, 
+    CIBLE_INIT,
+    CIBLE_SET_CUSTOMER_STATUT, 
+    CIBLE_SET_NAF, 
+    CIBLE_SET_PREVIOUS_CAMPAGNE_LIST, 
+    CIBLE_GET_CUSTOMER_STATUT, 
+    CIBLE_GET_NAF, 
+    CIBLE_TOGGLE, 
+    CIBLE_SET_SELECTION, 
+    CIBLE_UNSET_SELECTION, 
+    CIBLE_GET_SELECTION, 
+    HIDE_LOADER, 
+    LOADER_MODULE, 
+    DISPLAY_LOADER, 
+    CIBLE_ADD_TO_ALL_CONTACTS, 
+    CIBLE_GET_ALL_CONTACTS, 
+    CIBLE_GET_PREVIOUS_CAMPAGNE_LIST, 
+    CIBLE_CAMPAGNE_TOGGLE, 
+    CIBLE_SET_CAMPAGNE_SELECTION, 
+    CIBLE_UNSET_CAMPAGNE_SELECTION, 
+    CIBLE_GET_CAMPAGNE_SELECTION, 
+    CIBLE_SET_UNIQUE_CONTACTS, 
+    CIBLE_GET_UNIQUE_CONTACTS, CIBLE_GET_UNSELECTED_EMAILS, CIBLE_SET_UNSELECTED_EMAIL, CIBLE_UNSET_UNSELECTED_EMAIL, CIBLE_GET_FILTERED_EMAILS, CIBLE_SET_FILTERED_EMAILS, CIBLE_SET_PRICE, CIBLE_GET_PRICE, CIBLE_CREATE_CAMPAGNE, TOASTER_MODULE, CIBLE_SET_CAMPAGNE_CATEGORY, CIBLE_GET_CAMPAGNE_CATEGORY, CIBLE_RESET_STATE,
     GET_CAMPAGNE_CATEGORY,
-    SAVE_CAMPAGNE_CATEGORY
+    SAVE_CAMPAGNE_CATEGORY,
+    GET_CAMPAGNE_FIELDS,
+    SAVE_CAMPAGNE_FIELDS,
+    STORE_PRODUCT,
+    GET_CARD_PRODUCTS,
+    SAVE_CARD_PRODUCTS
 } from '../types/types';
 
 export const cible= {
@@ -31,7 +60,8 @@ export const cible= {
         unselected:[],       
 
         //final email list
-        filtered_emails:[]
+        filtered_emails:[],
+        fields: {}
     },
     mutations:{
         [CIBLE_SET_CAMPAGNE_CATEGORY_ID]:(state,id)=>{
@@ -62,7 +92,7 @@ export const cible= {
            
             state.checkedCampagne.push(payload);  
             const campagne=state.previous_campagne.filter(obj => (obj.id=== payload.campagne_id));
-            state.all_contacts.push(campagne[0]); 
+            state.all_contacts.push(campagne[0]);
           
          }
          ,
@@ -112,15 +142,21 @@ export const cible= {
         }*/
         [SAVE_CAMPAGNE_CATEGORY](state, category) {
             state.campagne_category = category
+        },
+        [SAVE_CAMPAGNE_FIELDS](state, fields) {
+            state.fields = fields
+        },
+        [SAVE_CARD_PRODUCTS](state, products) {
+            state.products = products
         }
     },
     actions:{
 
-        async [GET_CAMPAGNE_CATEGORY]({ commit }, id) {
+        async [GET_CARD_PRODUCTS]({ commit }, id) {
 
             try {
-                const { data } = await axios.get(`get-campagne-category/${id}`)
-                commit(SAVE_CAMPAGNE_CATEGORY, data)
+                const { data } = await axios.get(`/get-card-products`)
+                commit(SAVE_CARD_PRODUCTS, data)
             }
 
             catch(e) {
@@ -129,7 +165,45 @@ export const cible= {
 
         },
 
-        [CIBLE_CREATE_CAMPAGNE]:async({commit,state,dispatch})=>{
+        async [GET_CAMPAGNE_CATEGORY]({ commit }, id) {
+
+            try {
+                const { data } = await axios.get(`/get-campagne-category/${id}`)
+                commit(SAVE_CAMPAGNE_CATEGORY, data.data)
+            }
+
+            catch(e) {
+                throw e
+            }
+
+        },
+
+        async [GET_CAMPAGNE_FIELDS]({ commit }, id) {
+
+            try {
+                const { data } = await axios.get(`/get-fields-marketing/${id}`)
+                commit(SAVE_CAMPAGNE_FIELDS, data)
+            }
+
+            catch(e) {
+                throw e
+            }
+
+        },
+
+        async [STORE_PRODUCT]({ commit }, { category, qty }) {
+            try {
+                const { data } = await axios.post(`/store-campagne-product/${category.id}`, {
+                    qty
+                })
+                commit(SAVE_CAMPAGNE_CATEGORY, data.data)
+            }
+            catch(e) {
+                throw e
+            }
+        },
+
+        [CIBLE_CREATE_CAMPAGNE]:async({commit, state, dispatch})=>{
      
             if(state.filtered_emails.length==0){
                 dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`,{message: "Aucun emails dans votre liste.",ttl: 5,type: 'danger'}, {root: true});
@@ -144,7 +218,7 @@ export const cible= {
                     return  Promise.resolve(response);
             }).catch((error)=>{
                 return Promise.reject(error);
-            }).finally(()=>{
+            }).finally(() => {
                 dispatch(`${LOADER_MODULE}${HIDE_LOADER}`,{},{root:true});
             });
             }
@@ -220,6 +294,7 @@ export const cible= {
         [CIBLE_GET_FILTERED_EMAILS]:state=>state.filtered_emails,
         [CIBLE_GET_PRICE]:state=>state.price,
         [CIBLE_GET_CAMPAGNE_CATEGORY]:state=>state.campagne_category,
-        campagneCategory: state => state.campagne_category 
+        campagneCategory: state => state.campagne_category, 
+        fields: state => state.fields 
     }
 }

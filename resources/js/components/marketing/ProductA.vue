@@ -5,7 +5,8 @@
         <main-header />
 
         <div 
-            class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100"
+            class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" 
+            style="z-index:100"
         >
 
             <side-bar />
@@ -43,9 +44,12 @@
                                             prepend
                                             class="btn btn-newrdv body_medium"
                                             kind="warning"
-                                            title="Panier : XXX"
+                                            :title="'Panier :' + cardQuantity"
                                             classes="border-0"
                                             style="border-radius: 10px; font-size: 12px !important"
+                                            @click.prevent="$router.push({
+                                                name: 'marketing-card'
+                                            })"
                                         >
                                             <icon name="clipboard" />
                                         </base-button>
@@ -61,13 +65,19 @@
                                                 <div 
                                                     class="panel-heading d-flex justify-content-between align-items-center"
                                                 >
-                                                    <h4 class="panel-title">PRODUIT A</h4>
+                                                    <h4 class="panel-title">{{ category.name }}</h4>
                                                     <base-button
                                                         class="btn btn-newrdv body_medium"
                                                         kind="warning"
                                                         title="Retour vers produit"
                                                         classes="border-0"
                                                         style="border-radius: 10px; font-size: 12px !important"
+                                                        @click.prevent="$router.push({
+                                                            name: 'emailingprestations',
+                                                            params: {
+                                                                id: categoryId
+                                                            }
+                                                        })"
                                                     />
                                                 </div>
         
@@ -77,17 +87,13 @@
                                                         <p class="p-title text-uppercase text-start">
                                                             Descriptif
                                                         </p>
-                                                        <p class="fs-6" >
-                                                            Tampon pre-imprime Trodat Printy, 6.0 * 4.0cm <br>
-                                                            Conditionnement: 1ex. <br>
-                                                            Poids: X kg
-                                                        </p>
+                                                        <p class="fs-6" v-html="category.text"></p>
                                                     </div>
             
                                                     <hr />
             
             
-                                                    <div class="row">
+                                                    <div class="row" v-if="fields?.personalize">
             
                                                         <div class="col">
                                                             <p class="p-title text-uppercase text-start">
@@ -108,6 +114,8 @@
                                                                 type="text"
                                                                 placeholder="La Compagnie des Toits"
                                                                 name="expediteur"
+                                                                :value="affiliate.raisonsociale"
+                                                                disabled
                                                             />
             
                                                         </div>
@@ -119,6 +127,7 @@
                                                                 type="text"
                                                                 placeholder="1 Rue Jean-Baptiste Colbert"
                                                                 name="adresse"
+                                                                v-model="phone"
                                                             />
             
                                                             <label class="fix_width_tiret">-</label>
@@ -126,6 +135,7 @@
                                                                 type="text"
                                                                 id="inputPassword"
                                                                 name="adresse2"
+                                                                v-model="email"
                                                             />
             
                                                         </div>
@@ -137,6 +147,8 @@
                                                                 type="text"
                                                                 placeholder="1 Rue Jean-Baptiste Colbert"
                                                                 name="adresse"
+                                                                :value="affiliate.address"
+                                                                disabled
                                                             />
             
                                                             <label class="fix_width_tiret">-</label>
@@ -144,6 +156,8 @@
                                                                 type="text"
                                                                 id="inputPassword"
                                                                 name="adresse2"
+                                                                :value="affiliate.address2"
+                                                                disabled
                                                             />
             
                                                         </div>
@@ -155,6 +169,8 @@
                                                                 type="text"
                                                                 placeholder="1 Rue Jean-Baptiste Colbert"
                                                                 name="adresse"
+                                                                :value="affiliate.postcod + ' ' + affiliate.city"
+                                                                disabled
                                                             />
                                                         </div>
             
@@ -165,6 +181,8 @@
                                                                 type="text"
                                                                 placeholder="1 Rue Jean-Baptiste Colbert"
                                                                 name="adresse"
+                                                                :value="affiliate.statutagence"
+                                                                disabled
                                                             />
             
                                                             <label class="fix_width_tiret">-</label>
@@ -183,6 +201,8 @@
                                                                 type="text"
                                                                 placeholder="1 Rue Jean-Baptiste Colbert"
                                                                 name="adresse"
+                                                                :value="affiliate.siret"
+                                                                disabled
                                                             />
             
                                                             <label class="fix_width_tiret">-</label>
@@ -190,6 +210,8 @@
                                                                 type="text"
                                                                 id="inputPassword"
                                                                 name="adresse2"
+                                                                :value="affiliate.tva"
+                                                                disabled
                                                             />
             
                                                         </div>
@@ -201,6 +223,7 @@
                                                                 type="text"
                                                                 placeholder="1 Rue Jean-Baptiste Colbert"
                                                                 name="adresse"
+                                                                :value="affiliate.ape"
                                                             />
             
                                                             <label class="fix_width_tiret">-</label>
@@ -208,6 +231,8 @@
                                                                 type="text"
                                                                 id="inputPassword"
                                                                 name="adresse2"
+                                                                :value="affiliate.secteuragence"
+                                                                disabled
                                                             />
             
                                                         </div>
@@ -236,11 +261,13 @@
                                                                     type="text"
                                                                     placeholder="La Compagnie des Toits"
                                                                     name="expediteur"
-                                                                    value="250"
+                                                                    v-model="qtyOfProduct"
+                                                                    max="250"
+                                                                    min="1"
                                                                 />
         
                                                                 <span class="help text-lowercase">
-                                                                    (Minimum 250ex)
+                                                                    (Minimum {{ category.qtymini }})
                                                                 </span>
                 
                                                             </div>
@@ -255,11 +282,11 @@
                                                                 </label>
                 
                                                                 <div class="price-tag">
-                                                                    <strong>32,00</strong> &euro; <i>HT</i>
+                                                                    <strong>{{ categoryPrice  }}</strong> &euro; <i>HT</i>
                                                                 </div>
         
                                                                 <span class="help">
-                                                                    Soit 38, 40 &euro; TTC
+                                                                    Soit {{ categoryPriceWithTax }} &euro; TTC
                                                                 </span>
                 
                                                             </div>
@@ -274,19 +301,39 @@
                                             
                                             <div class="col-4">
 
-                                                <div class="preview-box text-center" style="margin-right: 1rem">
+                                                <div class="preview-box text-center" style="margin-right: 1rem; position: relative">
                                                     
                                                     <img 
-                                                        src="/images/lcdt-logo.png" 
+                                                        :src="category.imageTemplateUrl" 
                                                         alt="Lcdt Logo" 
-                                                        style="width: 100%; object-fit: cover;"
+                                                        style="width: 100%; height: 100%;"
                                                     >
 
-                                                    <h4>Avenir Toitures</h4>
+                                                    <template v-for="(item, index) in fields" :key="index">
+                                                        <span 
+                                                            :style="{
+                                                                color: item.color,
+                                                                fontSize: `${item.size}px`,
+                                                                fontFamily: item.font,
+                                                                top: `${item.y}px`,
+                                                                left: `${item.x}px`,
+                                                            }"
+                                                            v-if="item.active == 1" 
+                                                        >
+                                                            <template v-if="!['Telephone_agence', 'Email_agence'].includes(index)">
+                                                                {{ item.value }}
+                                                            </template>
 
-                                                    <p>
-                                                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta est corrupti cupiditate sapiente recusandae placeat esse animi excepturi aliquid laboriosam assumenda ut repellendus ad veritatis, possimus culpa totam voluptate eius!
-                                                    </p>
+                                                            <template v-if="'Email_agence' == index">
+                                                                {{ email }}
+                                                            </template>
+
+                                                            <template v-if="'Telephone_agence' == index">
+                                                                {{ phone }}
+                                                            </template>
+                                                            
+                                                        </span>
+                                                    </template>
                                                     
                                                 </div>
 
@@ -307,6 +354,7 @@
                                                         title="Ajouter au panier"
                                                         classes="border-0"
                                                         style="border-radius: 10px; font-size: 12px !important;"
+                                                        @click.prevent="storeProduct"
                                                     >
                                                         <Icon name="clipboard" width="18" height="18" />
                                                     </base-button>
@@ -345,11 +393,18 @@
 
 <script setup>
     
-    import { onMounted, computed } from 'vue'
+    import { ref, onMounted, computed, watch } from 'vue'
     import { useStore } from 'vuex'
     import {
         CIBLE_MODULE,
-        GET_CAMPAGNE_CATEGORY
+        GET_CAMPAGNE_CATEGORY,
+        GET_CAMPAGNE_FIELDS,
+        STORE_PRODUCT,
+        LOADER_MODULE,
+        DISPLAY_LOADER,
+        TOASTER_MODULE,
+        TOASTER_MESSAGE,
+        HIDE_LOADER
     }
     from '../../store/types/types'
 
@@ -362,14 +417,91 @@
 
     const store = useStore()
 
-    const category = computed(() => store.getters[`${CIBLE_MODULE}/campagneCategory`])
+    const phone = ref('')
+    const email = ref('')
 
+    const category = computed(() => store.getters[`${CIBLE_MODULE}campagneCategory`]?.campagne || {})
+    const affiliate = computed(() => store.getters[`${CIBLE_MODULE}campagneCategory`]?.affiliate || {})
+    const fields = computed(() => store.getters[`${CIBLE_MODULE}fields`])
+
+    const cardQuantity = computed(() => category.value?.card_detail?.qty || 0)
+    const qtyOfProduct = ref(1)     
+
+    const categoryPrice = computed(() => {
+        const price = category.value.price * (qtyOfProduct.value || 1)
+        return price?.toFixed(2) || 0
+    })
+
+    const categoryPriceWithTax = computed(() => { 
+        const tax = affiliate?.value?.tax?.taux * categoryPrice.value
+        const percentage = +categoryPrice.value + +tax
+        return percentage?.toFixed(2) || 0
+    })
+    
     const getCategory = (id) => {
-        store.dispatch(`${[CIBLE_MODULE]}/${[GET_CAMPAGNE_CATEGORY]}`, id)
+        return store.dispatch(`${[CIBLE_MODULE]}${[GET_CAMPAGNE_CATEGORY]}`, id)
     }
 
-    onMounted(() => {
-        getCategory(props.categoryId)
+    const getFieldsData = (id) => {
+        return store.dispatch(`${[CIBLE_MODULE]}${[GET_CAMPAGNE_FIELDS]}`, id)
+    }
+
+    const storeProduct = async () => {
+        try {
+
+            if(qtyOfProduct.value > category.value.qtymini) {
+                store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
+                    type: 'danger',
+                    message: 'PAS LA BONNE QUANTITE',
+                    ttl: 5,
+                })
+                return
+            }
+            if(qtyOfProduct.value <= 0) {
+                store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
+                    type: 'danger',
+                    message: 'Please enter a quantity first',
+                    ttl: 5,
+                })
+                return
+            }
+            store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Loading...']);
+            await store.dispatch(`${[CIBLE_MODULE]}${[STORE_PRODUCT]}`, { 
+                category: category.value, 
+                qty: qtyOfProduct.value 
+            })
+            store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
+                type: 'success',
+                message: 'Product saved to cart',
+                ttl: 5,
+            })
+
+        }
+
+        catch(e) {
+            store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
+                type: 'danger',
+                message: 'Something went wrong',
+                ttl: 5,
+            })
+        }
+
+        finally {
+            store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`)
+        }
+
+    }
+
+    watch(fields, (value) => {
+        if(value) {
+            email.value = value.Email_agence.value
+            phone.value = value.Telephone_agence.value
+        }
+    })
+
+    onMounted(async () => {
+        await getCategory(props.categoryId)
+        getFieldsData(props.categoryId)
     })
 
 </script>
@@ -441,10 +573,10 @@ img.card-img-top {
 .preview-box {
     border: 1px solid #000;
     height: 90%;
-    padding: 1rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    position: relative;
 }
 
 .group_input {

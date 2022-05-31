@@ -143,10 +143,10 @@ const router = createRouter({
         },
         
         {
-            path: "/marketing/producta-planner",
-            name: "marketing-producta-planner",
+            path: "/marketing/product-card",
+            name: "marketing-card",
             props: true,
-            component: () => import("../components/marketing/ProductAPlanner.vue"),
+            component: () => import("../components/marketing/cardPage.vue"),
             meta: {
                 authenticated: true,
             },

@@ -324,7 +324,20 @@
 </template>
 
 <script setup>
-    import { ref } from 'vue'
+
+    import { ref, computed, onMounted } from 'vue'
+    import { useStore } from 'vuex'
+    import {
+        CIBLE_MODULE,
+        GET_CARD_PRODUCTS,
+        LOADER_MODULE,
+        DISPLAY_LOADER,
+        TOASTER_MODULE,
+        TOASTER_MESSAGE,
+        HIDE_LOADER
+    }
+    from '../../store/types/types'
+
     const items = ref([{
             name: 'Produits',
             price: '70,50',
@@ -339,6 +352,14 @@
             price: '133,20',
         },
     ])
+
+    const store = useStore()
+
+
+    const getProducts = () => {
+        store.dispatch(`${CIBLE_MODULE}${GET_CARD_PRODUCTS}`)
+    }
+
 </script>
 
 <style lang="scss" scoped>

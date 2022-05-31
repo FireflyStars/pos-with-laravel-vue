@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Tax;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Affiliate extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable =[
+    protected $fillable = [
         'Name'
     ];
 
@@ -30,4 +31,10 @@ class Affiliate extends Model
     public function moyenacces(){
         return $this->hasMany(Moyenacces::class);
     }
+
+    public function tax() 
+    {
+        return $this->belongsTo(Tax::class, 'taxe_id');
+    }
+
 }

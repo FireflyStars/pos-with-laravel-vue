@@ -29,7 +29,7 @@
 
                     <div class="col-12"></div>
 
-                    <div class="d-flex gap-2 col">
+                    <div class="d-flex flex-wrap gap-2 col">
                         <ged-detail-files :gedDetail="gedDetail" />
                     </div> 
 
@@ -45,7 +45,7 @@
 
                     <div class="col-12"></div>
 
-                    <div class="d-flex gap-2 col">
+                    <div class="d-flex flex-wrap gap-2 col">
                         <ged-detail-files :gedDetail="gedDetail" />
                     </div> 
 
