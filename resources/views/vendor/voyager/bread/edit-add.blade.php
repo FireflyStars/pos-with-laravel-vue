@@ -273,13 +273,15 @@ vertical-align: middle;
                 <button type="button" class="btn btn-secondary float-right" data-dismiss="modal">Fermer</button>
             </div>
             <div class="modal-body" style="display:table; width:1000px;">
-                <div class="modalPosDiv float-left" id="div_modal_{{ $dataTypeContent->getKey() }}" style="background-size:auto 100%;">
+            <div class="float-left">
+                <div class="modalPosDiv float-left" id="div_modal_{{ $dataTypeContent->getKey() }}" style="background-size:auto 100%;width:210mm;height:297mm;background-repeat: no-repeat;">
 
                     <div id="modalDraggable" style="background:rgba(0,0,0,0.5); position: relative;">
                    
                     </div>
                 </div>
-                <div class="float-left" style=" padding-left:20px;">
+                </div>
+                <div class="float-left" style=" padding-left:20px; margin-top:50px">
                 <datalist id="fontsizes">
                                 <option value="8">
                                 <option value="9">
@@ -464,16 +466,19 @@ vertical-align: middle;
 
 
             let img1 = $('#campagne_category_imagetemplate');
+            $('#modalDraggable').height('297mm');
+            $('#modalDraggable').width('210mm');
+            // nheight = img1.prop('height')
+            // console.log(nheight);
+            // if(img1.length > 0){
+            //     let nwidth = img1.prop('naturalWidth');
+            //     let nheight = img1.prop('naturalHeight');
 
-            if(img1.length > 0){
-                let nwidth = img1.prop('naturalWidth');
-                let nheight = img1.prop('naturalHeight');
+            //     //$('.modalPosDiv').width(nwidth);
+            //     // $('#modalDraggable').width(nwidth);
+            //     // $('#modalDraggable').height(nheight);
 
-                $('.modalPosDiv').width(nwidth);
-                $('#modalDraggable').width(nwidth);
-                $('#modalDraggable').height(nheight);
-
-            }
+            // }
 
 
   

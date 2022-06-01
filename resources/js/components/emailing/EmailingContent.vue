@@ -16,7 +16,7 @@
     >
         <form class="space-y-6"  v-if="showcontainer">
             <div class="container">
-                <div class="row">
+                <div class="row" style="height: calc(0.75 * 297mm);">
                     <div class="col-lg-6">
              
                         <h3 class="margin">
@@ -78,11 +78,11 @@
                         </div>
                     </div>
                     <div
-                        class="col-lg-6 apercu d-table"
+                        class="col-lg-6 apercu d-table position-relative"
                     >
                         <h6>APERÇU</h6>
-                        <div style="position: relative; " class="bg-panel" >
-                        <img 
+                        <div style="  position: absolute;transform: scale(0.75);left: 1.5rem;transform-origin: top left;" class="bg-panel" >
+                        <img  style="width:210mm; height:297mm;"
                             v-if="imageurl!=''"
                             :src="`/storage/${imageurl}`" 
                         />
