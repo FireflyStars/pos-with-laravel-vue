@@ -250,8 +250,18 @@ export default {
             .then(({ data }) => {
 
                 if(data.ok==1) {
+                 if(route.params.type.toLowerCase()=='email'){   
+                router.push({
+                    name: "envoi",
+                    params: {
+                        cible_id: `${route.params.cible_id}`,
+                        type: route.params.type,
+                    },
+                });}else{
+
                     router.go(-1)
                     loading.value = false
+                }
                 }
 
             }).catch(() => {
