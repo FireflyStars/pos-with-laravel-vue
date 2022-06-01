@@ -222,11 +222,11 @@
                         <div class="d-flex">
                           <div class="col-4"></div>
                           <div class="col-8 d-flex">
-                            <div class="col-2 d-flex align-items-center justify-content-center border border-1">Qty</div>
-                            <div class="col-2 d-flex align-items-center justify-content-center border border-1">Unit ouv</div>
-                            <div class="col-2 d-flex align-items-center justify-content-center border border-1">Total hr</div>
-                            <div class="col-2 d-flex align-items-center justify-content-center border border-1">Total / Qty</div>
-                            <div class="col-2 d-flex align-items-center justify-content-center border border-1">Total</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Qte</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Unit ouv</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Total hr</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Total / Qte</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Total</div>
                             <div class="col-2"></div>
                           </div>
                         </div>
@@ -424,11 +424,11 @@
                         <div class="d-flex">
                           <div class="col-4"></div>
                           <div class="col-8 d-flex">
-                            <div class="col-2 d-flex align-items-center justify-content-center border border-1">Qty</div>
-                            <div class="col-2 d-flex align-items-center justify-content-center border border-1">Unit ouv</div>
-                            <div class="col-2 d-flex align-items-center justify-content-center border border-1">Total hr</div>
-                            <div class="col-2 d-flex align-items-center justify-content-center border border-1">Total / Qty</div>
-                            <div class="col-2 d-flex align-items-center justify-content-center border border-1">Total</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Qte</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Unit ouv</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Total hr</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Total / Qte</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Total</div>
                             <div class="col-2"></div>
                           </div>
                         </div>
@@ -626,11 +626,11 @@
                         <div class="d-flex">
                           <div class="col-4"></div>
                           <div class="col-8 d-flex">
-                            <div class="col-2 d-flex align-items-center justify-content-center border border-1">Qty</div>
-                            <div class="col-2 d-flex align-items-center justify-content-center border border-1">Unit ouv</div>
-                            <div class="col-2 d-flex align-items-center justify-content-center border border-1">Total hr</div>
-                            <div class="col-2 d-flex align-items-center justify-content-center border border-1">Total / Qty</div>
-                            <div class="col-2 d-flex align-items-center justify-content-center border border-1">Total</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Qte</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Unit ouv</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Total hr</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Total / Qte</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Total</div>
                             <div class="col-2"></div>
                           </div>
                         </div>
