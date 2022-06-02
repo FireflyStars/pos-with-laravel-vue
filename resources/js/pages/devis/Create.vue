@@ -242,7 +242,7 @@
                           </div>
                           <div class="col-8 d-flex">
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
-                              <input type="text" v-model="ouvrage.qty" class="w-100 form-control form-control-sm custom-text-danger">
+                              <input type="text" @keyup="updateAllValues" v-model.number="ouvrage.qty" class="w-100 form-control form-control-sm custom-text-danger">
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
                               <select class="form-control form-control-sm custom-text-danger" v-model="ouvrage.unit">
@@ -322,14 +322,14 @@
                                             ></span> {{ detail.name }}
                                           </div>
                                         </td>
-                                        <td valign="middle">{{ detail.qtyOuvrage }}</td>
+                                        <td valign="middle" class="text-center">{{ detail.qtyOuvrage }}</td>
                                         <td valign="middle">
-                                          <input type="text" v-model="detail.qty" class="w-100 form-control form-control-sm custom-text-danger">
+                                          <input @keyup="updateAllValues" type="text" v-model.number="detail.qty" class="w-100 form-control form-control-sm custom-text-danger">
                                         </td>
-                                        <td valign="middle">{{ detail.unit }}</td>
+                                        <td valign="middle" text="text-center">{{ detail.unit }}</td>
                                         <td valign="middle" v-if="detail.type == 'MO' || detail.type == 'Labor'">
                                           <div class="d-flex align-items-center">
-                                            <input type="text" v-model="detail.numberH" class="w-100 form-control form-control-sm custom-text-danger">hr
+                                            <input @keyup="updateAllValues" type="text" v-model.number="detail.numberH" class="w-100 form-control form-control-sm custom-text-danger">hr
                                           </div>
                                         </td>                                      
                                         <td valign="middle" class="text-center supplier" v-else-if="detail.type == 'COMMANDE FOURNISSEUR'">
@@ -340,14 +340,14 @@
                                         <td valign="middle" class="text-center" v-else></td>
                                         <td valign="middle">
                                           <div class="d-flex align-items-center">
-                                            <input type="text" v-model="detail.unitPrice" class="w-100 form-control form-control-sm custom-text-danger">€
+                                            <input @keyup="updateAllValues" type="text" v-model="detail.unitPrice" class="w-100 form-control form-control-sm custom-text-danger">€
                                           </div>
                                         </td>
                                         <td valign="middle" v-if="detail.type == 'MO' || detail.type == 'Labor'">
                                         </td>
                                         <td v-else style="min-width: 40px" valign="middle">
                                           <div class="d-flex align-items-center">
-                                            <input type="text" v-model="detail.marge" class="w-100 form-control form-control-sm custom-text-danger">%
+                                            <input @keyup="updateAllValues" type="text" v-model.number="detail.marge" class="w-100 form-control form-control-sm custom-text-danger">%
                                           </div>                                        
                                         </td>
                                         <td valign="middle">{{ detail.totalPrice }}€</td>
@@ -444,7 +444,7 @@
                           </div>
                           <div class="col-8 d-flex">
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
-                              <input type="text" v-model="ouvrage.qty" class="w-100 form-control form-control-sm custom-text-danger">
+                              <input @keyup="updateAllValues" type="text" v-model.number="ouvrage.qty" class="w-100 form-control form-control-sm custom-text-danger">
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
                               <select class="form-control form-control-sm custom-text-danger" v-model="ouvrage.unit">
@@ -524,14 +524,14 @@
                                             ></span> {{ detail.name }}
                                           </div>
                                         </td>
-                                        <td valign="middle">{{ detail.qtyOuvrage }}</td>
+                                       <td valign="middle" class="text-center">{{ detail.qtyOuvrage }}</td>
                                         <td valign="middle">
-                                          <input type="text" v-model="detail.qty" class="w-100 form-control form-control-sm custom-text-danger">
+                                          <input @keyup="updateAllValues" type="text" v-model.number="detail.qty" class="w-100 form-control form-control-sm custom-text-danger">
                                         </td>
-                                        <td valign="middle">{{ detail.unit }}</td>
+                                        <td valign="middle" text="text-center">{{ detail.unit }}</td>
                                         <td valign="middle" v-if="detail.type == 'MO' || detail.type == 'Labor'">
                                           <div class="d-flex align-items-center">
-                                            <input type="text" v-model="detail.numberH" class="w-100 form-control form-control-sm custom-text-danger">hr
+                                            <input @keyup="updateAllValues" type="text" v-model.number="detail.numberH" class="w-100 form-control form-control-sm custom-text-danger">hr
                                           </div>
                                         </td>                                      
                                         <td valign="middle" class="text-center supplier" v-else-if="detail.type == 'COMMANDE FOURNISSEUR'">
@@ -542,14 +542,14 @@
                                         <td valign="middle" class="text-center" v-else></td>
                                         <td valign="middle">
                                           <div class="d-flex align-items-center">
-                                            <input type="text" v-model="detail.unitPrice" class="w-100 form-control form-control-sm custom-text-danger">€
+                                            <input @keyup="updateAllValues" type="text" v-model="detail.unitPrice" class="w-100 form-control form-control-sm custom-text-danger">€
                                           </div>
                                         </td>
                                         <td valign="middle" v-if="detail.type == 'MO' || detail.type == 'Labor'">
                                         </td>
                                         <td v-else style="min-width: 40px" valign="middle">
                                           <div class="d-flex align-items-center">
-                                            <input type="text" v-model="detail.marge" class="w-100 form-control form-control-sm custom-text-danger">%
+                                            <input @keyup="updateAllValues" type="text" v-model.number="detail.marge" class="w-100 form-control form-control-sm custom-text-danger">%
                                           </div>                                        
                                         </td>
                                         <td valign="middle">{{ detail.totalPrice }}€</td>
@@ -646,7 +646,7 @@
                           </div>
                           <div class="col-8 d-flex">
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
-                              <input type="text" v-model="ouvrage.qty" class="w-100 form-control form-control-sm custom-text-danger">
+                              <input @keyup="updateAllValues" type="text" v-model.number="ouvrage.qty" class="w-100 form-control form-control-sm custom-text-danger">
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
                               <select class="form-control form-control-sm custom-text-danger" v-model="ouvrage.unit">
@@ -726,11 +726,11 @@
                                             ></span> {{ detail.name }}
                                           </div>
                                         </td>
-                                        <td valign="middle">{{ detail.qtyOuvrage }}</td>
+                                       <td valign="middle" class="text-center">{{ detail.qtyOuvrage }}</td>
                                         <td valign="middle">
-                                          <input type="text" v-model="detail.qty" class="w-100 form-control form-control-sm custom-text-danger">
+                                          <input @keyup="updateAllValues" type="text" v-model.number="detail.qty" class="w-100 form-control form-control-sm custom-text-danger">
                                         </td>
-                                        <td valign="middle">{{ detail.unit }}</td>
+                                        <td valign="middle" text="text-center">{{ detail.unit }}</td>
                                         <td valign="middle" v-if="detail.type == 'MO' || detail.type == 'Labor'">
                                           <div class="d-flex align-items-center">
                                             <input type="text" v-model="detail.numberH" class="w-100 form-control form-control-sm custom-text-danger">hr
@@ -744,14 +744,14 @@
                                         <td valign="middle" class="text-center" v-else></td>
                                         <td valign="middle">
                                           <div class="d-flex align-items-center">
-                                            <input type="text" v-model="detail.unitPrice" class="w-100 form-control form-control-sm custom-text-danger">€
+                                            <input @keyup="updateAllValues" type="text" v-model.number="detail.unitPrice" class="w-100 form-control form-control-sm custom-text-danger">€
                                           </div>
                                         </td>
                                         <td valign="middle" v-if="detail.type == 'MO' || detail.type == 'Labor'">
                                         </td>
                                         <td v-else style="min-width: 40px" valign="middle">
                                           <div class="d-flex align-items-center">
-                                            <input type="text" v-model="detail.marge" class="w-100 form-control form-control-sm custom-text-danger">%
+                                            <input @keyup="updateAllValues" type="text" v-model.number="detail.marge" class="w-100 form-control form-control-sm custom-text-danger">%
                                           </div>                                        
                                         </td>
                                         <td valign="middle">{{ detail.totalPrice }}€</td>
@@ -1055,14 +1055,13 @@ export default {
         }
       ],
     });    
-    watch(() => _.cloneDeep(form.value.zones), (curVal, oldVal) => {
+    const updateAllValues = ()=>{
       form.value.totalHoursForInstall = 0;
       form.value.totalPriceForInstall = 0;
       form.value.totalHoursForSecurity = 0;
       form.value.totalPriceForSecurity = 0;
       form.value.totalHoursForPrestation = 0;
       form.value.totalPriceForPrestation = 0;
-      form.value.totalHoursForInterim = 0;
       form.value.totalHoursForInterim = 0;
       form.value.totalPriceWithoutMarge = 0;
       form.value.totalUnitPrice = 0;
@@ -1079,8 +1078,10 @@ export default {
             task.details.forEach(detail=>{
               zone.installOuvrage.sumUnitPrice += parseInt(detail.unitPrice);
               if(detail.original){
-                detail.qtyOuvrage = ouvrage.qty;
-                detail.qty = parseInt(ouvrage.qty)*parseInt(detail.originalDetailQty);
+                if(detail.qtyOuvrage != ouvrage.qty){
+                  detail.qtyOuvrage = ouvrage.qty;
+                  detail.qty = parseInt(ouvrage.qty)*parseInt(detail.originalDetailQty);
+                }
                 detail.numberH = parseFloat(detail.originalNumberH)* parseInt(detail.qty);
               }           
               if(detail.type == 'MO'){
@@ -1102,8 +1103,9 @@ export default {
                 detail.totalPrice = (parseInt(detail.qty) * parseFloat(detail.unitPrice) * (parseInt(detail.marge)/100 + 1)).toFixed(2);
                 detail.totalPriceWithoutMarge = (parseInt(detail.qty) * parseFloat(detail.unitPrice));
               }     
-              if(detail.type == 'INTERIM')     
-                form.value.totalHoursForInterim += parseFloat(detail.numberH == '' ? '0' : detail.numberH)              
+              if(detail.type == 'INTERIM'){
+                form.value.totalHoursForInterim += parseFloat(detail.qty)
+              }
               ouvrage.total += parseFloat(detail.totalPrice);    
               ouvrage.totalWithoutMarge += parseFloat(detail.totalPriceWithoutMarge);
               ouvrage.totalHour += parseFloat(detail.numberH == '' ? '0' : detail.numberH);
@@ -1128,9 +1130,11 @@ export default {
             task.details.forEach(detail=>{
               zone.securityOuvrage.sumUnitPrice += parseInt(detail.unitPrice);
               if(detail.original){
-                detail.qtyOuvrage = ouvrage.qty;
-                detail.numberH = parseFloat(detail.originalNumberH)* parseInt(ouvrage.qty);
-                detail.qty = parseInt(ouvrage.qty)*parseInt(detail.originalDetailQty);
+                if(detail.qtyOuvrage != ouvrage.qty){
+                  detail.qtyOuvrage = ouvrage.qty;
+                  detail.qty = parseInt(ouvrage.qty)*parseInt(detail.originalDetailQty);
+                }
+                detail.numberH = parseFloat(detail.originalNumberH)* parseInt(detail.qty);
               }           
               if(detail.type == 'MO'){
                 if(detail.original){
@@ -1152,7 +1156,7 @@ export default {
                 detail.totalPriceWithoutMarge = (parseInt(detail.qty) * parseFloat(detail.unitPrice));
               }     
               if(detail.type == 'INTERIM')     
-                form.value.totalHoursForInterim += parseFloat(detail.numberH == '' ? '0' : detail.numberH)              
+                form.value.totalHoursForInterim += parseFloat(detail.qty)
               ouvrage.total += parseFloat(detail.totalPrice);    
               ouvrage.totalWithoutMarge += parseFloat(detail.totalPriceWithoutMarge);
               ouvrage.totalHour += parseFloat(detail.numberH == '' ? '0' : detail.numberH);
@@ -1178,9 +1182,11 @@ export default {
               detail.sumUnitPrice = parseInt(detail.unitPrice);
               zone.prestationOuvrage.sumUnitPrice += parseInt(detail.unitPrice);
               if(detail.original){
-                detail.qtyOuvrage = ouvrage.qty;
-                detail.numberH = parseFloat(detail.originalNumberH)* parseInt(ouvrage.qty);
-                detail.qty = parseInt(ouvrage.qty)*parseInt(detail.originalDetailQty);
+                if(detail.qtyOuvrage != ouvrage.qty){
+                  detail.qtyOuvrage = ouvrage.qty;
+                  detail.qty = parseInt(ouvrage.qty)*parseInt(detail.originalDetailQty);
+                }
+                detail.numberH = parseFloat(detail.originalNumberH)* parseInt(detail.qty);
               }           
               if(detail.type == 'MO'){
                 if(detail.original){
@@ -1202,7 +1208,7 @@ export default {
                 detail.totalPriceWithoutMarge = (parseInt(detail.qty) * parseFloat(detail.unitPrice));
               }     
               if(detail.type == 'INTERIM')     
-                form.value.totalHoursForInterim += parseFloat(detail.numberH == '' ? '0' : detail.numberH)              
+                form.value.totalHoursForInterim += parseFloat(detail.qty)
               ouvrage.total += parseFloat(detail.totalPrice);    
               ouvrage.totalWithoutMarge += parseFloat(detail.totalPriceWithoutMarge);
               ouvrage.totalHour += parseFloat(detail.numberH == '' ? '0' : detail.numberH);
@@ -1216,7 +1222,7 @@ export default {
         form.value.totalHoursForPrestation += zone.prestationOuvrage.totalHour;
         form.value.totalPriceForPrestation += zone.prestationOuvrage.totalPrice;    
       })
-    });
+    };
     onMounted(()=>{
       axios.post('/get-ged-categories').then((res)=>{
         gedCats.value = res.data.gedCats;
@@ -1353,6 +1359,7 @@ export default {
           form.value.zones[data.zoneIndex].prestationOuvrage.ouvrages.push(res.data);
           document.querySelector('.prestation-ouvrages').classList.add('open');
         }        
+        updateAllValues();
       }).catch((error)=>{
         console.log(error);
       }).finally(()=>{
@@ -1404,6 +1411,7 @@ export default {
           numberH: 0,
         });
       }
+      updateAllValues();
     }
 
     // listen selecedSupplier event
@@ -1459,6 +1467,7 @@ export default {
           numberH: 0,
         });
       }
+      updateAllValues();
     }
 
     const selectedLabor = (labor)=>{
@@ -1466,7 +1475,7 @@ export default {
         form.value.zones[labor.zoneIndex].installOuvrage.ouvrages[labor.ouvrageId].tasks[labor.taskId].details.push({
           qty: 1,
           tax: labor.tax,
-          unitPrice: labor.price,
+          unitPrice: parseFloat(labor.price).toFixed(2),
           marge: 8,
           type: 'Labor',
           name: 'MAIN D’ OEUVRES',
@@ -1480,7 +1489,7 @@ export default {
         form.value.zones[labor.zoneIndex].securityOuvrage.ouvrages[labor.ouvrageId].tasks[labor.taskId].details.push({
           qty: 1,
           tax: labor.tax,
-          unitPrice: labor.price,
+          unitPrice: parseFloat(labor.price).toFixed(2),
           marge: 8,
           type: 'Labor',
           name: 'MAIN D’ OEUVRES',
@@ -1494,7 +1503,7 @@ export default {
         form.value.zones[labor.zoneIndex].prestationOuvrage.ouvrages[labor.ouvrageId].tasks[labor.taskId].details.push({
           qty: 1,
           tax: labor.tax,
-          unitPrice: labor.price,
+          unitPrice: parseFloat(labor.price).toFixed(2),
           marge: '',
           type: 'Labor',
           name: 'MAIN D’ OEUVRES',
@@ -1504,6 +1513,7 @@ export default {
           numberH: labor.numberH,
         });
       }
+      updateAllValues();
     }
 
     const selectedInterim = (interim)=>{
@@ -1512,7 +1522,7 @@ export default {
           qty: interim.numberH,
           tax: interim.tax,
           societe: interim.societe,
-          unitPrice: interim.price,
+          unitPrice: parseFloat(interim.price).toFixed(2),
           marge: 8,
           type: 'INTERIM',
           name: 'INTERIM',
@@ -1527,7 +1537,7 @@ export default {
           qty: interim.numberH,
           tax: interim.tax,
           societe: interim.societe,
-          unitPrice: interim.price,
+          unitPrice: parseFloat(interim.price).toFixed(2),
           marge: 8,
           type: 'INTERIM',
           name: 'INTERIM',
@@ -1542,7 +1552,7 @@ export default {
           qty: interim.numberH,
           tax: interim.tax,
           societe: interim.societe,
-          unitPrice: interim.price,
+          unitPrice: parseFloat(interim.price).toFixed(2),
           marge: 8,
           type: 'INTERIM',
           name: 'INTERIM',
@@ -1552,6 +1562,7 @@ export default {
           numberH: 0,
         });
       }
+      updateAllValues();
     }
     // listen selecedTask event
     const selectedTask = (task)=>{
@@ -1584,8 +1595,8 @@ export default {
           qty: task.qty,
           details: []
         });        
-
       }
+      updateAllValues();
     }
     // add a zone
     const addZone = (index)=>{
@@ -1711,6 +1722,7 @@ export default {
           }
         }
       });
+      updateAllValues();
     }
     // remove detail from task
     const removeOuvrageDetail = (zoneIndex, ouvrageType, ouvrageIndex, taskIndex, detailIndex)=>{
@@ -1747,10 +1759,11 @@ export default {
           )        
         }
       })        
+      updateAllValues();
     }
     // save Devis
     const storeDevis = ()=>{
-      store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Stocker un Devis...']);
+      store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Enregistrer le Devis...']);
       axios.post('/store-devis', form.value).then((res)=>{
         if(res.data.success){
           router.push({
@@ -1784,7 +1797,8 @@ export default {
       if(type == 3){
         form.value.zones[zIndex].prestationOuvrage.ouvrages.push(emptyOuvrage);
         document.querySelector('.prestation-ouvrages').classList.add('open');
-      }       
+      }  
+      updateAllValues();     
     }
     // open empty product modal
     const openEmptyProductModal = (data)=>{
@@ -1835,6 +1849,7 @@ export default {
           numberH: 0,
         });
       }      
+      updateAllValues();
     }
     return {
       breadcrumbs,
@@ -1897,7 +1912,8 @@ export default {
       openEmptyOuvrageModal,
       selectedEmptyOuvrage,
       openEmptyProductModal,
-      selectedEmptyProduct
+      selectedEmptyProduct,
+      updateAllValues
     }
   },
 }
