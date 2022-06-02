@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Models;
+namespace App;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Product extends Model
+class CustomerStatut extends Model
 {
-    use HasFactory;
+    protected $table = 'customer_statut';
+	//
+	
 	use SoftDeletes;
 	protected $dates = ['deleted_at'];
 }

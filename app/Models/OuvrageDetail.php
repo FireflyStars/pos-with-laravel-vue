@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Product extends Model
+class OuvrageDetail extends Model
 {
-    use HasFactory;
+    protected $table = 'ouvrage_detail';
+	//
 	use SoftDeletes;
 	protected $dates = ['deleted_at'];
 }

@@ -94,7 +94,7 @@ class DevisController extends Controller
     public function getOrderStates(Request $request){
         return response()->json(OrderState::all());
     }
-
+    
     /**
      * Get Ged categories
      * 
