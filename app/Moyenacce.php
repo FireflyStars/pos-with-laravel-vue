@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Models;
+namespace App;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Product extends Model
+class Moyenacce extends Model
 {
-    use HasFactory;
+    protected $table = 'moyenacces';
+	//
 	use SoftDeletes;
 	protected $dates = ['deleted_at'];
 }
