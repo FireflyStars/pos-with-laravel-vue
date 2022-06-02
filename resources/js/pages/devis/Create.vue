@@ -218,6 +218,19 @@
                   </div>
                   <div class="ouvrage-body ps-3 mt-3">
                     <div class="ouvrage-list">
+                      <div class="ouvrage-list-header">
+                        <div class="d-flex">
+                          <div class="col-4"></div>
+                          <div class="col-8 d-flex">
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Qte</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Unit ouv</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Total hr</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Total / Qte</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Total</div>
+                            <div class="col-2"></div>
+                          </div>
+                        </div>
+                      </div>
                       <div class="ouvrage-item" v-for="(ouvrage, ouvrageIndex) in zone.installOuvrage.ouvrages" :key="ouvrageIndex">
                         <div class="d-flex ouvrage-header">
                           <div class="col-4">
@@ -240,7 +253,7 @@
                               {{ ouvrage.totalHour }} hr
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
-                              {{ ouvrage.avg }}€
+                              {{ (ouvrage.total / ouvrage.qty).toFixed(2) }}€
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
                               {{ ouvrage.total }}€
@@ -284,6 +297,20 @@
                                 </ul>
                                 <div class="w-100 ps-3">
                                   <table class="table w-100 details-table m-0">
+                                    <thead>
+                                      <tr>
+                                        <td></td>
+                                        <td valign="middle" class="text-center">Qte ouvrage</td>
+                                        <td valign="middle" class="text-center">Qte</td>
+                                        <td valign="middle" class="text-center">Unité</td>
+                                        <td valign="middle" class="text-center">Hr</td>
+                                        <td valign="middle" class="text-center">Prix</td>
+                                        <td valign="middle" class="text-center">Marge</td>
+                                        <td valign="middle" class="text-center">Total</td>
+                                        <td valign="middle" class="text-center">Taxe</td>
+                                        <td></td>
+                                      </tr>
+                                    </thead>                                    
                                     <tbody>
                                       <tr v-for="(detail, detailIndex) in task.details" :key="detailIndex">
                                         <td valign="middle">
@@ -393,6 +420,19 @@
                   </div>
                   <div class="ouvrage-body ps-3 mt-3">
                     <div class="ouvrage-list">
+                      <div class="ouvrage-list-header">
+                        <div class="d-flex">
+                          <div class="col-4"></div>
+                          <div class="col-8 d-flex">
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Qte</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Unit ouv</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Total hr</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Total / Qte</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Total</div>
+                            <div class="col-2"></div>
+                          </div>
+                        </div>
+                      </div>                      
                       <div class="ouvrage-item" v-for="(ouvrage, ouvrageIndex) in zone.securityOuvrage.ouvrages" :key="ouvrageIndex">
                         <div class="d-flex ouvrage-header">
                           <div class="col-4">
@@ -415,7 +455,7 @@
                               {{ ouvrage.totalHour }} hr
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
-                              {{ ouvrage.avg }}€
+                              {{ (ouvrage.total / ouvrage.qty).toFixed(2) }}€
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
                               {{ ouvrage.total }}€
@@ -459,6 +499,20 @@
                                 </ul>
                                 <div class="w-100 ps-3">
                                   <table class="table w-100 details-table m-0">
+                                    <thead>
+                                      <tr>
+                                        <td></td>
+                                        <td valign="middle" class="text-center">Qte ouvrage</td>
+                                        <td valign="middle" class="text-center">Qte</td>
+                                        <td valign="middle" class="text-center">Unité</td>
+                                        <td valign="middle" class="text-center">Hr</td>
+                                        <td valign="middle" class="text-center">Prix</td>
+                                        <td valign="middle" class="text-center">Marge</td>
+                                        <td valign="middle" class="text-center">Total</td>
+                                        <td valign="middle" class="text-center">Taxe</td>
+                                        <td></td>
+                                      </tr>
+                                    </thead>
                                     <tbody>
                                       <tr v-for="(detail, detailIndex) in task.details" :key="detailIndex">
                                         <td valign="middle">
@@ -568,6 +622,19 @@
                   </div>
                   <div class="ouvrage-body ps-3 mt-3">
                     <div class="ouvrage-list">
+                      <div class="ouvrage-list-header">
+                        <div class="d-flex">
+                          <div class="col-4"></div>
+                          <div class="col-8 d-flex">
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Qte</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Unit ouv</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Total hr</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Total / Qte</div>
+                            <div class="col-2 d-flex align-items-center justify-content-center border border-1 fw-bold">Total</div>
+                            <div class="col-2"></div>
+                          </div>
+                        </div>
+                      </div>                      
                       <div class="ouvrage-item" v-for="(ouvrage, ouvrageIndex) in zone.prestationOuvrage.ouvrages" :key="ouvrageIndex">
                         <div class="d-flex ouvrage-header">
                           <div class="col-4">
@@ -590,7 +657,7 @@
                               {{ ouvrage.totalHour }} hr
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
-                              {{ ouvrage.avg }}€
+                              {{ (ouvrage.total / ouvrage.qty).toFixed(2) }}€
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
                               {{ ouvrage.total }}€
@@ -634,6 +701,20 @@
                                 </ul>
                                 <div class="w-100 ps-3">
                                   <table class="table w-100 details-table m-0">
+                                    <thead>
+                                      <tr>
+                                        <td></td>
+                                        <td valign="middle" class="text-center">Qte ouvrage</td>
+                                        <td valign="middle" class="text-center">Qte</td>
+                                        <td valign="middle" class="text-center">Unité</td>
+                                        <td valign="middle" class="text-center">Hr</td>
+                                        <td valign="middle" class="text-center">Prix</td>
+                                        <td valign="middle" class="text-center">Marge</td>
+                                        <td valign="middle" class="text-center">Total</td>
+                                        <td valign="middle" class="text-center">Taxe</td>
+                                        <td></td>
+                                      </tr>
+                                    </thead>                                    
                                     <tbody>
                                       <tr v-for="(detail, detailIndex) in task.details" :key="detailIndex">
                                         <td valign="middle">
@@ -875,7 +956,7 @@ export default {
     const store = useStore();
     const router = useRouter();
     const breadcrumbs = ref(['Choix client']);
-    const devisCreateStep = ref('choose_customer');
+    const devisCreateStep = ref('create_devis');
     watchEffect(()=>{
       if(devisCreateStep.value == 'choose_customer'){
         breadcrumbs.value = ['Choix client'];
@@ -1884,6 +1965,9 @@ export default {
     border-radius: 10px;
     border: none;
     outline: none;
+  }
+  .table > :not(:first-child){
+    border-top: 0 !important;
   }
   .ouvrage-section{
     .form-control{
