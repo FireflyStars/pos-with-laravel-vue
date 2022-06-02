@@ -73,7 +73,7 @@
                     @php $item = (array) $item; @endphp
                     @if (isset($item['active']) && $item['active'] == 1)
                         @php
-                           $y = $item['y'] - 85; 
+                           $y = $item['y'] - 0; 
                         @endphp
                         <span 
                             class="item" 

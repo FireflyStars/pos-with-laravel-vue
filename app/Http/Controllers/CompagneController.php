@@ -11,6 +11,7 @@ use App\Mail\MyDemoMail;
 use App\Models\Campagne;
 use App\Models\Customer;
 use App\Models\Affiliate;
+use App\Models\campagne_card;
 use App\Traits\Sarbacane;
 use App\Models\CustomerNaf;
 use App\Models\page_builder;
@@ -24,7 +25,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\App;
 use App\Models\campagne_card_detail;
+use App\Models\campagne_detail;
 use App\Models\CampagneCibleStatuts;
+use App\Notifications\campagneCardNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -39,9 +42,79 @@ class CompagneController extends Controller
     private $pdf;
 
 
+    public function valider_card(Request $request) 
+    {
+
+        $cardProducts = campagne_card_detail::all();
+        campagne_detail::create($cardProducts->toArray());
+
+        $user = $request->user();
+
+        $campagne = Campagne::create([
+            'datefinvalidatiom' => date("Y-m-d"),
+            'datelancement'     => date("Y-m-d"),
+            'user_id'           => $user->id,
+            'affiliate_id'      => $user->affiliate->id,
+            'type'              => 'COMMANDE PRODUIT',
+            'run'               =>  date("Y-m-d"),
+            'montant'           => 0,
+            'nb'                => 0,
+            'name'              => 'PANIER XXXX',
+            'status'            => 'CAMPAGNE ENVOYEE',
+        ]);
+
+        campagne_card_detail::truncate(); // not correct
+
+        $emails = $this->get_settings_email();
+        $emails = explode(',', $emails);
+        //link and create relations in campagnes and campagnes card and don't truncate just delete those which has 
+        //afflilate id matching to those with auth
+        //these are the mistakes should be couered.
+        foreach($emails as $mail) 
+        {
+            Notification::route('mail', $mail)
+            ->notify(new campagneCardNotification($campagne));
+        }
+
+    }
+
+    public function delete_card_product(campagne_card_detail $card) 
+    {
+        $card->delete();
+        return response()->json("Card udpated");
+    }
+
+    public function update_card_product(Request $request, campagne_card_detail $card) 
+    {
+        $card->update([
+            'qty' => $request->qty
+        ]);
+
+        return response()->json("Card updated");
+    }
+
+
+    public function get_card_products(Request $request) 
+    {
+        
+        $affiliate = $request->user()->affiliate;
+        $card_ids = campagne_card::where('user_id', $request->user()->id)->pluck('id')->toArray();
+        
+        $card_details = campagne_card_detail::with('campagneCategory', 'tax')
+                        ->whereIn('campagne_card_id', $card_ids)
+                        ->get();
+
+        return response()->json(
+            compact('affiliate', 'card_details')
+        );
+
+    }
+
     public function store_campagne_product(CampagneCategory $campagne, Request $request) 
     {
         
+        $user = $request->user();
+
         if($campagne->cardDetail->count()) 
         {
             $campagne->cardDetail()->update([
@@ -50,17 +123,28 @@ class CompagneController extends Controller
         }
         else 
         {
-            $campagne->cardDetail()->create([
-                'productname' => $campagne->name,
-                'description' => $campagne->text,
-                'name'        => $campagne->name,
-                'qty'         => $request->qty,
-                'fields'      => $campagne->fields,
-                'price'       => $campagne->price,
+
+            $card = $user->card()->create([
+                'affiliate_id' => $user->affiliate->id,
+                'montant'      => 0,
+                'transport'    => 0,
+                'name'         => $campagne->name,  
             ]);
+
+            $campagne->cardDetail()->create([
+                'campagne_card_id' => $card->id,      
+                'productname'      => $campagne->name,
+                'description'      => $campagne->text,
+                'name'             => $campagne->name,
+                'qty'              => $request->qty,
+                'fields'           => $campagne->fields,
+                'price'            => $campagne->price,
+                'tax_id'           => optional(optional($user->affiliate)->tax)->id, 
+            ]);
+
         }
 
-        $affiliate = $request->user()->affiliate->load('tax');
+        $affiliate = $user->affiliate->load('tax');
         $campagne = $campagne->load('cardDetail');
 
         return response()->json(

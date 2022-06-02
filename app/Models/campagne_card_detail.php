@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Tax;
+use App\Models\CampagneCategory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class campagne_card_detail extends Model
 {
@@ -11,4 +13,15 @@ class campagne_card_detail extends Model
 
     protected $table = 'campagne_card_detail';
     protected $guarded = ['id'];
+
+    public function campagneCategory() 
+    {
+        return $this->belongsTo(CampagneCategory::class, 'campagne_category_id');
+    }
+
+    public function tax() 
+    {
+        return $this->belongsTo(Tax::class, 'taxe_id');
+    }
+
 }

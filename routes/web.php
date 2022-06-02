@@ -56,7 +56,10 @@ Route::get('/download-resource-file', [CompagneController::class, 'download_reso
 Route::get('/get-campagne-category/{campagne}', [CompagneController::class, 'get_campagne_category']);
 Route::post('/store-campagne-product/{campagne}', [CompagneController::class, 'store_campagne_product']);
 Route::get('/get-fields-marketing/{campagne}', [CompagneController::class, 'fields_for_marketing'])->middleware('auth')->name('fields_marketing');
-
+Route::get('/get-card-products', [CompagneController::class, 'get_card_products']);
+Route::put('/card-product/{card}', [CompagneController::class, 'update_card_product'])->middleware('auth');
+Route::delete('/card-product/{card}', [CompagneController::class, 'delete_card_product'])->middleware('auth');
+Route::post('/valider-card', [CompagneController::class, 'valider_card'])->middleware('auth');
 
 Route::post('/api',[ApiController::class,'index'])->middleware('cors')->name('api');
 

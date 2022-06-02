@@ -34,7 +34,10 @@ import {
     SAVE_CAMPAGNE_FIELDS,
     STORE_PRODUCT,
     GET_CARD_PRODUCTS,
-    SAVE_CARD_PRODUCTS
+    SAVE_CARD_PRODUCTS,
+    UPDATE_CARD,
+    DELETE_CARD,
+    VALIDER_CARD
 } from '../types/types';
 
 export const cible= {
@@ -61,7 +64,8 @@ export const cible= {
 
         //final email list
         filtered_emails:[],
-        fields: {}
+        fields: {},
+        products: []
     },
     mutations:{
         [CIBLE_SET_CAMPAGNE_CATEGORY_ID]:(state,id)=>{
@@ -146,11 +150,50 @@ export const cible= {
         [SAVE_CAMPAGNE_FIELDS](state, fields) {
             state.fields = fields
         },
-        [SAVE_CARD_PRODUCTS](state, products) {
-            state.products = products
+        [SAVE_CARD_PRODUCTS](state, data) {
+            state.products = data
+        },
+        [DELETE_CARD](state, id) {
+            const card = state.products.card_details
+            const index = card.findIndex(product => product.id == id)
+            card.splice(index, 1)
         }
     },
-    actions:{
+
+    actions: {
+
+        async [VALIDER_CARD]({ commit }) {
+            try {
+                await axios.post('/valider-card') 
+            }
+            catch(e) {
+                throw e
+            }
+        },
+
+        async [DELETE_CARD]({ commit }, id) {
+            try {
+                await axios.delete(`/card-product/${id}`, {
+                    _method: 'post',
+                })
+                commit(DELETE_CARD, id)
+            }
+            catch(e) {
+                throw e
+            }
+        },
+
+        async [UPDATE_CARD]({ commit }, product) {
+            try {
+                await axios.put(`/card-product/${product.id}`, {
+                    _method: 'post',
+                    qty: product.qty
+                })
+            }
+            catch(e) {
+                throw e
+            }
+        },
 
         async [GET_CARD_PRODUCTS]({ commit }, id) {
 
@@ -295,6 +338,7 @@ export const cible= {
         [CIBLE_GET_PRICE]:state=>state.price,
         [CIBLE_GET_CAMPAGNE_CATEGORY]:state=>state.campagne_category,
         campagneCategory: state => state.campagne_category, 
-        fields: state => state.fields 
+        fields: state => state.fields,
+        products: state => state.products 
     }
 }
