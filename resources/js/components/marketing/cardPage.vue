@@ -43,7 +43,7 @@
                                             prepend
                                             class="btn btn-newrdv body_medium"
                                             kind="warning"
-                                            title="Panier : XXX"
+                                            :title="'Panier :' + cardQuantity"
                                             classes="border-0"
                                             style="border-radius: 10px; font-size: 12px !important"
                                         >
@@ -67,12 +67,15 @@
                                                 <div class="content">
                                                     
                                                     <div 
-                                                        v-for="n in 2" 
-                                                        :key="n"
+                                                        v-for="product in products" 
+                                                        :key="product.id"
                                                         class="item-box"
                                                     >
                                                         
-                                                        <div class="delete-tag">
+                                                        <div 
+                                                            class="delete-tag" 
+                                                            @click.prevent="deleteCard(product)"
+                                                        >
                                                             <Icon 
                                                                 name="trash-solid" 
                                                                 color="white" 
@@ -98,7 +101,7 @@
                                                                     <h4 
                                                                         class="text-uppercase item-title text-center almarai-bold"
                                                                     >
-                                                                        Plaquette <br>audit
+                                                                        {{ product.name }}
                                                                     </h4>
                                                                     
                                                                     <base-button
@@ -106,6 +109,9 @@
                                                                         kind="warning"
                                                                         title="VOIR"
                                                                         style="font-size: 12px !important; border-radius: 0; padding-left: 3rem; padding-right: 3rem;"
+                                                                        @click.prevent="updateCard(product)"
+                                                                        :disabled="loading"
+                                                                        :class="{ 'cursor-not-allowed': loading }"
                                                                     />
 
                                                                 </div>
@@ -119,9 +125,9 @@
                                                                         Descriptif
                                                                     </p>
                                                                     <p class="fs-6" >
-                                                                        Tampon pre-imprime Trodat Printy, 6.0 * 4.0cm <br>
+                                                                        <span v-html="product.description"></span> <br>
                                                                         Conditionnement: 1ex. <br>
-                                                                        Poids: X kg
+                                                                        Poids: {{ productPoids(product) }} kg
                                                                     </p>
                                                                 </div>
 
@@ -144,12 +150,12 @@
                                                                                 type="text"
                                                                                 placeholder="La Compagnie des Toits"
                                                                                 name="expediteur"
-                                                                                value="250"
                                                                                 style="width: 10%"
+                                                                                v-model="product.qty"
                                                                             />
                     
                                                                             <span class="help text-lowercase">
-                                                                                (Minimum 250ex)
+                                                                                (Minimum {{ product.campagne_category?.qtymini }} ex)
                                                                             </span>
                             
                                                                         </div>
@@ -164,11 +170,11 @@
                                                                             </label>
                             
                                                                             <div class="price-tag">
-                                                                                <strong>32,00</strong> &euro; <i>HT</i>
+                                                                                <strong>{{ productPrice(product) }}</strong> &euro; <i>HT</i>
                                                                             </div>
                     
                                                                             <span class="help">
-                                                                                Soit 38, 40 &euro; TTC
+                                                                                Soit {{ productPriceWithTax(product) }} &euro; TTC
                                                                             </span>
                             
                                                                         </div>
@@ -186,7 +192,7 @@
 
                                             </div>
                                             
-                                            <div class="col-4 item-box--right px-4">
+                                            <div class="col-4 item-box--right px-3">
 
                                                 <div class="items-list">
                                                     <p class="p-title text-uppercase">
@@ -227,6 +233,8 @@
                                                                 type="text"
                                                                 placeholder="1 Rue Jean-Baptiste Colbert"
                                                                 name="adresse"
+                                                                :value="affiliate?.address + ' ' + affiliate?.address2"
+                                                                disabled
                                                             />
             
                                                         </div>
@@ -237,6 +245,8 @@
                                                                 type="text"
                                                                 id="inputPassword"
                                                                 name="adresse2"
+                                                                :value="affiliate?.postcod + ' ' + affiliate?.city"
+                                                                disabled
                                                             />
                                                         </div>
 
@@ -247,6 +257,8 @@
                                                                 type="text"
                                                                 placeholder="1 Rue Jean-Baptiste Colbert"
                                                                 name="adresse"
+                                                                :value="affiliateContact"
+                                                                disabled
                                                             />
             
                                                         </div>
@@ -259,6 +271,8 @@
                                                                 type="text"
                                                                 placeholder="1 Rue Jean-Baptiste Colbert"
                                                                 name="adresse"
+                                                                :value="affiliate?.telephone"
+                                                                disabled
                                                             />
         
                                                         </div>
@@ -269,6 +283,8 @@
                                                                 type="text"
                                                                 id="inputPassword"
                                                                 name="adresse2"
+                                                                :value="affiliate?.email"
+                                                                disabled
                                                             />
                                                         </div>
 
@@ -287,6 +303,8 @@
                                                         title="commander"
                                                         classes="border-0"
                                                         style="border-radius: 10px; font-size: 12px !important;"
+                                                        :disabled="loading"
+                                                        @click.prevent="validerCard"
                                                     >
                                                         <Icon name="clipboard" width="18" height="18" />
                                                     </base-button>
@@ -330,35 +348,186 @@
     import {
         CIBLE_MODULE,
         GET_CARD_PRODUCTS,
+        UPDATE_CARD,
+        DELETE_CARD,
         LOADER_MODULE,
         DISPLAY_LOADER,
         TOASTER_MODULE,
         TOASTER_MESSAGE,
-        HIDE_LOADER
+        HIDE_LOADER,
+        VALIDER_CARD
     }
     from '../../store/types/types'
 
-    const items = ref([{
-            name: 'Produits',
-            price: '70,50',
-        },{
-            name: 'Livraison',
-            price: '15,00',
-        },{
-            name: 'Total ht',
-            price: '111,00',
-        },{
-            name: 'Total ttc',
-            price: '133,20',
-        },
-    ])
-
     const store = useStore()
 
+    const Coef = ref(1)
+    const loading = ref(false)
+    const productQty = ref(0)
 
-    const getProducts = () => {
-        store.dispatch(`${CIBLE_MODULE}${GET_CARD_PRODUCTS}`)
+    const products = computed(() => store.getters[`${CIBLE_MODULE}products`]?.card_details || [])
+    const affiliate = computed(() => store.getters[`${CIBLE_MODULE}products`]?.affiliate || {})
+
+    const affiliateContact = computed(() => {
+        if(_.isEmpty(affiliate.value)) return ''
+        return affiliate.value?.firstnamedirector + ' ' + affiliate.value?.namedirector
+    })
+
+    const cardQuantity = computed(() => {
+        return products.value
+        .map(product => product.qty)
+        .reduce((oldQty, newQty) => oldQty + newQty, 0)
+    })
+
+    const cardPrice = computed(() => {
+        let total = 0
+        products.value
+            .forEach(product => total += +productPrice(product))
+        return total.toFixed(2)
+    })
+
+    const livraisonPrice = computed(() => {
+        let total = 0
+        products.value.forEach(product => {
+            total += (+productPrice(product) + +productPoids(product))*Coef.value
+        })
+        return total.toFixed(2)
+    })
+
+    const totalHt = computed(() => (+cardPrice.value + +livraisonPrice.value).toFixed(2))
+
+    const totalTtc = computed(() => {
+        return (+totalHt.value + +(+totalHt.value * +totalTax.value)).toFixed(2)
+    })
+
+    const totalTax = computed(() => {
+        return products.value
+        .map(product => product.tax?.taux)
+        ?.reduce((oldTax, newTax) => +oldTax + +newTax, 0)
+    })
+
+    const items = computed(() => {
+        return [{
+            name: 'Produits',
+            price: cardPrice.value
+        }, {
+            name: 'Livraison',
+            price: livraisonPrice.value
+        }, {
+            name: 'Total ht',
+            price: totalHt.value
+        }, {
+            name: 'Total ttc',
+            price: totalTtc.value
+        }]
+    })
+
+
+    const productPoids = (product) => {
+        return (product.qty * product.campagne_category?.poids) || 0
     }
+
+    const productPrice = (product) => {
+        const price = product.price * product.qty
+        return price?.toFixed(2) || 0
+    }
+
+    const productPriceWithTax = (product) => { 
+        const price = +productPrice(product)
+        const tax = product?.tax?.taux * price
+        const percentage = +price + +tax
+        return percentage?.toFixed(2) || 0
+    }
+
+    const updateCard = async (product) => {
+
+        try {
+
+            if(loading.value) return
+
+            if(product.qty > product?.campagne_category?.qtymini) {
+                store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
+                    type: 'danger',
+                    message: 'PAS LA BONNE QUANTITE',
+                    ttl: 5,
+                })
+                return
+            }
+
+            if(product.qty <= 0) {
+                store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
+                    type: 'danger',
+                    message: 'Please enter a quantity first',
+                    ttl: 5,
+                })
+                return
+            }
+
+            loading.value = true
+            store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Loading...'])
+            await store.dispatch(`${CIBLE_MODULE}${UPDATE_CARD}`, product)
+
+        }
+
+        catch(e) {
+            throw e
+        }
+
+        finally {
+            loading.value = false
+            store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`)
+        }
+
+    }
+
+    const deleteCard = async (product) => {
+        if(loading.value) return
+        try {
+            loading.value = true
+            store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Loading...'])
+            await store.dispatch(`${CIBLE_MODULE}${DELETE_CARD}`, product.id)
+        }
+        catch(e) {
+            throw e
+        }
+        finally {
+            loading.value = false
+            store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`)
+        }
+    }
+
+
+    const getProducts = async () => {
+        try {
+            loading.value = true
+            store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Loading...'])
+            await store.dispatch(`${CIBLE_MODULE}${GET_CARD_PRODUCTS}`)
+        }
+        catch(e) {
+            throw e
+        }
+        finally {
+            loading.value = false
+            store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`)
+        }
+    }
+
+    const validerCard = async () => {
+        try {
+            loading.value = true
+            store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Loading...'])
+            await store.dispatch(`${CIBLE_MODULE}${VALIDER_CARD}`)
+        }
+        catch(e) {
+            throw e
+        }
+        finally {
+            loading.value = false
+            store.dispatch(`${LOADER_MODULE}${HIDE_LOADER}`)
+        }
+    }
+
+    onMounted(() => getProducts())
 
 </script>
 
@@ -386,6 +555,10 @@
         height: 60px;
         display: flex; 
         justify-content: flex-end;
+        cursor: pointer;
+        &:hover {
+            opacity: .8;
+        }
     }
 
     &--left {
@@ -444,7 +617,7 @@
 }
 
 .content {
-    padding-left: 2.5rem;
+    padding-left: 2rem;
     padding-right: 1rem;
 
     .item-title {

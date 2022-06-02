@@ -465,7 +465,7 @@
                 })
                 return
             }
-            store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Loading...']);
+            store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Loading...'])
             await store.dispatch(`${[CIBLE_MODULE]}${[STORE_PRODUCT]}`, { 
                 category: category.value, 
                 qty: qtyOfProduct.value 

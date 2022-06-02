@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Affiliate;
+use App\Models\campagne_card;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Notifications\Notifiable;
@@ -62,6 +63,11 @@ class User extends \TCG\Voyager\Models\User
     public function orders() 
     {
         return $this->hasMany(Order::class, 'affiliate_id');
+    }
+
+    public function card() 
+    {
+        return $this->hasMany(campagne_card::class);
     }
 
 }
