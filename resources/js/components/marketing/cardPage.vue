@@ -46,6 +46,7 @@
                                             :title="'Panier :' + cardQuantity"
                                             classes="border-0"
                                             style="border-radius: 10px; font-size: 12px !important"
+                                            @click.prevent=""
                                         >
                                             <icon name="clipboard" />
                                         </base-button>
@@ -301,10 +302,10 @@
                                                         class="btn btn-newrdv body_medium text-uppercase"
                                                         kind="warning"
                                                         title="commander"
-                                                        classes="border-0"
                                                         style="border-radius: 10px; font-size: 12px !important;"
-                                                        :disabled="loading"
+                                                        :disabled="loading || !products.length"
                                                         @click.prevent="validerCard"
+                                                        :classes="commandreClasses"
                                                     >
                                                         <Icon name="clipboard" width="18" height="18" />
                                                     </base-button>
@@ -367,6 +368,12 @@
 
     const products = computed(() => store.getters[`${CIBLE_MODULE}products`]?.card_details || [])
     const affiliate = computed(() => store.getters[`${CIBLE_MODULE}products`]?.affiliate || {})
+
+    const commandreClasses = computed(() => {
+        let classes = 'border-0 '
+        classes += loading.value || !products.value.length ? 'cursor-not-allowed' : ''
+        return classes
+    })
 
     const affiliateContact = computed(() => {
         if(_.isEmpty(affiliate.value)) return ''
@@ -517,6 +524,11 @@
             loading.value = true
             store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Loading...'])
             await store.dispatch(`${CIBLE_MODULE}${VALIDER_CARD}`)
+            store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
+                type: 'success',
+                message: 'Campagne order has been created',
+                ttl: 5,
+            })
         }
         catch(e) {
             throw e

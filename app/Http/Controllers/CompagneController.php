@@ -45,16 +45,59 @@ class CompagneController extends Controller
     public function valider_card(Request $request) 
     {
 
-        $cardProducts = campagne_card_detail::all();
-        campagne_detail::create($cardProducts->toArray());
-
         $user = $request->user();
+        $affiliate = $user->affiliate;
+        
+        $card = optional(campagne_card::where('user_id', $user->id))->first();
 
-        $campagne = Campagne::create([
+        $campagne = $this->create_card_campagne($card, $user, $affiliate);
+
+        $cardProducts = $this->get_card_campagne_products($card);
+
+        $campagne->details()->createMany($cardProducts);
+
+        campagne_card_detail::where('campagne_card_id', $card->id)->delete();
+
+        $card->update(['status' => 'VALIDER']);
+        $card->delete();
+
+        $this->notify_admin($campagne);
+
+        return response()->json("Campagne valider completed");
+
+    }
+
+    private function notify_admin($campagne) 
+    {
+        $emails = $this->get_settings_email();
+        $emails = explode(',', $emails);
+
+        foreach($emails as $mail) 
+        {
+            Notification::route('mail', $mail)
+            ->notify(new campagneCardNotification($campagne));
+        }
+    }
+
+    private function get_card_campagne_products($card) 
+    {
+        return campagne_card_detail::where('campagne_card_id', $card->id)
+                        ->get()
+                        ->except([
+                            'campagne_card_id',
+                            'email', 
+                            'phone'
+                        ])
+                        ->toArray();
+    }
+
+    private function create_card_campagne($card, $user, $affiliate) 
+    {
+        return $card->campagne()->create([
             'datefinvalidatiom' => date("Y-m-d"),
             'datelancement'     => date("Y-m-d"),
             'user_id'           => $user->id,
-            'affiliate_id'      => $user->affiliate->id,
+            'affiliate_id'      => $affiliate->id,
             'type'              => 'COMMANDE PRODUIT',
             'run'               =>  date("Y-m-d"),
             'montant'           => 0,
@@ -62,20 +105,6 @@ class CompagneController extends Controller
             'name'              => 'PANIER XXXX',
             'status'            => 'CAMPAGNE ENVOYEE',
         ]);
-
-        campagne_card_detail::truncate(); // not correct
-
-        $emails = $this->get_settings_email();
-        $emails = explode(',', $emails);
-        //link and create relations in campagnes and campagnes card and don't truncate just delete those which has 
-        //afflilate id matching to those with auth
-        //these are the mistakes should be couered.
-        foreach($emails as $mail) 
-        {
-            Notification::route('mail', $mail)
-            ->notify(new campagneCardNotification($campagne));
-        }
-
     }
 
     public function delete_card_product(campagne_card_detail $card) 
@@ -98,10 +127,10 @@ class CompagneController extends Controller
     {
         
         $affiliate = $request->user()->affiliate;
-        $card_ids = campagne_card::where('user_id', $request->user()->id)->pluck('id')->toArray();
+        $card = optional(campagne_card::where('user_id', $request->user()->id))->first();
         
         $card_details = campagne_card_detail::with('campagneCategory', 'tax')
-                        ->whereIn('campagne_card_id', $card_ids)
+                        ->where('campagne_card_id', optional($card)->id)
                         ->get();
 
         return response()->json(
@@ -115,7 +144,7 @@ class CompagneController extends Controller
         
         $user = $request->user();
 
-        if($campagne->cardDetail->count()) 
+        if(!is_null($campagne->cardDetail)) 
         {
             $campagne->cardDetail()->update([
                 'qty' => $campagne->cardDetail->qty + $request->qty
@@ -124,12 +153,17 @@ class CompagneController extends Controller
         else 
         {
 
-            $card = $user->card()->create([
-                'affiliate_id' => $user->affiliate->id,
-                'montant'      => 0,
-                'transport'    => 0,
-                'name'         => $campagne->name,  
-            ]);
+            $card = campagne_card::where('user_id', $user->id)->where('status', 'NOUVEAU')->first();
+
+            if(is_null($card)) 
+            {
+                $card = $user->card()->create([
+                    'affiliate_id' => $user->affiliate->id,
+                    'montant'      => 0,
+                    'transport'    => 0,
+                    'name'         => $campagne->name,  
+                ]);
+            }
 
             $campagne->cardDetail()->create([
                 'campagne_card_id' => $card->id,      
@@ -139,7 +173,9 @@ class CompagneController extends Controller
                 'qty'              => $request->qty,
                 'fields'           => $campagne->fields,
                 'price'            => $campagne->price,
-                'tax_id'           => optional(optional($user->affiliate)->tax)->id, 
+                'tax_id'           => optional(optional($user->affiliate)->tax)->id,
+                'email'            => $request->email,
+                'phone'            => $request->phone,   
             ]);
 
         }
