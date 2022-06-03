@@ -14,7 +14,7 @@
 <div :id="table_def.identifier">
     <div class="list-header">
         <template v-for="item,index in table_def.columns_def" :key="index">
-            <div class="list-header-col almarai_700_normal" @drop="onDrop($event,item)" @dragover="onDragOver($event,item)"  @dragleave="onDragLeave($event,item)" @dragenter="onDragEnter($event,item)" @dragover.prevent  :draggable="isDraggable(item)" @dragstart="startDrag($event,item)" @dragend="endDrag($event,item)" :class="headerClasses(item,sortings)" :style="item.css">
+            <div v-if="item.visible==true" class="list-header-col almarai_700_normal" @drop="onDrop($event,item)" @dragover="onDragOver($event,item)"  @dragleave="onDragLeave($event,item)" @dragenter="onDragEnter($event,item)" @dragover.prevent  :draggable="isDraggable(item)" @dragstart="startDrag($event,item)" @dragend="endDrag($event,item)" :class="headerClasses(item,sortings)" :style="item.css">
                 <span  @click.exact="sortby(item,false)" @click.shift="sortby(item,true)" >{{item.display_name}}</span>
                 <check-box v-if="item.type=='checkbox'" name="checkall" id="checkall" :checked="lists.length==MULTI_CHECKED.length" @change="checkboxallclicked"/>
                 <input  class="mulish_400_normal" v-if="(item.type=='string'||item.type=='html'||item.type=='price')&&item.sort" type="text" @keyup.enter="filterColumn(item,$event.target.value)"/>
@@ -28,14 +28,14 @@
            <div>
         <div class="list-row list-row-group" v-if="grouped_by!=''&&showGroupHeader(ifnull(row[grouped_by]))" @click="toggleGroupVisible(row[grouped_by])" >
              <template v-for="col,indexcol in table_def.columns_def" :key="`${indexcol}_${grouped_by}`">
-                <div class="list-col almarai_700_normal" v-if="col.id==grouped_by" :style="col.css" :class="colRowClasses(col,row)">
+                <div class="list-col almarai_700_normal" v-if="col.id==grouped_by && col.visible==true" :style="col.css" :class="colRowClasses(col,row)">
                     <span v-if="col.type=='date'">{{formatDate(row[col.id],'DD/MM/YY')}}</span>
                     <span v-else-if="col.type=='html'" v-html="`${col.prefix} ${ifnull(row[col.id])} ${col.suffix}`"></span>
                     <span v-else-if="col.type=='price'">{{`${col.prefix} ${formatPrice(row[col.id])} ${col.suffix}`}}</span>
                     <slot v-else-if="col.type=='component'" :name="col.id" :row="row"></slot>
                     <span v-else>{{`${col.prefix} ${ifnull(sanitise(row[col.id],col))} ${col.suffix}`}}</span>
                 </div>
-                <div  class="list-col almarai_700_normal" :style="col.css" :class="colRowClasses(col,row)" v-else>
+                <div  class="list-col almarai_700_normal" :style="col.css" :class="colRowClasses(col,row)" v-else-if="col.visible==true||indexcol==1">
                     <span v-if="indexcol==1">{{countGroupItem(grouped_by,row[grouped_by])}}</span>
                     <span v-else-if="col.group_total===true&&col.type=='price'">{{`${col.prefix} ${formatPrice(colTotal(row[grouped_by],col.id))} ${col.suffix}`}}</span>
                     <span v-else-if="col.group_total===true">{{`${col.prefix} ${colTotal(row[grouped_by],col.id)} ${col.suffix}`}}</span>
@@ -47,7 +47,7 @@
         
         <div class="list-row" @click.self="selectrow(row.id,index)" :style="styleRow(row)" :class="{current_sel:row.id==CURRENT_SELECTED}" v-if="isGroupVisible(row[grouped_by])!=false" >
              <template v-for="col,indexcol in table_def.columns_def" :key="indexcol">
-                <div class="list-col almarai_700_normal" :style="col.css" :class="colRowClasses(col,row)"  @click="selectrow(row.id,col.type=='checkbox'?'line_select':index)">
+                <div v-if="col.visible==true" class="list-col almarai_700_normal" :style="col.css" :class="colRowClasses(col,row)"  @click="selectrow(row.id,col.type=='checkbox'?'line_select':index)">
                     <span v-if="col.type=='date'">{{formatDate(row[col.id],'DD/MM/YY')}}</span>
                     <check-box v-else-if="col.type=='checkbox'" :name="col.id" :id="row[col.id]" @change="checkboxclicked" :checked="row.id==CURRENT_SELECTED||MULTI_CHECKED.includes(row.id)"/>
                     <span v-else-if="col.type=='html'" v-html="`${col.prefix} ${ifnull(row[col.id])} ${col.suffix}`"></span>
@@ -63,7 +63,7 @@
     <div class="list-footer">
  
                    <template v-for="col,indexcol in table_def.columns_def" :key="indexcol">
-                        <div class="list-col  almarai_700_normal" :style="col.css" :class="colClasses(col)">
+                        <div class="list-col  almarai_700_normal" :style="col.css" :class="colClasses(col)" v-if="col.visible==true">
                                   <span v-if="indexcol==1"> {{`${lists.length} ${lists.length!=1?table_def.translations.footer_items:table_def.translations.footer_item}`}}</span>
                                         <span v-else-if="col.footer_total===true&&col.type=='price'">{{`${col.prefix} ${formatPrice(colTotalAll(col.id))} ${col.suffix}`}}</span>
                                         <span v-else-if="col.footer_total===true">{{`${col.prefix} ${colTotalAll(col.id)} ${col.suffix}`}}</span>
@@ -77,6 +77,7 @@
     <div class="d-flex justify-content-center">
         <span class="loadmore mulish_400_normal" @click="loadmore">Charger plus</span>
     </div>
+
 </div>
 </template>
 <script>
@@ -112,21 +113,69 @@ export default {
         const grouped_by=ref('');
         let   groupval='';
         const openedGroup=ref([]);
-      
+        const hidden_col=ref([]);
+        const columnSelection =  ref([
+                {
+                    id: "champsvisible",
+                    name: 'Champs',
+                    options: [],
+                },
+            ])
+
+            const listGroup = ref([
+                {
+                    label: 'Grouper par',
+                    options: [
+                        { value: '', display: 'Aucune' }
+                
+                    ],
+                },
+                //can add more here
+            ]);
 
         onMounted(()=>{
             let table_def=props.table_def;
             let sortedcol=[];
+             let hiddencols=window.localStorage.getItem(`hiddenCol_${identifier}`);
+             if(hiddencols!=null){
+                 hidden_col.value=hiddencols.split(',');
+             }
+        
             let sortedcols=window.localStorage.getItem(`sort_${identifier}`);
+
+                if(sortedcols!=null){
+                    let cols=sortedcols.split(',');
+            
+                    let c=0;
+                    props.table_def.columns_def.forEach((item,i)=>{
+                                if(item.type!="checkbox"){
+                                        c++;
+                                }
+                    });
+              
+                    if(c!=cols.length){
+                        window.localStorage.removeItem(`sort_${identifier}`);
+                        sortedcols=window.localStorage.getItem(`sort_${identifier}`);
+                    }
+                  }
+
             if(sortedcols!=null){
                 let cols=sortedcols.split(',');
                 cols.forEach((col,index)=>{
                         props.table_def.columns_def.forEach((item,i)=>{
+                                  let found=hidden_col.value.filter(id=>id==item.id);
+                             if(found.length>0){
+                                item.visible=false;
+                             }else{
+                                 item.visible=true;
+                             }
                             if(item.type!="checkbox"){
+                               
                                 if(item.id==col){
                                     sortedcol.push(item);
                                 }
                             }else if(index==0){
+                               
                                 sortedcol.push(item);
                             }
                         });
@@ -140,6 +189,16 @@ export default {
             let table={
                 table_def:table_def
             }
+
+
+        for(const i in props.table_def.columns_def){
+            if(props.table_def.columns_def[i].allow_groupby===true){
+                listGroup.value[0].options.push({value:props.table_def.columns_def[i].id,display:props.table_def.columns_def[i].display_name});
+            }
+            if(props.table_def.columns_def[i].type!="checkbox"){
+                columnSelection.value[0].options.push({id:props.table_def.columns_def[i].id,value:props.table_def.columns_def[i].display_name,check:props.table_def.columns_def[i].visible});
+            }
+        }
        
                 showLoader('Veuillez patienter. Chargement en cours...');
                 store.dispatch(`${ITEM_LIST_MODULE}${ITEM_LIST_TABLEDEF}`,table).finally(()=>hideLoader());
@@ -147,39 +206,30 @@ export default {
         });
         const grouperPar = ref({});
         const onTableFilerChange=(val)=>{
+            let hcol=[];
+            for(const i in val.checkboxOptions[0].options){
+             if(!val.checkboxOptions[0].options[i].check)
+             hcol.push(val.checkboxOptions[0].options[i].id)
+            }
+               hidden_col.value=hcol;   
+    
+            window.localStorage.setItem(`hiddenCol_${identifier}`,hcol);
+            if(typeof val.selectedOptions[0]!="undefined")
             grouped_by.value=val.selectedOptions[0];
         }
-        const columnSelection =  ref([
-            {
-                id: "champsvisible",
-                name: 'Champs',
-                options: [
-                    { id: 'nodevis', value: 'no devis', check: false },
-                    { id: 2, value: 'client', check: false },
-                    { id: 3, value: 'contact', check: false },
-                    { id: 4, value: 'chantier', check: false },
-                    { id: 5, value: 'date creation', check: false },
-                    { id: 6, value: 'responsable', check: false },
-                    { id: 7, value: 'status', check: false },
-                ],
-            },
-        ])
+            watch(() => hidden_col.value, (currentValue, oldValue) => {
+                         props.table_def.columns_def.forEach((item,i)=>{
+                             let found=currentValue.filter(id=>id==item.id);
+                             if(found.length>0){
+                                item.visible=false;
+                             }else{
+                                 item.visible=true;
+                             }
+                          
+                        });
+            });
 
-        const listGroup = ref([
-            {
-                label: 'Grouper par',
-                options: [
-                    { value: '', display: 'Aucune' }
-             
-                ],
-            },
-             //can add more here
-        ]);
-        for(const i in props.table_def.columns_def){
-            if(props.table_def.columns_def[i].allow_groupby===true){
-                listGroup.value[0].options.push({value:props.table_def.columns_def[i].id,display:props.table_def.columns_def[i].display_name});
-            }
-        }
+
 
          const loadmore=()=>{
              showLoader('Veuillez patienter.')
@@ -526,6 +576,7 @@ export default {
         }
       return{
           table_def:props.table_def,
+  
           lists,
           filterColumn,
           headerClasses,
