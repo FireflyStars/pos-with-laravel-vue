@@ -335,10 +335,10 @@ class DevisController extends Controller
         foreach ($request->zones as $zone) {
             $zoneData = [
                 'order_id'      =>  $orderId,
-                // 'latitude'      =>  $request->address['lat'],
-                // 'longitude'     =>  $request->address['lon'],
-                'latitude'      =>  '10.197948495703532',
-                'longitude'     =>  '10.197948495703532',
+                'latitude'      =>  $request->address['lat'],
+                'longitude'     =>  $request->address['lon'],
+                // 'latitude'      =>  '10.197948495703532',
+                // 'longitude'     =>  '10.197948495703532',
                 'description'   =>  '',
                 'hauteur'       =>  $zone['height'],
                 'moyenacces_id' =>  $zone['roofAccess'],
