@@ -300,14 +300,14 @@
                                     <thead>
                                       <tr>
                                         <td></td>
-                                        <td valign="middle" class="text-center">Qte ouvrage</td>
-                                        <td valign="middle" class="text-center">Qte</td>
-                                        <td valign="middle" class="text-center">Unité</td>
-                                        <td valign="middle" class="text-center">Hr</td>
-                                        <td valign="middle" class="text-center">Prix</td>
-                                        <td valign="middle" class="text-center">Marge</td>
-                                        <td valign="middle" class="text-center">Total</td>
-                                        <td valign="middle" class="text-center">Taxe</td>
+                                        <td valign="middle" class="text-center fw-bold">Qte ouvrage</td>
+                                        <td valign="middle" class="text-center fw-bold">Qte</td>
+                                        <td valign="middle" class="text-center fw-bold">Unité</td>
+                                        <td valign="middle" class="text-center fw-bold">Hr</td>
+                                        <td valign="middle" class="text-center fw-bold">Prix</td>
+                                        <td valign="middle" class="text-center fw-bold">Marge</td>
+                                        <td valign="middle" class="text-center fw-bold">Total</td>
+                                        <td valign="middle" class="text-center fw-bold">Taxe</td>
                                         <td></td>
                                       </tr>
                                     </thead>                                    
@@ -316,15 +316,16 @@
                                         <td valign="middle">
                                           <div class="custom-option d-flex align-items-center">
                                             <span 
-                                              :class="{ 'clock-icon': detail.type == 'MO' || detail.type == 'INTERIM',  
-                                                'book-icon' : detail.type == 'PRODUIT' || detail.type == 'Labor' || detail.type == 'COMMANDE FOURNISSEUR'
+                                              :class="{ 'clock-icon': detail.type == 'MO' || detail.type == 'INTERIM'|| detail.type == 'Labor',  
+                                                'book-icon' : detail.type == 'PRODUIT' || detail.type == 'COMMANDE FOURNISSEUR'
                                               }"
                                             ></span> {{ detail.name }}
                                           </div>
                                         </td>
                                         <td valign="middle" class="text-center">{{ detail.qtyOuvrage }}</td>
-                                        <td valign="middle">
-                                          <input @keyup="updateAllValues" type="text" v-model.number="detail.qty" class="w-100 form-control form-control-sm custom-text-danger">
+                                        <td valign="middle" class="text-center">
+                                          <input v-if="detail.type != 'MO'" @keyup="updateAllValues" type="text" v-model.number="detail.qty" class="w-100 form-control form-control-sm custom-text-danger">
+                                          <span v-else>{{ detail.qty }}</span>
                                         </td>
                                         <td valign="middle" text="text-center">{{ detail.unit }}</td>
                                         <td valign="middle" v-if="detail.type == 'MO' || detail.type == 'Labor'">
@@ -367,21 +368,21 @@
                                 </div>
                                 <div class="btns d-flex mt-4">
                                   <div class="col-5">
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openProductModal(zoneIndex, 1,ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openProductModal(zoneIndex, 1,ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER UN PRODUIT
                                     </div>
                                     <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openTaskModal(zoneIndex, 1, ouvrageIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER ACTION
                                     </div>
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openSupplierModal(zoneIndex, 1, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openSupplierModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> COMMANDE FOURNISSEUR
                                     </div>
                                   </div>
                                   <div class="col-5">
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openLaborModal(zoneIndex, 1, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openLaborModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER UN MAIN D’ OEUVRES
                                     </div>
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openInterimModal(zoneIndex, 1, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openInterimModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER  INTERIM
                                     </div>
                                   </div>
@@ -436,7 +437,7 @@
                       <div class="ouvrage-item" v-for="(ouvrage, ouvrageIndex) in zone.securityOuvrage.ouvrages" :key="ouvrageIndex">
                         <div class="d-flex ouvrage-header">
                           <div class="col-4">
-                            <a class="ouvrage custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': ouvrageIndex == (zone.securityOuvrage.ouvrages.length -1) }" :data-id="'zone-' + zoneIndex +'-installation-ouvrage-'+ouvrageIndex" href="javascript:;"
+                            <a class="ouvrage custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': ouvrageIndex == (zone.securityOuvrage.ouvrages.length -1) }" :data-id="'zone-' + zoneIndex +'-security-ouvrage-'+ouvrageIndex" href="javascript:;"
                                 @click="activeOuvrage"
                               >
                                 <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ ouvrage.name }}
@@ -468,7 +469,7 @@
                           </div>
                         </div>
                         <div class="tab-content">
-                          <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" :id="'zone-'+ zoneIndex +'-installation-ouvrage-'+ouvrageIndex">
+                          <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" :id="'zone-'+ zoneIndex +'-security-ouvrage-'+ouvrageIndex">
                             <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
                             <!-- ouvrage description -->
                             <ul class="ps-3" v-if="ouvrage.textchargeaffaire !=''">
@@ -482,10 +483,10 @@
                             </ul>
                             <!-- Ouvrage Task -->
                             <div class="ouvrage-task" v-for="(task, taskIndex) in ouvrage.tasks" :key="taskIndex">
-                              <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'zone-'+ zoneIndex +'-installation-ouvrage-'+ouvrageIndex+'-task-'+taskIndex" @click="activeOuvrageTask">
+                              <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'zone-'+ zoneIndex +'-security-ouvrage-'+ouvrageIndex+'-task-'+taskIndex" @click="activeOuvrageTask">
                                 <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ task.name }}
                               </div>
-                              <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'zone-'+ zoneIndex +'-installation-ouvrage-'+ouvrageIndex+'-task-'+taskIndex">
+                              <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'zone-'+ zoneIndex +'-security-ouvrage-'+ouvrageIndex+'-task-'+taskIndex">
                                 <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
                                 <!-- task description -->
                                 <ul class="ps-3" v-if="task.textchargeaffaire != ''">
@@ -502,14 +503,14 @@
                                     <thead>
                                       <tr>
                                         <td></td>
-                                        <td valign="middle" class="text-center">Qte ouvrage</td>
-                                        <td valign="middle" class="text-center">Qte</td>
-                                        <td valign="middle" class="text-center">Unité</td>
-                                        <td valign="middle" class="text-center">Hr</td>
-                                        <td valign="middle" class="text-center">Prix</td>
-                                        <td valign="middle" class="text-center">Marge</td>
-                                        <td valign="middle" class="text-center">Total</td>
-                                        <td valign="middle" class="text-center">Taxe</td>
+                                        <td valign="middle" class="text-center fw-bold">Qte ouvrage</td>
+                                        <td valign="middle" class="text-center fw-bold">Qte</td>
+                                        <td valign="middle" class="text-center fw-bold">Unité</td>
+                                        <td valign="middle" class="text-center fw-bold">Hr</td>
+                                        <td valign="middle" class="text-center fw-bold">Prix</td>
+                                        <td valign="middle" class="text-center fw-bold">Marge</td>
+                                        <td valign="middle" class="text-center fw-bold">Total</td>
+                                        <td valign="middle" class="text-center fw-bold">Taxe</td>
                                         <td></td>
                                       </tr>
                                     </thead>
@@ -518,15 +519,16 @@
                                         <td valign="middle">
                                           <div class="custom-option d-flex align-items-center">
                                             <span 
-                                              :class="{ 'clock-icon': detail.type == 'MO' || detail.type == 'INTERIM',  
-                                                'book-icon' : detail.type == 'PRODUIT' || detail.type == 'Labor' || detail.type == 'COMMANDE FOURNISSEUR'
+                                              :class="{ 'clock-icon': detail.type == 'MO' || detail.type == 'INTERIM'|| detail.type == 'Labor',  
+                                                'book-icon' : detail.type == 'PRODUIT' || detail.type == 'COMMANDE FOURNISSEUR'
                                               }"
                                             ></span> {{ detail.name }}
                                           </div>
                                         </td>
                                        <td valign="middle" class="text-center">{{ detail.qtyOuvrage }}</td>
-                                        <td valign="middle">
-                                          <input @keyup="updateAllValues" type="text" v-model.number="detail.qty" class="w-100 form-control form-control-sm custom-text-danger">
+                                        <td valign="middle" class="text-center">
+                                          <input v-if="detail.type != 'MO'" @keyup="updateAllValues" type="text" v-model.number="detail.qty" class="w-100 form-control form-control-sm custom-text-danger">
+                                          <span v-else>{{ detail.qty }}</span>
                                         </td>
                                         <td valign="middle" text="text-center">{{ detail.unit }}</td>
                                         <td valign="middle" v-if="detail.type == 'MO' || detail.type == 'Labor'">
@@ -569,21 +571,21 @@
                                 </div>
                                 <div class="btns d-flex mt-4">
                                   <div class="col-5">
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openProductModal(zoneIndex, 1,ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openProductModal(zoneIndex, 1,ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER UN PRODUIT
                                     </div>
                                     <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openTaskModal(zoneIndex, 1, ouvrageIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER ACTION
                                     </div>
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openSupplierModal(zoneIndex, 1, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openSupplierModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> COMMANDE FOURNISSEUR
                                     </div>
                                   </div>
                                   <div class="col-5">
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openLaborModal(zoneIndex, 1, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openLaborModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER UN MAIN D’ OEUVRES
                                     </div>
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openInterimModal(zoneIndex, 1, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openInterimModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER  INTERIM
                                     </div>
                                   </div>
@@ -638,7 +640,7 @@
                       <div class="ouvrage-item" v-for="(ouvrage, ouvrageIndex) in zone.prestationOuvrage.ouvrages" :key="ouvrageIndex">
                         <div class="d-flex ouvrage-header">
                           <div class="col-4">
-                            <a class="ouvrage custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': ouvrageIndex == (zone.prestationOuvrage.ouvrages.length - 1 )}" :data-id="'zone-' + zoneIndex +'-installation-ouvrage-'+ouvrageIndex" href="javascript:;"
+                            <a class="ouvrage custom-option d-flex align-items-center px-0 text-black" :class="{ 'active': ouvrageIndex == (zone.prestationOuvrage.ouvrages.length - 1 )}" :data-id="'zone-' + zoneIndex +'-prestation-ouvrage-'+ouvrageIndex" href="javascript:;"
                                 @click="activeOuvrage"
                               >
                                 <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ ouvrage.name }}
@@ -670,7 +672,7 @@
                           </div>
                         </div>
                         <div class="tab-content">
-                          <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" :id="'zone-'+ zoneIndex +'-installation-ouvrage-'+ouvrageIndex">
+                          <div class="tab-pane ps-3" :class="{ 'active': ouvrageIndex == 0}" :id="'zone-'+ zoneIndex +'-prestation-ouvrage-'+ouvrageIndex">
                             <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
                             <!-- ouvrage description -->
                             <ul class="ps-3" v-if="ouvrage.textchargeaffaire !=''">
@@ -684,10 +686,10 @@
                             </ul>
                             <!-- Ouvrage Task -->
                             <div class="ouvrage-task" v-for="(task, taskIndex) in ouvrage.tasks" :key="taskIndex">
-                              <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'zone-'+ zoneIndex +'-installation-ouvrage-'+ouvrageIndex+'-task-'+taskIndex" @click="activeOuvrageTask">
+                              <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'zone-'+ zoneIndex +'-prestation-ouvrage-'+ouvrageIndex+'-task-'+taskIndex" @click="activeOuvrageTask">
                                 <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ task.name }}
                               </div>
-                              <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'zone-'+ zoneIndex +'-installation-ouvrage-'+ouvrageIndex+'-task-'+taskIndex">
+                              <div class="task-body ps-3" :class="{ 'show': taskIndex == 0}" :id="'zone-'+ zoneIndex +'-prestation-ouvrage-'+ouvrageIndex+'-task-'+taskIndex">
                                 <h3 class="mulish-light fw-light custom-text-danger font-14">TEXTE COMMENTAIRE TECHNIQUE</h3>
                                 <!-- task description -->
                                 <ul class="ps-3" v-if="task.textchargeaffaire != ''">
@@ -704,14 +706,14 @@
                                     <thead>
                                       <tr>
                                         <td></td>
-                                        <td valign="middle" class="text-center">Qte ouvrage</td>
-                                        <td valign="middle" class="text-center">Qte</td>
-                                        <td valign="middle" class="text-center">Unité</td>
-                                        <td valign="middle" class="text-center">Hr</td>
-                                        <td valign="middle" class="text-center">Prix</td>
-                                        <td valign="middle" class="text-center">Marge</td>
-                                        <td valign="middle" class="text-center">Total</td>
-                                        <td valign="middle" class="text-center">Taxe</td>
+                                        <td valign="middle" class="text-center fw-bold">Qte ouvrage</td>
+                                        <td valign="middle" class="text-center fw-bold">Qte</td>
+                                        <td valign="middle" class="text-center fw-bold">Unité</td>
+                                        <td valign="middle" class="text-center fw-bold">Hr</td>
+                                        <td valign="middle" class="text-center fw-bold">Prix</td>
+                                        <td valign="middle" class="text-center fw-bold">Marge</td>
+                                        <td valign="middle" class="text-center fw-bold">Total</td>
+                                        <td valign="middle" class="text-center fw-bold">Taxe</td>
                                         <td></td>
                                       </tr>
                                     </thead>                                    
@@ -720,15 +722,16 @@
                                         <td valign="middle">
                                           <div class="custom-option d-flex align-items-center">
                                             <span 
-                                              :class="{ 'clock-icon': detail.type == 'MO' || detail.type == 'INTERIM',  
-                                                'book-icon' : detail.type == 'PRODUIT' || detail.type == 'Labor' || detail.type == 'COMMANDE FOURNISSEUR'
+                                              :class="{ 'clock-icon': detail.type == 'MO' || detail.type == 'INTERIM'|| detail.type == 'Labor',  
+                                                'book-icon' : detail.type == 'PRODUIT' || detail.type == 'COMMANDE FOURNISSEUR'
                                               }"
                                             ></span> {{ detail.name }}
                                           </div>
                                         </td>
                                        <td valign="middle" class="text-center">{{ detail.qtyOuvrage }}</td>
-                                        <td valign="middle">
-                                          <input @keyup="updateAllValues" type="text" v-model.number="detail.qty" class="w-100 form-control form-control-sm custom-text-danger">
+                                        <td valign="middle" class="text-center">
+                                          <input v-if="detail.type != 'MO'" @keyup="updateAllValues" type="text" v-model.number="detail.qty" class="w-100 form-control form-control-sm custom-text-danger">
+                                          <span v-else>{{ detail.qty }}</span>
                                         </td>
                                         <td valign="middle" text="text-center">{{ detail.unit }}</td>
                                         <td valign="middle" v-if="detail.type == 'MO' || detail.type == 'Labor'">
@@ -771,21 +774,21 @@
                                 </div>
                                 <div class="btns d-flex mt-4">
                                   <div class="col-5">
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openProductModal(zoneIndex, 1,ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openProductModal(zoneIndex, 1,ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER UN PRODUIT
                                     </div>
                                     <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openTaskModal(zoneIndex, 1, ouvrageIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER ACTION
                                     </div>
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openSupplierModal(zoneIndex, 1, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openSupplierModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> COMMANDE FOURNISSEUR
                                     </div>
                                   </div>
                                   <div class="col-5">
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openLaborModal(zoneIndex, 1, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openLaborModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER UN MAIN D’ OEUVRES
                                     </div>
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openInterimModal(zoneIndex, 1, ouvrageIndex, taskIndex, ouvrage.qtyOuvrage)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openInterimModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER  INTERIM
                                     </div>
                                   </div>
@@ -996,7 +999,7 @@ export default {
         contact: 'Thierry Gavois',
         telephone: '58 58 74 58 44',
         tax: '10%',
-        taxId: '1',
+        taxId: 0,
         naf: 'Boulangerie',
         siret: '4654654646546546',
       },
@@ -1008,8 +1011,8 @@ export default {
         postcode: '',
         city: '',
         addressType: '',
-        lat: '',
-        lon: '',
+        lat: '36.846691982477985',
+        lon: '10.197948495703532',
       },
       totalHoursForInstall: 0,
       totalPriceForInstall: 0,
@@ -1081,8 +1084,8 @@ export default {
                 if(detail.qtyOuvrage != ouvrage.qty){
                   detail.qtyOuvrage = ouvrage.qty;
                   detail.qty = parseInt(ouvrage.qty)*parseInt(detail.originalDetailQty);
+                  detail.numberH = parseFloat(detail.originalNumberH)* parseInt(detail.qty);
                 }
-                detail.numberH = parseFloat(detail.originalNumberH)* parseInt(detail.qty);
               }           
               if(detail.type == 'MO'){
                 if(detail.original){
@@ -1133,8 +1136,8 @@ export default {
                 if(detail.qtyOuvrage != ouvrage.qty){
                   detail.qtyOuvrage = ouvrage.qty;
                   detail.qty = parseInt(ouvrage.qty)*parseInt(detail.originalDetailQty);
+                  detail.numberH = parseFloat(detail.originalNumberH)* parseInt(detail.qty);
                 }
-                detail.numberH = parseFloat(detail.originalNumberH)* parseInt(detail.qty);
               }           
               if(detail.type == 'MO'){
                 if(detail.original){
@@ -1185,8 +1188,8 @@ export default {
                 if(detail.qtyOuvrage != ouvrage.qty){
                   detail.qtyOuvrage = ouvrage.qty;
                   detail.qty = parseInt(ouvrage.qty)*parseInt(detail.originalDetailQty);
+                  detail.numberH = parseFloat(detail.originalNumberH)* parseInt(detail.qty);
                 }
-                detail.numberH = parseFloat(detail.originalNumberH)* parseInt(detail.qty);
               }           
               if(detail.type == 'MO'){
                 if(detail.original){
@@ -1275,19 +1278,19 @@ export default {
     const openPrestationModal = (zIndex)=>{
       prestationModal.value.openModal(zIndex);
     }
-    const openSupplierModal = (zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
-      supplierModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage, taxes.value);
+    const openSupplierModal = (zIndex, ouvrageType, ouvrageId, taskId)=>{
+      supplierModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId);
     }
-    const openProductModal = (zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
-      productModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage);
+    const openProductModal = (zIndex, ouvrageType, ouvrageId, taskId)=>{
+      productModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId);
     }
     
-    const openInterimModal = (zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
-      interimModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage, taxes.value);
+    const openInterimModal = (zIndex, ouvrageType, ouvrageId, taskId)=>{
+      interimModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId);
     }
 
-    const openLaborModal = (zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
-      laborModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage, taxes.value, form.value.customer.taxId);
+    const openLaborModal = (zIndex, ouvrageType, ouvrageId, taskId)=>{
+      laborModal.value.openModal(zIndex, ouvrageType, ouvrageId, taskId);
     }
     const openTaskModal = (zIndex, ouvrageType, ouvrageId)=>{
       taskModal.value.openModal(zIndex, ouvrageType, ouvrageId);
@@ -1419,7 +1422,7 @@ export default {
       if(supplier.ouvrageType == 1){
         form.value.zones[supplier.zoneIndex].installOuvrage.ouvrages[supplier.ouvrageId].tasks[supplier.taskId].details.push({
           qty: 1,
-          tax: supplier.tax,
+          tax: form.value.customer.taxId,
           unitPrice: supplier.unitPrice,
           marge: 8,
           type: supplier.type,
@@ -1436,7 +1439,7 @@ export default {
       if(supplier.ouvrageType == 2){
         form.value.zones[supplier.zoneIndex].securityOuvrage.ouvrages[supplier.ouvrageId].tasks[supplier.taskId].details.push({
           qty: 1,
-          tax: supplier.tax,
+          tax: form.value.customer.taxId,
           unitPrice: supplier.unitPrice,
           marge: 8,
           supplierId: supplier.supplier_id,
@@ -1453,7 +1456,7 @@ export default {
       if(supplier.ouvrageType == 3){
         form.value.zones[supplier.zoneIndex].prestationOuvrage.ouvrages[supplier.ouvrageId].tasks[supplier.taskId].details.push({
           qty: 1,
-          tax: supplier.tax,
+          tax: form.value.customer.taxId,
           unitPrice: supplier.unitPrice,
           marge: 8,
           supplierId: supplier.supplier_id,
@@ -1474,11 +1477,11 @@ export default {
       if(labor.ouvrageType == 1){
         form.value.zones[labor.zoneIndex].installOuvrage.ouvrages[labor.ouvrageId].tasks[labor.taskId].details.push({
           qty: 1,
-          tax: labor.tax,
+          tax: form.value.customer.taxId,
           unitPrice: parseFloat(labor.price).toFixed(2),
           marge: 8,
           type: 'Labor',
-          name: 'MAIN D’ OEUVRES',
+          name: 'main d\'œuvre ouvrier chantier',
           unit: 'HR',
           qtyOuvrage: labor.qtyOuvrage,
           totalPrice: labor.total,
@@ -1488,11 +1491,11 @@ export default {
       if(labor.ouvrageType == 2){
         form.value.zones[labor.zoneIndex].securityOuvrage.ouvrages[labor.ouvrageId].tasks[labor.taskId].details.push({
           qty: 1,
-          tax: labor.tax,
+          tax: form.value.customer.taxId,
           unitPrice: parseFloat(labor.price).toFixed(2),
           marge: 8,
           type: 'Labor',
-          name: 'MAIN D’ OEUVRES',
+          name: 'main d\'œuvre ouvrier chantier',
           unit: 'HR',
           qtyOuvrage: labor.qtyOuvrage,
           totalPrice: labor.total,
@@ -1502,11 +1505,11 @@ export default {
       if(labor.ouvrageType == 3){
         form.value.zones[labor.zoneIndex].prestationOuvrage.ouvrages[labor.ouvrageId].tasks[labor.taskId].details.push({
           qty: 1,
-          tax: labor.tax,
+          tax: form.value.customer.taxId,
           unitPrice: parseFloat(labor.price).toFixed(2),
           marge: '',
           type: 'Labor',
-          name: 'MAIN D’ OEUVRES',
+          name: 'main d\'œuvre ouvrier chantier',
           unit: 'HR',
           qtyOuvrage: labor.qtyOuvrage,
           totalPrice: labor.total,
@@ -1520,7 +1523,7 @@ export default {
       if(interim.ouvrageType == 1){
         form.value.zones[interim.zoneIndex].installOuvrage.ouvrages[interim.ouvrageId].tasks[interim.taskId].details.push({
           qty: interim.numberH,
-          tax: interim.tax,
+          tax: form.value.customer.taxId,
           societe: interim.societe,
           unitPrice: parseFloat(interim.price).toFixed(2),
           marge: 8,
@@ -1535,7 +1538,7 @@ export default {
       if(interim.ouvrageType == 2){
         form.value.zones[interim.zoneIndex].securityOuvrage.ouvrages[interim.ouvrageId].tasks[interim.taskId].details.push({
           qty: interim.numberH,
-          tax: interim.tax,
+          tax: form.value.customer.taxId,
           societe: interim.societe,
           unitPrice: parseFloat(interim.price).toFixed(2),
           marge: 8,
@@ -1550,7 +1553,7 @@ export default {
       if(interim.ouvrageType == 3){
         form.value.zones[interim.zoneIndex].prestationOuvrage.ouvrages[interim.ouvrageId].tasks[interim.taskId].details.push({
           qty: interim.numberH,
-          tax: interim.tax,
+          tax: form.value.customer.taxId,
           societe: interim.societe,
           unitPrice: parseFloat(interim.price).toFixed(2),
           marge: 8,
@@ -1663,28 +1666,28 @@ export default {
 
     // activate the ouvrage
     const activeOuvrage = (event)=>{
-      document.querySelectorAll('.ouvrage.custom-option').forEach((item)=>{
-        if(item.getAttribute('data-id') != event.target.getAttribute('data-id'))
-            item.classList.remove('active');
-      })
-      document.querySelectorAll('.tab-pane').forEach((item)=>{
-        if(item.id != event.target.getAttribute('data-id'))
-          item.classList.remove('active');
-      })
+      // document.querySelectorAll('.ouvrage.custom-option').forEach((item)=>{
+      //   if(item.getAttribute('data-id') != event.target.getAttribute('data-id'))
+      //       item.classList.remove('active');
+      // })
+      // document.querySelectorAll('.tab-pane').forEach((item)=>{
+      //   if(item.id != event.target.getAttribute('data-id'))
+      //     item.classList.remove('active');
+      // })
       event.target.classList.toggle('active');
       document.getElementById(event.target.getAttribute('data-id')).classList.toggle('active');
     }
     // activate the task
     const activeOuvrageTask = (event)=>{
-      document.querySelectorAll('.task-header.custom-option').forEach((item)=>{
-        if(item.getAttribute('data-id') != event.target.getAttribute('data-id'))
-          item.classList.remove('active');
-      })      
+      // document.querySelectorAll('.task-header.custom-option').forEach((item)=>{
+      //   if(item.getAttribute('data-id') != event.target.getAttribute('data-id'))
+      //     item.classList.remove('active');
+      // })      
       event.target.classList.toggle('active');
-      document.querySelectorAll('.task-body').forEach((item)=>{
-        if(item.id != event.target.getAttribute('data-id'))
-          item.classList.remove('show');
-      })      
+      // document.querySelectorAll('.task-body').forEach((item)=>{
+      //   if(item.id != event.target.getAttribute('data-id'))
+      //     item.classList.remove('show');
+      // })      
       document.getElementById(event.target.getAttribute('data-id')).classList.toggle('show');
     }
     // remove ouvrage from ouvrages
@@ -1765,6 +1768,7 @@ export default {
     const storeDevis = ()=>{
       store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Enregistrer le Devis...']);
       axios.post('/store-devis', form.value).then((res)=>{
+        console.log(res);
         if(res.data.success){
           router.push({
             name: 'LandingPage'

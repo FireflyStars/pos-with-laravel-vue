@@ -35,15 +35,6 @@
                                     <label>Date</label>
                                     <input type="date" v-model="supplier.datesupplier" placeholder="Date" class="form-control">
                                 </div>
-                                <div class="col-5">
-                                    <SelectBox :label="'Taxe'" 
-                                        v-model="supplier.tax" 
-                                        :options="taxes"
-                                        :name="'Taxe'"
-                                        :classnames="'w-100'"
-                                        :placeholder="'Taxe'"
-                                    />                                        
-                                </div>
                             </div>
                             <div class="col-12 mt-3">
                                 <input type="file" class="form-control" @change="readFile" accept="application/pdf" id="commande-file">
@@ -75,7 +66,6 @@ export default {
         SelectBox
     },
     setup(props, { emit }){
-        const taxes = ref([]);
         const suppliers = ref([]);
         onMounted(()=>{
             axios.post('/get-suppliers').then((res)=>{
@@ -103,7 +93,7 @@ export default {
             qtyOuvrage: '',
         })
         const showModal = ref(false);
-        const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage, tax)=>{
+        const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId)=>{
             supplier.value = {
                 supplier_id: '',
                 type: 'COMMANDE FOURNISSEUR',
@@ -120,7 +110,6 @@ export default {
                 qtyOuvrage: '',
             }
             showModal.value = !showModal.value;
-            taxes.value = tax;
         }  
         const selectSupplier = (index)=>{
             showModal.value = false;
@@ -135,7 +124,6 @@ export default {
             reader.readAsDataURL(file);
         }
         return {
-            taxes,
             suppliers,
             supplier,
             showModal,

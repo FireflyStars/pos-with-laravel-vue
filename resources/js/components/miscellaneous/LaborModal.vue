@@ -20,19 +20,6 @@
                                         <input type="text" v-model="labor.total" readonly placeholder="Montant HT" class="form-control form-control-sm">
                                     </div>
                                 </div>
-                                <div class="d-flex px-3 mt-3 justify-content-between">
-                                    <div class="col-5">
-                                    </div>
-                                    <div class="col-5">
-                                        <SelectBox :label="'Taxe'" 
-                                            v-model="labor.tax" 
-                                            :options="taxes"
-                                            :name="'tax'"
-                                            :classnames="'w-100'"
-                                            :placeholder="'Taxe'"
-                                        />                                        
-                                    </div>
-                                </div>
                             </div>
                             <div class="btns mt-4 d-flex justify-content-between px-5">
                                 <button class="custom-btn btn-cancel" @click="closeModal">Annuler</button>
@@ -64,7 +51,6 @@ export default {
         const closeModal = ()=>{
             showModal.value = !showModal.value;
         }
-        const taxes = ref([]);
         const labor = ref({
             zoneIndex: '',
             ouvrageType: '',
@@ -73,11 +59,10 @@ export default {
             numberH: '',
             total: '',
             price: 1,
-            tax: '',
             qtyOuvrage: '',
         })
         const showModal = ref(false);
-        const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage, tax, taxId)=>{
+        const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId)=>{
             labor.value.zoneIndex = zoneIndex;
             labor.value.ouvrageType = ouvrageType;
             labor.value.ouvrageId = ouvrageId;
@@ -85,8 +70,6 @@ export default {
             labor.value.qtyOuvrage = '';
             labor.value.numberH = '';
             labor.value.total = '';
-            labor.value.tax = taxId;
-            taxes.value = tax;
             showModal.value = !showModal.value;
         }
         const selectLabor = ()=>{
@@ -101,13 +84,10 @@ export default {
             })
         })
         watch(() => labor.value.numberH, (newValue, oldValue) => {
-            console.log(newValue)
-            console.log(labor.value.price)
             labor.value.total = parseInt(newValue)* parseFloat(labor.value.price);
         });          
         return {
             labor,
-            taxes,
             showModal,
             closeModal,
             openModal,
