@@ -959,7 +959,7 @@ export default {
     const store = useStore();
     const router = useRouter();
     const breadcrumbs = ref(['Choix client']);
-    const devisCreateStep = ref('create_devis');
+    const devisCreateStep = ref('choose_customer');
     watchEffect(()=>{
       if(devisCreateStep.value == 'choose_customer'){
         breadcrumbs.value = ['Choix client'];
