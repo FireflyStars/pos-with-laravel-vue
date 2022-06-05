@@ -5,12 +5,16 @@ namespace App\Models;
 use App\Models\User;
 use App\Models\Affiliate;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class campagne_card extends Model
 {
-    use HasFactory;
+    
+    use HasFactory, SoftDeletes;
+
     protected $table = 'campagne_card';
+    protected $guarded = ['id'];
 
 
     public function user() 
@@ -21,6 +25,11 @@ class campagne_card extends Model
     public function affiliate() 
     {
         return $this->belongsTo(Affiliate::class);
+    }
+
+    public function campagne() 
+    {
+        return $this->hasOne(campagne::class);
     }
 
 

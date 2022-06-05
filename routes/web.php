@@ -45,6 +45,34 @@ Route::get('/get-templates', [PageElementsController::class, 'get_page_templates
 Route::get('/search', [SearchController::class, 'search']);
 Route::get('/search-append', [SearchController::class, 'search_append']);
 
+// Route::view('/test-campagne-email', 'mail.campagneCardEmail', [
+//     'campagne'          => $campagne = Campagne::find(633),
+//     'total'             => get_total($campagne),
+//     'tax'               => get_tax($campagne),
+//     'total_with_tax'    => get_total_with_tax($campagne),
+// ]);
+
+// function get_total($campagne) 
+// {
+//     $total = 0;
+//     $campagne->details->each(function($product) use ($total) {
+//         $total += $product->price * $product->qty;
+//     });
+//     return $total;
+// }
+
+// function get_tax($campagne) 
+// {
+//     $total = get_total($campagne);
+//     $taxTotal = $campagne->details->pluck('tax.taux')->sum();
+//     return $total * $taxTotal;
+// }
+
+// function get_total_with_tax($campagne) 
+// {
+//     return get_total($campagne) + get_tax($campagne);
+// }
+
 Route::post('/save-letter-pdf/{campagne}', [CompagneController::class, 'save_letter_pdf']);
 Route::post('/save-letter-settings/{campagne}', [CompagneController::class, 'save_letter_settings']);
 Route::get('/stream-letter-pdf/{campagne}', [CompagneController::class, 'stream_letter_pdf']);

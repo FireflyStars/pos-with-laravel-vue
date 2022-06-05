@@ -37,7 +37,9 @@ import {
     SAVE_CARD_PRODUCTS,
     UPDATE_CARD,
     DELETE_CARD,
-    VALIDER_CARD
+    VALIDER_CARD,
+    RESET_PRODUCTS
+
 } from '../types/types';
 
 export const cible= {
@@ -157,6 +159,9 @@ export const cible= {
             const card = state.products.card_details
             const index = card.findIndex(product => product.id == id)
             card.splice(index, 1)
+        },
+        [RESET_PRODUCTS](state) {
+            state.products = []
         }
     },
 
@@ -165,6 +170,7 @@ export const cible= {
         async [VALIDER_CARD]({ commit }) {
             try {
                 await axios.post('/valider-card') 
+                commit(RESET_PRODUCTS)
             }
             catch(e) {
                 throw e
@@ -234,10 +240,12 @@ export const cible= {
 
         },
 
-        async [STORE_PRODUCT]({ commit }, { category, qty }) {
+        async [STORE_PRODUCT]({ commit }, { category, qty, email, phone }) {
             try {
                 const { data } = await axios.post(`/store-campagne-product/${category.id}`, {
-                    qty
+                    qty,
+                    email,
+                    phone,
                 })
                 commit(SAVE_CAMPAGNE_CATEGORY, data.data)
             }

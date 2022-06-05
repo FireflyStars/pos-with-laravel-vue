@@ -43,12 +43,34 @@ class campagneCardNotification extends Notification
     public function toMail($notifiable)
     {
 
-        return (new MailMessage)->markdown('mail.courierEmail', [
+        return (new MailMessage)->markdown('mail.campagneCardEmail', [
             'campagne'          => $this->campagne,
-            'card_details'      => 
-            'url'               => rtrim(config('app.url'), '/'),
+            'total'             => $this->get_total(),
+            'tax'               => $this->get_tax(),
+            'total_with_tax'    => $this->get_total_with_tax(),
         ])
         ->subject('COMMANDE N : ' . $this->campagne->id);
+    }
+
+    private function get_total() 
+    {
+        $total = 0;
+        $this->campagne->details->each(function($product) use (&$total) {
+            $total += $product->price * $product->qty;
+        });
+        return $total;
+    }
+
+    private function get_tax() 
+    {
+        $total = $this->get_total();
+        $taxTotal = $this->campagne->details->pluck('tax.taux')->sum();
+        return $total * $taxTotal;
+    }
+
+    private function get_total_with_tax() 
+    {
+        return $this->get_total() + $this->get_tax();
     }
 
     /**

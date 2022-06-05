@@ -3,16 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CampagneCategory extends Model
+class Customer extends Model
 {
-
+    protected $table = 'customers';
+	//
     use SoftDeletes;
 	protected $dates = ['deleted_at'];
-
-
-    protected $table = 'campagne_category';
-	protected $guarded = ['id'];
 }

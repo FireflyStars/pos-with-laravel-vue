@@ -94,6 +94,7 @@ export const SAVE_CARD_PRODUCTS = 'SAVE_CARD_PRODUCTS'
 export const UPDATE_CARD = 'UPDATE_CARD'
 export const DELETE_CARD = 'DELETE_CARD'
 export const VALIDER_CARD = 'VALIDER_CARD'
+export const RESET_PRODUCTS = 'RESET_PRODUCTS'
 
 export const SIDEBAR_MODULE = 'SIDEBAR_MODULE/' //namespace
 export const SIDEBAR_SET_SLIDEIN = 'SIDEBAR_SET_SLIDEIN' //mutations

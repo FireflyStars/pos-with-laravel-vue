@@ -468,7 +468,9 @@
             store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Loading...'])
             await store.dispatch(`${[CIBLE_MODULE]}${[STORE_PRODUCT]}`, { 
                 category: category.value, 
-                qty: qtyOfProduct.value 
+                qty: qtyOfProduct.value,
+                email: email.value,
+                phone: phone.value
             })
             store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
                 type: 'success',

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Campagne;
 use App\Models\Affiliate;
 use App\Models\campagne_card;
 use Laravel\Sanctum\HasApiTokens;
@@ -68,6 +69,11 @@ class User extends \TCG\Voyager\Models\User
     public function card() 
     {
         return $this->hasMany(campagne_card::class);
+    }
+
+    public function campagnes() 
+    {
+        return $this->hasMany(Campagne::class);
     }
 
 }

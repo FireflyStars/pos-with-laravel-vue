@@ -20,6 +20,7 @@
                 :style="{
                     background: customActiveBgColor,
                     color: customActiveColor,
+                    borderColor:customActiveBgColor
                 }"
                 :textStyle="{
                     paddingRight: '1rem'
@@ -89,7 +90,7 @@
 
 <script>
 
-import { ref, computed } from "vue"
+import { ref, computed, onMounted, nextTick } from "vue"
 import useToggler from '../../composables/useToggler'
 
 export default {
@@ -141,13 +142,42 @@ export default {
         let checkboxOptions = [ ...props.checkboxOptions ]
         let selectedOptions = { ...props.selectedOptions }
 
+ 
+        onMounted(()=>{
+     
+        for(const index in checkboxOptions){
+           
+                let o =checkboxOptions[index].options;
+                nextTick(()=>{
+                    for(const i in o){
+             
+                                    if(o[i].check==false){
+                                   
+                                       return Promise.resolve({active:true});
+                                    }
+
+                            }
+
+                            return Promise.resolve({active:false})
+                }).then((obj)=>{
+                       if(obj.active==true){
+                           isActive.value=true;
+                 
+                       }
+                });
+
+         
+         
+        }
+        })
+
         const resetFilter = () => {
              checkboxOptions = [ ...props.checkboxOptions ]
 
 
             checkboxOptions.forEach((checkbox, index) => {
                 checkbox.options.forEach((option, optionIndex) => {
-                    checkboxOptions[index].options[optionIndex].check = false
+                    checkboxOptions[index].options[optionIndex].check = true
                 })
             })
 
@@ -178,8 +208,27 @@ export default {
 
         
         const validate = () => {
-            isActive.value = true
-            
+          isActive.value=false;
+            if(typeof selectedOptionItems.value[0]!="undefined"&&selectedOptionItems.value[0]!='')
+               isActive.value = true
+                loop1:
+                for(const index in checkboxOptions){
+           
+                let o =checkboxOptions[index].options;
+              
+                    for(const i in o){
+             
+                                    if(o[i].check==false){
+                                   
+                                          isActive.value=true;
+                                          break loop1;
+                                    }
+
+                            }
+
+                     
+         
+                 }
             
             emit('onChange', {checkboxOptions,selectedOptions:selectedOptionItems.value});
             
