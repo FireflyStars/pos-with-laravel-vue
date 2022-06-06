@@ -396,7 +396,7 @@
     const livraisonPrice = computed(() => {
         let total = 0
         products.value.forEach(product => {
-            total += (+productPrice(product) + +productPoids(product))*Coef.value
+            total += (+productPrice(product) + +productPoids(product)) * Coef.value
         })
         return total.toFixed(2)
     })

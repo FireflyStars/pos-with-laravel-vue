@@ -50,7 +50,14 @@ class CourierNotification extends Notification
             'filedepliant'      => $this->get_filedepliant($campagne_category),
             'fileenveloppe'      => $this->get_fileenveloppe($campagne_category),
         ])
-        ->subject($this->campagne->campagneCategory->objet);
+        ->subject($this->get_subject());
+    }
+
+    private function get_subject() 
+    {
+        $subject = str_replace('XXXXXXXX', '', $this->campagne->campagneCategory->objet);
+        $subject = $subject . ' ' . $this->campagne->id;
+        return $subject;
     }
 
     private function get_filedepliant($campagne_category) 
