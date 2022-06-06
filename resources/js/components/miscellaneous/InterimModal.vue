@@ -31,15 +31,6 @@
                                             :classnames="'w-100'"
                                         />
                                     </div>
-                                    <div class="col-5">
-                                        <SelectBox :label="'Taxe'" 
-                                            v-model="interim.tax" 
-                                            :options="taxes"
-                                            :name="'tax'"
-                                            :placeholder="'Taxe'"
-                                            :classnames="'w-100'"
-                                        />
-                                    </div>
                                 </div>
                             </div>
                             <div class="btns mt-4 d-flex justify-content-between px-5">
@@ -73,13 +64,11 @@ export default {
             showModal.value = !showModal.value;
         }
         const societes = ref([]);
-        const taxes = ref([]);
         const interim = ref({
             numberH: '',
             total: '',
             price: 1,
             societe: 0,
-            tax: 0,
             zoneIndex: 0,
             ouvrageType: '',
             ouvrageId: 0,
@@ -89,14 +78,13 @@ export default {
         onMounted(()=>{
             axios.post('/get-interim-data').then((res)=>{
                 societes.value = res.data.societes;    
-                interim.value.tax = res.data.interim.tax
                 interim.value.price = res.data.interim.price
             }).catch((error)=>{
                 console.log()
             })
         })
         const showModal = ref(false);
-        const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage, tax)=>{
+        const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
             interim.value.zoneIndex = zoneIndex;
             interim.value.ouvrageType = ouvrageType;
             interim.value.ouvrageId = ouvrageId;
@@ -106,7 +94,6 @@ export default {
             interim.value.total =  '';
             interim.value.societe =  0;
             interim.value.tax =  0;
-            taxes.value =  tax;
             showModal.value = !showModal.value;
         }  
         const selectInterim = (index)=>{
@@ -119,7 +106,6 @@ export default {
         return {
             interim,
             societes,
-            taxes,
             showModal,
             closeModal,
             openModal,

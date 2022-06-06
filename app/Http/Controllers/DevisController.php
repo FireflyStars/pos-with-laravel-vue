@@ -304,7 +304,16 @@ class DevisController extends Controller
             'updated_at'        => Carbon::now(),
         ];
 
+
         $orderId = DB::table('orders')->insertGetId($orderData);
+        $orderHistory = [
+            'user_id'       => Auth::id(),
+            'order_id'      => $orderId,
+            'order_state_id'=> 2,
+            'created_at'    => Carbon::now(),
+            'updated_at'    => Carbon::now(),
+        ];
+        DB::table('order_histories')->insert($orderHistory);
         if(
             ! Ged::where('user_id','=',Auth::id())
                 ->where('customer_id', $request->customer['id'])
@@ -328,6 +337,8 @@ class DevisController extends Controller
                 'order_id'      =>  $orderId,
                 'latitude'      =>  $request->address['lat'],
                 'longitude'     =>  $request->address['lon'],
+                // 'latitude'      =>  '10.197948495703532',
+                // 'longitude'     =>  '10.197948495703532',
                 'description'   =>  '',
                 'hauteur'       =>  $zone['height'],
                 'moyenacces_id' =>  $zone['roofAccess'],
@@ -372,6 +383,7 @@ class DevisController extends Controller
                 ];
                 $orderCatId = DB::table('order_cat')->insertGetId($installationCat);
                 foreach ($zone['installOuvrage']['ouvrages'] as $ouvrage) {
+                    
                     $ouvrageData = [
                         'order_id'          => $orderId,
                         'order_zone_id'     => $zoneId,
@@ -420,7 +432,7 @@ class DevisController extends Controller
                                 'totalprice'        => $detail['totalPrice'],
                                 'taxe_id'           => $detail['tax'],
                                 'unit_id'           => $detail['unit_id'],
-                                'priceachat'        => $detail['productPrice'],
+                                'priceachat'        => $detail['unitPrice'],
                             ];
                             if($detail['type'] == 'INTERIM'){
                                 $detail['interim_societe_id']   = $detail['societe'];
@@ -442,7 +454,7 @@ class DevisController extends Controller
                                     $detailData['orderfile'] = $orderFilePath;
                                 }
                             }
-                            DB::table('order_ouvrage_detail')->insert($detailData);
+                            return response()->json($detailData);
                         }
                     }
                 }
@@ -509,7 +521,7 @@ class DevisController extends Controller
                                 'totalprice'        => $detail['totalPrice'],
                                 'taxe_id'           => $detail['tax'],
                                 'unit_id'           => $detail['unit_id'],
-                                'priceachat'        => $detail['productPrice'],
+                                'priceachat'        => $detail['unitPrice'],
                             ];
                             if($detail['type'] == 'INTERIM'){
                                 $detail['interim_societe_id']   = $detail['societe'];
@@ -598,7 +610,7 @@ class DevisController extends Controller
                                 'totalprice'        => $detail['totalPrice'],
                                 'taxe_id'           => $detail['tax'],
                                 'unit_id'           => $detail['unit_id'],
-                                'priceachat'        => $detail['productPrice'],
+                                'priceachat'        => $detail['unitPrice'],
                             ];
                             if($detail['type'] == 'INTERIM'){
                                 $detail['interim_societe_id']   = $detail['societe'];

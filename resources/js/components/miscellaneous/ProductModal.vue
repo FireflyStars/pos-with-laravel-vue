@@ -102,7 +102,7 @@
                 , 500)
             };            
             const showModal = ref(false);
-            const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId, qtyOuvrage)=>{
+            const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId)=>{
                 data.value.zoneIndex = zoneIndex;
                 data.value.ouvrageType = ouvrageType;
                 data.value.ouvrageId = ouvrageId;
