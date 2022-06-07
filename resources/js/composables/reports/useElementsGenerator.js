@@ -5,7 +5,6 @@ import store from '../../store/store'
 import { 
     BUILDER_MODULE, 
     SAVE_PAGE,
-    GET_TEMPLATES,
     DELETE_ITEM,
     GENERATE_ELEMENT,
     UPDATE_ELEMENT_STYLES,

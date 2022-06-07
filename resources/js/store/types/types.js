@@ -120,6 +120,7 @@ export const SET_TOGGLER_ITEM = 'SET_TOGGLER_ITEM' //mutations
 //Reports module
 
 export const BUILDER_MODULE = 'BUILDER_MODULE'
+export const BUILDER_MODULE_LIST = 'BUILDER_MODULE_LIST/'
 export const GENERATE_PDF = 'GENERATE_PDF'
 export const ADD_PAGE = 'AddPage'
 export const DELETE_PAGE = 'deletePage'
@@ -130,7 +131,6 @@ export const SAVE_REPORTS = 'saveReports'
 export const SAVE_PAGE_ELEMENTS = 'SAVE_PAGE_ELEMENTS'
 export const GET_ORDER_DETAILS = 'getOrderDetails'
 export const SAVE_PAGE_ORDER = 'savePageOrder'
-export const GET_TEMPLATES = 'getTemplates'
 export const SAVE_TEMPLATES = 'saveTemplates'
 export const SAVE_REPORT_TEMPLATE = 'saveReportTemplate'
 export const SAVE_REPORT_TEMPLATES = 'saveReportTemplates'
@@ -173,4 +173,8 @@ export const SEARCH_MORE = 'searchMore'
 export const APPEND_SEARCH = 'appendSearch'
 export const INCREMENT_ITERATION = 'incrementIteration'
 export const RESET_SEARCH = 'resetSearch'
+
+export const CAMPAGNE_LIST_MODULE = 'CAMPAGNE_LIST_MODULE/'
+export const GET_CAMPAGNE_LIST = 'GET_CAMPAGNE_LIST'
+export const SAVE_CAMPAGNE_LIST = 'SAVE_CAMPAGNE_LIST'
 

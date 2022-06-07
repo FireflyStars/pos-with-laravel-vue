@@ -29,10 +29,14 @@
                             })"
                         />
 
+                        <item-list-table 
+                            :table_def="templatesList" 
+                        />
 
-                        <div class="bg-white p-3 my-4">
+                        <!-- <div class="bg-white p-3 my-4">
+
                          
-                            <table 
+                            <table
                                 class="table"
                                 :class="{ 'table-striped': templates.length }"
                             >
@@ -93,7 +97,7 @@
                                 </tbody>
                             </table>
 
-                        </div>
+                        </div>  -->
 
                     </div>
 
@@ -105,52 +109,42 @@
 
 </template>
 
-<script>
+<script setup>
 
 import { useStore } from 'vuex'
 import { onMounted, ref, nextTick, computed } from 'vue'
+import ItemListTable from '../../components/miscellaneous/ItemListTable/ItemListTable.vue';
+
 
 import { 
-    BUILDER_MODULE, 
-    GET_REPORT_TEMPLATES
+    BUILDER_MODULE_LIST, 
+    // GET_REPORT_TEMPLATES,
 } from '../../store/types/types'
 
+const store = useStore()
 
+const showcontainer = ref(false)
 
-export default {
+// const fetching = computed(() => { 
+//     const { id, value } = store.getters[`${pageBuilderList}/loading`]
+//     return id == 'fetching' && value
+// })
 
+const templatesList = computed(() => store.getters[`${BUILDER_MODULE_LIST}templateListDefinition`]);
 
-    setup() {
+// const templates = computed(() => store.getters[`${BUILDER_MODULE}/reportTemplates`])
 
-        const store = useStore()
+// const getTemplates = () => {
+//     store.dispatch(`${[BUILDER_MODULE]}/${[GET_REPORT_TEMPLATES]}`)
+// }
 
-        const showcontainer = ref(false)
-
-        const fetching = computed(() => { 
-            const { id, value } = store.getters[`${BUILDER_MODULE}/loading`]
-            return id == 'fetching' && value
-        })
-
-        const templates = computed(() => store.getters[`${BUILDER_MODULE}/reportTemplates`])
-
-        const getTemplates = () => {
-            store.dispatch(`${[BUILDER_MODULE]}/${[GET_REPORT_TEMPLATES]}`)
-        }
-
-        onMounted(() => {
-            nextTick(() => {
-                showcontainer.value = true
-                getTemplates()
-            })
-        })
+onMounted(() => {
+    nextTick(() => {
+        showcontainer.value = true
+        // getTemplates()
+    })
+})
       
-        return { 
-            fetching,
-            templates,
-            showcontainer,
-        }
-    },
-}
 
 </script>
 
