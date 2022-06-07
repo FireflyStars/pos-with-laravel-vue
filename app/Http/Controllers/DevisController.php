@@ -16,6 +16,7 @@ use App\Models\Order;
 use App\Models\OrderZone;
 use App\Models\GedCategory;
 use App\Models\GedDetail;
+use stdClass;
 
 class DevisController extends Controller
 {
@@ -94,7 +95,17 @@ class DevisController extends Controller
     public function getOrderStates(Request $request){
         return response()->json(OrderState::all());
     }
-    
+    public function getOrderStatesFormatted(Request $request){
+        $orderstates=OrderState::all();
+        $formatted_order_states=[];
+        foreach($orderstates as $od){
+            $s=new stdClass();
+            $s->id=$od->id;
+            $s->value=$od->name;
+            $formatted_order_states[]=$s;
+        }
+        return response()->json($formatted_order_states);
+    }
     /**
      * Get Ged categories
      * 

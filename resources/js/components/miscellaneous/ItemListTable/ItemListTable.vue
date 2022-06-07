@@ -17,9 +17,9 @@
             <div v-if="item.visible==true" class="list-header-col almarai_700_normal" @drop="onDrop($event,item)" @dragover="onDragOver($event,item)"  @dragleave="onDragLeave($event,item)" @dragenter="onDragEnter($event,item)" @dragover.prevent  :draggable="isDraggable(item)" @dragstart="startDrag($event,item)" @dragend="endDrag($event,item)" :class="headerClasses(item,sortings)" :style="item.css">
                 <span  @click.exact="sortby(item,false)" @click.shift="sortby(item,true)" >{{item.display_name}}</span>
                 <check-box v-if="item.type=='checkbox'" name="checkall" id="checkall" :checked="lists.length==MULTI_CHECKED.length" @change="checkboxallclicked"/>
-                <input  class="mulish_400_normal" v-if="(item.type=='string'||item.type=='html'||item.type=='price')&&item.sort" type="text" @keyup.enter="filterColumn(item,$event.target.value)"/>
+                <input  class="mulish_400_normal" v-if="(item.type=='string'||item.type=='html'||item.type=='price')&&item.filter&&typeof item.filter_options=='undefined'" type="text" @keyup.enter="filterColumn(item,$event.target.value)"/>
                 <item-list-date-filter v-if="item.type=='date'" :col="item" :name="item.id" @onDateFiltered="filterdate" ></item-list-date-filter>
-
+                <item-list-multi-filter v-if="typeof item.filter_options!='undefined'" :id="item.id" :col="item" :filteroptions="item.filter_options" :identifier="table_def.identifier"/>
             </div>
         </template>
     </div>
@@ -88,6 +88,7 @@ import { DISPLAY_LOADER, HIDE_LOADER, ITEM_LIST_FILTER, ITEM_LIST_GET_COLUMN_FIL
 import { useRouter } from 'vue-router';
 import ItemListDateFilter from './ItemListDateFilter.vue';
 import TableFilter from "../TableFilter.vue";
+import ItemListMultiFilter from "./ItemListMultiFilter.vue";
 
 export default {
 
@@ -95,7 +96,8 @@ export default {
     name: "ItemListTable",
     components:{
         ItemListDateFilter,
-        TableFilter
+        TableFilter,
+        ItemListMultiFilter
     },
     props: { 
         table_def: {
@@ -141,6 +143,15 @@ export default {
                  hidden_col.value=hiddencols.split(',');
              }
         
+
+          props.table_def.columns_def.forEach((item,i)=>{
+                                  let found=hidden_col.value.filter(id=>id==item.id);
+                             if(found.length>0){
+                                item.visible=false;
+                             }else{
+                                 item.visible=true;
+                             }
+                        });
             let sortedcols=window.localStorage.getItem(`sort_${identifier}`);
 
                 if(sortedcols!=null){
@@ -163,12 +174,7 @@ export default {
                 let cols=sortedcols.split(',');
                 cols.forEach((col,index)=>{
                         props.table_def.columns_def.forEach((item,i)=>{
-                                  let found=hidden_col.value.filter(id=>id==item.id);
-                             if(found.length>0){
-                                item.visible=false;
-                             }else{
-                                 item.visible=true;
-                             }
+                          
                             if(item.type!="checkbox"){
                                
                                 if(item.id==col){
@@ -185,7 +191,6 @@ export default {
                         table_def.columns_def=sortedcol;
             }
          
-       
             let table={
                 table_def:table_def
             }

@@ -103,6 +103,7 @@ Route::group([
     // Devis
     Route::post('/get-devis-list',[DevisController::class,'loadList'])->middleware('auth')->name('get-devis-list');
     Route::post('/get-order-states',[DevisController::class,'getOrderStates'])->middleware('auth')->name('get-order-states');
+    Route::post('/get-order-states-formatted',[DevisController::class,'getOrderStatesFormatted'])->middleware('auth')->name('get-order-states-formatted');
     Route::post('/get-ged-categories', [DevisController::class,'getGedCategories'])->middleware('auth')->name('get.ged.categories');
     Route::post('/get-all-toits', [DevisController::class,'getAllToits'])->middleware('auth')->name('get.all.toits');
     Route::post('/get-prestation-ouvrages', [DevisController::class,'getPrestationOuvrages'])->middleware('auth')->name('get.all.toits');

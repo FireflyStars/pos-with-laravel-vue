@@ -215,9 +215,12 @@ export default {
                 for(const index in checkboxOptions){
            
                 let o =checkboxOptions[index].options;
-              
                     for(const i in o){
-             
+                        if(typeof selectedOptionItems.value[0]!="undefined"&&selectedOptionItems.value[0]!=''){
+                            if(o[i].id== selectedOptionItems.value[0]){
+                                o[i].check=true;
+                            }
+                        }
                                     if(o[i].check==false){
                                    
                                           isActive.value=true;
