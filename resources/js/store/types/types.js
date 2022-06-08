@@ -124,6 +124,7 @@ export const SET_TOGGLER_ITEM = 'SET_TOGGLER_ITEM' //mutations
 
 export const BUILDER_MODULE = 'BUILDER_MODULE'
 export const BUILDER_MODULE_LIST = 'BUILDER_MODULE_LIST/'
+export const REPORTS_BUILDER_MODULE = 'REPORTS_BUILDER_MODULE/'
 export const GENERATE_PDF = 'GENERATE_PDF'
 export const ADD_PAGE = 'AddPage'
 export const DELETE_PAGE = 'deletePage'

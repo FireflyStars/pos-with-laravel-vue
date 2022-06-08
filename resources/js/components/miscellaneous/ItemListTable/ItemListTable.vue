@@ -92,7 +92,6 @@ import ItemListMultiFilter from "./ItemListMultiFilter.vue";
 
 export default {
 
-    
     name: "ItemListTable",
     components:{
         ItemListDateFilter,

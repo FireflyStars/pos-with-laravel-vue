@@ -14,11 +14,26 @@ class ReportsController extends Controller
 {
     use TemplateFormattedFiles;
     
-    public function index() 
+    public function index(Request $request) 
     {
+
+        $affiliate_id = $request->user()->affiliate->id;
+
+        $orders = Order::query()->where('affiliate_id', $affiliate_id);
+
+        if($request->has('sortby') && count($request->sortby)) 
+        {
+            $sortby = $request->sortby[0];
+            $orders = $orders->orderBy($sortby['id'], $sortby['orderby']);
+        }
+        
+        $orders = $orders
+                ->skip($request->skip ?? 0)
+                ->take($request->take ?? 15);
+
         try {
             return ReportsCollectionResource::collection(
-                Auth::user()->affiliate->orders()->paginate()
+                $orders->get()
             );
         }
         catch(Exception $e) {

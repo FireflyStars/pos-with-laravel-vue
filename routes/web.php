@@ -29,12 +29,12 @@ Route::group(['prefix' => 'admin'], function () {
 Route::post('/save-page-elements', [PageElementsController::class, 'store']);
 Route::get('/save-page-elements', [PageElementsController::class, 'store_get']);
 
-Route::get('/report-templates', [TemplatesController::class, 'index']);
+Route::post('/report-templates', [TemplatesController::class, 'index']);
 Route::post('/report-template', [TemplatesController::class, 'store']);
 Route::get('/report-template/{template}', [TemplatesController::class, 'show']);
 Route::post('/report-template/{template}', [TemplatesController::class, 'update']);
 
-Route::get('/page-reports', [ReportsController::class, 'index'])->middleware('auth');
+Route::post('/page-reports', [ReportsController::class, 'index'])->middleware('auth');
 Route::post('/page-report', [ReportsController::class, 'store']);
 Route::get('/page-report/{order}', [ReportsController::class, 'show']);
 Route::post('/page-report/{order}', [ReportsController::class, 'update']);
@@ -54,7 +54,7 @@ Route::get('/stream-flyer-pdf/{campagne}', [CompagneController::class, 'stream_f
 Route::post('/save-mail-csv/{campagne}', [CompagneController::class, 'generate_mail_csv_and_store']);
 Route::post('/validate-and-send-email/{campagne}', [CompagneController::class, 'validate_and_send_email']);
 Route::get('/download-resource-file', [CompagneController::class, 'download_resource_file']);
-Route::get('/get-campagne-list', [CampagneListController::class, 'index']);
+Route::post('/get-campagne-list', [CampagneListController::class, 'index']);
 Route::get('/get-campagne-category/{campagne}', [CompagneController::class, 'get_campagne_category']);
 Route::post('/store-campagne-product/{campagne}', [CompagneController::class, 'store_campagne_product']);
 Route::get('/get-fields-marketing/{campagne}', [CompagneController::class, 'fields_for_marketing'])->middleware('auth')->name('fields_marketing');

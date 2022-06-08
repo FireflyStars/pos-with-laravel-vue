@@ -28,11 +28,11 @@
                         <template v-slot:tout>
                             <item-list-table :table_def="campagnesList" >
                                 <template v-slot:status="{ row }">
-                                    <order-state-tag 
-                                        :order_state_id="row.status" 
+                                    <campagne-status-tag 
+                                        :status="row.status" 
                                         classes="almarai_700_normal"
                                     >
-                                    </order-state-tag>
+                                    </campagne-status-tag>
                                 </template>
                             </item-list-table>
                         </template>
@@ -57,7 +57,7 @@
 
     import { useStore } from 'vuex'
     import { ref, computed, onMounted } from 'vue'
-    import OrderStateTag from '../miscellaneous/OrderStateTag'
+    import CampagneStatusTag from '../miscellaneous/CampagneStatusTag'
     import ItemListTable from '../miscellaneous/ItemListTable/ItemListTable.vue';
 
     
@@ -75,8 +75,6 @@
     })
 
     const campagnesList = computed(() => store.getters[`${CAMPAGNE_LIST_MODULE}campagnesList`])
-
-
 
 </script>
 

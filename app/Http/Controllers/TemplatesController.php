@@ -12,11 +12,26 @@ class TemplatesController extends Controller
 {
     use TemplateFormattedFiles;
     
-    public function index() 
+    public function index(Request $request) 
     {
+
+        $data = Template::where('affiliate_id', $request->user()->id);
+
+        if($request->has('sortby') && count($request->sortby)) 
+        {
+            $sortby = $request->sortby[0];
+            $data = $data->orderBy($sortby['id'], $sortby['orderby']);
+        }
+        
+        $data = $data
+                ->skip($request->skip ?? 0)
+                ->take($request->take ?? 15)
+                ->get();
+
         return TemplateResource::collection(
-            Template::where('affiliate_id', Auth::user()->id)->get()
+            $data
         );
+        
     }
     
     public function store(Request $request) 

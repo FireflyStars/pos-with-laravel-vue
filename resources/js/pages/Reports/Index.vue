@@ -19,78 +19,29 @@
                             Reports List
                         </h4>
 
-                        <div class="bg-white p-3 my-4">
-                         
-                            <table 
-                                class="table"
-                                :class="{ 'table-striped': reports.length }"
-                            >
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Order Id</th>
-                                        <th scope="col">Affilitiate Id</th>
-                                        <th scope="col">Pages</th>
-                                        <th scope="col">Created at</th>
-                                        <th scope="col">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                        <item-list-table 
+                            :table_def="reports" 
+                        >
 
-                                    <template v-if="fetching">
-                                        <tr v-for="n in 2" :key="n">
-                                            <td v-for="col in 6" :key="col"><loader /></td>
-                                        </tr>
-                                    </template>
+                            <template v-slot:pages="{ row }">
+                                {{ row.pages.length }}
+                            </template>
 
-                                    <template v-else>
-                                        
-                                        <template v-if="reports.length">
-                                            
-                                            <tr v-for="(report, index) in reports" :key="report.id">
-                                                <td>{{ +index + 1 }}</td>
-                                                <td>{{ report.id || 'Nil' }}</td>
-                                                <td>{{ report.affiliate_id || 'Nil' }}</td>
-                                                <td>{{ report.pages.length }}</td>
-                                                <td>{{ report.created_at }}</td>
-                                                <td>
-                                                    <router-link 
-                                                        class="link"
-                                                        :to="{ 
-                                                            name: 'report-page',
-                                                            params: {
-                                                                id: report.id
-                                                            } 
-                                                        }"
-                                                    >
-                                                        {{ report.pages.length ? 'Edit Report': 'Create Report' }}
-                                                    </router-link>
-                                                </td>
-                                            </tr>
+                            <template v-slot:id="{ row }">
+                                <router-link 
+                                    class="link"
+                                    :to="{ 
+                                        name: 'report-page',
+                                        params: {
+                                            id: row.id
+                                        } 
+                                    }"
+                                >
+                                    {{ row.pages.length ? 'Edit Report': 'Create Report' }}
+                                </router-link>
+                            </template> 
 
-                                        </template>
-
-                                        <template v-else>
-                                            <tr>
-                                                <td colspan="6">No reports found!</td>
-                                            </tr>
-                                        </template>
-
-                                    </template>
-                                    
-
-                                </tbody>
-                            </table>
-
-                            <pagination 
-                                v-if="reports.length"
-                                :total="meta.total"
-                                :page="meta.current_page" 
-                                :perPage="meta.per_page"
-                                @change="changePage"
-                            />
-
-                        </div>
+                        </item-list-table>
 
                     </div>
 
@@ -102,80 +53,30 @@
 
 </template>
 
-<script>
+<script setup>
 
-import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
-import { onMounted, ref, nextTick, computed, watch } from 'vue'
+import { onMounted, ref, nextTick, computed } from 'vue'
 
 import { 
-    BUILDER_MODULE, 
-    GET_REPORTS
+    REPORTS_BUILDER_MODULE, 
 } from '../../store/types/types'
 
-import pagination from '../../components/miscellaneous/pagination'
+import ItemListTable from '../../components/miscellaneous/ItemListTable/ItemListTable.vue'
 
-export default {
+const store = useStore()
 
-    components: {
-        pagination
-    },
+const showcontainer = ref(false)
 
-    setup() {
+const reports = computed(() => store.getters[`${REPORTS_BUILDER_MODULE}reportListDefinition`])
 
-        const store = useStore()
-        const route = useRoute()
-        const router = useRouter()
-
-        const showcontainer = ref(false)
-
-        const fetching = computed(() => { 
-            const { id, value } = store.getters[`${BUILDER_MODULE}/loading`]
-            return id == 'fetching' && value
-        })
-
-        const reports = computed(() => store.getters[`${BUILDER_MODULE}/reports`])
-        const meta = computed(() => store.getters[`${BUILDER_MODULE}/meta`])
-
-        const changePage = (page) => {
-            router.replace({
-                name: 'reports',
-                query: {
-                    page
-                }
-            })
-        }
-
-        const getReports = (page = 1) => {
-            store.dispatch(`${[BUILDER_MODULE]}/${[GET_REPORTS]}`, page)
-        }
-
-        watch(route, (to) => {
-            if(to.query.page == meta.current_page) return
-            getReports(to.query.page)
-        }, {
-            flush: 'pre',
-            immediate: true,
-            deep: true
-        })
-
-        onMounted(() => {
-            nextTick(() => {
-                showcontainer.value = true
-                getReports(route.query.page || 1)
-            })
-        })
+onMounted(() => {
+    nextTick(() => {
+        showcontainer.value = true
+    })
+})
       
-        return { 
-            meta,
-            reports,
-            fetching,
-            getReports,
-            changePage,
-            showcontainer,
-        }
-    },
-}
+      
 
 </script>
 

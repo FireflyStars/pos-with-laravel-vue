@@ -39,8 +39,7 @@ export const campagneList = {
             },
             highlight_row: {
                   where: [
-                    { col: 'id', value: 10 },
-                    { col: 'nbheure', value: 6},
+                    
                   ], 
                   backgroundColor: '#f7c5af',
                   color: '#fd3b35'
@@ -48,7 +47,7 @@ export const campagneList = {
             ,
             item_route_name: "DevisDetail",// the route to trigger when a line is click 
             max_per_page: 15,//required          
-            identifier: "templates_list_all",//required
+            identifier: "campagne_list_all",//required
             filter: true,// required boolean
             rearrange_columns: true,// required boolean
             columns_def: [
@@ -137,20 +136,20 @@ export const campagneList = {
                     prefix: "",
                     suffix: "",
                 },
-                // {
-                //     id: "status",
-                //     display_name: "STATUS",
-                //     type: "component",
-                //     class: "text-center",
-                //     header_class: "",
-                //     sort: true,
-                //     filter: true,   
-                //     having: true,
-                //     prefix: "",
-                //     suffix: "",
-                //     filter_options: [],
-                //     allow_groupby: true,
-                // },
+                {
+                    id: "status",
+                    display_name: "STATUS",
+                    type: "component",
+                    class: "text-center",
+                    header_class: "",
+                    sort: true,
+                    filter: true,   
+                    having: true,
+                    prefix: "",
+                    suffix: "",
+                    filter_options: [],
+                    allow_groupby: true,
+                },
                 {
                     id: "phone",
                     display_name: "NOMBRE",
@@ -166,7 +165,7 @@ export const campagneList = {
                 {
                     id: "montant",
                     display_name: "MONTANT",
-                    type: "string",
+                    type: "price",
                     class: "text-center",
                     header_class: "",
                     sort: true,
@@ -188,7 +187,7 @@ export const campagneList = {
 
         async [GET_CAMPAGNE_LIST]({ commit }, params) {
 
-            return axios.get(`/get-campagne-list`, params).then((response) => {
+            return axios.post(`/get-campagne-list`, params).then((response) => {
                 return Promise.resolve(response)
                       
             }).catch((error) => {

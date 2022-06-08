@@ -1,12 +1,11 @@
 
 import {
-    BUILDER_MODULE_LIST,
-    GET_REPORT_TEMPLATES,
-    SAVE_REPORT_TEMPLATES
+    REPORTS_BUILDER_MODULE,
+    GET_REPORTS,
 }
 from '../types/types'
 
-export const pageBuilderList = {
+export const reportsBuilderList = {
 
     namespaced: true,
 
@@ -15,8 +14,8 @@ export const pageBuilderList = {
 
             column_filters: [],//required empty array
             store: {
-              MODULE: BUILDER_MODULE_LIST,//required
-              INIT: GET_REPORT_TEMPLATES,//required
+              MODULE: REPORTS_BUILDER_MODULE,//required
+              INIT: GET_REPORTS,//required
             },
             batch_actions: {
                 delete: {
@@ -46,7 +45,7 @@ export const pageBuilderList = {
             ,
             item_route_name: "",// the route to trigger when a line is click 
             max_per_page: 10,//required          
-            identifier: "templates_list_all",//required
+            identifier: "report_list_all",//required
             filter: true,// required boolean
             rearrange_columns: true,// required boolean
             columns_def: [
@@ -54,19 +53,19 @@ export const pageBuilderList = {
                     id: "id",
                     display_name: "",
                     type: "checkbox",
-                    class: "",
+                    class: "text-center",
                     header_class: "",
                     sort: false,
                     filter: false,
                     css: {
-                      flex: 0.5
-                    },
+                        flex: 0.5
+                    }
                 }, 
                 {
-                    id: "name",
-                    display_name: "Name",
+                    id: "template_name",
+                    display_name: "Template name",
                     type: "string",
-                    class: "",
+                    class: "text-center",
                     header_class: "",
                     sort: true,
                     filter: true,   
@@ -77,7 +76,7 @@ export const pageBuilderList = {
                     id: "affiliate",
                     display_name: "Affiliate",
                     type: "string",
-                    class: "",
+                    class: "text-center",
                     header_class: "",
                     sort: true,
                     filter: true,   
@@ -88,7 +87,7 @@ export const pageBuilderList = {
                     id: "pages",
                     display_name: "Pages",
                     type: "component",
-                    class: "",
+                    class: "text-center",
                     header_class: "",
                     sort: true,
                     filter: true,   
@@ -99,7 +98,7 @@ export const pageBuilderList = {
                     id: "created_at",
                     display_name: "Created At",
                     type: "date",
-                    class: "",
+                    class: "text-center",
                     header_class: "",
                     sort: true,
                     filter: true,   
@@ -110,7 +109,7 @@ export const pageBuilderList = {
                     id: "id",
                     display_name: "Action",
                     type: "component",
-                    class: "",
+                    class: "text-center",
                     header_class: "",
                     sort: false,
                     filter: false,   
@@ -124,21 +123,18 @@ export const pageBuilderList = {
         },
     },
     getters: {
-        templateListDefinition: state => state.table_def
+        reportListDefinition: state => state.table_def
     },
 
     actions: {
 
-        async [GET_REPORT_TEMPLATES]({ commit }, params) {
-
-
-            return axios.post(`/report-templates`, params).then((response) => {
-                return Promise.resolve(response.data);
-                      
+        async [GET_REPORTS]({ commit }, params) {
+            return axios.post(`/page-reports`, params).then((response) => {
+                console.log(response)
+                return Promise.resolve(response.data)
             }).catch((error)=>{
-                return  Promise.resolve(error);
-            });
-
+                return  Promise.resolve(error)
+            })
 
         },
 
