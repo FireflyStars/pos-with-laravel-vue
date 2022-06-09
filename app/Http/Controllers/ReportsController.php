@@ -33,7 +33,7 @@ class ReportsController extends Controller
             DB::raw('DATE_FORMAT(orders.created_at, "%Y-%m-%d") as created_at')
         );
 
-        $orders = (new TableFiltersController)->sorts($request, $orders);
+        $orders = (new TableFiltersController)->sorts($request, $orders, 'orders.id');
 
         $orders = (new TableFiltersController)->filters($request, $orders);
         

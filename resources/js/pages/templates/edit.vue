@@ -135,7 +135,7 @@ export default {
         }
 
         const toggleContainer = (value = true) => {
-            if(window?.screen?.width >= 1500) return
+            // if(window?.screen?.width >= 1500) return
             if(value == true) showRightContainer.value = true
             else showRightContainer.value = false
         }
@@ -151,10 +151,10 @@ export default {
             resetOrder()
             nextTick(async () => {
                 await getPageTemplate()
-                showcontainer.value = true
                 if(window?.screen && window?.screen?.width >= 1500) {
                     showRightContainer.value = true
                 }
+                showcontainer.value = true
             })
         })
       
@@ -201,6 +201,7 @@ $orange: orange;
     width: 793px;
     height: 1122px;
     z-index: 6;
+    margin-bottom: 2rem;
 }
 
 .right-page-container {
@@ -220,7 +221,8 @@ $orange: orange;
 }
 
 .main-view {
-    margin-top: 6rem;
+    margin-top: 7rem;
+    margin-bottom: 2rem;
 }
 
 .text {

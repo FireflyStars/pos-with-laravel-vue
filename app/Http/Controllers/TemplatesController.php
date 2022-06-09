@@ -28,7 +28,7 @@ class TemplatesController extends Controller
                     DB::raw('DATE_FORMAT(templates.created_at, "%Y-%m-%d") as created_at'),
                 );
 
-        $data = (new TableFiltersController)->sorts($request, $data);
+        $data = (new TableFiltersController)->sorts($request, $data, 'templates.id');
 
         $data = (new TableFiltersController)->filters($request, $data);
         

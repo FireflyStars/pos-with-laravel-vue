@@ -8,12 +8,16 @@ class TableFiltersController extends Controller
 {
 
     
-    public function sorts(Request $request, $data) 
+    public function sorts(Request $request, $data, $sort = 'id') 
     {
         if($request->has('sortby') && count($request->sortby)) 
         {
             $soryby = $request->sortby[0];
             $data = $data->orderBy($soryby['id'], $soryby['orderby']);
+        }
+        else 
+        {
+            $data = $data->orderBy($sort, 'asc');
         }
         return $data;
     }
@@ -55,6 +59,21 @@ class TableFiltersController extends Controller
                         }
                     }
 
+                }
+
+                elseif(isset($filter['filter_options']) && count($filter['word']) > 0)
+                {
+           
+                    if(isset($filter['having']) && $filter['having'] == true)
+                    {
+                       
+                        $data = $data->havingRaw($filter['id'] . " IN ('" . implode("','", $filter['word']) . "')");
+                    }
+                    else
+                    {
+                        $data = $data->whereIn($filter['id'], $filter['word']);
+                    }
+                
                 }
 
                 else

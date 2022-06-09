@@ -57,7 +57,7 @@ class CampagneListController extends Controller
             DB::raw('DATE_FORMAT(campagnes.created_at, "%Y-%m-%d") as created_at'),
         );
 
-        $data = (new TableFiltersController)->sorts($request, $data);
+        $data = (new TableFiltersController)->sorts($request, $data, 'campagnes.id');
         $data = (new TableFiltersController)->filters($request, $data);
 
         return $data;

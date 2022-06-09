@@ -15,7 +15,7 @@
                 
                 <page-title 
                     icon="emailing" 
-                    name="PLATEFORME MARKETING / Campagne" 
+                    name="PLATEFORME MARKETING" 
                     class="almarai_extrabold_normal_normal"
                 />
 

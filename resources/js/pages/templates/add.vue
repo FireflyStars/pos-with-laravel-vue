@@ -123,7 +123,7 @@ export default {
         }
 
         const toggleContainer = (value = true) => {
-            if(window?.screen?.width >= 1500) return
+            // if(window?.screen?.width >= 1500) return
             if(value == true) showRightContainer.value = true
             else showRightContainer.value = false
         }
@@ -228,7 +228,7 @@ $orange: orange;
 }
 
 .main-view {
-    margin-top: 6rem;
+    margin-top: 7rem;
 }
 
 .text {
