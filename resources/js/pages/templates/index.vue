@@ -15,6 +15,8 @@
 
                     <div class="col main-view container px-5">
 
+                    <div class="d-flex justify-content-between align-items-center">
+                    
                         <page-title 
                             icon="report" 
                             name="Templates" 
@@ -27,13 +29,15 @@
                         <BaseButton 
                             kind="default" 
                             title="Add New" 
-                            class="mb-4 float-end"
+                            class=""
                             @click="$router.push({
                                 name: 'templates-add'
                             })"
                         />
+                    
+                    </div>
 
-                        <div class="clearfix"></div>
+
 
                         
                         <item-list-table 
