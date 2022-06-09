@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Campagne;
 use Illuminate\Http\Request;
-use App\Http\Resources\CampagnesListResource;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\TableFiltersController;
 
 class CampagneListController extends Controller
 {
@@ -12,33 +13,55 @@ class CampagneListController extends Controller
     public function index(Request $request) 
     {
         
-        $campagne = Campagne::query();
+        $campagne = Campagne::query()->where('campagnes.affiliate_id', $request->user()->affiliate->id);
 
-        $data = $campagne->where('user_id', $request->user()->id);
+        $data = $this->get_data($campagne, $request);
         
-        if($request->has('sortby') && count($request->sortby)) 
-        {
-            $soryby = $request->sortby[0];
-            $data = $data->orderBy($soryby['id'], $soryby['orderby']);
-        }
-
-        if($request->has('column_filters') && count($request->column_filters)) 
-        {
-            // foreach($request->column_filters as $filter) 
-            // {
-            //     $data->where($filter['id'], )
-            // }
-        }
-
         $data = $data->skip($request->skip ?? 0)
         ->take($request->take ?? 15)
         ->get();
 
-        return response()->json(
-            campagnesListResource::collection($data)
-        );
+        return response()->json($data);
 
     }
 
+
+    public function user_campagnes(Request $request) 
+    {
+
+        $campagne = Campagne::query()->where('campagnes.user_id', $request->user()->id);
+
+        $data = $this->get_data($campagne, $request);
+        
+        $data = $data->skip($request->skip ?? 0)
+        ->take($request->take ?? 15)
+        ->get();
+
+        return response()->json($data);
+
+    }
+
+    private function get_data($campagne, Request $request) 
+    {
+
+        $data = $campagne->join('users', 'users.id', '=', 'campagnes.user_id')
+        ->select(
+            'campagnes.id', 
+            'campagnes.name',
+            'users.name as username',
+            'type',
+            'status',
+            'nb',
+            'montant', 
+            DB::raw('DATE_FORMAT(datelancement, "%Y-%m-%d") as datelancement'), 
+            DB::raw('DATE_FORMAT(campagnes.created_at, "%Y-%m-%d") as created_at'),
+        );
+
+        $data = (new TableFiltersController)->sorts($request, $data);
+        $data = (new TableFiltersController)->filters($request, $data);
+
+        return $data;
+
+    }
 
 }

@@ -50,10 +50,10 @@ export const reportsBuilderList = {
             rearrange_columns: true,// required boolean
             columns_def: [
                 {
-                    id: "id",
+                    id: "",
                     display_name: "",
                     type: "checkbox",
-                    class: "text-center",
+                    class: "justify-content-start",
                     header_class: "",
                     sort: false,
                     filter: false,
@@ -62,24 +62,38 @@ export const reportsBuilderList = {
                     }
                 }, 
                 {
+                    id: "id",
+                    display_name: "Order id",
+                    type: "number",
+                    class: "justify-content-start",
+                    header_class: "",
+                    sort: true,
+                    filter: false,
+                    prefix: "",
+                    suffix: "",
+                }, 
+                {
                     id: "template_name",
                     display_name: "Template name",
                     type: "string",
-                    class: "text-center",
+                    class: "justify-content-start",
                     header_class: "",
                     sort: true,
-                    filter: true,   
+                    filter: true,  
+                    having: true, 
                     prefix: "",
                     suffix: "",
+                    
                 },
                 {
                     id: "affiliate",
                     display_name: "Affiliate",
                     type: "string",
-                    class: "text-center",
+                    class: "justify-content-start",
                     header_class: "",
                     sort: true,
                     filter: true,   
+                    having: true,
                     prefix: "",
                     suffix: "",
                 },
@@ -87,10 +101,11 @@ export const reportsBuilderList = {
                     id: "pages",
                     display_name: "Pages",
                     type: "component",
-                    class: "text-center",
+                    class: "justify-content-start",
                     header_class: "",
-                    sort: true,
-                    filter: true,   
+                    sort: false,
+                    filter: false,   
+                    having: true,
                     prefix: "",
                     suffix: "",
                 },
@@ -98,18 +113,20 @@ export const reportsBuilderList = {
                     id: "created_at",
                     display_name: "Created At",
                     type: "date",
-                    class: "text-center",
+                    class: "justify-content-start",
                     header_class: "",
                     sort: true,
-                    filter: true,   
+                    filter: true,  
+                    having: false, 
                     prefix: "",
                     suffix: "",
+                    table: "orders"
                 },
                 {
                     id: "id",
                     display_name: "Action",
                     type: "component",
-                    class: "text-center",
+                    class: "justify-content-start",
                     header_class: "",
                     sort: false,
                     filter: false,   
@@ -122,6 +139,7 @@ export const reportsBuilderList = {
 
         },
     },
+
     getters: {
         reportListDefinition: state => state.table_def
     },
@@ -130,8 +148,7 @@ export const reportsBuilderList = {
 
         async [GET_REPORTS]({ commit }, params) {
             return axios.post(`/page-reports`, params).then((response) => {
-                console.log(response)
-                return Promise.resolve(response.data)
+                return Promise.resolve(response)
             }).catch((error)=>{
                 return  Promise.resolve(error)
             })

@@ -18,13 +18,12 @@ class CampagnesListResource extends JsonResource
         return [
             'id'              => $this->id,
             'name'            => $this->name,
-            'affiliate_name'  => $this->affiliate->name,
-            'expediteur'      => $this->expediteur,
-            'run'             => Carbon::parse($this->run)->format('Y-m-d'),
+            'username'        => $this->user->name,  
+            'datelancement'   => Carbon::parse($this->datelancement)->format('Y-m-d'),
             'created_at'      => Carbon::parse($this->created_at)->format('Y-m-d'),
             'type'            => $this->type,
             'status'          => $this->status,
-            'phone'           => $this->phone,
+            'nb'              => $this->nb,
             'montant'         => $this->montant,
         ];
     }

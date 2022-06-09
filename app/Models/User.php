@@ -57,7 +57,8 @@ class User extends \TCG\Voyager\Models\User
         return $roles;
     }
 
-    public function affiliate(){
+    public function affiliate()
+    {
         return $this->belongsTo(Affiliate::class);
     }
 

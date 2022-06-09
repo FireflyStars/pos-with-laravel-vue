@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use App\Models\campagne_card;
 use App\Models\CampagneCible;
 use App\Models\campagne_detail;
@@ -18,6 +19,11 @@ class Campagne extends Model
     public function affiliate()
     {
         return $this->belongsTo(Affiliate::class);
+    }
+
+    public function user() 
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function campagneCategory()

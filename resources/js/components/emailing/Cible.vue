@@ -8,7 +8,7 @@
                     <side-bar />
 
                     <div class="col main-view container">
-                        <page-title icon="emailing" name="MARKETING" class="almarai_extrabold_normal_normal"/>
+                        <page-title icon="emailing" name="PLATEFORME MARKETING" class="almarai_extrabold_normal_normal"/>
                            <transition
             enter-active-class="animate__animated animate__fadeIn"
             leave-active-class="animate__animated animate__fadeOut"
@@ -20,7 +20,7 @@
 
                 <div>
                     <h3 class="margin">
-                        <a @click="goToHome()" class="link">Marketing </a>>
+                        <a @click="goToHome()" class="link">PLATEFORME MARKETING </a>>
                         <a key="" @click="goToPrestation()" v-if="campagne_category.name" class="link" > {{ campagne_category.name }} > </a>
                         Cible
                     </h3>

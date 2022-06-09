@@ -14,7 +14,7 @@
                 
                 <page-title 
                     icon="emailing" 
-                    name="Marketing / Campagne" 
+                    name="PLATEFORME MARKETING / Campagne" 
                     class="almarai_extrabold_normal_normal"
                 />
 
@@ -36,19 +36,23 @@
                                         <h3 
                                             class="margin-align m-0"
                                         >
-                                            Marketing > Categorie XXX
+                                            PLATEFORME MARKETING > Categorie XXX
                                         </h3>
 
-                                        <base-button
-                                            prepend
-                                            class="btn btn-newrdv body_medium"
-                                            kind="warning"
-                                            title="Panier : XXX"
-                                            classes="border-0"
-                                            style="border-radius: 10px; font-size: 12px !important"
-                                        >
-                                            <icon name="clipboard" />
-                                        </base-button>
+                                        <div>
+                                             
+                                            <base-button
+                                                prepend
+                                                class="btn btn-newrdv body_medium"
+                                                kind="warning"
+                                                title="Panier : XXX"
+                                                classes="border-0"
+                                                style="border-radius: 10px; font-size: 12px !important"
+                                            >
+                                                <icon name="clipboard" />
+                                            </base-button>
+                                        </div>
+
 
                                     </div>
 

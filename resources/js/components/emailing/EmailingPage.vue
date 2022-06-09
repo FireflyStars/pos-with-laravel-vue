@@ -9,12 +9,14 @@
 
 
                     <div class="col main-view container">
-                            <page-title icon="emailing" name="MARKETING" class="almarai_extrabold_normal_normal"/>
+                            
+                            <page-title icon="emailing" name="PLATEFORME MARKETING" class="almarai_extrabold_normal_normal"/>
+                            
                             <transition
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
     >
- <div class="container" v-if="showcontainer">
+        <div class="container" v-if="showcontainer">
          
                      <transition-group tag="div" class="row flex_wrap bg-panel p-4" name="list" appear>
                 <div

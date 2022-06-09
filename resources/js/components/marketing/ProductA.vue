@@ -11,11 +11,11 @@
 
             <side-bar />
 
-            <div class="col main-view container">
+            <div class="col main-view container" style="overflow-x: hidden">
                 
                 <page-title 
                     icon="emailing" 
-                    name="Marketing / Campagne" 
+                    name="PLATEFORME MARKETING / Campagne" 
                     class="almarai_extrabold_normal_normal"
                 />
 
@@ -37,22 +37,41 @@
                                         <h3 
                                             class="margin-align m-0"
                                         >
-                                            Marketing > Categorie XXX
+                                            PLATEFORME MARKETING > Categorie XXX
                                         </h3>
 
-                                        <base-button
-                                            prepend
-                                            class="btn btn-newrdv body_medium"
-                                            kind="warning"
-                                            :title="'Panier :' + cardQuantity"
-                                            classes="border-0"
-                                            style="border-radius: 10px; font-size: 12px !important"
-                                            @click.prevent="$router.push({
-                                                name: 'marketing-card'
-                                            })"
-                                        >
-                                            <icon name="clipboard" />
-                                        </base-button>
+                                        <div class="d-flex align-items-center gap-2">
+
+                                            <base-button
+                                                prepend
+                                                class="btn btn-newrdv body_medium"
+                                                kind="warning"
+                                                title="Liste campagne"
+                                                classes="border-0"
+                                                style="border-radius: 10px; font-size: 12px !important; margin-right: 1rem; background: #FF0000"
+                                                @click.prevent="$router.push({
+                                                    name: 'marketing-list'
+                                                })"
+                                            >
+                                                <icon name="clipboard" />
+                                            </base-button>
+
+                                            <base-button
+                                                prepend
+                                                class="btn btn-newrdv body_medium"
+                                                kind="warning"
+                                                :title="'Panier :' + cardQuantity"
+                                                classes="border-0"
+                                                style="border-radius: 10px; font-size: 12px !important"
+                                                @click.prevent="$router.push({
+                                                    name: 'marketing-card'
+                                                })"
+                                            >
+                                                <icon name="clipboard" />
+                                            </base-button>
+                                        
+                                        </div>
+
 
                                     </div>
 

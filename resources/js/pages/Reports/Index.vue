@@ -13,18 +13,23 @@
                     
                     <side-bar />
 
-                    <div class="col main-view container">
-                        <h4 class="tile_h1 flex align-items-center gap-3 mt-2">
-                            <Icon name="report" width="32" height="32" />
-                            Reports List
-                        </h4>
+                    <div class="col main-view container px-5">
+
+                        <page-title 
+                            icon="report" 
+                            name="Reports" 
+                            class="almarai_extrabold_normal_normal"
+                            width="32" 
+                            height="32"
+                        />
+
 
                         <item-list-table 
                             :table_def="reports" 
                         >
 
                             <template v-slot:pages="{ row }">
-                                {{ row.pages.length }}
+                                {{ row.pages === null || row.pages === '' ? '' : JSON.parse(row.pages).length }}
                             </template>
 
                             <template v-slot:id="{ row }">
@@ -37,11 +42,12 @@
                                         } 
                                     }"
                                 >
-                                    {{ row.pages.length ? 'Edit Report': 'Create Report' }}
+                                    {{ row.pages != null && row.pages != '' ? 'Edit Report': 'Create Report' }}
                                 </router-link>
                             </template> 
 
                         </item-list-table>
+        
 
                     </div>
 
@@ -84,5 +90,10 @@ onMounted(() => {
 .main-view {
     margin-top: 6rem;
 }
+
+.table-container {
+    margin-left: 7.125rem;
+}
+
 </style>
 

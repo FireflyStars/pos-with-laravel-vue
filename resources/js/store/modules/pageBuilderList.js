@@ -72,6 +72,7 @@ export const pageBuilderList = {
                     filter: true,   
                     prefix: "",
                     suffix: "",
+                    table: 'templates',
                 },
                 {
                     id: "affiliate",
@@ -81,6 +82,7 @@ export const pageBuilderList = {
                     header_class: "",
                     sort: true,
                     filter: true,   
+                    having: true,
                     prefix: "",
                     suffix: "",
                 },
@@ -105,6 +107,7 @@ export const pageBuilderList = {
                     filter: true,   
                     prefix: "",
                     suffix: "",
+                    table: 'templates'
                 },
                 {
                     id: "id",
@@ -133,7 +136,7 @@ export const pageBuilderList = {
 
 
             return axios.post(`/report-templates`, params).then((response) => {
-                return Promise.resolve(response.data);
+                return Promise.resolve(response);
                       
             }).catch((error)=>{
                 return  Promise.resolve(error);

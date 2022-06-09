@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Template;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\TemplateFormattedFiles;
 use App\Http\Resources\TemplateResource;
+use App\Http\Controllers\TableFiltersController;
 
 class TemplatesController extends Controller
 {
@@ -15,22 +17,27 @@ class TemplatesController extends Controller
     public function index(Request $request) 
     {
 
-        $data = Template::where('affiliate_id', $request->user()->id);
+        $data = Template::where('templates.affiliate_id', $request->user()->id)
+                ->join('users', 'users.id', '=', 'templates.affiliate_id')
+                ->select(
+                    'templates.id',
+                    'templates.name',
+                    'users.name as affiliate',
+                    'pages',
+                    'page_files',
+                    DB::raw('DATE_FORMAT(templates.created_at, "%Y-%m-%d") as created_at'),
+                );
 
-        if($request->has('sortby') && count($request->sortby)) 
-        {
-            $sortby = $request->sortby[0];
-            $data = $data->orderBy($sortby['id'], $sortby['orderby']);
-        }
+        $data = (new TableFiltersController)->sorts($request, $data);
+
+        $data = (new TableFiltersController)->filters($request, $data);
         
         $data = $data
                 ->skip($request->skip ?? 0)
                 ->take($request->take ?? 15)
                 ->get();
 
-        return TemplateResource::collection(
-            $data
-        );
+        return response()->json($data);
         
     }
     

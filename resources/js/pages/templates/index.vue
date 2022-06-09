@@ -13,22 +13,29 @@
                     
                     <side-bar />
 
-                    <div class="col main-view container">
-                        <h4 class="tile_h1 flex align-items-center gap-2">
-                            <Icon name="report" width="32" height="32" />
-                            Templates List
-                        </h4>
+                    <div class="col main-view container px-5">
+
+                        <page-title 
+                            icon="report" 
+                            name="Templates" 
+                            class="almarai_extrabold_normal_normal"
+                            width="32" 
+                            height="32"
+                        />
 
 
                         <BaseButton 
                             kind="default" 
                             title="Add New" 
-                            class="mb-2 mt-3"
+                            class="mb-4 float-end"
                             @click="$router.push({
                                 name: 'templates-add'
                             })"
                         />
 
+                        <div class="clearfix"></div>
+
+                        
                         <item-list-table 
                             :table_def="templatesList" 
                         >
@@ -49,6 +56,7 @@
                                 </router-link>
                             </template>
                         </item-list-table>
+
 
                     </div>
 
@@ -88,6 +96,10 @@ onMounted(() => {
 <style lang="scss" scoped>
 
 $orange: orange;
+
+.table-container {
+    margin-left: 7.125rem;
+}
 
 .active-item {
     cursor: move;

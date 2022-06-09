@@ -15,7 +15,7 @@
                 leave-active-class="animate__animated animate_fadeOut"
             >
 
-                <div class="col main-view container">
+                <div class="col main-view container px-5">
                     
                     <page-title 
                         icon="emailing" 
@@ -23,25 +23,23 @@
                         class="almarai_extrabold_normal_normal"
                     />
 
+                        
                     <tab-pane :tabs="tabs" current='tout' class="almarai_700_normal">
 
                         <template v-slot:tout>
-                            <item-list-table :table_def="campagnesList" >
-                                <template v-slot:status="{ row }">
-                                    <campagne-status-tag 
-                                        :status="row.status" 
-                                        classes="almarai_700_normal"
-                                    >
-                                    </campagne-status-tag>
-                                </template>
-                            </item-list-table>
+                            
+                            <item-list-table :table_def="campagnesList" />
+                                
                         </template>
 
                         <template v-slot:mes_campagnes>
-                            2nd
+                            
+                            <item-list-table :table_def="campagnesUserList" />
+
                         </template>
                         
                     </tab-pane>
+
 
                 </div>
 
@@ -75,6 +73,7 @@
     })
 
     const campagnesList = computed(() => store.getters[`${CAMPAGNE_LIST_MODULE}campagnesList`])
+    const campagnesUserList = computed(() => store.getters[`${CAMPAGNE_LIST_MODULE}campagnesUserList`])
 
 </script>
 

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\TemplateFormattedFiles;
+use App\Http\Controllers\TableFiltersController;
 use App\Http\Resources\ReportsCollectionResource;
 
 class ReportsController extends Controller
@@ -19,26 +20,30 @@ class ReportsController extends Controller
 
         $affiliate_id = $request->user()->affiliate->id;
 
-        $orders = Order::query()->where('affiliate_id', $affiliate_id);
+        $orders = Order::query()->where('orders.affiliate_id', $affiliate_id)
+        ->leftJoin('reports', 'reports.order_id', '=', 'orders.id')
+        ->leftJoin('templates', 'templates.id', '=', 'reports.template_id')
+        ->leftJoin('affiliates', 'affiliates.id', '=', 'orders.affiliate_id')
+        ->select(
+            'orders.id', 
+            'templates.name as template_name',
+            'reports.id as report_id',
+            'affiliates.name as affiliate',
+            DB::raw('reports.pages as pages'),
+            DB::raw('DATE_FORMAT(orders.created_at, "%Y-%m-%d") as created_at')
+        );
 
-        if($request->has('sortby') && count($request->sortby)) 
-        {
-            $sortby = $request->sortby[0];
-            $orders = $orders->orderBy($sortby['id'], $sortby['orderby']);
-        }
+        $orders = (new TableFiltersController)->sorts($request, $orders);
+
+        $orders = (new TableFiltersController)->filters($request, $orders);
         
         $orders = $orders
                 ->skip($request->skip ?? 0)
                 ->take($request->take ?? 15);
 
-        try {
-            return ReportsCollectionResource::collection(
-                $orders->get()
-            );
-        }
-        catch(Exception $e) {
-            return $e->getMessage();
-        }
+        return response()->json(
+            $orders->get()
+        );
         
     }
 
