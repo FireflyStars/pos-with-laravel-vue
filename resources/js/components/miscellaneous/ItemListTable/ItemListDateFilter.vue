@@ -1,6 +1,6 @@
 <template>
-   <item-list-date-picker  :col="col" name="from" :disabledFromDate="disabledFromDate" :droppos="droppos" placeHolder="début" @changed="filterdate"></item-list-date-picker>
-   <item-list-date-picker  :col="col" name="to" :disabledToDate="disabledToDate" :droppos="droppos" placeHolder="fin" @changed="filterdate"></item-list-date-picker>
+   <item-list-date-picker  :col="col" :name="`from_${name}`" :disabledFromDate="disabledFromDate" :droppos="droppos" placeHolder="début" @changed="filterdate"></item-list-date-picker>
+   <item-list-date-picker  :col="col" :name="`to_${name}`" :disabledToDate="disabledToDate" :droppos="droppos" placeHolder="fin" @changed="filterdate"></item-list-date-picker>
 </template>
 
 <script>
@@ -29,10 +29,10 @@ export default {
         const disabledToDate=ref('');
         const disabledFromDate=ref('');
         const filterdate=(input)=>{
-            if(input.name=='from'){
+            if(input.name==`from_${props.name}`){
                 disabledToDate.value=input.date;
             }
-                  if(input.name=='to'){
+                  if(input.name==`to_${props.name}`){
                 disabledFromDate.value=input.date;
             }
             context.emit('onDateFiltered',{name:props.name,col:props.col,date:{'from':disabledToDate.value,'to':disabledFromDate.value}});
