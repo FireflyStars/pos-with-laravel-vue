@@ -48,7 +48,7 @@ export default {
                     required:true
                 }
     },
-  //  emits: ['onDateFiltered'],
+    emits: ['onMultiFiltered'],
     setup(props,context){
         const options = ref([]);
         const store=useStore();
@@ -74,7 +74,13 @@ export default {
             return opt;
        });
         const onupdate=(options)=>{
-            console.log(options);
+            let values=[];
+            for(const i in options){
+                if(options[i].check==true)
+                values.push(options[i].id);
+            }
+             context.emit('onMultiFiltered',{name:props.id,col:props.col,values:values});
+         
         }
         return {
             onupdate,

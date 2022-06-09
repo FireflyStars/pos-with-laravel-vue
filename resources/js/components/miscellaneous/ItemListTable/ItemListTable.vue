@@ -19,7 +19,7 @@
                 <check-box v-if="item.type=='checkbox'" name="checkall" id="checkall" :checked="lists.length==MULTI_CHECKED.length" @change="checkboxallclicked"/>
                 <input  class="mulish_400_normal" v-if="(item.type=='string'||item.type=='html'||item.type=='price')&&item.filter&&typeof item.filter_options=='undefined'" type="text" @keyup.enter="filterColumn(item,$event.target.value)"/>
                 <item-list-date-filter v-if="item.type=='date'" :col="item" :name="item.id" @onDateFiltered="filterdate" ></item-list-date-filter>
-                <item-list-multi-filter v-if="typeof item.filter_options!='undefined'" :id="item.id" :col="item" :filteroptions="item.filter_options" :identifier="table_def.identifier"/>
+                <item-list-multi-filter v-if="typeof item.filter_options!='undefined'" :id="item.id" @onMultiFiltered="multifilter" :col="item" :filteroptions="item.filter_options" :identifier="table_def.identifier"/>
             </div>
         </template>
     </div>
@@ -92,6 +92,7 @@ import ItemListMultiFilter from "./ItemListMultiFilter.vue";
 
 export default {
 
+    
     name: "ItemListTable",
     components:{
         ItemListDateFilter,
@@ -517,6 +518,9 @@ export default {
         const filterdate=(data)=>{
                  store.dispatch(`${ITEM_LIST_MODULE}${ITEM_LIST_FILTER}`,{col:data.col,word:data.date});
         }
+        const multifilter=(data)=>{
+                store.dispatch(`${ITEM_LIST_MODULE}${ITEM_LIST_FILTER}`,{col:data.col,word:data.values});
+        }
         const showGroupHeader=(val)=>{
             if(val==groupval){
                 return false;
@@ -618,7 +622,8 @@ export default {
           grouperPar,
           listGroup,
           columnSelection,
-          onTableFilerChange
+          onTableFilerChange,
+          multifilter
       }
 
     }

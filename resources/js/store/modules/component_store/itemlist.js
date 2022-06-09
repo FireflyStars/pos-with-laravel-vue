@@ -30,6 +30,14 @@ export const itemlist= {
                 if(params.filter.word.from==""&&params.filter.word.to=="")
                 params.filter.word='';
             }
+
+            if(typeof params.filter.filter_options!="undefined"){
+                if(params.filter.word.length==0)
+                    params.filter.word='';
+                
+            }
+           
+
             if(params.filter.word=='')
             state.column_filters[state.current_table_identifier]=state.column_filters[state.current_table_identifier].filter(obj=>obj.id!=params.filter.id);
       },
