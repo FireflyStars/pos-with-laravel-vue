@@ -116,7 +116,18 @@ export const devislist= {
                 table:'orders',
                 allow_groupby:true,
               },
- 
+              {
+                id:"updated_at",
+                display_name:"MIS A JOUR",
+                type:"date",
+                format:"DD/MM/YY",
+                class:"",
+                header_class:"",
+                sort:true,
+                filter:true,   
+                table:'orders',
+                allow_groupby:true,
+              },
               {
                 id:"responsable",
                 display_name:"RESPONSABLE",
@@ -127,8 +138,8 @@ export const devislist= {
                 filter:true,   
                 having:true,
                 filter_options:[
-                  { id: 1, value: 'John Doe'},
-                  { id: '', value: '--'},
+                  { id: 'John Doe', value: 'John Doe'},
+                 
       
               ],
                 prefix:"",
@@ -202,6 +213,7 @@ export const devislist= {
     actions: {
       [DEVISLIST_LOAD_TAB]:async({commit,state,dispatch},params)=>{
  
+        params.myparam=1
         return axios.post(`/get-devis-list`,params).then((response)=>{
           return  Promise.resolve(response);
                 

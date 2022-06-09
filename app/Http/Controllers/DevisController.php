@@ -72,6 +72,15 @@ class DevisController extends Controller
                         $orderList=$orderList->whereDate((isset($column_filter['table'])?$column_filter['table'].'.':'').$column_filter['id'],'<',$column_filter['word']['to']);
                     }
                 }
+            }elseif(isset($column_filter['filter_options'])&&count($column_filter['word'])>0){
+           
+                if(isset($column_filter['having'])&&$column_filter['having']==true){
+                   
+                    $orderList=$orderList->havingRaw($column_filter['id']." IN ('".implode("','",$column_filter['word'])."')");
+                }else{
+                    $orderList=$orderList->whereIn($column_filter['id'],$column_filter['word']);
+                }
+            
             }else{
                 if(isset($column_filter['having'])&&$column_filter['having']==true){
                     $orderList=$orderList->having($column_filter['id'],'LIKE','%'.$column_filter['word'].'%');
