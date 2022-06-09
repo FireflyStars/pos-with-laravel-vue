@@ -8,7 +8,31 @@
                     <side-bar />
 
                     <div class="col main-view container">
-                        <page-title icon="emailing" name="PLATEFORME MARKETING" class="almarai_extrabold_normal_normal"/>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            
+                            <page-title icon="emailing" name="PLATEFORME MARKETING" class="almarai_extrabold_normal_normal" />
+                            
+                            <base-button
+                                prepend
+                                class="btn btn-newrdv body_medium"
+                                kind="warning"
+                                title="Liste campagne"
+                                style="border: 0;
+                                border-radius: 10px; 
+                                font-size: 12px !important; 
+                                margin-right: 1rem; 
+                                background: #FF0000;"
+                                @click.prevent="$router.push({
+                                    name: 'marketing-list'
+                                })"
+                            >
+                                <icon name="clipboard" />
+                            </base-button>
+
+                        </div>
+
+
                            <transition
             enter-active-class="animate__animated animate__fadeIn"
             leave-active-class="animate__animated animate__fadeOut"
