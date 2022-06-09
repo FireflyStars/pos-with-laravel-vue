@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\User;
+use App\Models\Campagne;
 use App\Models\Affiliate;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -29,7 +30,7 @@ class campagne_card extends Model
 
     public function campagne() 
     {
-        return $this->hasOne(campagne::class);
+        return $this->hasOne(Campagne::class);
     }
 
 
