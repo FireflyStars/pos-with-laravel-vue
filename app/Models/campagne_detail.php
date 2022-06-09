@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Tax;
 use App\Models\Campagne;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,7 +20,7 @@ class campagne_detail extends Model
 
     public function tax() 
     {
-        return $this->belongsTo(tax::class, 'taxe_id');
+        return $this->belongsTo(Tax::class, 'taxe_id');
     }
 
     

@@ -20,6 +20,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CampagneListController;
 use App\Http\Controllers\PageElementsController;
 
+
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
     Route::post('/update-text-pos',[LcdtAdminController::class,'updateTextPos'])->name('update-text-pos');

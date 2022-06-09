@@ -15,29 +15,27 @@
 
                     <div class="col main-view container px-5">
 
-                    <div class="d-flex justify-content-between align-items-center">
-                    
-                        <page-title 
-                            icon="report" 
-                            name="Templates" 
-                            class="almarai_extrabold_normal_normal"
-                            width="32" 
-                            height="32"
-                        />
+                        <div class="d-flex justify-content-between align-items-center">
+                        
+                            <page-title 
+                                icon="report" 
+                                name="Templates" 
+                                class="almarai_extrabold_normal_normal"
+                                width="32" 
+                                height="32"
+                            />
 
 
-                        <BaseButton 
-                            kind="default" 
-                            title="Add New" 
-                            class=""
-                            @click="$router.push({
-                                name: 'templates-add'
-                            })"
-                        />
-                    
-                    </div>
-
-
+                            <BaseButton 
+                                kind="default" 
+                                title="Add New" 
+                                class=""
+                                @click="$router.push({
+                                    name: 'templates-add'
+                                })"
+                            />
+                        
+                        </div>
 
                         
                         <item-list-table 

@@ -81,7 +81,7 @@
                                                 <div 
                                                     class="panel-heading d-flex justify-content-between align-items-center"
                                                 >
-                                                    <h4 class="panel-title text-uppercase">votre planner</h4>
+                                                    <h4 class="panel-title text-uppercase">Votre PANIER</h4>
                                                 </div>
         
                                                 <div class="content">

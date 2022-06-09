@@ -30,7 +30,7 @@ class campagne_card extends Model
 
     public function campagne() 
     {
-        return $this->hasOne(Campagne::class);
+        return $this->hasOne(Campagne::class, 'campagne_card_id');
     }
 
 
