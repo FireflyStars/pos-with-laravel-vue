@@ -4,19 +4,41 @@ namespace App\Http\Controllers;
 
 use App\Models\Template;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\TemplateFormattedFiles;
 use App\Http\Resources\TemplateResource;
+use App\Http\Controllers\TableFiltersController;
 
 class TemplatesController extends Controller
 {
     use TemplateFormattedFiles;
     
-    public function index() 
+    public function index(Request $request) 
     {
-        return TemplateResource::collection(
-            Template::where('affiliate_id', Auth::user()->id)->get()
-        );
+
+        $data = Template::where('templates.affiliate_id', $request->user()->id)
+                ->join('users', 'users.id', '=', 'templates.affiliate_id')
+                ->select(
+                    'templates.id',
+                    'templates.name',
+                    'users.name as affiliate',
+                    'pages',
+                    'page_files',
+                    DB::raw('DATE_FORMAT(templates.created_at, "%Y-%m-%d") as created_at'),
+                );
+
+        $data = (new TableFiltersController)->sorts($request, $data, 'templates.id');
+
+        $data = (new TableFiltersController)->filters($request, $data);
+        
+        $data = $data
+                ->skip($request->skip ?? 0)
+                ->take($request->take ?? 15)
+                ->get();
+
+        return response()->json($data);
+        
     }
     
     public function store(Request $request) 

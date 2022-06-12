@@ -44,6 +44,7 @@ class campagneCardNotification extends Notification
     {
 
         return (new MailMessage)->markdown('mail.campagneCardEmail', [
+            'url'               => rtrim(config('app.url'), '/'),
             'campagne'          => $this->campagne,
             'total'             => $this->get_total(),
             'tax'               => $this->get_tax(),

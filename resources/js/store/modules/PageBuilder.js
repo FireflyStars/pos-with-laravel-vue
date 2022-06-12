@@ -7,6 +7,7 @@ const { formatFormData, getFormattedPages, saveReportPages } = useReports()
 
 import { 
 
+    BUILDER_MODULE,
     SAVE_META,
     UPDATE_SVG,
     SET_LOADING,
@@ -17,7 +18,6 @@ import {
     GET_ORDER_DETAILS, 
     SAVE_PAGE_ORDER, 
     SAVE_TEMPLATES,
-    GET_TEMPLATES,
     ASSIGN_TEMPLATE,
     SET_ACTIVE_TEMPLATE,
     SET_ACTIVE_PAGE,
@@ -65,7 +65,9 @@ export const PageBuilder = {
             id: '',
             value: ''
         },
-        meta: {}
+        meta: {},
+
+        
     },
 
     getters: {
@@ -231,17 +233,6 @@ export const PageBuilder = {
             }
         },
 
-        async [GET_TEMPLATES]({ commit, getters }) {
-            try {
-                const { data } = await axios.get(`/get-templates`)
-                await commit(SAVE_TEMPLATES, data)
-                if(getters.templates.length) commit(SET_ACTIVE_TEMPLATE)
-            }
-            catch(e) {
-                throw e
-            }
-        },
-
         async [SAVE_REPORT_TEMPLATE]({ commit }, { pages, orderId, name }) {
 
             commit(SET_LOADING, { id: 'save-template' })
@@ -336,18 +327,6 @@ export const PageBuilder = {
 
         },
 
-        async [GET_REPORT_TEMPLATES]({ commit }) {
-            try {
-                commit(SET_LOADING, { id: 'fetching' })
-                const { data } = await axios.get('/report-templates')
-                commit(SAVE_REPORT_TEMPLATES, data.data || [])
-                commit(SET_LOADING, { id: 'fetching', value: false })
-            }
-            catch(e) {
-                commit(SET_LOADING, { id: 'fetching', value: false })
-                throw e
-            }
-        },
 
         async [GET_REPORTS]({ commit }, page = 1) {
             try {

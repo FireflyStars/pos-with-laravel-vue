@@ -61,13 +61,13 @@ class CompagneController extends Controller
         $card->update(['status' => 'VALIDER']);
         $card->delete();
 
-        $this->notify_admin($campagne);
+        $this->notify_admin($campagne, $user);
 
         return response()->json("Campagne valider completed");
 
     }
 
-    private function notify_admin($campagne) 
+    private function notify_admin($campagne, $user) 
     {
         $emails = $this->get_settings_email();
         $emails = explode(',', $emails);
@@ -77,6 +77,9 @@ class CompagneController extends Controller
             Notification::route('mail', $mail)
             ->notify(new campagneCardNotification($campagne));
         }
+
+        $user->notify(new campagneCardNotification($campagne));
+
     }
 
     private function get_card_campagne_products($card) 
@@ -85,8 +88,6 @@ class CompagneController extends Controller
                         ->get()
                         ->except([
                             'campagne_card_id',
-                            'email', 
-                            'phone'
                         ])
                         ->toArray();
     }
@@ -165,7 +166,7 @@ class CompagneController extends Controller
                 ]);
             }
 
-            $campagne->cardDetail()->create([
+            $detail = $campagne->cardDetail()->create([
                 'campagne_card_id' => $card->id,      
                 'productname'      => $campagne->name,
                 'description'      => $campagne->text,
@@ -178,7 +179,24 @@ class CompagneController extends Controller
                 'phone'            => $request->phone,   
             ]);
 
+            if(!is_null($campagne->fields)) 
+            {
+                $file_path = '/' . 'mail-files/' . $campagne->id . '_product_' . date('dmY-hi') . '.pdf';
+                $fields = $this->fields_for_marketing($campagne, $request, $request->email, $request->phone);
+    
+                $data = array(
+                    'fields'           => $fields,
+                    'image2'           => $campagne->imagetemplate,
+                    'image'            => $campagne->urlimageflyerpage1,
+                    'campagneCategory' => $campagne
+                );
+    
+                $this->save_campagne_pdf_file($file_path, $data);
+                $detail->update([ 'urlpdf' => $file_path ]);
+            }
+
         }
+
 
         $affiliate = $user->affiliate->load('tax');
         $campagne = $campagne->load('cardDetail');
@@ -198,7 +216,6 @@ class CompagneController extends Controller
             ['data' => compact('affiliate', 'campagne')]
         );
     }
-
 
     public function save_letter_pdf(Request $request, Campagne $campagne) 
     {
@@ -275,7 +292,11 @@ class CompagneController extends Controller
 
     }
 
-    public function save_flyer_pdf(Campagne $campagne) 
+    /**
+     * @param campagne|campagneCategory $campagne
+    */
+
+    public function save_flyer_pdf($campagne, $data) 
     {
 
         $pdf = App::make('dompdf.wrapper');
@@ -289,7 +310,7 @@ class CompagneController extends Controller
         $pdf->loadView(
             'flyer', [
                 'builder' => (new page_builder),
-                'data'    => (new CompagneController)->fields_Pdf($campagne->id)
+                'data'    => $data
             ]
         );
 
@@ -303,6 +324,30 @@ class CompagneController extends Controller
 
         return response()->json($file_path, 200);
     }
+
+    /**
+     * @param campagne|campagneCategory $campagne
+    */
+    public function save_campagne_pdf_file($path, $data) 
+    {
+        $pdf = App::make('dompdf.wrapper');
+
+        $pdf->setOptions([
+            'enable_php'           => true,
+            'isRemoteEnabled'      => true, 
+            'isHtml5ParserEnabled' => true, 
+        ]);
+
+        $pdf->loadView(
+            'product', [
+                'builder' => (new page_builder),
+                'data'    => $data
+            ]
+        );
+
+        $pdf->save(Storage::path('public') . $path);
+    }
+
 
     public function stream_flyer_pdf(Campagne $campagne) 
     {
@@ -330,7 +375,7 @@ class CompagneController extends Controller
     {
 
         $this->generate_mail_csv_and_store($campagne);
-        $this->save_flyer_pdf($campagne);
+        $this->save_flyer_pdf($campagne, $this->fields_Pdf($campagne->id));
         $this->save_letter_pdf($request, $campagne);    
 
         $emails = $this->get_settings_email();
@@ -341,7 +386,7 @@ class CompagneController extends Controller
             ->notify(new CourierNotification($campagne));
         }
 
-        // Notification::send($emails, new CourierNotification($campagne));
+        $request->user()->notify(new CourierNotification($campagne));
 
         $campagne->update([
             'status' => 'CAMPAGNE ENVOYEE'
@@ -1824,12 +1869,12 @@ class CompagneController extends Controller
         ];
     }
 
-    public function fields_for_marketing(CampagneCategory $campagne, Request $request) 
+    public function fields_for_marketing(CampagneCategory $campagne, Request $request, $email = null, $telephone = null) 
     {
 
         $affiliate = $request->user()->affiliate;
-        $telephone = $affiliate->telephone;
-        $email = $affiliate->reponseaddress;
+        if(is_null($telephone)) $telephone = $affiliate->telephone;
+        if(is_null($email)) $email = $affiliate->reponseaddress;
 
         if(is_null($campagne->fields)) 
         {
@@ -1837,7 +1882,7 @@ class CompagneController extends Controller
             $fields['Telephone_agence']['value'] = $telephone;
             $fields['Email_agence']['value'] = $email;
             $fields['personalize'] = false;
-            return response()->json($fields);
+            return $fields;
         }
 
         $fields = json_decode($campagne->fields);
@@ -1849,7 +1894,7 @@ class CompagneController extends Controller
         $fields->Nom_dirigeant->value=$affiliate->namedirector;
         $fields->Email_dirigeant->value=$affiliate->email;
         $fields->Portable_dirigeant->value=$affiliate->mobile;
-        $fields->Adresse_agence->value=$affiliate->address.' '.$affiliate->address2;
+        $fields->Adresse_agence->value=$affiliate->address . ' ' . $affiliate->address2;
         $fields->CP_agence->value=$affiliate->postcod;
         $fields->Ville_agence->value=$affiliate->city;
         $fields->Page_agence->value=$affiliate->urlagence;
@@ -1858,7 +1903,7 @@ class CompagneController extends Controller
         $fields->file_depliant=$filedepliant;
         $fields->personalize = true;
 
-        return response()->json($fields);
+        return $fields;
 
     }
 

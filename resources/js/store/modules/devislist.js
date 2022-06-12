@@ -1,26 +1,25 @@
-import {  DEVISLIST_LOAD_TAB, DEVISLIST_SET_LIST, DEVIS_LIST_MODULE, DISPLAY_LOADER, GET_DEVIS_LIST_DEF, HIDE_LOADER, LOADER_MODULE } from "../types/types";
+import {  DEVISLIST_LOAD_TAB, DEVISLIST_SET_LIST, DEVIS_LIST_MODULE, GET_DEVIS_LIST_DEF } from "../types/types";
 
 export const devislist= {
     namespaced:true,
     state: {
       
         table_def: {
-            column_filters:[],//required empty array
             store:{
               MODULE:DEVIS_LIST_MODULE,//required
               INIT:DEVISLIST_LOAD_TAB,//required
             },
-            batch_actions:{
-                delete:{
-                    name:"Delete",
-                    route:"DeleteDevis",
-                    type:'button'
-                },
-                status:{
-                    type:"component"
-                }
+            // batch_actions:{
+            //     delete:{
+            //         name:"Delete",
+            //         route:"DeleteDevis",
+            //         type:'button'
+            //     },
+            //     status:{
+            //         type:"component"
+            //     }
 
-            },
+            // },
             translations:{
               group_item:'devis',
               group_items:'devis',
@@ -30,8 +29,8 @@ export const devislist= {
             },
             highlight_row:{
                   where:[
-                    {col:'id',value:10},
-                    {col:'nbheure',value:6},
+                    {col:'id',value:10}, //conditions to higlight rows
+                    {col:'nbheure',value:6}
                   ], 
                   backgroundColor:'#f7c5af',
                   color:'#fd3b35'
@@ -117,7 +116,18 @@ export const devislist= {
                 table:'orders',
                 allow_groupby:true,
               },
- 
+              {
+                id:"updated_at",
+                display_name:"MIS A JOUR",
+                type:"date",
+                format:"DD/MM/YY",
+                class:"",
+                header_class:"",
+                sort:true,
+                filter:true,   
+                table:'orders',
+                allow_groupby:true,
+              },
               {
                 id:"responsable",
                 display_name:"RESPONSABLE",
@@ -127,7 +137,11 @@ export const devislist= {
                 sort:true,
                 filter:true,   
                 having:true,
-                filter_options:[],
+                filter_options:[
+                  { id: 'John Doe', value: 'John Doe'},
+                 
+      
+              ],
                 prefix:"",
                 suffix:"",
                 allow_groupby:true,
@@ -140,7 +154,7 @@ export const devislist= {
                 header_class:"",
                 sort:true,
                 filter:true,   
-                filter_options:[],
+                filter_options:'/get-order-states-formatted',
                 allow_groupby:true,
               },
               {
@@ -149,7 +163,6 @@ export const devislist= {
                 type:"html",
                 class:"",
                 header_class:"",
-                event:null,
                 sort:true,
                 filter:true,   
                 having:true,
@@ -200,6 +213,7 @@ export const devislist= {
     actions: {
       [DEVISLIST_LOAD_TAB]:async({commit,state,dispatch},params)=>{
  
+        params.myparam=1
         return axios.post(`/get-devis-list`,params).then((response)=>{
           return  Promise.resolve(response);
                 

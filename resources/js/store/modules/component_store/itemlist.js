@@ -1,4 +1,4 @@
-import { ITEM_LIST_FILTER, ITEM_LIST_GET_COLUMN_FILTERS, ITEM_LIST_GET_CURRENT, ITEM_LIST_GET_LISTS, ITEM_LIST_GET_TABLES, ITEM_LIST_LOAD_MORE, ITEM_LIST_SET_PAGINATION, ITEM_LIST_SELECT_CURRENT, ITEM_LIST_SET_CURRENT, ITEM_LIST_SET_LIST, ITEM_LIST_SET_TABLEDEF, ITEM_LIST_TABLEDEF, ITEM_LIST_TABLE_RELOAD, ITEM_LIST_UPDATE_FILTER, ITEM_LIST_GET_IDENTIFIER, ITEM_LIST_MULTI_CHECK, ITEM_LIST_MULTI_UNCHECK, ITEM_LIST_RESET_MULTI_CHECK, ITEM_LIST_MULTI_CHECK_LISTS, ITEM_LIST_SET_TABLE, ITEM_LIST_SORT, ITEM_LIST_SET_SORT, ITEM_LIST_GET_SORT } from "../../types/types";
+import { ITEM_LIST_FILTER, ITEM_LIST_GET_COLUMN_FILTERS, ITEM_LIST_GET_CURRENT, ITEM_LIST_GET_LISTS, ITEM_LIST_GET_TABLES, ITEM_LIST_LOAD_MORE, ITEM_LIST_SET_PAGINATION, ITEM_LIST_SELECT_CURRENT, ITEM_LIST_SET_CURRENT, ITEM_LIST_SET_LIST, ITEM_LIST_SET_TABLEDEF, ITEM_LIST_TABLEDEF, ITEM_LIST_TABLE_RELOAD, ITEM_LIST_UPDATE_FILTER, ITEM_LIST_GET_IDENTIFIER, ITEM_LIST_MULTI_CHECK, ITEM_LIST_MULTI_UNCHECK, ITEM_LIST_RESET_MULTI_CHECK, ITEM_LIST_MULTI_CHECK_LISTS, ITEM_LIST_SET_TABLE, ITEM_LIST_SORT, ITEM_LIST_SET_SORT, ITEM_LIST_GET_SORT, ITEM_LIST_LOAD_FILTER_OPTIONS, ITEM_LIST_SET_FILTER_OPTIONS, ITEM_LIST_GET_FILTER_OPTIONS } from "../../types/types";
 
 export const itemlist= {
     namespaced:true,
@@ -12,6 +12,7 @@ export const itemlist= {
         sortby:{},
         currentchecked:{},
         multichecked:{},
+        filteroptions:{},
     },
     mutations: {
       [ITEM_LIST_UPDATE_FILTER]:(state,params)=>{
@@ -29,6 +30,14 @@ export const itemlist= {
                 if(params.filter.word.from==""&&params.filter.word.to=="")
                 params.filter.word='';
             }
+
+            if(typeof params.filter.filter_options!="undefined"){
+                if(params.filter.word.length==0)
+                    params.filter.word='';
+                
+            }
+           
+
             if(params.filter.word=='')
             state.column_filters[state.current_table_identifier]=state.column_filters[state.current_table_identifier].filter(obj=>obj.id!=params.filter.id);
       },
@@ -87,9 +96,29 @@ export const itemlist= {
 
        
 
+      },
+      [ITEM_LIST_SET_FILTER_OPTIONS]:(state,params)=>{
+ 
+        if(typeof state.filteroptions[state.current_table_identifier]=="undefined")
+        state.filteroptions[state.current_table_identifier]={};
+        if(typeof state.filteroptions[state.current_table_identifier][params.id]=="undefined"){
+            state.filteroptions[state.current_table_identifier][params.id]=[];
+        }
+        state.filteroptions[state.current_table_identifier][params.id]=params.data;
+
       }
     },
     actions: {
+        [ITEM_LIST_LOAD_FILTER_OPTIONS]:({commit,state,dispatch},params)=>{
+
+            return axios.post(params.url,{}).then((response)=>{
+              commit(ITEM_LIST_SET_FILTER_OPTIONS,{data:response.data,id:params.id});
+             
+                    
+            }).catch((error)=>{
+             
+            });
+        },
         [ITEM_LIST_SELECT_CURRENT]:({commit,state,dispatch},params)=>{
             commit(`${ITEM_LIST_SET_CURRENT}`,params);
 
@@ -161,5 +190,6 @@ export const itemlist= {
         [ITEM_LIST_GET_IDENTIFIER]:state=>state.current_table_identifier,
         [ITEM_LIST_MULTI_CHECK_LISTS]:state=>state.multichecked,
         [ITEM_LIST_GET_SORT]:state=>state.sortby,
+        [ITEM_LIST_GET_FILTER_OPTIONS]:state=>state.filteroptions,
     }
 }

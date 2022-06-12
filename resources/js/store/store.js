@@ -32,7 +32,13 @@ import { toggler as TOGGLER_MODULE } from "./modules/toggler"
 
 import { PageBuilder as BUILDER_MODULE } from "./modules/PageBuilder"
 
+import { pageBuilderList as BUILDER_MODULE_LIST } from "./modules/pageBuilderList"
+
+import { reportsBuilderList as REPORTS_BUILDER_MODULE } from "./modules/reportsBuilderList"
+
 import { mainSearch as SEARCH_MODULE } from './modules/mainSearch'
+
+import { campagneList as CAMPAGNE_LIST_MODULE } from './modules/campagneList'
 
 
 export default createStore({
@@ -48,7 +54,10 @@ export default createStore({
         FILTER_MODULE,
         TOGGLER_MODULE,
         BUILDER_MODULE,
+        BUILDER_MODULE_LIST,
         SEARCH_MODULE,
         CUSTOMERLIST_MODULE,
+        CAMPAGNE_LIST_MODULE,
+        REPORTS_BUILDER_MODULE
     }
 });

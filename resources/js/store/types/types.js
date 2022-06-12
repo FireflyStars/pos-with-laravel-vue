@@ -31,6 +31,9 @@ export const ITEM_LIST_SET_TABLE='ITEM_LIST_SET_TABLE'//mutations
 export const ITEM_LIST_SORT='ITEM_LIST_SORT'//action
 export const ITEM_LIST_SET_SORT='ITEM_LIST_SET_SORT'//action
 export const ITEM_LIST_GET_SORT='ITEM_LIST_GET_SORT'//getters
+export const ITEM_LIST_GET_FILTER_OPTIONS='ITEM_LIST_GET_FILTER_OPTIONS'//getters
+export const ITEM_LIST_LOAD_FILTER_OPTIONS='ITEM_LIST_LOAD_FILTER_OPTIONS'//action
+export const ITEM_LIST_SET_FILTER_OPTIONS='ITEM_LIST_SET_FILTER_OPTIONS'//mutations
 
 //ORDER STATE TAG
 export const ORDERSTATETAG_MODULE='ORDERSTATETAG_MODULE/';
@@ -120,6 +123,8 @@ export const SET_TOGGLER_ITEM = 'SET_TOGGLER_ITEM' //mutations
 //Reports module
 
 export const BUILDER_MODULE = 'BUILDER_MODULE'
+export const BUILDER_MODULE_LIST = 'BUILDER_MODULE_LIST/'
+export const REPORTS_BUILDER_MODULE = 'REPORTS_BUILDER_MODULE/'
 export const GENERATE_PDF = 'GENERATE_PDF'
 export const ADD_PAGE = 'AddPage'
 export const DELETE_PAGE = 'deletePage'
@@ -130,7 +135,6 @@ export const SAVE_REPORTS = 'saveReports'
 export const SAVE_PAGE_ELEMENTS = 'SAVE_PAGE_ELEMENTS'
 export const GET_ORDER_DETAILS = 'getOrderDetails'
 export const SAVE_PAGE_ORDER = 'savePageOrder'
-export const GET_TEMPLATES = 'getTemplates'
 export const SAVE_TEMPLATES = 'saveTemplates'
 export const SAVE_REPORT_TEMPLATE = 'saveReportTemplate'
 export const SAVE_REPORT_TEMPLATES = 'saveReportTemplates'
@@ -173,4 +177,9 @@ export const SEARCH_MORE = 'searchMore'
 export const APPEND_SEARCH = 'appendSearch'
 export const INCREMENT_ITERATION = 'incrementIteration'
 export const RESET_SEARCH = 'resetSearch'
+
+export const CAMPAGNE_LIST_MODULE = 'CAMPAGNE_LIST_MODULE/'
+export const GET_CAMPAGNE_LIST = 'GET_CAMPAGNE_LIST'
+export const GET_USER_CAMPAGNE_LIST = 'GET_USER_CAMPAGNE_LIST'
+export const SAVE_CAMPAGNE_LIST = 'SAVE_CAMPAGNE_LIST'
 

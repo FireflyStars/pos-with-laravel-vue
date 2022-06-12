@@ -13,87 +13,52 @@
                     
                     <side-bar />
 
-                    <div class="col main-view container">
-                        <h4 class="tile_h1 flex align-items-center gap-2">
-                            <Icon name="report" width="32" height="32" />
-                            Templates List
-                        </h4>
+                    <div class="col main-view container px-5">
+
+                        <div class="d-flex justify-content-between align-items-center">
+                        
+                            <page-title 
+                                icon="report" 
+                                name="Templates" 
+                                class="almarai_extrabold_normal_normal"
+                                width="32" 
+                                height="32"
+                            />
 
 
-                        <BaseButton 
-                            kind="default" 
-                            title="Add New" 
-                            class="mb-2 mt-3"
-                            @click="$router.push({
-                                name: 'templates-add'
-                            })"
-                        />
-
-
-                        <div class="bg-white p-3 my-4">
-                         
-                            <table 
-                                class="table"
-                                :class="{ 'table-striped': templates.length }"
-                            >
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Affilitiate Id</th>
-                                        <th scope="col">Pages</th>
-                                        <th scope="col">Created at</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                    <template v-if="fetching">
-                                        <tr v-for="n in 2" :key="n">
-                                            <td v-for="col in 6" :key="col"><loader /></td>
-                                        </tr>
-                                    </template>
-
-                                    <template v-else>
-                                        
-                                        <template v-if="templates.length">
-                                            
-                                            <tr v-for="(template, index) in templates" :key="template.id">
-                                                <td>{{ +index + 1 }}</td>
-                                                <td>{{ template.name }}</td>
-                                                <td>{{ template.affiliate_id || 'Nil' }}</td>
-                                                <td>{{ template.pages.length }}</td>
-                                                <td>{{ template.created_at }}</td>
-                                                <td>
-                                                    <router-link 
-                                                        class="link"
-                                                        :to="{ 
-                                                            name: 'templates-edit',
-                                                            params: {
-                                                                id: template.id
-                                                            } 
-                                                        }"
-                                                    >
-                                                        Edit
-                                                    </router-link>
-                                                </td>
-                                            </tr>
-
-                                        </template>
-
-                                        <template v-else>
-                                            <tr>
-                                                <td colspan="6">No templates found!</td>
-                                            </tr>
-                                        </template>
-
-                                    </template>
-                                    
-
-                                </tbody>
-                            </table>
-
+                            <BaseButton 
+                                kind="default" 
+                                title="Add New" 
+                                class=""
+                                @click="$router.push({
+                                    name: 'templates-add'
+                                })"
+                            />
+                        
                         </div>
+
+                        
+                        <item-list-table 
+                            :table_def="templatesList" 
+                        >
+                            <template v-slot:pages="{ row }">
+                                {{ row.pages.length }}
+                            </template>
+                            <template v-slot:id="{ row }">
+                                <router-link 
+                                    class="link"
+                                    :to="{ 
+                                        name: 'templates-edit',
+                                        params: {
+                                            id: row.id
+                                        } 
+                                    }"
+                                >
+                                    Edit
+                                </router-link>
+                            </template>
+                        </item-list-table>
+
 
                     </div>
 
@@ -105,58 +70,38 @@
 
 </template>
 
-<script>
+<script setup>
 
 import { useStore } from 'vuex'
 import { onMounted, ref, nextTick, computed } from 'vue'
+import ItemListTable from '../../components/miscellaneous/ItemListTable/ItemListTable.vue'
 
 import { 
-    BUILDER_MODULE, 
-    GET_REPORT_TEMPLATES
+    BUILDER_MODULE_LIST, 
 } from '../../store/types/types'
 
+const store = useStore()
 
+const showcontainer = ref(false)
 
-export default {
+const templatesList = computed(() => store.getters[`${BUILDER_MODULE_LIST}templateListDefinition`]);
 
-
-    setup() {
-
-        const store = useStore()
-
-        const showcontainer = ref(false)
-
-        const fetching = computed(() => { 
-            const { id, value } = store.getters[`${BUILDER_MODULE}/loading`]
-            return id == 'fetching' && value
-        })
-
-        const templates = computed(() => store.getters[`${BUILDER_MODULE}/reportTemplates`])
-
-        const getTemplates = () => {
-            store.dispatch(`${[BUILDER_MODULE]}/${[GET_REPORT_TEMPLATES]}`)
-        }
-
-        onMounted(() => {
-            nextTick(() => {
-                showcontainer.value = true
-                getTemplates()
-            })
-        })
+onMounted(() => {
+    nextTick(() => {
+        showcontainer.value = true
+    })
+})
       
-        return { 
-            fetching,
-            templates,
-            showcontainer,
-        }
-    },
-}
 
 </script>
 
 <style lang="scss" scoped>
 
 $orange: orange;
+
+.table-container {
+    margin-left: 7.125rem;
+}
 
 .active-item {
     cursor: move;

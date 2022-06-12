@@ -17,7 +17,9 @@ use App\Http\Controllers\LcdtAdminController;
 use App\Http\Controllers\LcdtFrontController;
 use App\Http\Controllers\TemplatesController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CampagneListController;
 use App\Http\Controllers\PageElementsController;
+
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
@@ -28,12 +30,12 @@ Route::group(['prefix' => 'admin'], function () {
 Route::post('/save-page-elements', [PageElementsController::class, 'store']);
 Route::get('/save-page-elements', [PageElementsController::class, 'store_get']);
 
-Route::get('/report-templates', [TemplatesController::class, 'index']);
+Route::post('/report-templates', [TemplatesController::class, 'index']);
 Route::post('/report-template', [TemplatesController::class, 'store']);
 Route::get('/report-template/{template}', [TemplatesController::class, 'show']);
 Route::post('/report-template/{template}', [TemplatesController::class, 'update']);
 
-Route::get('/page-reports', [ReportsController::class, 'index'])->middleware('auth');
+Route::post('/page-reports', [ReportsController::class, 'index'])->middleware('auth');
 Route::post('/page-report', [ReportsController::class, 'store']);
 Route::get('/page-report/{order}', [ReportsController::class, 'show']);
 Route::post('/page-report/{order}', [ReportsController::class, 'update']);
@@ -45,34 +47,6 @@ Route::get('/get-templates', [PageElementsController::class, 'get_page_templates
 Route::get('/search', [SearchController::class, 'search']);
 Route::get('/search-append', [SearchController::class, 'search_append']);
 
-// Route::view('/test-campagne-email', 'mail.campagneCardEmail', [
-//     'campagne'          => $campagne = Campagne::find(633),
-//     'total'             => get_total($campagne),
-//     'tax'               => get_tax($campagne),
-//     'total_with_tax'    => get_total_with_tax($campagne),
-// ]);
-
-// function get_total($campagne) 
-// {
-//     $total = 0;
-//     $campagne->details->each(function($product) use ($total) {
-//         $total += $product->price * $product->qty;
-//     });
-//     return $total;
-// }
-
-// function get_tax($campagne) 
-// {
-//     $total = get_total($campagne);
-//     $taxTotal = $campagne->details->pluck('tax.taux')->sum();
-//     return $total * $taxTotal;
-// }
-
-// function get_total_with_tax($campagne) 
-// {
-//     return get_total($campagne) + get_tax($campagne);
-// }
-
 Route::post('/save-letter-pdf/{campagne}', [CompagneController::class, 'save_letter_pdf']);
 Route::post('/save-letter-settings/{campagne}', [CompagneController::class, 'save_letter_settings']);
 Route::get('/stream-letter-pdf/{campagne}', [CompagneController::class, 'stream_letter_pdf']);
@@ -81,6 +55,8 @@ Route::get('/stream-flyer-pdf/{campagne}', [CompagneController::class, 'stream_f
 Route::post('/save-mail-csv/{campagne}', [CompagneController::class, 'generate_mail_csv_and_store']);
 Route::post('/validate-and-send-email/{campagne}', [CompagneController::class, 'validate_and_send_email']);
 Route::get('/download-resource-file', [CompagneController::class, 'download_resource_file']);
+Route::post('/get-campagne-list', [CampagneListController::class, 'index']);
+Route::post('/get-user-campagne-list', [CampagneListController::class, 'user_campagnes']);
 Route::get('/get-campagne-category/{campagne}', [CompagneController::class, 'get_campagne_category']);
 Route::post('/store-campagne-product/{campagne}', [CompagneController::class, 'store_campagne_product']);
 Route::get('/get-fields-marketing/{campagne}', [CompagneController::class, 'fields_for_marketing'])->middleware('auth')->name('fields_marketing');
@@ -129,6 +105,7 @@ Route::group([
     // Devis
     Route::post('/get-devis-list',[DevisController::class,'loadList'])->middleware('auth')->name('get-devis-list');
     Route::post('/get-order-states',[DevisController::class,'getOrderStates'])->middleware('auth')->name('get-order-states');
+    Route::post('/get-order-states-formatted',[DevisController::class,'getOrderStatesFormatted'])->middleware('auth')->name('get-order-states-formatted');
     Route::post('/get-ged-categories', [DevisController::class,'getGedCategories'])->middleware('auth')->name('get.ged.categories');
     Route::post('/get-all-toits', [DevisController::class,'getAllToits'])->middleware('auth')->name('get.all.toits');
     Route::post('/get-prestation-ouvrages', [DevisController::class,'getPrestationOuvrages'])->middleware('auth')->name('get.all.toits');

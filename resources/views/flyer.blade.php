@@ -36,11 +36,6 @@
 
 <body>
 
-    {{-- background-image: url('{{ //$backgroundImage }}'); 
-    background-size: cover; 
-    background-position: top; 
-    background-repeat: no-repeat; --}}
-
     @for ($i = 0; $i < 2; $i++)
         
         @php
@@ -86,10 +81,10 @@
 
                             @if ((strtolower($key) != "email_egence" && strtolower($key) != "telephone_agence"))
                                 {{ $item['value'] }}
-                                @elseif (strtolower($key) == 'email_agence')
-                                    {{ $item['value'] }}
-                                @elseif (strtolower($key) == 'telephone_agence')
-                                    {{ $item['value'] }}    
+                            @elseif (strtolower($key) == 'email_agence')
+                                {{ $item['value'] }}
+                            @elseif (strtolower($key) == 'telephone_agence')
+                                {{ $item['value'] }}    
                             @endif
 
                         </span>

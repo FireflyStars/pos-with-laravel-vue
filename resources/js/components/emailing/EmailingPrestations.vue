@@ -9,7 +9,28 @@
                     <side-bar />
 
                     <div class="col main-view container">
-                            <page-title icon="emailing" name="MARKETING" class="almarai_extrabold_normal_normal"/>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <page-title icon="emailing" name="PLATEFORME MARKETING" class="almarai_extrabold_normal_normal" />
+                            <base-button
+                                prepend
+                                class="btn btn-newrdv body_medium"
+                                kind="warning"
+                                title="Liste campagne"
+                                style="border: 0;
+                                border-radius: 10px; 
+                                font-size: 12px !important; 
+                                margin-right: 4rem; 
+                                background: #FF0000;"
+                                @click.prevent="$router.push({
+                                    name: 'marketing-list'
+                                })"
+                            >
+                                <icon name="clipboard" />
+                            </base-button>
+                        </div>
+                          
+                          
                           <transition
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
@@ -18,13 +39,13 @@
 
             <div v-if="myvar == true">
                 <h3 class="margin" v-for="data in campagnedata" :key="data.id">
-                    <a @click="goToHome()" class="link">Marketing</a> >
+                    <a @click="goToHome()" class="link">PLATEFORME MARKETING</a> >
                     {{ data.name }}
                 </h3>
             </div>
             <div v-if="myvar2 == true && myvar == false">
                 <h3 class="color margin" v-for="item in title" :key="item.id">
-                    <a @click="goToHome()" class="link">Marketing</a> >
+                    <a @click="goToHome()" class="link">PLATEFORME MARKETING</a> >
                     {{ item.name }}
                     
                 </h3>

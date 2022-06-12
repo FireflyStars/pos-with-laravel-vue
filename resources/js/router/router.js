@@ -150,6 +150,16 @@ const router = createRouter({
                 authenticated: true,
             },
         },
+
+        {
+            path: "/marketing/campagnes-list",
+            name: "marketing-list",
+            props: true,
+            component: () => import("../components/marketing/List.vue"),
+            meta: {
+                authenticated: true,
+            },
+        },
         
         {
             path: "/marketing/product-card",
