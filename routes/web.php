@@ -56,6 +56,7 @@ Route::post('/save-mail-csv/{campagne}', [CompagneController::class, 'generate_m
 Route::post('/validate-and-send-email/{campagne}', [CompagneController::class, 'validate_and_send_email']);
 Route::get('/download-resource-file', [CompagneController::class, 'download_resource_file']);
 Route::post('/get-campagne-list', [CampagneListController::class, 'index']);
+Route::get('/get-campagne-details/{campagne}', [CompagneController::class, 'campagne_details']);
 Route::post('/get-user-campagne-list', [CampagneListController::class, 'user_campagnes']);
 Route::get('/get-campagne-category/{campagne}', [CompagneController::class, 'get_campagne_category']);
 Route::post('/store-campagne-product/{campagne}', [CompagneController::class, 'store_campagne_product']);

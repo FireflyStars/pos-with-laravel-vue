@@ -1,53 +1,59 @@
 <template>
     
-    <div class="container-fluid h-100 bg-color">
+    <router-view v-slot="{ Component }">
+        
+        <div class="container-fluid h-100 bg-color">
 
-        <main-header />
+            <main-header />
 
-        <div 
-            class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100"
-        >
-
-            <side-bar />
-
-            <transition
-                enter-active-class="animate__animated animate_fadeIn"
-                leave-active-class="animate__animated animate_fadeOut"
+            <div 
+                class="row d-flex align-content-stretch align-items-stretch flex-row hmax main-view-wrap" style="z-index:100"
             >
 
-                <div class="col main-view container px-5">
-                    
-                    <page-title 
-                        icon="emailing" 
-                        name="PLATEFORME MARKETING" 
-                        class="almarai_extrabold_normal_normal"
-                    />
+                <side-bar />
 
+                <transition
+                    enter-active-class="animate__animated animate_fadeIn"
+                    leave-active-class="animate__animated animate_fadeOut"
+                >
+
+                    <div class="col main-view container px-5">
                         
-                    <tab-pane :tabs="tabs" current='tout' class="almarai_700_normal">
+                        <page-title 
+                            icon="emailing" 
+                            name="PLATEFORME MARKETING" 
+                            class="almarai_extrabold_normal_normal"
+                        />
 
-                        <template v-slot:tout>
                             
-                            <item-list-table :table_def="campagnesList" />
+                        <tab-pane :tabs="tabs" current='tout' class="almarai_700_normal">
+
+                            <template v-slot:tout>
                                 
-                        </template>
+                                <item-list-table :table_def="campagnesList" />
+                                    
+                            </template>
 
-                        <template v-slot:mes_campagnes>
+                            <template v-slot:mes_campagnes>
+                                
+                                <item-list-table :table_def="campagnesUserList" />
+
+                            </template>
                             
-                            <item-list-table :table_def="campagnesUserList" />
+                        </tab-pane>
 
-                        </template>
-                        
-                    </tab-pane>
+                        <component :is="Component" />
 
+                    </div>
 
-                </div>
+                </transition>    
 
-            </transition>    
+            </div>
 
         </div>
 
-    </div>
+    </router-view>
+
 
 </template>
 

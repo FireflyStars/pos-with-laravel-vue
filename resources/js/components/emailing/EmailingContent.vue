@@ -81,7 +81,7 @@
                         class="col-lg-6 apercu d-table position-relative"
                     >
                         <h6>APERÇU</h6>
-                        <div style="  position: absolute;transform: scale(0.75);left: 1.5rem;transform-origin: top left;" class="bg-panel" >
+                        <div style="position: absolute;transform: scale(0.75);left: 1.5rem;transform-origin: top left;" class="bg-panel" >
                         <img  style="width:210mm; height:297mm;"
                             v-if="imageurl!=''"
                             :src="`/storage/${imageurl}`" 

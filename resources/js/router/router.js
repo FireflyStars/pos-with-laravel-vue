@@ -141,6 +141,7 @@ const router = createRouter({
                 }
             ]
         },
+
         {
             path: "/marketing/producta/:categoryId",
             name: "marketing-producta",
@@ -159,6 +160,15 @@ const router = createRouter({
             meta: {
                 authenticated: true,
             },
+            children: [{
+                path: "/marketing/campagnes-detail/:id",
+                name: "marketing-campagne-details",
+                props: true,
+                component: () => import("../components/marketing/ListDetail.vue"),
+                meta: {
+                    authenticated: true,
+                },
+            }]
         },
         
         {

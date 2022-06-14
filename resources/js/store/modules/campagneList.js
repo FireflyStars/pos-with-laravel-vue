@@ -198,7 +198,7 @@ export const campagneList = {
             batch_actions: table.batch_actions,
             translations: table.translations,
             highlight_row: table.highlight_row,
-            item_route_name: "",// the route to trigger when a line is click 
+            item_route_name: "marketing-campagne-details",// the route to trigger when a line is click 
             max_per_page: 15,//required          
             identifier: "campagne_list_all",//required
             filter: true,// required boolean

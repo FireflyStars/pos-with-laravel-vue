@@ -98,15 +98,15 @@ import { ref, onMounted, nextTick } from "vue";
 import SideBar from "../layout/SideBar";
 import Main from "../Main.vue";
 import useCompanies from "../../composables/companies";
+import { useRoute } from 'vue-router'
 
 export default {
-
-
 
     components: {
         Main,
         SideBar,
     },
+
     props: {
         id: {
             // This is the param that we are putting in our url
@@ -123,11 +123,15 @@ export default {
         },
     },
     setup(props, context) {
+        
         const showcontainer = ref(false);
+
+        const route = useRoute()
+
         onMounted(() => {
             nextTick(() => {
-
-                showcontainer.value = true;
+                showcontainer.value = true
+                getTemplates(props.id, route.query.redirect)
             });
         });
         const {
@@ -143,7 +147,6 @@ export default {
             SubCategory,
         } = useCompanies();
 
-        onMounted(getTemplates(props.id));
         // onMounted(SubCategory(props.id));
 
 
@@ -160,12 +163,12 @@ export default {
             myvar2,
         };
     },
+
     methods: {
+
         goToHome() {
             this.$router.push("/emailing");
         },
-
-
 
     }
 

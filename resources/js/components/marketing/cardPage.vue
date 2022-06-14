@@ -11,13 +11,31 @@
             <side-bar />
 
             <div class="col main-view container" style="overflow-x: hidden">
-                
-                <page-title 
-                    icon="emailing" 
-                    name="PLATEFORME MARKETING" 
-                    class="almarai_extrabold_normal_normal"
-                />
 
+                <div class="d-flex justify-content-between align-items-center">
+                    
+                    <page-title 
+                        icon="emailing" 
+                        name="PLATEFORME MARKETING" 
+                        class="almarai_extrabold_normal_normal"
+                    />
+
+                    <base-button
+                        prepend
+                        class="btn btn-newrdv body_medium"
+                        kind="warning"
+                        title="RETOUR VERS PRODUIT"
+                        classes="border-0"
+                        style="border-radius: 10px; font-size: 12px !important; margin-right: 5rem;"
+                        @click.prevent="$router.push({
+                            name: 'emailing'
+                        })"
+                    >
+                        <icon name="clipboard" />
+                    </base-button>
+
+                </div>
+                
                 <transition
                     enter-active-class="animate__animated animate_fadeIn"
                     leave-active-class="animate__animated animate_fadeOut"
@@ -253,7 +271,7 @@
                                                                 type="text"
                                                                 placeholder="1 Rue Jean-Baptiste Colbert"
                                                                 name="adresse"
-                                                                :value="affiliate?.address + ' ' + affiliate?.address2"
+                                                                :value="address"
                                                                 disabled
                                                             />
             
@@ -265,7 +283,7 @@
                                                                 type="text"
                                                                 id="inputPassword"
                                                                 name="adresse2"
-                                                                :value="affiliate?.postcod + ' ' + affiliate?.city"
+                                                                :value="postcode"
                                                                 disabled
                                                             />
                                                         </div>
@@ -387,6 +405,18 @@
 
     const products = computed(() => store.getters[`${CIBLE_MODULE}products`]?.card_details || [])
     const affiliate = computed(() => store.getters[`${CIBLE_MODULE}products`]?.affiliate || {})
+
+    const address = computed(() => {
+        const address = affiliate.value?.address || ''
+        const address2 = affiliate.value?.address2 || ''
+        return `${address} ${address2}`
+    })
+
+    const postcode = computed(() => {
+        const code = affiliate.value?.postcod || ''
+        const city = affiliate.value?.city || ''
+        return `${code} ${city}`
+    })
 
     const commandreClasses = computed(() => {
         let classes = 'border-0 '
