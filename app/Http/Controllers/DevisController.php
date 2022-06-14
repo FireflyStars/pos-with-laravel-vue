@@ -690,8 +690,24 @@ class DevisController extends Controller
         $devis['totalHoursForInterim'] = 0;
         $devis['totalPriceWithoutMarge'] = 0;
         $devis['totalUnitPrice'] = 0;
+        $devis['customer'] = DB::table('customers')
+                                ->join('group', 'group.id', '=', 'customers.group_id')
+                                ->join('taxes', 'taxes.id', '=', 'customers.taxe_id')
+                                ->where('customers.id', $order->customer_id)
+                                ->select('customers.id', 'customers.company', 'customers.raisonsociale', 'group.Name as group'
+                                    ,DB::raw('CONCAT(customers.firstname, " ",customers.name) as contact'),
+                                    'customers.telephone', 'taxes.Name as tax', 'taxes.id as taxId', 'customers.naf', 'customers.siret'
+                                )->first();
+        $devis['address'] = DB::table('addresses')
+                                // ->join('group', 'group.id', '=', 'customers.group_id')
+                                ->where('id', $order->address_id)
+                                ->select(
+                                    'id', 'address1', 'address2', 'postcode', 'city', 'address_type_id as addressType',
+                                    'latitude as lat', 'longitude as lon'
+                                )->first();
         foreach ($zones as $zoneIndex => $zone) {
             // get ged details
+            $devis['zones'][$zoneIndex]['edit'] = false;
             $categories = DB::table('ged_categories')->select('id', 'name')->get();
             foreach ($categories as $item) {
                 $ged_details = DB::table('ged_details')
@@ -699,31 +715,37 @@ class DevisController extends Controller
                                 ->where('ged_category_id', $item->id)
                                 ->where('user_id', Auth::id())
                                 ->select(DB::raw('CONCAT(CONCAT(storage_path, "/",file), ".", type) as url'), 'human_readable_filename as fileName')->get();
-                foreach ($ged_details as $ged_detail) {
-                    $item->items[] = [
-                        'base64data'    => getenv('APP_URL').Storage::url($ged_detail->url),
-                        'fileName'      => $ged_detail->fileName,
-                        'url'           => $ged_detail->fileName,
-                    ];
+                if($ged_details){
+                    foreach ($ged_details as $ged_detail) {
+                        $item->items[] = [
+                            'base64data'    => getenv('APP_URL').Storage::url($ged_detail->url),
+                            'fileName'      => $ged_detail->fileName,
+                            'url'           => $ged_detail->fileName,
+                        ];
+                    }
+                }else{
+                    $item->items = [];
                 }
             }
+            $devis['zones'][$zoneIndex]['gedCats'] = $categories->groupBy('id');
             //installation ouvrages;
+            
             $orderCat = DB::table('order_cat')->where('order_zone_id', $zone->id)->where('type', 'INSTALLATION')->first();
+            $devis['zones'][$zoneIndex]['installOuvrage']['sumUnitPrice'] = 0;
+            $devis['zones'][$zoneIndex]['installOuvrage']['name'] = 'Installation';
+            $devis['zones'][$zoneIndex]['installOuvrage']['edit'] = false;
+            $devis['zones'][$zoneIndex]['installOuvrage']['totalHour'] = 0;
+            $devis['zones'][$zoneIndex]['installOuvrage']['sumUnitPrice'] = 0;
+            $devis['zones'][$zoneIndex]['installOuvrage']['totalPrice'] = 0;
             if($orderCat){
-                $devis['zones'][$zoneIndex]['installOuvrage']['sumUnitPrice'] = 0;
                 $devis['zones'][$zoneIndex]['installOuvrage']['name'] = $orderCat->name;
-                $devis['zones'][$zoneIndex]['installOuvrage']['edit'] = false;
-                $devis['zones'][$zoneIndex]['installOuvrage']['totalHour'] = 0;
-                $devis['zones'][$zoneIndex]['installOuvrage']['sumUnitPrice'] = 0;
-                $devis['zones'][$zoneIndex]['installOuvrage']['totalPrice'] = 0;
-    
                 $ouvrages = DB::table('order_ouvrages')
                     ->where('order_id', $devisId)
                     ->where('order_zone_id', $zone->id)
                     ->where('order_cat_id', $orderCat->id)
                     ->where('type', 'INSTALLATION')
                     ->select(
-                        'id', 'unit_id', 'qty', 'ouvrage_prestation_id', 'ouvrage_metier_id', 'ouvrage_toit_id', 
+                        'id', 'unit_id as unit', 'qty', 'ouvrage_prestation_id', 'ouvrage_metier_id', 'ouvrage_toit_id', 
                         'textcustomer as customerText','textchargeaffaire', 'textoperator', 'name', 
                         'type', 'qty', 'qty as qtyOuvrage'
                     )
@@ -731,6 +753,7 @@ class DevisController extends Controller
                 foreach ($ouvrages as $ouvrage) {
                     $ouvrage->avg = 0;
                     $ouvrage->total = 0;
+                    $ouvrage->totalHour = 0;
                     $ouvrage->totalWithoutMarge = 0;
                     $tasks = DB::table('order_ouvrage_task')->where('order_ouvrage_id', $ouvrage->id)->select('id', 'name', 'textcustomer as customerText', 'textchargeaffaire', 'textoperator', 'unit_id', 'qty')->get();
                     foreach ($tasks as $task) {
@@ -741,9 +764,12 @@ class DevisController extends Controller
                             'order_ouvrage_detail.id', 'order_ouvrage_detail.numberh as numberH', 'order_ouvrage_detail.qty', 'order_ouvrage_detail.unit_id',
                             'order_ouvrage_detail.type', 'units.code as unit', 'order_ouvrage_detail.product_id as productId', 'order_ouvrage_detail.name', 'order_ouvrage_detail.taxe_id as tax', 'order_ouvrage_detail.unitprice as unitPrice', 'order_ouvrage_detail.datesupplier',
                             'order_ouvrage_detail.supplier_id as supplierId', 'order_ouvrage_detail.interim_societe_id as societe', 'order_ouvrage_detail.marge', 'order_ouvrage_detail.totalPrice', 'order_ouvrage_detail.qty', 'order_ouvrage_detail.qty as qtyOuvrage', 'order_ouvrage_detail.original', 'order_ouvrage_detail.original_number_h as originalNumberH',
-                            'order_ouvrage_detail.original_qty as originalDetailQty'
+                            'order_ouvrage_detail.original_qty as originalDetailQty', 'order_ouvrage_detail.orderfile as base64'
                         )->get();                    
                         foreach ($details as $detail) {
+                            if($detail->type == 'Commande ELISP'){
+                                $detail->base64 = getenv('APP_URL').Storage::url($detail->url);
+                            }
                             $detail->totalPriceWithoutMarge = 0;
                             $ouvrage->totalHour += $detail->numberH;
                             $devis['totalPriceForInstall'] += $detail->totalPrice;
@@ -754,26 +780,28 @@ class DevisController extends Controller
                     $devis['zones'][$zoneIndex]['installOuvrage']['totalHour'] = $ouvrage->totalHour;
                     $ouvrage->tasks = $tasks;
                 }
-                $devis['zones']['installOuvrage']['ouvrages'] = $ouvrages;
+                $devis['zones'][$zoneIndex]['installOuvrage']['ouvrages'] = $ouvrages;
+            }else{
+                $devis['zones'][$zoneIndex]['installOuvrage']['ouvrages'] = [];
             }
 
             //securite ouvrages;
             $orderCat = DB::table('order_cat')->where('order_zone_id', $zone->id)->where('type', 'SECURITE')->first();
+            $devis['zones'][$zoneIndex]['securityOuvrage']['sumUnitPrice'] = 0;
+            $devis['zones'][$zoneIndex]['securityOuvrage']['name'] = 'Sécurité';
+            $devis['zones'][$zoneIndex]['securityOuvrage']['edit'] = false;
+            $devis['zones'][$zoneIndex]['securityOuvrage']['totalHour'] = 0;
+            $devis['zones'][$zoneIndex]['securityOuvrage']['sumUnitPrice'] = 0;
+            $devis['zones'][$zoneIndex]['securityOuvrage']['totalPrice'] = 0;
             if($orderCat){
-                $devis['zones'][$zoneIndex]['securityOuvrage']['sumUnitPrice'] = 0;
                 $devis['zones'][$zoneIndex]['securityOuvrage']['name'] = $orderCat->name;
-                $devis['zones'][$zoneIndex]['securityOuvrage']['edit'] = false;
-                $devis['zones'][$zoneIndex]['securityOuvrage']['totalHour'] = 0;
-                $devis['zones'][$zoneIndex]['securityOuvrage']['sumUnitPrice'] = 0;
-                $devis['zones'][$zoneIndex]['securityOuvrage']['totalPrice'] = 0;
-    
                 $ouvrages = DB::table('order_ouvrages')
                     ->where('order_id', $devisId)
                     ->where('order_zone_id', $zone->id)
                     ->where('order_cat_id', $orderCat->id)
                     ->where('type', 'SECURITE')
                     ->select(
-                        'id', 'unit_id', 'qty', 'ouvrage_prestation_id', 'ouvrage_metier_id', 'ouvrage_toit_id', 
+                        'id', 'unit_id as unit', 'qty', 'ouvrage_prestation_id', 'ouvrage_metier_id', 'ouvrage_toit_id', 
                         'textcustomer as customerText','textchargeaffaire', 'textoperator', 'name', 
                         'type', 'qty', 'qty as qtyOuvrage'
                     )
@@ -781,6 +809,7 @@ class DevisController extends Controller
                 foreach ($ouvrages as $ouvrage) {
                     $ouvrage->avg = 0;
                     $ouvrage->total = 0;
+                    $ouvrage->totalHour = 0;
                     $ouvrage->totalWithoutMarge = 0;
                     $tasks = DB::table('order_ouvrage_task')->where('order_ouvrage_id', $ouvrage->id)->select('id', 'name', 'textcustomer as customerText', 'textchargeaffaire', 'textoperator', 'unit_id', 'qty')->get();
                     foreach ($tasks as $task) {
@@ -791,11 +820,13 @@ class DevisController extends Controller
                             'order_ouvrage_detail.id', 'order_ouvrage_detail.numberh as numberH', 'order_ouvrage_detail.qty', 'order_ouvrage_detail.unit_id',
                             'order_ouvrage_detail.type', 'units.code as unit', 'order_ouvrage_detail.product_id as productId', 'order_ouvrage_detail.name', 'order_ouvrage_detail.taxe_id as tax', 'order_ouvrage_detail.unitprice as unitPrice', 'order_ouvrage_detail.datesupplier',
                             'order_ouvrage_detail.supplier_id as supplierId', 'order_ouvrage_detail.interim_societe_id as societe', 'order_ouvrage_detail.marge', 'order_ouvrage_detail.totalPrice', 'order_ouvrage_detail.qty', 'order_ouvrage_detail.qty as qtyOuvrage', 'order_ouvrage_detail.original', 'order_ouvrage_detail.original_number_h as originalNumberH',
-                            'order_ouvrage_detail.original_qty as originalDetailQty'
+                            'order_ouvrage_detail.original_qty as originalDetailQty', 'order_ouvrage_detail.orderfile as base64'
                         )->get();                    
                         foreach ($details as $detail) {
+                            if($detail->type == 'Commande ELISP'){
+                                $detail->base64 = getenv('APP_URL').Storage::url($detail->url);
+                            }
                             $detail->totalPriceWithoutMarge = 0;
-                            $detail->base64 = '';
                             $ouvrage->totalHour += $detail->numberH;
                             $devis['totalPriceForInstall'] += $detail->totalPrice;
                             $devis['zones'][$zoneIndex]['installOuvrage']['totalPrice'] += $detail->totalPrice;
@@ -805,26 +836,28 @@ class DevisController extends Controller
                     $devis['zones'][$zoneIndex]['securityOuvrage']['totalHour'] = $ouvrage->totalHour;
                     $ouvrage->tasks = $tasks;
                 }
-                $devis['zones']['securityOuvrage']['ouvrages'] = $ouvrages;
+                $devis['zones'][$zoneIndex]['securityOuvrage']['ouvrages'] = $ouvrages;
+            }else{
+                $devis['zones'][$zoneIndex]['securityOuvrage']['ouvrages'] = [];
             }
             
             //prestation ouvrages;
-            $orderCat = DB::table('order_cat')->where('order_zone_id', $zone->id)->where('type', 'SECURITE')->first();
+            $orderCat = DB::table('order_cat')->where('order_zone_id', $zone->id)->where('type', 'PRESTATION')->first();
+            $devis['zones'][$zoneIndex]['prestationOuvrage']['sumUnitPrice'] = 0;
+            $devis['zones'][$zoneIndex]['prestationOuvrage']['name'] = 'PRESTATION';
+            $devis['zones'][$zoneIndex]['prestationOuvrage']['edit'] = false;
+            $devis['zones'][$zoneIndex]['prestationOuvrage']['totalHour'] = 0;
+            $devis['zones'][$zoneIndex]['prestationOuvrage']['sumUnitPrice'] = 0;
+            $devis['zones'][$zoneIndex]['prestationOuvrage']['totalPrice'] = 0;
             if($orderCat){
-                $devis['zones'][$zoneIndex]['prestationOuvrage']['sumUnitPrice'] = 0;
                 $devis['zones'][$zoneIndex]['prestationOuvrage']['name'] = $orderCat->name;
-                $devis['zones'][$zoneIndex]['prestationOuvrage']['edit'] = false;
-                $devis['zones'][$zoneIndex]['prestationOuvrage']['totalHour'] = 0;
-                $devis['zones'][$zoneIndex]['prestationOuvrage']['sumUnitPrice'] = 0;
-                $devis['zones'][$zoneIndex]['prestationOuvrage']['totalPrice'] = 0;
-    
                 $ouvrages = DB::table('order_ouvrages')
                     ->where('order_id', $devisId)
                     ->where('order_zone_id', $zone->id)
                     ->where('order_cat_id', $orderCat->id)
                     ->where('type', 'SECURITE')
                     ->select(
-                        'id', 'unit_id', 'qty', 'ouvrage_prestation_id', 'ouvrage_metier_id', 'ouvrage_toit_id', 
+                        'id', 'unit_id as unit', 'qty', 'ouvrage_prestation_id', 'ouvrage_metier_id', 'ouvrage_toit_id', 
                         'textcustomer as customerText','textchargeaffaire', 'textoperator', 'name', 
                         'type', 'qty', 'qty as qtyOuvrage'
                     )
@@ -832,6 +865,7 @@ class DevisController extends Controller
                 foreach ($ouvrages as $ouvrage) {
                     $ouvrage->avg = 0;
                     $ouvrage->total = 0;
+                    $ouvrage->totalHour = 0;
                     $ouvrage->totalWithoutMarge = 0;
                     $tasks = DB::table('order_ouvrage_task')->where('order_ouvrage_id', $ouvrage->id)->select('id', 'name', 'textcustomer as customerText', 'textchargeaffaire', 'textoperator', 'unit_id', 'qty')->get();
                     foreach ($tasks as $task) {
@@ -842,9 +876,12 @@ class DevisController extends Controller
                             'order_ouvrage_detail.id', 'order_ouvrage_detail.numberh as numberH', 'order_ouvrage_detail.qty', 'order_ouvrage_detail.unit_id',
                             'order_ouvrage_detail.type', 'units.code as unit', 'order_ouvrage_detail.product_id as productId', 'order_ouvrage_detail.name', 'order_ouvrage_detail.taxe_id as tax', 'order_ouvrage_detail.unitprice as unitPrice', 'order_ouvrage_detail.datesupplier',
                             'order_ouvrage_detail.supplier_id as supplierId', 'order_ouvrage_detail.interim_societe_id as societe', 'order_ouvrage_detail.marge', 'order_ouvrage_detail.totalPrice', 'order_ouvrage_detail.qty', 'order_ouvrage_detail.qty as qtyOuvrage', 'order_ouvrage_detail.original', 'order_ouvrage_detail.original_number_h as originalNumberH',
-                            'order_ouvrage_detail.original_qty as originalDetailQty'
+                            'order_ouvrage_detail.original_qty as originalDetailQty', 'order_ouvrage_detail.orderfile as base64'
                         )->get();                    
                         foreach ($details as $detail) {
+                            if($detail->type == 'Commande ELISP'){
+                                $detail->base64 = getenv('APP_URL').Storage::url($detail->url);
+                            }
                             $detail->totalPriceWithoutMarge = 0;
                             $ouvrage->totalHour += $detail->numberH;
                             $devis['totalPriceForInstall'] += $detail->totalPrice;
@@ -855,9 +892,23 @@ class DevisController extends Controller
                     $devis['zones'][$zoneIndex]['prestationOuvrage']['totalHour'] = $ouvrage->totalHour;
                     $ouvrage->tasks = $tasks;
                 }
-                $devis['zones']['prestationOuvrage']['ouvrages'] = $ouvrages;
+                $devis['zones'][$zoneIndex]['prestationOuvrage']['ouvrages'] = $ouvrages;
+            }else{
+                $devis['zones'][$zoneIndex]['prestationOuvrage']['ouvrages'] = [];
             }
         }
-        return response()->json($devis);
+        $categories = DB::table('ged_categories')->select('id', 'name')->get();
+        foreach ($categories as $item) {
+            $item->items = [];
+        }
+        return response()->json(
+            [
+                'devis' => $devis,
+                'gedCats'   => $categories->groupBy('id'),
+                'units'     => DB::table('units')->select('id as value', 'code as display')->get(),
+                'taxes'     => DB::table('taxes')->select('id as value', DB::raw('CEIL(taux * 100) as display'))->get(),
+                'roofAccesses'     => DB::table('moyenacces')->select('id as value', 'name as display')->get(),
+            ]
+        );
     }
 }

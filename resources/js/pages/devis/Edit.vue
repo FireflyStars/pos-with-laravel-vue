@@ -1232,6 +1232,8 @@ export default {
         taxes.value = res.data.taxes;
         units.value = res.data.units;
         roofAccesses.value = res.data.roofAccesses;
+        gedCats.value = res.data.gedCats
+        form.value = res.data.devis
         updateAllValues();
       }).catch((error)=>{
         console.log(error);
@@ -1762,7 +1764,7 @@ export default {
       })        
       updateAllValues();
     }
-    // save Devis
+    // update Devis
     const updateDevis = ()=>{
       store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Mettez à jour le devis....']);
       axios.post('/update-devis', form.value).then((res)=>{
@@ -1780,7 +1782,6 @@ export default {
     }
     // Generate PDF for DEVIS
     const PDFDevis = ()=>{
-
     }
     // open empty ouvrage modal
     const openEmptyOuvrageModal = (data)=>{

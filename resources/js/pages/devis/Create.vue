@@ -279,7 +279,7 @@
                               <li class="mulish-regular font-10 custom-text-danger">{{ ouvrage.customerText }}</li>
                             </ul>
                             <!-- Ouvrage Task -->
-                            <div class="ouvrage-task" v-for="(task, taskIndex) in ouvrage.tasks" :key="taskIndex">
+                            <div class="ouvrage-task mt-3" v-for="(task, taskIndex) in ouvrage.tasks" :key="taskIndex">
                               <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'zone-'+ zoneIndex +'-installation-ouvrage-'+ouvrageIndex+'-task-'+taskIndex" @click="activeOuvrageTask">
                                 <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ task.name }}
                               </div>
@@ -330,7 +330,7 @@
                                         <td valign="middle" text="text-center">{{ detail.unit }}</td>
                                         <td valign="middle" v-if="detail.type == 'MO' || detail.type == 'Labor'">
                                           <div class="d-flex align-items-center">
-                                            <input @keyup="updateAllValues" type="text" v-model.number="detail.numberH" class="w-100 form-control form-control-sm custom-text-danger">hr
+                                            <input @keyup="updateAllValues" type="text" v-model.number="detail.numberH" style="min-width: 50px" class="w-100 form-control form-control-sm custom-text-danger">hr
                                           </div>
                                         </td>                                      
                                         <td valign="middle" class="text-center supplier" v-else-if="detail.type == 'COMMANDE FOURNISSEUR'">
@@ -482,7 +482,7 @@
                               <li class="mulish-regular font-10 custom-text-danger">{{ ouvrage.customerText }}</li>
                             </ul>
                             <!-- Ouvrage Task -->
-                            <div class="ouvrage-task" v-for="(task, taskIndex) in ouvrage.tasks" :key="taskIndex">
+                            <div class="ouvrage-task mt-3" v-for="(task, taskIndex) in ouvrage.tasks" :key="taskIndex">
                               <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'zone-'+ zoneIndex +'-security-ouvrage-'+ouvrageIndex+'-task-'+taskIndex" @click="activeOuvrageTask">
                                 <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ task.name }}
                               </div>
@@ -533,7 +533,7 @@
                                         <td valign="middle" text="text-center">{{ detail.unit }}</td>
                                         <td valign="middle" v-if="detail.type == 'MO' || detail.type == 'Labor'">
                                           <div class="d-flex align-items-center">
-                                            <input @keyup="updateAllValues" type="text" v-model.number="detail.numberH" class="w-100 form-control form-control-sm custom-text-danger">hr
+                                            <input @keyup="updateAllValues" type="text" v-model.number="detail.numberH" style="min-width: 50px" class="w-100 form-control form-control-sm custom-text-danger">hr
                                           </div>
                                         </td>                                      
                                         <td valign="middle" class="text-center supplier" v-else-if="detail.type == 'COMMANDE FOURNISSEUR'">
@@ -685,7 +685,7 @@
                               <li class="mulish-regular font-10 custom-text-danger">{{ ouvrage.customerText }}</li>
                             </ul>
                             <!-- Ouvrage Task -->
-                            <div class="ouvrage-task" v-for="(task, taskIndex) in ouvrage.tasks" :key="taskIndex">
+                            <div class="ouvrage-task mt-3" v-for="(task, taskIndex) in ouvrage.tasks" :key="taskIndex">
                               <div class="task-header d-flex align-items-center custom-option cursor-pointer" :class="{ 'active': taskIndex == 0}" :data-id="'zone-'+ zoneIndex +'-prestation-ouvrage-'+ouvrageIndex+'-task-'+taskIndex" @click="activeOuvrageTask">
                                 <span class="option-icon me-2"><span class="option-icon-dot"></span></span> {{ task.name }}
                               </div>
@@ -736,7 +736,7 @@
                                         <td valign="middle" text="text-center">{{ detail.unit }}</td>
                                         <td valign="middle" v-if="detail.type == 'MO' || detail.type == 'Labor'">
                                           <div class="d-flex align-items-center">
-                                            <input type="text" v-model="detail.numberH" class="w-100 form-control form-control-sm custom-text-danger">hr
+                                            <input type="text" v-model="detail.numberH" style="min-width: 50px" class="w-100 form-control form-control-sm custom-text-danger">hr
                                           </div>
                                         </td>                                      
                                         <td valign="middle" class="text-center supplier" v-else-if="detail.type == 'COMMANDE FOURNISSEUR'">
