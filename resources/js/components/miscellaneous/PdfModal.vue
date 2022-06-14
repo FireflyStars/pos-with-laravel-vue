@@ -9,7 +9,15 @@
                         </svg>
                     </div>
                     <div class="pdfviewer-content">
-                        <vue-pdf-embed :source="pdfData" />
+                        <vue-pdf-embed :rotation="angle" :source="pdfData" />
+                    </div>
+                    <div class="pdfview-footer d-flex justify-content-center mt-2">
+                        <svg @click="rotateLeft" class="me-3 cursor-pointer" width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 2V8M3 8H9M3 8L5.64033 5.63067C7.02134 4.25209 8.81301 3.35964 10.7454 3.08779C12.6777 2.81593 14.6461 3.17941 16.3539 4.12343C18.0617 5.06746 19.4165 6.54091 20.214 8.32177C21.0115 10.1026 21.2086 12.0944 20.7756 13.997C20.3426 15.8996 19.303 17.61 17.8133 18.8704C16.3237 20.1308 14.4647 20.873 12.5165 20.9851C10.5684 21.0972 8.63652 20.5732 7.01208 19.492C5.38765 18.4108 4.15862 16.831 3.51018 14.9907" stroke="#001A72" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <svg @click="rotateRight" class="cursor-pointer" width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20.9999 2V8M20.9999 8H14.9999M20.9999 8L18.3597 5.63067C16.9787 4.25209 15.187 3.35964 13.2546 3.08779C11.3223 2.81593 9.35389 3.17941 7.64608 4.12343C5.93827 5.06746 4.58354 6.54091 3.78602 8.32177C2.98849 10.1026 2.79138 12.0944 3.22438 13.997C3.65738 15.8996 4.69703 17.61 6.18668 18.8704C7.67634 20.1308 9.5353 20.873 11.4835 20.9851C13.4316 21.0972 15.3635 20.5732 16.9879 19.492C18.6124 18.4108 19.8414 16.831 20.4898 14.9907" stroke="#001A72" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
                     </div>
                 </div>
             </transition>
@@ -27,6 +35,7 @@ export default {
     },
     setup(){
         const pdfData = ref();
+        const angle = ref(0);
         const showModal = ref(false);
         const openModal = (base64)=>{
             showModal.value = true;
@@ -35,11 +44,24 @@ export default {
         const closeModal = ()=>{
             showModal.value = false;
         }
+        const rotateRight = ()=>{
+            if(angle.value < 360){
+                angle.value += 90;
+            }
+        }
+        const rotateLeft = ()=>{
+            if(angle.value != 0){
+                angle.value -= 90;
+            }
+        }
         return {
             pdfData,
             showModal,
+            angle,
             openModal,
-            closeModal
+            closeModal,
+            rotateLeft,
+            rotateRight,
         }
     }
 
