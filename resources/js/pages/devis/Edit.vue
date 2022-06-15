@@ -462,7 +462,7 @@
                               {{ ouvrage.total }}€
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center">
-                              <svg class="cursor-pointer" @click="removeOuvrage(zoneIndex, 1, ouvrageIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <svg class="cursor-pointer" @click="removeOuvrage(zoneIndex, 2, ouvrageIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M17 6H22V8H20V21C20 21.2652 19.8946 21.5196 19.7071 21.7071C19.5196 21.8946 19.2652 22 19 22H5C4.73478 22 4.48043 21.8946 4.29289 21.7071C4.10536 21.5196 4 21.2652 4 21V8H2V6H7V3C7 2.73478 7.10536 2.48043 7.29289 2.29289C7.48043 2.10536 7.73478 2 8 2H16C16.2652 2 16.5196 2.10536 16.7071 2.29289C16.8946 2.48043 17 2.73478 17 3V6ZM18 8H6V20H18V8ZM13.414 14L15.182 15.768L13.768 17.182L12 15.414L10.232 17.182L8.818 15.768L10.586 14L8.818 12.232L10.232 10.818L12 12.586L13.768 10.818L15.182 12.232L13.414 14ZM9 4V6H15V4H9Z" fill="black"/>
                               </svg>
                             </div>
@@ -561,7 +561,7 @@
                                           </select>                                          
                                         </td>
                                         <td valign="middle">
-                                          <svg class="cursor-pointer" @click="removeOuvrageDetail(zoneIndex, 1, ouvrageIndex, taskIndex, detailIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                          <svg class="cursor-pointer" @click="removeOuvrageDetail(zoneIndex, 2, ouvrageIndex, taskIndex, detailIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                           <path d="M17 6H22V8H20V21C20 21.2652 19.8946 21.5196 19.7071 21.7071C19.5196 21.8946 19.2652 22 19 22H5C4.73478 22 4.48043 21.8946 4.29289 21.7071C4.10536 21.5196 4 21.2652 4 21V8H2V6H7V3C7 2.73478 7.10536 2.48043 7.29289 2.29289C7.48043 2.10536 7.73478 2 8 2H16C16.2652 2 16.5196 2.10536 16.7071 2.29289C16.8946 2.48043 17 2.73478 17 3V6ZM18 8H6V20H18V8ZM13.414 14L15.182 15.768L13.768 17.182L12 15.414L10.232 17.182L8.818 15.768L10.586 14L8.818 12.232L10.232 10.818L12 12.586L13.768 10.818L15.182 12.232L13.414 14ZM9 4V6H15V4H9Z" fill="black"/>
                                           </svg>
                                         </td>
@@ -571,28 +571,28 @@
                                 </div>
                                 <div class="btns d-flex mt-4">
                                   <div class="col-5">
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openProductModal(zoneIndex, 1,ouvrageIndex, taskIndex)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openProductModal(zoneIndex, 2,ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER UN PRODUIT
                                     </div>
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openTaskModal(zoneIndex, 1, ouvrageIndex)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openTaskModal(zoneIndex, 2, ouvrageIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER ACTION
                                     </div>
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openSupplierModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openSupplierModal(zoneIndex, 2, ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> COMMANDE FOURNISSEUR
                                     </div>
                                   </div>
                                   <div class="col-5">
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openLaborModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openLaborModal(zoneIndex, 2, ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER UN MAIN D’ OEUVRES
                                     </div>
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openInterimModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openInterimModal(zoneIndex, 2, ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER  INTERIM
                                     </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            <div v-if="ouvrage.tasks.length == 0" class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openTaskModal(zoneIndex, 1, ouvrageIndex)">
+                            <div v-if="ouvrage.tasks.length == 0" class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openTaskModal(zoneIndex, 2, ouvrageIndex)">
                               <span class="plus-icon me-2"></span> AJOUTER ACTION
                             </div>                                                
                           </div>
@@ -665,7 +665,7 @@
                               {{ ouvrage.total }}€
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center">
-                              <svg class="cursor-pointer" @click="removeOuvrage(zoneIndex, 1, ouvrageIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <svg class="cursor-pointer" @click="removeOuvrage(zoneIndex, 3, ouvrageIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M17 6H22V8H20V21C20 21.2652 19.8946 21.5196 19.7071 21.7071C19.5196 21.8946 19.2652 22 19 22H5C4.73478 22 4.48043 21.8946 4.29289 21.7071C4.10536 21.5196 4 21.2652 4 21V8H2V6H7V3C7 2.73478 7.10536 2.48043 7.29289 2.29289C7.48043 2.10536 7.73478 2 8 2H16C16.2652 2 16.5196 2.10536 16.7071 2.29289C16.8946 2.48043 17 2.73478 17 3V6ZM18 8H6V20H18V8ZM13.414 14L15.182 15.768L13.768 17.182L12 15.414L10.232 17.182L8.818 15.768L10.586 14L8.818 12.232L10.232 10.818L12 12.586L13.768 10.818L15.182 12.232L13.414 14ZM9 4V6H15V4H9Z" fill="black"/>
                               </svg>
                             </div>
@@ -764,7 +764,7 @@
                                           </select>                                          
                                         </td>
                                         <td valign="middle">
-                                          <svg class="cursor-pointer" @click="removeOuvrageDetail(zoneIndex, 1, ouvrageIndex, taskIndex, detailIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                          <svg class="cursor-pointer" @click="removeOuvrageDetail(zoneIndex, 3, ouvrageIndex, taskIndex, detailIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                           <path d="M17 6H22V8H20V21C20 21.2652 19.8946 21.5196 19.7071 21.7071C19.5196 21.8946 19.2652 22 19 22H5C4.73478 22 4.48043 21.8946 4.29289 21.7071C4.10536 21.5196 4 21.2652 4 21V8H2V6H7V3C7 2.73478 7.10536 2.48043 7.29289 2.29289C7.48043 2.10536 7.73478 2 8 2H16C16.2652 2 16.5196 2.10536 16.7071 2.29289C16.8946 2.48043 17 2.73478 17 3V6ZM18 8H6V20H18V8ZM13.414 14L15.182 15.768L13.768 17.182L12 15.414L10.232 17.182L8.818 15.768L10.586 14L8.818 12.232L10.232 10.818L12 12.586L13.768 10.818L15.182 12.232L13.414 14ZM9 4V6H15V4H9Z" fill="black"/>
                                           </svg>
                                         </td>
@@ -774,28 +774,28 @@
                                 </div>
                                 <div class="btns d-flex mt-4">
                                   <div class="col-5">
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openProductModal(zoneIndex, 1,ouvrageIndex, taskIndex)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openProductModal(zoneIndex, 3,ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER UN PRODUIT
                                     </div>
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openTaskModal(zoneIndex, 1, ouvrageIndex)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openTaskModal(zoneIndex, 3, ouvrageIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER ACTION
                                     </div>
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openSupplierModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openSupplierModal(zoneIndex, 3, ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> COMMANDE FOURNISSEUR
                                     </div>
                                   </div>
                                   <div class="col-5">
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openLaborModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openLaborModal(zoneIndex, 3, ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER UN MAIN D’ OEUVRES
                                     </div>
-                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openInterimModal(zoneIndex, 1, ouvrageIndex, taskIndex)">
+                                    <div class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openInterimModal(zoneIndex, 3, ouvrageIndex, taskIndex)">
                                       <span class="plus-icon me-2"></span> AJOUTER  INTERIM
                                     </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            <div v-if="ouvrage.tasks.length == 0" class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openTaskModal(zoneIndex, 1, ouvrageIndex)">
+                            <div v-if="ouvrage.tasks.length == 0" class="add-btn ms-3 mt-3 d-flex align-items-center mulish-semibold font-14 custom-text-danger cursor-pointer" @click="openTaskModal(zoneIndex, 3, ouvrageIndex)">
                               <span class="plus-icon me-2"></span> AJOUTER ACTION
                             </div>                                                
                           </div>
@@ -994,15 +994,15 @@ export default {
     const form = ref({
       customer: {
         id: 1,
-        company: 'La boulangerie',
-        raisonsocial: 'de la plangne',
-        group: 'Lagardere',
-        contact: 'Thierry Gavois',
-        telephone: '58 58 74 58 44',
-        tax: '10%',
+        company: '',
+        raisonsocial: '',
+        group: '',
+        contact: '',
+        telephone: '',
+        tax: '',
         taxId: 0,
-        naf: 'Boulangerie',
-        siret: '4654654646546546',
+        naf: '',
+        siret: '',
       },
       address: {
         id: 1,
@@ -1386,6 +1386,8 @@ export default {
           qtyOuvrage: '',
           totalPrice: product.unitPrice * parseInt(product.unit),
           numberH: 0,
+          productId: product.productId,
+          unit_id: product.unitId,
         });
       }
       if(product.ouvrageType == 2){
@@ -1400,6 +1402,8 @@ export default {
           qtyOuvrage: '',
           totalPrice: product.unitPrice * parseInt(product.unit),
           numberH: 0,
+          productId: product.productId,
+          unit_id: product.unitId,
         });
       }
       if(product.ouvrageType == 3){
@@ -1414,6 +1418,8 @@ export default {
           qtyOuvrage: '',
           totalPrice: product.unitPrice,
           numberH: 0,
+          productId: product.productId,
+          unit_id: product.unitId,
         });
       }
       updateAllValues();
@@ -1436,6 +1442,8 @@ export default {
           qtyOuvrage: supplier.qtyOuvrage,
           totalPrice: 0,
           numberH: 0,
+          productId: 0,
+          unit_id: 0,
         });
       }
       if(supplier.ouvrageType == 2){
@@ -1453,6 +1461,8 @@ export default {
           qtyOuvrage: supplier.qtyOuvrage,
           totalPrice: 0,
           numberH: 0,
+          productId: 0,
+          unit_id: 0,
         });
       }
       if(supplier.ouvrageType == 3){
@@ -1470,6 +1480,8 @@ export default {
           qtyOuvrage: supplier.qtyOuvrage,
           totalPrice: 0,
           numberH: 0,
+          productId: 0,
+          unit_id: 0,
         });
       }
       updateAllValues();
@@ -1488,6 +1500,8 @@ export default {
           qtyOuvrage: labor.qtyOuvrage,
           totalPrice: labor.total,
           numberH: labor.numberH,
+          productId: labor.productId,
+          unit_id: labor.unitId,
         });
       }
       if(labor.ouvrageType == 2){
@@ -1502,6 +1516,8 @@ export default {
           qtyOuvrage: labor.qtyOuvrage,
           totalPrice: labor.total,
           numberH: labor.numberH,
+          productId: labor.productId,
+          unit_id: labor.unitId,
         });
       }
       if(labor.ouvrageType == 3){
@@ -1516,6 +1532,8 @@ export default {
           qtyOuvrage: labor.qtyOuvrage,
           totalPrice: labor.total,
           numberH: labor.numberH,
+          productId: labor.productId,
+          unit_id: labor.unitId,
         });
       }
       updateAllValues();
@@ -1535,6 +1553,8 @@ export default {
           qtyOuvrage: interim.qtyOuvrage,
           totalPrice: interim.total,
           numberH: 0,
+          productId: interim.productId,
+          unit_id: interim.unitId,
         });
       }
       if(interim.ouvrageType == 2){
@@ -1550,6 +1570,8 @@ export default {
           qtyOuvrage: interim.qtyOuvrage,
           totalPrice: interim.total,
           numberH: 0,
+          productId: interim.productId,
+          unit_id: interim.unitId,
         });
       }
       if(interim.ouvrageType == 3){
@@ -1565,6 +1587,8 @@ export default {
           qtyOuvrage: interim.qtyOuvrage,
           totalPrice: interim.total,
           numberH: 0,
+          productId: interim.productId,
+          unit_id: interim.unitId,
         });
       }
       updateAllValues();
@@ -1705,11 +1729,6 @@ export default {
         confirmButtonText: 'Oui, supprimez-le!'
       }).then((result) => {
         if (result.isConfirmed) {
-          Swal.fire(
-            'Supprimé!',
-            "Louvrage a été supprimé.",
-            'success'
-          )
           if(ouvrageType == 1){
             form.value.zones[zoneIndex].installOuvrage.ouvrages = form.value.zones[zoneIndex].installOuvrage.ouvrages.filter((item, index)=>{
               return ouvrageIndex != index;
@@ -1725,6 +1744,11 @@ export default {
               return ouvrageIndex != index;
             });            
           }
+          Swal.fire(
+            'Supprimé!',
+            "Louvrage a été supprimé.",
+            'success'
+          )          
         }
       });
       updateAllValues();
@@ -1770,16 +1794,12 @@ export default {
     const updateDevis = ()=>{
       store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Mettez à jour le devis....']);
       axios.post('/update-devis/'+route.params.id, form.value).then((res)=>{
-        console.log(res);
         if(res.data.success){
           Swal.fire({
             title: 'Success',
             text: "DEVIS updated successfully!",
             icon: 'success',
           });
-          // router.push({
-          //   name: 'LandingPage'
-          // });
         }
       }).catch((error)=>{
         console.log(error);
@@ -1789,6 +1809,7 @@ export default {
     }
     // Generate PDF for DEVIS
     const PDFDevis = ()=>{
+
     }
     // open empty ouvrage modal
     const openEmptyOuvrageModal = (data)=>{
@@ -1829,6 +1850,8 @@ export default {
           qtyOuvrage: '',
           totalPrice: parseFloat(emptyProduct.productPrice)*parseFloat(emptyProduct.qty)* 1.08,
           numberH: 0,
+          productId: 0,
+          unit_id: 0,
         });
       }
       if(data.ouvrageType == 2){
@@ -1843,6 +1866,8 @@ export default {
           qtyOuvrage: '',
           totalPrice: parseFloat(emptyProduct.productPrice)*parseFloat(emptyProduct.qty)* 1.08,
           numberH: 0,
+          productId: 0,
+          unit_id: 0,
         });
       }
       if(data.ouvrageType == 3){
@@ -1857,6 +1882,8 @@ export default {
           qtyOuvrage: '',
           totalPrice: parseFloat(emptyProduct.productPrice)*parseFloat(emptyProduct.qty)* 1.08,
           numberH: 0,
+          productId: 0,
+          unit_id: 0,
         });
       }      
       updateAllValues();

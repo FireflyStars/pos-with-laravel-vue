@@ -91,6 +91,7 @@ export default {
             ouvrageId: '',
             taskId: '',
             qtyOuvrage: '',
+            productId: 0,
         })
         const showModal = ref(false);
         const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId)=>{
@@ -108,6 +109,8 @@ export default {
                 ouvrageId: ouvrageId,
                 taskId: taskId,
                 qtyOuvrage: '',
+                productId: 0,
+                unitId: 0,
             }
             showModal.value = !showModal.value;
         }  

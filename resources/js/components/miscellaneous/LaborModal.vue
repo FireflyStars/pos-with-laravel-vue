@@ -60,6 +60,8 @@ export default {
             total: '',
             price: 1,
             qtyOuvrage: '',
+            productId: 0,
+            unitId: 2,
         })
         const showModal = ref(false);
         const openModal = (zoneIndex, ouvrageType, ouvrageId, taskId)=>{
@@ -70,6 +72,8 @@ export default {
             labor.value.qtyOuvrage = '';
             labor.value.numberH = '';
             labor.value.total = '';
+            labor.value.productId = 0;
+            labor.value.unitId = 2;
             showModal.value = !showModal.value;
         }
         const selectLabor = ()=>{
@@ -79,6 +83,8 @@ export default {
         onMounted(()=>{
             axios.post('/get-labor-data').then((res)=>{
                 labor.value.price = res.data.price
+                labor.value.productId = res.data.productId
+                labor.value.unitId = res.data.unitId
             }).catch((error)=>{
                 console.log(error);
             })

@@ -85,6 +85,7 @@
                 name: '',
                 productPrice: 0,
                 description: '',
+                productId: 0,
             });            
             const closeModal = ()=>{
                 showModal.value = !showModal.value;

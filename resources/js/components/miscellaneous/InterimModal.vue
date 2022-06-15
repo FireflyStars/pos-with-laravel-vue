@@ -74,11 +74,15 @@ export default {
             ouvrageId: 0,
             taskId: 0,
             qtyOuvrage: '',
+            productId: 0,
+            unitId: 0,
         })        
         onMounted(()=>{
             axios.post('/get-interim-data').then((res)=>{
                 societes.value = res.data.societes;    
                 interim.value.price = res.data.interim.price
+                interim.value.productId = res.data.interim.productId
+                interim.value.unitId = res.data.interim.unitId
             }).catch((error)=>{
                 console.log()
             })
@@ -94,6 +98,8 @@ export default {
             interim.value.total =  '';
             interim.value.societe =  0;
             interim.value.tax =  0;
+            interim.value.productId =  0;
+            interim.value.unitId =  0;
             showModal.value = !showModal.value;
         }  
         const selectInterim = (index)=>{

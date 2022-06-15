@@ -122,6 +122,7 @@
                     type: product.type, 
                     name: product.name, 
                     unit: product.unit, 
+                    unitId: product.unit_id, 
                     numberh: product.numberh, 
                     ... data.value 
                 });
