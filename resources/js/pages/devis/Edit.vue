@@ -13,7 +13,7 @@
               </h1>
             </div>
             <div class="col-6 d-flex" v-if="devisCreateStep == 'create_devis'">
-              <button class="btn btn-save me-3 text-white" @click="updateDevis">Sauvegarder</button>
+              <button class="btn btn-save me-3 text-white" @click="updateDevis">Mise à jour</button>
               <button class="btn btn-pdf text-white rounded-3" @click="PDFDevis">PDF</button>
             </div>
           </div>
