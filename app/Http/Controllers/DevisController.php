@@ -489,7 +489,7 @@ class DevisController extends Controller
                                     $detailData['orderfile'] = $orderFilePath;
                                 }
                             }
-                            return response()->json($detailData);
+                            DB::table('order_ouvrage_detail')->insert($detailData);
                         }
                     }
                 }
@@ -532,9 +532,7 @@ class DevisController extends Controller
                             'textchargeaffaire'     => $task['textchargeaffaire'],
                             'textoperator'          => $task['textoperator'],
                             'qty'                   => $task['qty'],
-                            'unit_id'               => $task['unit_id'],
-                            'created_at'            => Carbon::now(),
-                            'updated_at'            => Carbon::now()
+                            'unit_id'               => $task['unit_id']
                         ];
                         $orderOuvrageTaskId = DB::table('order_ouvrage_task')->insertGetId($orderOuvrageTask);
                         foreach ($task['details'] as $detailIndex => $detail) {
@@ -625,8 +623,6 @@ class DevisController extends Controller
                             'textoperator'          => $task['textoperator'],
                             'qty'                   => $task['qty'],
                             'unit_id'               => $task['unit_id'],
-                            'created_at'            => Carbon::now(),
-                            'updated_at'            => Carbon::now()
                         ];
                         $orderOuvrageTaskId = DB::table('order_ouvrage_task')->insertGetId($orderOuvrageTask);
                         foreach ($task['details'] as $detailIndex => $detail) {
