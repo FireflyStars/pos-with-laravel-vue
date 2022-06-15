@@ -868,7 +868,7 @@ class DevisController extends Controller
                     ->where('order_id', $devisId)
                     ->where('order_zone_id', $zone->id)
                     ->where('order_cat_id', $orderCat->id)
-                    ->where('type', 'SECURITE')
+                    ->where('type', 'PRESTATION')
                     ->select(
                         'id', 'unit_id as unit', 'qty', 'ouvrage_prestation_id', 'ouvrage_metier_id', 'ouvrage_toit_id', 
                         'textcustomer as customerText','textchargeaffaire', 'textoperator', 'name', 
