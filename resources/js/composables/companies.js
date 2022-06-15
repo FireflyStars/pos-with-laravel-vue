@@ -80,8 +80,10 @@ export default function useCompanies() {
         category.value = response.data.campagnes;
     };
 
-    const getTemplates = async (id) => {
+    const getTemplates = async (id, redirect = undefined) => {
+
         let response = await axios.get("/getTemplates/" + id);
+        console.log(response, " is response")
         template.value = response.data.template;
         type.value = response.data.type;
         campagnedata.value = response.data.campagnesCategory;
@@ -89,24 +91,32 @@ export default function useCompanies() {
         my_ids.value = response.data.data_id;
         selected_id.value = response.data.id;
         mytitle1.value = response.data.myvar;
+
         if ((mytitle1.value = true)) {
             myvar.value = true;
         }
 
         if (my_ids.value.length == 0) {
             console.log("empty");
-        } else {
+        } 
+        else {
+
             if (my_ids.value.includes(`${selected_id.value}`)) {
                 req.value = router.push({
                     name: "emailingprestations",
                     params: { id: `${selected_id.value}` },
-                });
-            } else {
-                let d;
+                })
+            } 
+            else {
+                
+                if(redirect == true || redirect == 'true') return
+
+                let d
                 if (response.data.campagnesCategory[0].ciblage) {
-                    d = response.data.campagnesCategory[0].ciblage;
-                } else {
-                    d = "[]";
+                    d = response.data.campagnesCategory[0].ciblage
+                } 
+                else {
+                    d = "[]"
                 }
                 router.push({
                     name: "cible",
@@ -115,7 +125,8 @@ export default function useCompanies() {
                         data: d,
                         categ_id: `${selected_id.value}`,
                     },
-                });
+                })
+
             }
         }
     };

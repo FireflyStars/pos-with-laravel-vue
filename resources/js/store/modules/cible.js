@@ -38,7 +38,9 @@ import {
     UPDATE_CARD,
     DELETE_CARD,
     VALIDER_CARD,
-    RESET_PRODUCTS
+    RESET_PRODUCTS,
+    GET_CAMPAGNE_DETAILS,
+    SAVE_CAMPAGNE_DETAILS
 
 } from '../types/types';
 
@@ -67,7 +69,8 @@ export const cible= {
         //final email list
         filtered_emails:[],
         fields: {},
-        products: []
+        products: [],
+        campagne: {}
     },
     mutations:{
         [CIBLE_SET_CAMPAGNE_CATEGORY_ID]:(state,id)=>{
@@ -162,10 +165,23 @@ export const cible= {
         },
         [RESET_PRODUCTS](state) {
             state.products = []
+        },
+        [SAVE_CAMPAGNE_DETAILS](state, data) {
+            state.campagne = data
         }
     },
 
     actions: {
+
+        async [GET_CAMPAGNE_DETAILS]({ commit }, id) {
+            try {
+                const { data } = await axios.get(`/get-campagne-details/${id}`)
+                commit(SAVE_CAMPAGNE_DETAILS, data)
+            }
+            catch(e) {
+                throw e
+            }
+        },
 
         async [VALIDER_CARD]({ commit }) {
             try {
@@ -347,6 +363,7 @@ export const cible= {
         [CIBLE_GET_CAMPAGNE_CATEGORY]:state=>state.campagne_category,
         campagneCategory: state => state.campagne_category, 
         fields: state => state.fields,
-        products: state => state.products 
+        products: state => state.products,
+        campagne: state => state.campagne
     }
 }

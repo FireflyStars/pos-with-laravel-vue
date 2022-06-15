@@ -11,7 +11,8 @@
 
             <side-bar />
 
-            <div class="col main-view container" style="overflow-x: hidden">
+            <!--  -->
+            <div class="col main-view container">
                 
                 <page-title 
                     icon="emailing" 
@@ -28,7 +29,7 @@
                     <form action="" class="space-y-6">
 
                         <div class="container">
-                            <div class="row">
+                            <div class="row" style="height: calc(222.75mm);">
 
                                 <div class="col-lg-12">
 
@@ -75,11 +76,11 @@
 
                                     </div>
 
-                                    <div class="bg-panel py-5 ps-5 pe-2">
+                                    <div>
 
                                         <div class="row">
                                             
-                                            <div class="col-8 left-panel">
+                                            <div class="col-7 left-panel py-5 ps-5 pe-2 bg-panel">
                                                 
                                                 <div 
                                                     class="panel-heading d-flex justify-content-between align-items-center"
@@ -95,6 +96,9 @@
                                                             name: 'emailingprestations',
                                                             params: {
                                                                 id: categoryId
+                                                            },
+                                                            query: {
+                                                                redirect: true
                                                             }
                                                         })"
                                                     />
@@ -318,17 +322,24 @@
 
                                             </div>
                                             
-                                            <div class="col-4">
+                                            <div 
+                                                class="col-5 apercu d-table bg-primary" 
+                                                style="margin: 0; padding: 0"
+                                            >
 
-                                                <div class="preview-box text-center" style="margin-right: 1rem; position: relative">
+                                                <div 
+                                                    class="text-center preview-box" 
+                                                    style="position: absolute; transform: scale(0.75) !important; transform-origin: top left;"
+                                                >
                                                     
                                                     <img 
                                                         :src="category.imageTemplateUrl" 
                                                         alt="Lcdt Logo" 
-                                                        style="width: 100%; height: 100%;"
+                                                        style="width: 210mm; height: 297mm;"
                                                     >
 
                                                     <template v-for="(item, index) in fields" :key="index">
+                                                       
                                                         <span 
                                                             :style="{
                                                                 color: item.color,
@@ -339,6 +350,7 @@
                                                             }"
                                                             v-if="item.active == 1" 
                                                         >
+
                                                             <template v-if="!['Telephone_agence', 'Email_agence'].includes(index)">
                                                                 {{ item.value }}
                                                             </template>
@@ -354,31 +366,32 @@
                                                         </span>
                                                     </template>
                                                     
-                                                </div>
+                                                    <div class="d-flex align-items-center justify-content-center gap-2 my-4">
+                                                        
+                                                        <base-button
+                                                            class="btn btn-newrdv body_medium"
+                                                            kind="warning"
+                                                            title="Télécharger fichier"
+                                                            classes="border-0"
+                                                            style="border-radius: 10px; font-size: 12px !important; background: #000;"
+                                                        />
 
-                                                <div class="d-flex align-items-center justify-content-center gap-2 my-4">
+                                                        <base-button
+                                                            prepend
+                                                            class="btn btn-newrdv body_medium"
+                                                            kind="warning"
+                                                            title="Ajouter au panier"
+                                                            classes="border-0"
+                                                            style="border-radius: 10px; font-size: 12px !important;"
+                                                            @click.prevent="storeProduct"
+                                                        >
+                                                            <Icon name="clipboard" width="18" height="18" />
+                                                        </base-button>
+
+                                                    </div>
                                                     
-                                                    <base-button
-                                                        class="btn btn-newrdv body_medium"
-                                                        kind="warning"
-                                                        title="Télécharger fichier"
-                                                        classes="border-0"
-                                                        style="border-radius: 10px; font-size: 12px !important; background: #000;"
-                                                    />
-
-                                                    <base-button
-                                                        prepend
-                                                        class="btn btn-newrdv body_medium"
-                                                        kind="warning"
-                                                        title="Ajouter au panier"
-                                                        classes="border-0"
-                                                        style="border-radius: 10px; font-size: 12px !important;"
-                                                        @click.prevent="storeProduct"
-                                                    >
-                                                        <Icon name="clipboard" width="18" height="18" />
-                                                    </base-button>
-
                                                 </div>
+
 
 
                                             </div>
@@ -452,7 +465,8 @@
     })
 
     const categoryPriceWithTax = computed(() => { 
-        const tax = affiliate?.value?.tax?.taux * categoryPrice.value
+        // const tax = affiliate?.value?.tax?.taux * categoryPrice.value
+        const tax = 0.20 * categoryPrice.value //making it to fix 20%
         const percentage = +categoryPrice.value + +tax
         return percentage?.toFixed(2) || 0
     })
@@ -529,6 +543,12 @@
 
 <style lang="scss" scoped>
 
+.apercu {
+    height: 600px;
+    overflow: overlay;
+    width: 465px;
+}
+
 .panel-title {
     color: #E8581B;
     font-family: 'Almarai Bold';
@@ -592,8 +612,6 @@ img.card-img-top {
 }
 
 .preview-box {
-    border: 1px solid #000;
-    height: 90%;
     display: flex;
     flex-direction: column;
     justify-content: center;

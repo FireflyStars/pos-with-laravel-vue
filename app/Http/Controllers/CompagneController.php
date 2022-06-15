@@ -41,6 +41,11 @@ class CompagneController extends Controller
 
     private $pdf;
 
+    public function campagne_details(Campagne $campagne) 
+    {
+        return response()->json( $campagne->load('user'));
+    }
+
 
     public function valider_card(Request $request) 
     {
@@ -174,7 +179,7 @@ class CompagneController extends Controller
                 'qty'              => $request->qty,
                 'fields'           => $campagne->fields,
                 'price'            => $campagne->price,
-                'tax_id'           => optional(optional($user->affiliate)->tax)->id,
+                'tax_id'           => 3,
                 'email'            => $request->email,
                 'phone'            => $request->phone,   
             ]);
@@ -209,7 +214,7 @@ class CompagneController extends Controller
 
     public function get_campagne_category(CampagneCategory $campagne, Request $request) 
     {
-        $affiliate = $request->user()->affiliate->load('tax');
+        $affiliate = $request->user()->affiliate;
         $campagne = $campagne->load('cardDetail');
 
         return response()->json(
