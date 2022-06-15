@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\User;
 use App\Models\Campagne;
 use App\Models\Affiliate;
+use App\Models\campagne_card_detail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,6 +32,11 @@ class campagne_card extends Model
     public function campagne() 
     {
         return $this->hasOne(Campagne::class, 'campagne_card_id');
+    }
+
+    public function details() 
+    {
+        return $this->hasMany(campagne_card_detail::class, 'campagne_card_id');
     }
 
 

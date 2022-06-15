@@ -12,6 +12,7 @@
   --mainlogoheight: 64px;
   --lcdtOrange:#e86f29;
   --lcdtRed:rgba(232, 88, 27, 0.7);
+  --lcdtGrey:#868686;
 }
 html:not(.Login):not(.ForgotPassword):not(.NewPassword):not(.not-found){
   background-color: #E5E5E5;

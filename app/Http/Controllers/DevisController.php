@@ -109,6 +109,14 @@ class DevisController extends Controller
         $chantier_address=$lastevent->address()->where('address_type_id','=',2)->first();
         $order->formatted_chantier_address=$chantier_address==null?'--/--':$chantier_address->getformattedAddress();
         $order->customer;
+        $order->orderZones;
+        foreach($order->orderZones as &$orderzone){
+            $orderzone->orderOuvrage;
+            foreach( $orderzone->orderOuvrage as $order_ouvrage){
+                $order_ouvrage->orderCategory;
+            }
+
+        }
         $facturation_address=$order->customer->addresses()->where('address_type_id','=',1)->first();
         $order->formatted_facturation_address=$facturation_address==null?'--/--':$facturation_address->getformattedAddress();
         return response()->json($order);

@@ -82,10 +82,10 @@
                     >
                         <h6>APERÇU</h6>
                         <div style="position: absolute;transform: scale(0.75);left: 1.5rem;transform-origin: top left;" class="bg-panel" >
-                        <img  style="width:210mm; height:297mm;"
-                            v-if="imageurl!=''"
-                            :src="`/storage/${imageurl}`" 
-                        />
+                            <img  style="width:210mm; height:297mm;"
+                                v-if="imageurl!=''"
+                                :src="`/storage/${imageurl}`" 
+                            />
                             <template v-for="item,index in fields" :key="index">
                                 <span 
                                     v-if="item.active==1" 

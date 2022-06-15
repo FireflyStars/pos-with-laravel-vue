@@ -11,7 +11,6 @@
 
             <side-bar />
 
-            <!--  -->
             <div class="col main-view container">
                 
                 <page-title 
@@ -80,7 +79,7 @@
 
                                         <div class="row">
                                             
-                                            <div class="col-7 left-panel py-5 ps-5 pe-2 bg-panel">
+                                            <div class="col-6 left-panel py-5 ps-5 pe-2 bg-panel">
                                                 
                                                 <div 
                                                     class="panel-heading d-flex justify-content-between align-items-center"
@@ -323,13 +322,13 @@
                                             </div>
                                             
                                             <div 
-                                                class="col-5 apercu d-table bg-primary" 
-                                                style="margin: 0; padding: 0"
+                                                class="col-6 apercu d-table position-relative" 
+                                                style="margin: 0; padding: 0;"
                                             >
 
                                                 <div 
-                                                    class="text-center preview-box" 
-                                                    style="position: absolute; transform: scale(0.75) !important; transform-origin: top left;"
+                                                    class="text-center bg-panel" 
+                                                    style="position: absolute; left: 1.5rem; transform: scale(0.75) !important; transform-origin: top left;"
                                                 >
                                                     
                                                     <img 
@@ -339,8 +338,9 @@
                                                     >
 
                                                     <template v-for="(item, index) in fields" :key="index">
-                                                       
+                                            
                                                         <span 
+                                                            v-if="item.active == 1" 
                                                             :style="{
                                                                 color: item.color,
                                                                 fontSize: `${item.size}px`,
@@ -348,24 +348,24 @@
                                                                 top: `${item.y}px`,
                                                                 left: `${item.x}px`,
                                                             }"
-                                                            v-if="item.active == 1" 
                                                         >
 
                                                             <template v-if="!['Telephone_agence', 'Email_agence'].includes(index)">
                                                                 {{ item.value }}
                                                             </template>
 
-                                                            <template v-if="'Email_agence' == index">
+                                                            <template v-else-if="'Email_agence' == index">
                                                                 {{ email }}
                                                             </template>
 
-                                                            <template v-if="'Telephone_agence' == index">
+                                                            <template v-else-if="'Telephone_agence' == index">
                                                                 {{ phone }}
                                                             </template>
                                                             
                                                         </span>
+
                                                     </template>
-                                                    
+
                                                     <div class="d-flex align-items-center justify-content-center gap-2 my-4">
                                                         
                                                         <base-button
@@ -565,7 +565,7 @@
 }
 
 .content {
-    padding-left: 2.5rem;
+    padding-left: 1rem;
     padding-right: 1rem;
 }
 
@@ -615,7 +615,6 @@ img.card-img-top {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    position: relative;
 }
 
 .group_input {
@@ -626,7 +625,7 @@ img.card-img-top {
     align-items: center;
 
     input {
-        width: 220px;
+        width: 200px;
         background-color: #d3d3d3;
         border: none;
         height: 27px;

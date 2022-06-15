@@ -18,7 +18,12 @@
         <div class="col">
             <h4 class="text-fade">Detail</h4>
             <p class="text-normal">{{ campagne.email }}</p>
-            <p class="text-normal">45 Clients</p>
+            <p 
+                v-if="campagne.type?.toLowerCase() == 'commande produit'"
+                class="text-normal" 
+            >
+                {{ campagne.nb }} Clients
+            </p>
         </div>
         
         <div class="col">
@@ -86,19 +91,21 @@
             <h4 class="heading-fade">Détail</h4>
 
             <div class="d-flex align-items-center gap-4">
-                <h4 class="heading-campagne-title">12&euro;</h4>
-                <h4 class="heading-campagne-title">3500&euro;</h4>
+                <h4 class="heading-campagne-title">{{ campagne.transport }}&euro;</h4>
+                <h4 class="heading-campagne-title">{{ grandTotalHt }} &euro;</h4>
             </div>
         
         </div>
 
         <div class="product-campagne-content">
 
-            <div class="d-flex justify-content-between align-items-center">
-                <div></div>
+            <div class="d-flex justify-content-between align-items-center" style="justify-items: center">
+                <div>
+                    <p class="text-light text-center">Name</p>
+                </div>
                 
                 <div>
-                    <p class="text-light">Description</p>
+                    <p class="text-light text-center">Description</p>
                 </div>
                 
                 <div>
@@ -106,21 +113,26 @@
                 </div>    
             </div>
 
-            <div class="d-flex justify-content-between align-items-center">
+            <div 
+                v-for="product in campagne.details"
+                :key="product.id"
+                class="d-flex justify-content-between align-items-center"
+                style="justify-items: center"
+            >
             
                 <div class="product-campagne-col">
                     <div class="d-flex align-items-center gap-4">
                         <div class="radio"></div>
-                        <h4 class="heading-campagne-title m-0">produit A</h4>
+                        <h4 class="heading-campagne-title m-0">{{ product.name }}</h4>
                     </div>
                 </div>
 
-                <div class="product-campagne-col">
-                    <p class="text-normal">produits XXX pour les toits</p>
+                <div class="product-campagne-col text-center">
+                    <p class="text-normal" v-html="product.description"></p>
                 </div>
 
                 <div class="product-campagne-col">
-                    <p class="text-normal d-flex justify-flex-end">23 €</p>
+                    <p class="text-normal d-flex justify-flex-end">{{ totalHt(product) }} &euro;</p>
                 </div>
 
             </div>
@@ -163,6 +175,17 @@ const props = defineProps({
 const store = useStore()
 
 const campagne = computed(() => store.getters[`${CIBLE_MODULE}campagne`])
+
+const totalHt = (product) => {
+    return (product.price * product.qty).toFixed(2)
+}
+
+const grandTotalHt = computed(() => {
+    return campagne.value?.details
+    ?.map(detail => totalHt(detail))
+    ?.reduce((newQty, oldQty) => +newQty + +oldQty, 0)
+    ?.toFixed(2)
+})
 
 const getCampagneDetails = async () => {
     try {
