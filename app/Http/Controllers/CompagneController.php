@@ -43,7 +43,9 @@ class CompagneController extends Controller
 
     public function campagne_details(Campagne $campagne) 
     {
-        return response()->json( $campagne->load('user'));
+        return response()->json(
+            $campagne->load('user', 'card', 'details')
+        );
     }
 
 
@@ -59,16 +61,63 @@ class CompagneController extends Controller
 
         $cardProducts = $this->get_card_campagne_products($card);
 
-        $campagne->details()->createMany($cardProducts);
+        [$transport, $montant] = $this->get_products_transport_montant($cardProducts);
+
+        $campagne->details()->createMany($cardProducts->toArray());
 
         campagne_card_detail::where('campagne_card_id', $card->id)->delete();
 
-        $card->update(['status' => 'VALIDER']);
+        $card->update([
+            'status' => 'VALIDER', 
+        ]);
+
+        $campagne->update([
+            'transport' => $transport, 
+            'montant' => $montant
+        ]);
+
         $card->delete();
 
         $this->notify_admin($campagne, $user);
 
         return response()->json("Campagne valider completed");
+
+    }
+
+    private function get_products_transport_montant($products) 
+    {
+        
+        $products = new Collection($products);
+
+        $product_price = function($product) {
+            return $product->price * $product->qty;
+        };
+
+        $product_poids = function($product) {
+            return $product->qty * $product->campagneCategory->poids;
+        };
+
+        $totalTax = $products->map(function($product) {
+            return $product->tax->taux ?? 0.20;
+        })->sum();
+
+        $transport = $products->sum(function($product) use($product_price, $product_poids) {
+            return ($product_price($product) + $product_poids($product)) * 1;
+        });
+
+        $cardPrice = $products->sum(function($product) use($product_price) {
+            return $product_price($product);
+        });
+
+        $totalHt = $cardPrice + $transport;
+
+        $totalTtc = $totalHt + ( $totalHt * $totalTax );
+
+        return [
+            $transport,
+            $totalTtc
+        ];
+
 
     }
 
@@ -93,8 +142,7 @@ class CompagneController extends Controller
                         ->get()
                         ->except([
                             'campagne_card_id',
-                        ])
-                        ->toArray();
+                        ]);
     }
 
     private function create_card_campagne($card, $user, $affiliate) 

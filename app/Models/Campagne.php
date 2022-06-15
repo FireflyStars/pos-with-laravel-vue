@@ -38,7 +38,7 @@ class Campagne extends Model
 
     public function card() 
     {
-        return $this->belongsTo(campagne_card::class);
+        return $this->belongsTo(campagne_card::class, 'campagne_card_id');
     }
 
     public function details() 
