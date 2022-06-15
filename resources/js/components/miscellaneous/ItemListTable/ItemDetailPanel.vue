@@ -1,9 +1,11 @@
 <template>
+
      <transition enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut">
 <div class="back-layer" v-if="show"></div> 
      </transition>
       <transition enter-active-class="animate__animated animate__slideInRight" leave-active-class="animate__animated animate__slideOutRight"  >
         <div class="od" :style="{width:width}" v-if="show">
+                <div class="miniloader" v-if="showloader"></div>
             <i class="icon-close" @click="close"></i>
            <slot></slot>
         </div>
@@ -23,13 +25,18 @@ import { ITEM_LIST_GET_CURRENT, ITEM_LIST_GET_IDENTIFIER, ITEM_LIST_MODULE, ITEM
         width: {
             required: false,
             type: String,
-            default:'684px'
+            default:'680px'
             
         },
         closebtn:{
             required: false,
             type:Boolean,
             default:true
+        },
+        showloader:{
+            required: false,
+            type:Boolean,
+            default:false
         }
     },
         setup(props){
@@ -100,4 +107,36 @@ import { ITEM_LIST_GET_CURRENT, ITEM_LIST_GET_IDENTIFIER, ITEM_LIST_MODULE, ITEM
         width: 100%;
         z-index: 9999;
     }
+
+
+ .miniloader{
+    
+    height: 4px;
+    background: #EEEEEE;
+    position: relative;
+    margin:0 -20px;
+    display: block;
+}
+.miniloader:after{
+    content: " ";
+    background: linear-gradient(
+            270deg
+            , var(--lcdtOrange) 0%, #F7CDB5 51.08%, var(--lcdtOrange) 100%);
+    width: 225px;
+    position: absolute;
+    left: 50%;
+    height: 4px;
+    z-index: 7;
+    top: 0;
+    transform: translate(-50%);
+    animation: w 2s linear 0s infinite alternate-reverse;
+
+}
+
+@keyframes w {
+    0%   {width: 325px;}
+    25%  {width: 400px;}
+    50%  {width: 280px;}
+    100% {width: 100%;}
+}
 </style>

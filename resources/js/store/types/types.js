@@ -47,6 +47,11 @@ export const DEVIS_LIST_MODULE='DEVIS_LIST_MODULE/'//namespace
 export const GET_DEVIS_LIST_DEF='GET_DEVIS_LIST_DEF'//getters
 export const DEVISLIST_LOAD_TAB='DEVISLIST_LOAD_TAB'//action
 export const DEVISLIST_SET_LIST='DEVISLIST_SET_LIST'//mutations
+//devis detail 
+export const DEVIS_DETAIL_MODULE='DEVIS_DETAIL_MODULE/'//namespace
+export const DEVIS_DETAIL_LOAD='DEVIS_DETAIL_LOAD'//action
+export const DEVIS_DETAIL_SET='DEVIS_DETAIL_SET'//mutation
+export const DEVIS_DETAIL_GET='DEVIS_DETAIL_GET'//getter
 
 export const TOASTER_MODULE = 'TOASTER_MODULE/'; //namespace
 export const TOASTER_ADD_TOAST = 'TOASTER_ADD_TOAST'; //mutations

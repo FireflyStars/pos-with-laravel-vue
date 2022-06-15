@@ -73,4 +73,8 @@ class Event extends Model
     public function eventComments(){
         return $this->hasMany(EventComment::class);
    }
+
+   public function contact(){
+       return $this->belongsTo(Contact::class);
+   }
 }

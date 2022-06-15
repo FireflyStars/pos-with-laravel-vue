@@ -10,7 +10,8 @@ export const featureUnavailable=((feature)=>{
 export const formatPrice=price=>`${price !== 0 ? price.toFixed(2) : 0} €`;
 
 export const formatDate=(date_str,format)=>{
-
+    if(date_str==null)
+    return "--/--";
     if(typeof format==="undefined")
         format='DD/MM/YY';
     const date=new Date(date_str);
@@ -34,4 +35,11 @@ export const removeDuplicatesBy=(keyFn, array)=>{
         if (isNew) mySet.add(key);
         return isNew;
     });
+}
+
+export const br=(str)=>{
+    if(str.trim()!=''&&str!=null)
+    return `<br/>${str}`;
+
+    return str;
 }
