@@ -21,24 +21,30 @@ import { ORDERSTATETAG_GET_LOADED, ORDERSTATETAG_GET_ORDER_STATES, ORDERSTATETAG
                 store.dispatch(`${ORDERSTATETAG_MODULE}${ORDERSTATETAG_LOAD_ORDER_STATES}`)
                 if(order_states.value.length>0){
                     const order_state=order_states.value.filter(obj=>obj.id==props.order_state_id);
+                    if(typeof order_state[0]!="undefined"){
                     status.value=order_state[0].name;
                     style.value=`background-color: ${order_state[0].color};color: ${order_state[0].fontcolor}`;
+                    }
                 }
             })
             const status=ref('');
             const style=ref('');
             watch(() => order_states, (current_val, previous_val) => {
                 const order_state=current_val.value.filter(obj=>obj.id==props.order_state_id);
+                if(typeof order_state[0]!="undefined"){
                 status.value=order_state[0].name;
                 style.value=`background-color: ${order_state[0].color};color: ${order_state[0].fontcolor}`;
+                }
             },{
                     deep:true
                 });
 
             watch(() => props.order_state_id, (current_val, previous_val) => {
                 const order_state=order_states.value.filter(obj=>obj.id==current_val);
+                if(typeof order_state[0]!="undefined"){
                 status.value=order_state[0].name;
                 style.value=`background-color: ${order_state[0].color};color: ${order_state[0].fontcolor}`;
+                }
             },{
                     deep:true
                 });

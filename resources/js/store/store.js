@@ -40,6 +40,8 @@ import { mainSearch as SEARCH_MODULE } from './modules/mainSearch'
 
 import { campagneList as CAMPAGNE_LIST_MODULE } from './modules/campagneList'
 
+import {devisdetail as DEVIS_DETAIL_MODULE } from './modules/devisdetail'
+
 
 export default createStore({
     modules: {
@@ -58,6 +60,7 @@ export default createStore({
         SEARCH_MODULE,
         CUSTOMERLIST_MODULE,
         CAMPAGNE_LIST_MODULE,
-        REPORTS_BUILDER_MODULE
+        REPORTS_BUILDER_MODULE,
+        DEVIS_DETAIL_MODULE
     }
 });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Traits\Tools;
 use App\Traits\GedFileProcessor;
 use App\Models\OrderState;
@@ -29,7 +30,7 @@ class DevisController extends Controller
         $column_sortby=$request->post('sortby');
         $skip=$request->post('skip');
         $take=$request->post('take');
-  
+        $user=Auth::user();
 
         $orderList=DB::table('orders')
         ->select(['orders.*',
@@ -51,7 +52,7 @@ class DevisController extends Controller
         })->leftJoin('users',function($join){
             $join->on('users.id','=','orders.responsable_id');
         });
-
+        $orderList=$orderList->where('orders.affiliate_id','=',$user->affiliate->id);
         //column filters
         if($column_filters!=null)
         foreach($column_filters as $column_filter){
@@ -100,7 +101,18 @@ class DevisController extends Controller
         $orderList=$orderList->groupBy('orders.id')->skip($skip)->take($take)->get();
         return response()->json($orderList);
     }
-
+    public function getOrderDetail(Request $request){
+        $order_id=$request->post('order_id');
+        $order=Order::find($order_id);
+        $lastevent=$order->events()->orderBy('id','desc')->first();
+        $order->contact=$lastevent->contact;
+        $chantier_address=$lastevent->address()->where('address_type_id','=',2)->first();
+        $order->formatted_chantier_address=$chantier_address==null?'--/--':$chantier_address->getformattedAddress();
+        $order->customer;
+        $facturation_address=$order->customer->addresses()->where('address_type_id','=',1)->first();
+        $order->formatted_facturation_address=$facturation_address==null?'--/--':$facturation_address->getformattedAddress();
+        return response()->json($order);
+    }
     public function getOrderStates(Request $request){
         return response()->json(OrderState::all());
     }
