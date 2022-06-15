@@ -477,7 +477,7 @@ class DevisController extends Controller
                                     $detailData['orderfile'] = $orderFilePath;
                                 }
                             }
-                            return response()->json($detailData);
+                            DB::table('order_ouvrage_detail')->insert($detailData);
                         }
                     }
                 }
