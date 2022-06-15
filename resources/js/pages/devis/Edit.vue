@@ -1252,6 +1252,8 @@ export default {
           form.value.zones[zoneIndex.value].gedCats[gedCatId.value][0].items.push({
             base64data: reader.result,
             fileName: images[i].name,
+            url: reader.result,
+            id: '',
           })
         };
         reader.readAsDataURL(images[i]);
@@ -1767,12 +1769,17 @@ export default {
     // update Devis
     const updateDevis = ()=>{
       store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Mettez à jour le devis....']);
-      axios.post('/update-devis', form.value).then((res)=>{
+      axios.post('/update-devis/'+route.params.id, form.value).then((res)=>{
         console.log(res);
         if(res.data.success){
-          router.push({
-            name: 'LandingPage'
+          Swal.fire({
+            title: 'Success',
+            text: "DEVIS updated successfully!",
+            icon: 'success',
           });
+          // router.push({
+          //   name: 'LandingPage'
+          // });
         }
       }).catch((error)=>{
         console.log(error);
