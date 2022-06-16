@@ -1470,7 +1470,6 @@ class DevisController extends Controller
                             }else{
                                 $detailData['created_at'] = Carbon::now();
                                 $detailId = DB::table('order_ouvrage_detail')->insertGetId($detailData);
-                                return response()->json($detailId);
                             }
                             $availTaskDetails[] = $detailId;
                         }
