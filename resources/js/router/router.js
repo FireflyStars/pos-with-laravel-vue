@@ -47,7 +47,7 @@ const router = createRouter({
         },
         {
             path:'/customer/create',
-            name:'customer-create',
+            name:'CreateCustomer',
             component: () => import('../pages/Customer/Create'),
             meta:{
                 authenticated: true

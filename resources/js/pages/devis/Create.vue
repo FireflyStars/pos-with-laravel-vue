@@ -1301,7 +1301,7 @@ export default {
         
     const addNewCustomer = ()=>{
       router.push({
-        name: "customer-create"
+        name: "CreateCustomer"
       })
     }
 
@@ -1684,6 +1684,7 @@ export default {
             "Louvrage a été supprimé.",
             'success'
           )          
+          updateAllValues();
         }
       });      
     }
@@ -1747,9 +1748,9 @@ export default {
               return ouvrageIndex != index;
             });            
           }
+          updateAllValues();
         }
       });
-      updateAllValues();
     }
     // remove detail from task
     const removeOuvrageDetail = (zoneIndex, ouvrageType, ouvrageIndex, taskIndex, detailIndex)=>{
@@ -1784,9 +1785,9 @@ export default {
             'Le détail a été supprimé.',
             'success'
           )        
+          updateAllValues();
         }
       })        
-      updateAllValues();
     }
     // save Devis
     const storeDevis = ()=>{
