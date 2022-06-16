@@ -820,7 +820,7 @@ class DevisController extends Controller
                         ->leftJoin('units', 'units.id', '=', 'order_ouvrage_detail.unit_id')
                         ->where('order_ouvrage_task_id', $task->id)
                         ->where(function($query){
-                            $query->whereNull('deleted_at')->orWhere('deleted_at', '0000-00-00 00:00:00');
+                            $query->whereNull('order_ouvrage_detail.deleted_at')->orWhere('order_ouvrage_detail.deleted_at', '0000-00-00 00:00:00');
                         })                        
                         ->select(
                             'order_ouvrage_detail.id', 'order_ouvrage_detail.numberh as numberH', 'order_ouvrage_detail.qty', 'order_ouvrage_detail.unit_id',
@@ -885,7 +885,7 @@ class DevisController extends Controller
                         ->leftJoin('units', 'units.id', '=', 'order_ouvrage_detail.unit_id')
                         ->where('order_ouvrage_task_id', $task->id)
                         ->where(function($query){
-                            $query->whereNull('deleted_at')->orWhere('deleted_at', '0000-00-00 00:00:00');
+                            $query->whereNull('order_ouvrage_detail.deleted_at')->orWhere('order_ouvrage_detail.deleted_at', '0000-00-00 00:00:00');
                         })                              
                         ->select(
                             'order_ouvrage_detail.id', 'order_ouvrage_detail.numberh as numberH', 'order_ouvrage_detail.qty', 'order_ouvrage_detail.unit_id',
@@ -950,7 +950,7 @@ class DevisController extends Controller
                         ->leftJoin('units', 'units.id', '=', 'order_ouvrage_detail.unit_id')
                         ->where('order_ouvrage_task_id', $task->id)
                         ->where(function($query){
-                            $query->whereNull('deleted_at')->orWhere('deleted_at', '0000-00-00 00:00:00');
+                            $query->whereNull('order_ouvrage_detail.deleted_at')->orWhere('order_ouvrage_detail.deleted_at', '0000-00-00 00:00:00');
                         })                              
                         ->select(
                             'order_ouvrage_detail.id', 'order_ouvrage_detail.numberh as numberH', 'order_ouvrage_detail.qty', 'order_ouvrage_detail.unit_id',
