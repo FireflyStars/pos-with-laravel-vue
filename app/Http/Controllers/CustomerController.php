@@ -11,8 +11,10 @@ class CustomerController extends Controller
     //
     public function getListInfoForCustomer(){
         return response()->json([
+            'customerOrigins'=> DB::table('customer_origins')->select('id as value', 'name as display')->orderBy('name')->get(),
             'status'    => DB::table('customer_statut')->select('id as value', 'name as display')->orderBy('name')->get(),
-            'types'     => DB::table('customer_categories')->select('id as value', 'name as display')->orderBy('name')->get(),
+            'customerCats'=> DB::table('customer_categories')->select('id as value', 'name as display')->orderBy('name')->get(),
+            'customerPentes'=> DB::table('customer_pente')->select('id as value', 'name as display')->orderBy('name')->get(),
             'nafs'      => DB::table('customer_naf')->select('code as value', 'name as display')->orderBy('name')->get(),
             'taxs'      => DB::table('taxes')->select('taux as value', 'name as display')->orderBy('name')->get(),
             'addressTypes' => DB::table('address_type')->select('id as value', 'name as display')->orderBy('name')->get(),
@@ -45,8 +47,8 @@ class CustomerController extends Controller
                 'email'                 => $request->email,
                 'telephone'             => $request->phoneCountryCode.'|'.$request->phoneNumber,
                 'company'               => $request->company,
-                'raisonsociale'         => $request->nomClient,
-                'raisonsociale2'        => $request->nomClient2,
+                'raisonsociale'         => $request->raisonsociale,
+                'raisonsociale2'        => $request->raisonsociale2,
                 'firstname'             => $request->firstName,
                 'gender'                => $request->gender,
                 'name'                  => $request->firstName.' '.$request->lastName,
