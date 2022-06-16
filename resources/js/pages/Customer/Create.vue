@@ -467,7 +467,7 @@
                             </div>
                             <div class="d-flex mt-3">
                                 <div class="col-4">
-                                    <select-box v-model="contact.type" :options="contactTypes" :name="'contactType'+index" :label="'TYPE CONTACT'"></select-box>
+                                    <select-box v-model="contact.type" :options="contactTypes" :name="'contactType'+index" :label="'TYPE CONTACT *'"></select-box>
                                 </div>
                                 <div class="col-8 d-flex ps-3">
                                     <div class="col-2 form-group">
@@ -482,23 +482,19 @@
                                             ></select-box>
                                     </div>
                                     <div class="col-5 ps-2 form-group">
-                                        <label for="nom-client" class="mulish-medium font-16">PRENOM</label>
+                                        <label for="nom-client" class="mulish-medium font-16">PRENOM *</label>
                                         <input type="text" class="form-control" v-model="contact.firstName" placeholder="First Name">
                                     </div>
                                     <div class="col-5 ps-2 form-group">
-                                        <label class="mulish-medium font-16">NOM</label>
+                                        <label class="mulish-medium font-16">NOM *</label>
                                         <input type="text" v-model="contact.name" placeholder="Name" class="form-control">
                                     </div>
                                 </div>
                             </div>
                             <div class="d-flex mt-3">
                                 <div class="col-7">
-                                    <select-box v-model="contact.quantite" 
-                                        :options="[
-                                            { value: 'M', display: 'M' },
-                                            { value: 'Mme', display: 'Mme' },
-                                            { value: 'Mlle', display: 'Mlle' },
-                                        ]" 
+                                    <select-box v-model="contact.qualite" 
+                                        :options="customerQualites" 
                                         :name="'QUANTITE'+index"
                                         :label="'QUANTITE'"
                                         ></select-box>                                    
@@ -641,6 +637,7 @@ export default {
         const customerNafs    = ref([]);
         const customerCats   = ref([]);
         const customerPentes   = ref([]);
+        const customerQualites   = ref([]);
         const addressTypes     = ref([]);
         const contactTypes     = ref([]);
         const form = ref({
@@ -704,7 +701,7 @@ export default {
             contacts: [{
                 type: '',
                 actif: true,
-                quantite: '',
+                qualite: '',
                 gender: 'M',
                 firstName: '',
                 address: '',
@@ -882,6 +879,7 @@ export default {
                 customerPentes.value   = res.data.customerPentes;
                 addressTypes.value    = res.data.addressTypes;
                 contactTypes.value    = res.data.contactTypes;
+                customerQualites.value    = res.data.customerQualites;
             }).catch((errors)=>{
                 console.log(errors);
             }).finally(()=>{
@@ -899,6 +897,7 @@ export default {
             customerPentes,
             addressTypes,
             contactTypes,
+            customerQualites,
             phoneCodesSorted,
             addAddress,
             addContact,
