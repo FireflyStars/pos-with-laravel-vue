@@ -93,6 +93,8 @@ class CustomerController extends Controller
                     'address3'              => $address['address3'],
                     'postcode'              => $address['postCode'],
                     'city'                  => $address['city'],
+                    'latitude'              => $address['latitude'],
+                    'longitude'             => $address['longitude'],
                     'created_at'            => now(),
                     'updated_at'            => now(),
                 ];

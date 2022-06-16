@@ -361,7 +361,7 @@
                                 </div>
                                 <div class="col-4 px-2">
                                     <div class="address-map" >
-                                        <GoogleMap v-model:lat="address.lat" v-model:lon="address.lon"></GoogleMap>
+                                        <GoogleMap v-model:latitude="address.latitude" v-model:longitude="address.longitude"></GoogleMap>
                                     </div>
                                 </div>
                             </div>
@@ -704,8 +704,8 @@ export default {
                 receiptEmail: '',
                 phoneCode: '+33',
                 phoneNumber: '',
-                lat: 48.85560142492883,
-                lon: 2.3491914978706396,
+                latitude: 48.85560142492883,
+                longitude: 2.3491914978706396,
             }],
             // contacts
             contacts: [{
@@ -824,8 +824,8 @@ export default {
                 receiptEmail: '',
                 phoneCode: '',
                 phoneNumber: '',     
-                lat: 48.85560142492883,
-                lon: 2.3491914978706396,
+                latitude: 48.85560142492883,
+                longitude: 2.3491914978706396,
             });
         }     
         const addContact = ()=>{

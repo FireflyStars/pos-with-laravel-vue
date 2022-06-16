@@ -9,19 +9,19 @@ import { ref, onMounted } from 'vue';
 export default {
     name: "GoogleMap",
     props: {
-        lat: {
+        latitude: {
             type: Number,
         },
-        lon: {
+        longitude: {
             type: Number,
         },
     },
-    emits: ['update:lat', 'update:lon'],
+    emits: ['update:latitude', 'update:longitude'],
     setup(props, { emit }){
         let map;
         let markers = [];
         const initMap = ()=>{
-            const myLatlng = { lat: props.lat, lng: props.lon }; // Paris is set as center.
+            const myLatlng = { lat: props.latitude, lng: props.longitude }; // Paris is set as center.
             map = new google.maps.Map(document.getElementById("googleMapToSetLatLon"), {
                 zoom: 7,
                 center: myLatlng,
@@ -31,8 +31,8 @@ export default {
                 removeMarkers(null);
                 var latLng = mapsMouseEvent.latLng.toJSON();
                 addMarker(latLng, map);
-                emit('update:lat', latLng.lat);
-                emit('update:lon', latLng.lng);
+                emit('update:latitude', latLng.lat);
+                emit('update:longitude', latLng.lng);
             });            
         }
         const addMarker = (position, map)=>{
