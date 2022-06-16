@@ -150,7 +150,7 @@
                                 <div class="col-9"></div>
                                 <div class="col-3">
                                     <CheckBox v-model="form.litige" class="ms-5" :title="'LITIGE'"></CheckBox>
-                                    <CheckBox v-model="form.actif" class="ms-5 mt-1" :title="'ACTIF'"></CheckBox>
+                                    <CheckBox v-model="form.actif" :checked="true" class="ms-5 mt-1" :title="'ACTIF'"></CheckBox>
                                 </div>
                             </div>
                             <div class="d-flex">
