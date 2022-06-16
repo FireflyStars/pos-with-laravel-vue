@@ -281,7 +281,7 @@
                             <h3 class="m-0 mulish-extrabold font-22">BATIMENTS</h3>
                             <div class="d-flex">
                                 <div class="col-5 pe-3">
-                                    <select-box v-model="address.addressType" :options="addressTypes" :label="'TYPE ADRESSE'" :name="'addressType'+index"></select-box>
+                                    <select-box v-model="address.addressType" :options="addressTypes" :label="'TYPE ADRESSE *'" :name="'addressType'+index"></select-box>
                                 </div>
                                 <div class="col-7 d-flex">
                                     <div class="col-7">
@@ -293,7 +293,7 @@
                                     <div class="col-5 ps-3">
                                         <div class="form-group">
                                             <label>NOM</label>
-                                            <input type="text" v-model="address.lastName" placeholder="Name" class="form-control">
+                                            <input type="text" v-model="address.nom" placeholder="Name" class="form-control">
                                         </div>
                                     </div>
                                 </div>
@@ -338,7 +338,7 @@
                                 <div class="col-4">
                                     <div class="form-group">
                                         <label>ADRESSE EMAIL</label>
-                                        <input type="text" v-model="form.email" placeholder="E-receipt email" class="form-control">
+                                        <input type="text" v-model="address.receiptEmail" placeholder="E-receipt email" class="form-control">
                                     </div>                                    
                                 </div>
                                 <div class="customer-phone col-5 ps-5">
@@ -348,14 +348,14 @@
                                     <div class="d-flex">
                                         <div class="phone-country-code">
                                             <select-box 
-                                                v-model="form.phoneCountryCode" 
+                                                v-model="address.phoneCode" 
                                                 :options="phoneCodesSorted"
                                                 :styles="{ width: '100px'}"
                                                 :name="'phoneCountryCode'">
                                             </select-box>
                                         </div>
                                         <div class="form-group ms-2">
-                                            <input type="text" v-model="form.phoneNumber" class="form-control custom-input">
+                                            <input type="text" v-model="address.phoneNumber" class="form-control custom-input">
                                         </div>
                                     </div>
                                 </div>
@@ -459,13 +459,18 @@
                         </div>                        
                         <div class="page-section" v-for="(contact, index) in form.contacts" :key="index">
                             <h3 class="m-0 mulish-extrabold font-22">CONTACT</h3>
-                            <div class="d-flex">
+                            <div class="d-flex mt-3">
+                                <div class="col-9"></div>
+                                <div class="col-3">
+                                    <CheckBox v-model="contact.actif" :checked="true" :title="'ACTIF'"></CheckBox>
+                                </div>
+                            </div>
+                            <div class="d-flex mt-3">
                                 <div class="col-4">
-                                    <select-box v-model="contact.type" :options="contactTypes" :name="'contactType'+index" :lable="'TYPE CONTACT'"></select-box>
+                                    <select-box v-model="contact.type" :options="contactTypes" :name="'contactType'+index" :label="'TYPE CONTACT'"></select-box>
                                 </div>
                                 <div class="col-8 d-flex ps-3">
                                     <div class="col-2 form-group">
-                                        <label>&nbsp;</label>
                                         <select-box v-model="contact.gender" 
                                             :options="[
                                                 { value: 'M', display: 'M' },
@@ -473,6 +478,7 @@
                                                 { value: 'Mlle', display: 'Mlle' },
                                             ]" 
                                             :name="'customerGender'+index"
+                                            :label="'&nbsp;'"
                                             ></select-box>
                                     </div>
                                     <div class="col-5 ps-2 form-group">
@@ -680,40 +686,41 @@ export default {
             epc: '',
             infoNote: '',
             // address tab
-            addresses: [
-                {
-                    addressType: '',
-                    alias: '',
-                    address1: '',
-                    address2: '',
-                    address3: '',
-                    postCode: '',
-                    city: '',
-                    state: '',
-                }
-            ],
+            addresses: [{
+                addressType: '',
+                firstName: '',
+                Nom: '',
+                address1: '',
+                address2: '',
+                address3: '',
+                postCode: '',
+                city: '',
+                state: '',
+                receiptEmail: '',
+                phoneCode: '',
+                phoneNumber: '',
+            }],
             // contacts
-            contacts: [
-                {
-                    type: '',
-                    quantite: '',
-                    gender: 'M',
-                    firstName: '',
-                    address: '',
-                    profilLinedin: '',
-                    name: '',
-                    email: '',
-                    note: '',
-                    numGx: '',
-                    phoneCountryCode1: '+33',
-                    phoneNumber1: '',
-                    phoneCountryCode2: '+33',
-                    phoneNumber2: '',
-                    acceptSMS: true,
-                    acceptmarketing: true,
-                    acceptcourrier: true,
-                }
-            ],            
+            contacts: [{
+                type: '',
+                actif: true,
+                quantite: '',
+                gender: 'M',
+                firstName: '',
+                address: '',
+                profilLinedin: '',
+                name: '',
+                email: '',
+                note: '',
+                numGx: '',
+                phoneCountryCode1: '+33',
+                phoneNumber1: '',
+                phoneCountryCode2: '+33',
+                phoneNumber2: '',
+                acceptSMS: true,
+                acceptmarketing: true,
+                acceptcourrier: true,
+            }],            
         });
 
         const selectNav = (value)=>{
@@ -724,34 +731,103 @@ export default {
         }
         const nextStep = ()=>{
             if(step.value == 'client-detail'){
-                step.value = 'address';
+                if(form.value.raisonsociale == ''){
+                    store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
+                        type: 'danger',
+                        message: 'Please enter RAISON SOCIALE',
+                        ttl: 5,
+                    });
+                }else if(form.value.siret == ''){
+                    store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
+                        type: 'danger',
+                        message: 'Please enter SIRET',
+                        ttl: 5,
+                    });                    
+                }else if(form.value.naf == ''){
+                    store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
+                        type: 'danger',
+                        message: 'Please enter NAF',
+                        ttl: 5,
+                    });                    
+                }else{
+                    step.value = 'address';
+                }
             }else if( step.value == 'address' ){
-                step.value = 'information';
+                var flag = false;
+                form.value.addresses.forEach(address => {
+                    if(address.addressType == ''){
+                        flag = true;
+                        store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
+                            type: 'danger',
+                            message: 'Please select address type',
+                            ttl: 5,
+                        });  
+                    }else if(address.address1 == ''){
+                        flag = true;
+                        store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
+                            type: 'danger',
+                            message: 'Please fill in address1',
+                            ttl: 5,
+                        });                          
+                    }else if(address.postCode == ''){
+                        flag = true;
+                        store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
+                            type: 'danger',
+                            message: 'Please enter CODE POSTAL',
+                            ttl: 5,
+                        });                          
+                    }else if(address.city == ''){
+                        flag = true;
+                        store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
+                            type: 'danger',
+                            message: 'Please enter CODE VILLE *',
+                            ttl: 5,
+                        });                                                  
+                    }else if(address.firstName == ''){
+                        flag = true;
+                        store.dispatch(`${TOASTER_MODULE}${TOASTER_MESSAGE}`, {
+                            type: 'danger',
+                            message: 'Please enter PRENOM / NOM BATIMENT',
+                            ttl: 5,
+                        });
+                    }
+                });
+                if(!flag){
+                    step.value = 'information';
+                }
             }else if(step.value == 'information'){
                 step.value = 'contact';
             }
         }
         const phoneCodesSorted = [...new Map(phoneCodes.map(item =>
-                        [item.value, item])).values()].sort((a, b)=>{
-                return parseInt(a.value.replace(/\D/g, '')) - parseInt(b.value.replace(/\D/g, ''));
+            [item.value, item])).values()].sort((a, b)=>{
+            return parseInt(a.value.replace(/\D/g, '')) - parseInt(b.value.replace(/\D/g, ''));
         }); 
         const addAddress = ()=>{
             form.value.addresses.push({
                 addressType: '',
-                alias: '',
+                firstName: '',
+                Nom: '',
                 address1: '',
                 address2: '',
                 address3: '',
                 postCode: '',
                 city: '',
                 state: '',
+                receiptEmail: '',
+                phoneCode: '',
+                phoneNumber: '',            
             });
         }     
         const addContact = ()=>{
             form.value.contacts.push({
                 type: '',
+                actif: true,
+                quantite: '',
                 gender: 'M',
                 firstName: '',
+                address: '',
+                profilLinedin: '',
                 name: '',
                 email: '',
                 note: '',
@@ -759,7 +835,10 @@ export default {
                 phoneCountryCode1: '+33',
                 phoneNumber1: '',
                 phoneCountryCode2: '+33',
-                phoneNumber2: '',                
+                phoneNumber2: '',
+                acceptSMS: true,
+                acceptmarketing: true,
+                acceptcourrier: true,             
             });
         }     
         const removeAddress = (selectedIndex)=>{
