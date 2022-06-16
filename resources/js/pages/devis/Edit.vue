@@ -256,7 +256,7 @@
                               {{ (ouvrage.total / ouvrage.qty).toFixed(2) }}€
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
-                              {{ ouvrage.total }}€
+                              {{ ouvrage.total.toFixed(2) }}€
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center">
                               <svg class="cursor-pointer" @click="removeOuvrage(zoneIndex, 1, ouvrageIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -459,7 +459,7 @@
                               {{ (ouvrage.total / ouvrage.qty).toFixed(2) }}€
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
-                              {{ ouvrage.total }}€
+                              {{ ouvrage.total.toFixed(2) }}€
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center">
                               <svg class="cursor-pointer" @click="removeOuvrage(zoneIndex, 2, ouvrageIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -662,7 +662,7 @@
                               {{ (ouvrage.total / ouvrage.qty).toFixed(2) }}€
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center border border-1">
-                              {{ ouvrage.total }}€
+                              {{ ouvrage.total.toFixed(2) }}€
                             </div>
                             <div class="col-2 d-flex align-items-center justify-content-center">
                               <svg class="cursor-pointer" @click="removeOuvrage(zoneIndex, 3, ouvrageIndex)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

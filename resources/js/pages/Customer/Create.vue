@@ -335,15 +335,15 @@
                                 </div>
                             </div>
                             <div class="d-flex mt-3">
-                                <div class="col-4">
+                                <div class="col-3">
                                     <div class="form-group">
-                                        <label>ADRESSE EMAIL</label>
+                                        <label>EMAIL GENERIQUE</label>
                                         <input type="text" v-model="address.receiptEmail" placeholder="E-receipt email" class="form-control">
                                     </div>                                    
                                 </div>
-                                <div class="customer-phone col-5 ps-5">
+                                <div class="customer-phone col-5 ps-3">
                                     <div>
-                                        <label class="text-uppercase">TELEPHONE</label>
+                                        <label class="text-uppercase">STANDARD TELEPHONIQUE</label>
                                     </div>
                                     <div class="d-flex">
                                         <div class="phone-country-code">
@@ -357,6 +357,11 @@
                                         <div class="form-group ms-2">
                                             <input type="text" v-model="address.phoneNumber" class="form-control custom-input">
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="col-4 px-2">
+                                    <div class="address-map" >
+                                        <GoogleMap v-model:lat="address.lat" v-model:lon="address.lon"></GoogleMap>
                                     </div>
                                 </div>
                             </div>
@@ -610,6 +615,7 @@
 import { ref, onMounted } from 'vue';
 import SelectBox from '../../components/miscellaneous/SelectBox';
 import CheckBox from '../../components/miscellaneous/CheckBox';
+import GoogleMap from '../../components/miscellaneous/GoogleMap';
 import { phoneCountryCode as phoneCodes } from '../../static/PhoneCountryCodes';
 import {     
   DISPLAY_LOADER,
@@ -625,12 +631,14 @@ import { useRouter } from 'vue-router';
 export default {
     components:{
         SelectBox,
-        CheckBox
+        CheckBox,
+        GoogleMap
     },
     setup() {
         const store = useStore();
         const router = useRouter();
-        const step = ref('client-detail');
+        // const step = ref('client-detail');
+        const step = ref('address');
         const customerStatuses  = ref([]);
         const customerOrigins  = ref([]);
         const customerTaxes    = ref([]);
@@ -694,8 +702,10 @@ export default {
                 city: '',
                 state: '',
                 receiptEmail: '',
-                phoneCode: '',
+                phoneCode: '+33',
                 phoneNumber: '',
+                lat: 48.85560142492883,
+                lon: 2.3491914978706396,
             }],
             // contacts
             contacts: [{
@@ -813,7 +823,9 @@ export default {
                 state: '',
                 receiptEmail: '',
                 phoneCode: '',
-                phoneNumber: '',            
+                phoneNumber: '',     
+                lat: 48.85560142492883,
+                lon: 2.3491914978706396,
             });
         }     
         const addContact = ()=>{
@@ -993,5 +1005,9 @@ export default {
 .btn-danger{
     background: rgba(255, 0, 0, 0.1);
     color: #E8581B;
+}
+.address-map{
+    width: 270px;
+    height: 170px;
 }
 </style>
