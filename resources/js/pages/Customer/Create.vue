@@ -374,7 +374,7 @@
                     <div class="cust-page-content m-auto pt-5">
                         <div class="page-section">
                             <h3 class="m-0 mulish-extrabold font-22">INFORMATIONS TECHNIQUES</h3>
-                            <div class="d-flex">
+                            <div class="d-flex mt-3">
                                 <div class="col-4 pe-3">
                                     <select-box v-model="form.customerPente" :options="customerPentes" :label="'PENTE (o)'" :name="'customerPente'"></select-box>
                                 </div>
