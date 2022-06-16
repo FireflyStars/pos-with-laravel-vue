@@ -829,8 +829,8 @@ class DevisController extends Controller
                             'order_ouvrage_detail.original_qty as originalDetailQty', 'order_ouvrage_detail.orderfile as base64'
                         )->get();                    
                         foreach ($details as $detail) {
-                            if($detail->type == 'Commande ELISP'){
-                                $detail->base64 = getenv('APP_URL').Storage::url($detail->url);
+                            if($detail->type == 'COMMANDE FOURNISSEUR'){
+                                $detail->base64 = getenv('APP_URL').Storage::url($detail->base64);
                             }
                             $detail->totalPriceWithoutMarge = 0;
                             $ouvrage->totalHour += $detail->numberH;
@@ -894,8 +894,8 @@ class DevisController extends Controller
                             'order_ouvrage_detail.original_qty as originalDetailQty', 'order_ouvrage_detail.orderfile as base64'
                         )->get();                    
                         foreach ($details as $detail) {
-                            if($detail->type == 'Commande ELISP'){
-                                $detail->base64 = getenv('APP_URL').Storage::url($detail->url);
+                            if($detail->type == 'COMMANDE FOURNISSEUR'){
+                                $detail->base64 = getenv('APP_URL').Storage::url($detail->base64);
                             }
                             $detail->totalPriceWithoutMarge = 0;
                             $ouvrage->totalHour += $detail->numberH;
@@ -959,8 +959,8 @@ class DevisController extends Controller
                             'order_ouvrage_detail.original_qty as originalDetailQty', 'order_ouvrage_detail.orderfile as base64'
                         )->get();                    
                         foreach ($details as $detail) {
-                            if($detail->type == 'Commande ELISP'){
-                                $detail->base64 = getenv('APP_URL').Storage::url($detail->url);
+                            if($detail->type == 'COMMANDE FOURNISSEUR'){
+                                $detail->base64 = getenv('APP_URL').Storage::url($detail->base64);
                             }
                             $detail->totalPriceWithoutMarge = 0;
                             $ouvrage->totalHour += $detail->numberH;
