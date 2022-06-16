@@ -1671,7 +1671,8 @@ export default {
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#42A71E',
-        cancelButtonColor: '#E8581B',
+        // cancelButtonColor: '#E8581B',
+        cancelButtonColor: 'var(--lcdtOrange)',
         cancelButtonText: 'annuler',
         confirmButtonText: 'Oui, supprimez-le!'
       }).then((result) => {
@@ -1723,7 +1724,8 @@ export default {
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#42A71E',
-        cancelButtonColor: '#E8581B',
+        cancelButtonColor: 'var(--lcdtOrange)',
+        // cancelButtonColor: '#E8581B',
         cancelButtonText: 'annuler',
         confirmButtonText: 'Oui, supprimez-le!'
       }).then((result) => {
@@ -1760,7 +1762,8 @@ export default {
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#42A71E',
-        cancelButtonColor: '#E8581B',
+        // cancelButtonColor: '#E8581B',
+        cancelButtonColor: 'var(--lcdtOrange)',
         cancelButtonText: 'annuler',        
         confirmButtonText: 'Oui, supprimez-le!'
       }).then((result) => {
