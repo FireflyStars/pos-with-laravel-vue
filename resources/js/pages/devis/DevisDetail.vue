@@ -55,12 +55,11 @@
       
      </div>
      <div class="od_actions" v-if="show">
-        <button class="btn btn-outline-dark almarai_700_normal">Editer</button>
-        <button class="btn btn-outline-success almarai_700_normal">Gagne</button>
-        <button class="btn btn-outline-secondary almarai_700_normal">Perdu</button>  
-        <button class="btn btn-outline-primary almarai_700_normal">Abandonne</button>  
-        <button class="btn btn-outline-warning almarai_700_normal">Attente client</button> 
-        <button class="btn btn-outline-info almarai_700_normal">Copier</button>  
+        <button class="btn btn-outline-dark almarai_700_normal" @click="router.push({ name: 'EditDevis', params: { id: order_id } })">Editer</button>
+        <button class="btn btn-outline-success almarai_700_normal" @click="changeOrderState(4)">Gagne</button>
+        <button class="btn btn-outline-secondary almarai_700_normal"  @click="changeOrderState(20)">Perdu</button>  
+        <button class="btn btn-outline-primary almarai_700_normal"  @click="changeOrderState(18)">Abandonne</button>  
+        <button class="btn btn-outline-warning almarai_700_normal"  @click="changeOrderState(3)">Attente client</button>   
      </div>
 
 
@@ -69,17 +68,19 @@
 
 <script>
 import { computed, onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex';
 import ItemDetailPanel from '../../components/miscellaneous/ItemListTable/ItemDetailPanel.vue'
 import OrderStateTag from '../../components/miscellaneous/OrderStateTag.vue';
-import { DEVIS_DETAIL_GET, DEVIS_DETAIL_LOAD, DEVIS_DETAIL_MODULE, DEVIS_DETAIL_SET } from '../../store/types/types';
+import { DEVIS_DETAIL_GET, DEVIS_DETAIL_LOAD, DEVIS_DETAIL_MODULE, DEVIS_DETAIL_SET, ORDERSTATETAG_GET_ORDER_STATES, ORDERSTATETAG_MODULE } from '../../store/types/types';
 import { formatPrice,formatDate,br } from '../../components/helpers/helpers';
+import Swal from 'sweetalert2';
     export default {
         name: "DevisDetail",
         components:{ItemDetailPanel,OrderStateTag},
         setup(){
             const route=useRoute();
+            const router=useRouter();
             const store=useStore();
             const show=ref(false);
             const showloader=ref(false);
@@ -94,7 +95,28 @@ import { formatPrice,formatDate,br } from '../../components/helpers/helpers';
                     showloader.value=false;
                 });
             })
-            const order=computed(()=>store.getters[`${DEVIS_DETAIL_MODULE}${DEVIS_DETAIL_GET}`])
+            const order=computed(()=>store.getters[`${DEVIS_DETAIL_MODULE}${DEVIS_DETAIL_GET}`]);
+
+             const order_states=computed(()=>store.getters[`${ORDERSTATETAG_MODULE}${ORDERSTATETAG_GET_ORDER_STATES}`]);
+
+            const changeOrderState = (order_state_id)=>{
+                const order_state=order_states.value.filter(obj=>obj.id==order_state_id);
+                Swal.fire({
+                    title: 'Veuillez confirmer!',
+                    text: `Voulez-vous changer le statut en ${typeof order_state[0]!="undefined"?order_state[0].name:''}?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#42A71E',
+                    cancelButtonColor: 'var(--lcdtOrange)',
+                    cancelButtonText: 'Annuler',
+                    confirmButtonText: `Oui, s'il vous plaît.`
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                    
+                    }
+                });      
+            }
+
              return {
                  show,
                  showloader,
@@ -102,7 +124,9 @@ import { formatPrice,formatDate,br } from '../../components/helpers/helpers';
                  order,
                  formatPrice,
                  formatDate,
-                 br
+                 br,
+                 router,
+                 changeOrderState
              }
         }
     }
