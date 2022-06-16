@@ -1675,8 +1675,8 @@ export default {
         confirmButtonColor: '#42A71E',
         // cancelButtonColor: '#E8581B',
         cancelButtonColor: 'var(--lcdtOrange)',
-        cancelButtonText: 'annuler',
-        confirmButtonText: 'Oui, supprimez-le!'
+        cancelButtonText: 'Annuler',
+        confirmButtonText: `Oui, s'il vous plaît.`
       }).then((result) => {
         if (result.isConfirmed) {
           form.value.zones = form.value.zones.filter((item, index)=>{
@@ -1728,8 +1728,8 @@ export default {
         confirmButtonColor: '#42A71E',
         // cancelButtonColor: '#E8581B',
         cancelButtonColor: 'var(--lcdtOrange)',
-        cancelButtonText: 'annuler',
-        confirmButtonText: 'Oui, supprimez-le!'
+        cancelButtonText: 'Annuler',
+        confirmButtonText: `Oui, s'il vous plaît.`
       }).then((result) => {
         if (result.isConfirmed) {
           if(ouvrageType == 1){
@@ -1766,8 +1766,8 @@ export default {
         confirmButtonColor: '#42A71E',
         // cancelButtonColor: '#E8581B',
         cancelButtonColor: 'var(--lcdtOrange)',
-        cancelButtonText: 'annuler',        
-        confirmButtonText: 'Oui, supprimez-le!'
+        cancelButtonText: 'Annuler',        
+        confirmButtonText: `Oui, s'il vous plaît.`
       }).then((result) => {
         if (result.isConfirmed) {
           if(ouvrageType == 1){

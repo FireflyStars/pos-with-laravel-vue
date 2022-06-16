@@ -938,12 +938,12 @@ class DevisController extends Controller
                     $tasks = DB::table('order_ouvrage_task')
                             ->where('order_ouvrage_id', $ouvrage->id)
                             ->where(function($query){
-                            $query->whereNull('deleted_at')->orWhere('deleted_at', '0000-00-00 00:00:00');
-                        })
+                                $query->whereNull('deleted_at')->orWhere('deleted_at', '0000-00-00 00:00:00');
+                            })
                             ->select('id', 'name', 'textcustomer as customerText', 'textchargeaffaire', 'textoperator', 'unit_id', 'qty')->get();
                     foreach ($tasks as $task) {
                         $details = DB::table('order_ouvrage_detail')
-                        ->join('units', 'units.id', '=', 'order_ouvrage_detail.unit_id')
+                        ->leftJoin('units', 'units.id', '=', 'order_ouvrage_detail.unit_id')
                         ->where('order_ouvrage_task_id', $task->id)
                         ->whereNull('order_ouvrage_detail.deleted_at')
                         ->select(
@@ -1103,7 +1103,7 @@ class DevisController extends Controller
                         $orderOuvrageId = DB::table('order_ouvrages')->insertGetId($ouvrageData);
                     }
                     // adding ouvrage's id;
-                    $availSecurityOuvrages[] = $orderOuvrageId;
+                    $availInstallOuvrages[] = $orderOuvrageId;
                     // declare var for available ouvrage tasks
                     $avileOuvrageTasks = [];
                     foreach ($ouvrage['tasks'] as $taskIndex => $task) {
@@ -1464,6 +1464,7 @@ class DevisController extends Controller
                             }else{
                                 $detailData['created_at'] = Carbon::now();
                                 $detailId = DB::table('order_ouvrage_detail')->insertGetId($detailData);
+                                return response()->json($detailId);
                             }
                             $availTaskDetails[] = $detailId;
                         }

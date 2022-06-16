@@ -1441,7 +1441,7 @@ export default {
           totalPrice: 0,
           numberH: 0,
           productId: supplier.productId,
-          unit_id: 0,
+          unit_id: 3,
         });
       }
       if(supplier.ouvrageType == 2){
@@ -1460,7 +1460,7 @@ export default {
           totalPrice: 0,
           numberH: 0,
           productId: supplier.productId,
-          unit_id: 0,
+          unit_id: 3,
         });
       }
       if(supplier.ouvrageType == 3){
@@ -1479,7 +1479,7 @@ export default {
           totalPrice: 0,
           numberH: 0,
           productId: supplier.productId,
-          unit_id: 0,
+          unit_id: 3,
         });
       }
       updateAllValues();
@@ -1673,8 +1673,8 @@ export default {
         confirmButtonColor: '#42A71E',
         // cancelButtonColor: '#E8581B',
         cancelButtonColor: 'var(--lcdtOrange)',
-        cancelButtonText: 'annuler',
-        confirmButtonText: 'Oui, supprimez-le!'
+        cancelButtonText: 'Annuler',
+        confirmButtonText: `Oui, s'il vous plaît.`
       }).then((result) => {
         if (result.isConfirmed) {
           form.value.zones = form.value.zones.filter((item, index)=>{
@@ -1726,8 +1726,8 @@ export default {
         confirmButtonColor: '#42A71E',
         cancelButtonColor: 'var(--lcdtOrange)',
         // cancelButtonColor: '#E8581B',
-        cancelButtonText: 'annuler',
-        confirmButtonText: 'Oui, supprimez-le!'
+        cancelButtonText: 'Annuler',
+        confirmButtonText: `Oui, s'il vous plaît.`
       }).then((result) => {
         if (result.isConfirmed) {
           Swal.fire(
@@ -1764,8 +1764,8 @@ export default {
         confirmButtonColor: '#42A71E',
         // cancelButtonColor: '#E8581B',
         cancelButtonColor: 'var(--lcdtOrange)',
-        cancelButtonText: 'annuler',        
-        confirmButtonText: 'Oui, supprimez-le!'
+        cancelButtonText: 'Annuler',        
+        confirmButtonText: `Oui, s'il vous plaît.`
       }).then((result) => {
         if (result.isConfirmed) {
           if(ouvrageType == 1){
