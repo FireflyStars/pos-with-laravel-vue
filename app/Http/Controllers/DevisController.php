@@ -794,8 +794,8 @@ class DevisController extends Controller
                     ->where('order_zone_id', $zone->id)
                     ->where('order_cat_id', $orderCat->id)
                     ->where(function($query){
-                            $query->whereNull('deleted_at')->orWhere('deleted_at', '0000-00-00 00:00:00');
-                        })
+                        $query->whereNull('deleted_at')->orWhere('deleted_at', '0000-00-00 00:00:00');
+                    })
                     ->where('type', 'INSTALLATION')
                     ->select(
                         'id', 'unit_id as unit', 'qty', 'ouvrage_prestation_id', 'ouvrage_metier_id', 'ouvrage_toit_id', 
@@ -809,17 +809,19 @@ class DevisController extends Controller
                     $tasks = DB::table('order_ouvrage_task')
                                 ->where('order_ouvrage_id', $ouvrage->id)
                                 ->where(function($query){
-                            $query->whereNull('deleted_at')->orWhere('deleted_at', '0000-00-00 00:00:00');
-                        })
+                                    $query->whereNull('deleted_at')->orWhere('deleted_at', '0000-00-00 00:00:00');
+                                })
                                 ->select(
                                     'id', 'name', 'textcustomer as customerText', 'textchargeaffaire', 
                                     'textoperator', 'unit_id', 'qty'
                                 )->get();
                     foreach ($tasks as $task) {
                         $details = DB::table('order_ouvrage_detail')
-                        ->join('units', 'units.id', '=', 'order_ouvrage_detail.unit_id')
+                        ->leftJoin('units', 'units.id', '=', 'order_ouvrage_detail.unit_id')
                         ->where('order_ouvrage_task_id', $task->id)
-                        ->whereNull('order_ouvrage_detail.deleted_at')
+                        ->where(function($query){
+                            $query->whereNull('deleted_at')->orWhere('deleted_at', '0000-00-00 00:00:00');
+                        })                        
                         ->select(
                             'order_ouvrage_detail.id', 'order_ouvrage_detail.numberh as numberH', 'order_ouvrage_detail.qty', 'order_ouvrage_detail.unit_id',
                             'order_ouvrage_detail.type', 'units.code as unit', 'order_ouvrage_detail.product_id as productId', 'order_ouvrage_detail.name', 'order_ouvrage_detail.taxe_id as tax', 'order_ouvrage_detail.unitprice as unitPrice', 'order_ouvrage_detail.datesupplier',
@@ -880,9 +882,11 @@ class DevisController extends Controller
                                 ->select('id', 'name', 'textcustomer as customerText', 'textchargeaffaire', 'textoperator', 'unit_id', 'qty')->get();
                     foreach ($tasks as $task) {
                         $details = DB::table('order_ouvrage_detail')
-                        ->join('units', 'units.id', '=', 'order_ouvrage_detail.unit_id')
+                        ->leftJoin('units', 'units.id', '=', 'order_ouvrage_detail.unit_id')
                         ->where('order_ouvrage_task_id', $task->id)
-                        ->whereNull('order_ouvrage_detail.deleted_at')
+                        ->where(function($query){
+                            $query->whereNull('deleted_at')->orWhere('deleted_at', '0000-00-00 00:00:00');
+                        })                              
                         ->select(
                             'order_ouvrage_detail.id', 'order_ouvrage_detail.numberh as numberH', 'order_ouvrage_detail.qty', 'order_ouvrage_detail.unit_id',
                             'order_ouvrage_detail.type', 'units.code as unit', 'order_ouvrage_detail.product_id as productId', 'order_ouvrage_detail.name', 'order_ouvrage_detail.taxe_id as tax', 'order_ouvrage_detail.unitprice as unitPrice', 'order_ouvrage_detail.datesupplier',
@@ -945,7 +949,9 @@ class DevisController extends Controller
                         $details = DB::table('order_ouvrage_detail')
                         ->leftJoin('units', 'units.id', '=', 'order_ouvrage_detail.unit_id')
                         ->where('order_ouvrage_task_id', $task->id)
-                        ->whereNull('order_ouvrage_detail.deleted_at')
+                        ->where(function($query){
+                            $query->whereNull('deleted_at')->orWhere('deleted_at', '0000-00-00 00:00:00');
+                        })                              
                         ->select(
                             'order_ouvrage_detail.id', 'order_ouvrage_detail.numberh as numberH', 'order_ouvrage_detail.qty', 'order_ouvrage_detail.unit_id',
                             'order_ouvrage_detail.type', 'units.code as unit', 'order_ouvrage_detail.product_id as productId', 'order_ouvrage_detail.name', 'order_ouvrage_detail.taxe_id as tax', 'order_ouvrage_detail.unitprice as unitPrice', 'order_ouvrage_detail.datesupplier',
