@@ -637,8 +637,8 @@ export default {
     setup() {
         const store = useStore();
         const router = useRouter();
-        // const step = ref('client-detail');
-        const step = ref('address');
+        const step = ref('client-detail');
+        // const step = ref('address');
         const customerStatuses  = ref([]);
         const customerOrigins  = ref([]);
         const customerTaxes    = ref([]);
