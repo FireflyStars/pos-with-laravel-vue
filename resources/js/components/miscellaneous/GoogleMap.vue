@@ -1,5 +1,5 @@
 <template>
-    <div class="h-100 w-100" id="googleMapToSetLatLon">
+    <div class="h-100 w-100 googleMapToSetLatLon" ref="googleMap">
 
     </div>
 </template>
@@ -18,11 +18,12 @@ export default {
     },
     emits: ['update:latitude', 'update:longitude'],
     setup(props, { emit }){
-        let map;
+        const googleMap = ref(null);
         let markers = [];
         const initMap = ()=>{
             const myLatlng = { lat: props.latitude, lng: props.longitude }; // Paris is set as center.
-            map = new google.maps.Map(document.getElementById("googleMapToSetLatLon"), {
+            // var mapsElements = document.getElementsByClassName("googleMapToSetLatLon");
+            const map = new google.maps.Map(googleMap.value, {
                 zoom: 7,
                 center: myLatlng,
             });
@@ -52,6 +53,7 @@ export default {
             initMap();
         })
         return {
+            googleMap
         }
     }
 }
