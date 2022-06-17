@@ -42,9 +42,9 @@ class DevisController extends Controller
         DB::raw("TRIM(CONCAT(addresses.address1, IF(addresses.address2<>'', '<br/>',''),addresses.address2,'<br/>',addresses.postcode,' ',addresses.city)) as address")])
           ->join('customers',function($join){
             $join->on('customers.id','=','orders.customer_id');
-        })->join('events',function($join){
+        })->leftJoin('events',function($join){
             $join->on('events.order_id','=','orders.id');
-        })->join('contacts',function($join){
+        })->leftJoin('contacts',function($join){
             $join->on('contacts.id','=','events.contact_id');
         })->leftJoin('addresses',function($join){
             $join->on('addresses.id','=','events.address_id')
@@ -105,8 +105,12 @@ class DevisController extends Controller
         $order_id=$request->post('order_id');
         $order=Order::find($order_id);
         $lastevent=$order->events()->orderBy('id','desc')->first();
+        $order->contact='--/--';
+        $chantier_address=null;
+        if($lastevent!=null){
         $order->contact=$lastevent->contact;
         $chantier_address=$lastevent->address()->where('address_type_id','=',2)->first();
+        }
         $order->formatted_chantier_address=$chantier_address==null?'--/--':$chantier_address->getformattedAddress();
         $order->customer;
         $order->orderZones;
