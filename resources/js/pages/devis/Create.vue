@@ -196,10 +196,10 @@
                   </div>
                 </div>
 
-                <div class="ouvrage-section installation-ouvrages bg-white px-4 py-3 mt-2 mb-2">
+                <div class="ouvrage-section installation-ouvrages bg-white px-4 py-3 mt-2 mb-2" :id="'zone-'+zoneIndex+'-installation-ouvrages'">
                   <div class="ouvrage-header d-flex">
                     <div class="col-7">
-                      <div class="col-5 d-flex align-items-center cursor-pointer toggle-btn" @click="togglePanel">
+                      <div class="col-5 d-flex align-items-center cursor-pointer toggle-btn" @click="togglePanel('zone-'+zoneIndex+'-installation-ouvrages')">
                         <span class="installation-icon me-2"></span> 
                         <input type="text" @blur="zone.installOuvrage.edit = false" v-if="zone.installOuvrage.edit" class="form-control form-control-sm" v-model="zone.installOuvrage.name">
                         <span v-else class="me-4" @dblclick="zone.installOuvrage.edit = true">{{ zone.installOuvrage.name }}</span>
@@ -399,10 +399,10 @@
                   </div>
                 </div>
 
-                <div class="ouvrage-section security-ouvrages bg-white px-4 py-3 mt-2 mb-2">
+                <div class="ouvrage-section security-ouvrages bg-white px-4 py-3 mt-2 mb-2" :id="'zone-'+zoneIndex+'-security-ouvrages'">
                   <div class="ouvrage-header d-flex">
                     <div class="col-7">
-                      <div class="col-5 d-flex align-items-center cursor-pointer toggle-btn" @click="togglePanel">
+                      <div class="col-5 d-flex align-items-center cursor-pointer toggle-btn" @click="togglePanel('zone-'+zoneIndex+'-security-ouvrages')">
                         <span class="securite-icon me-2"></span> 
                         <input type="text" @blur="zone.securityOuvrage.edit = false" v-if="zone.securityOuvrage.edit" class="form-control form-control-sm" v-model="zone.securityOuvrage.name">
                         <span v-else class="me-4" @dblclick="zone.securityOuvrage.edit = true">{{ zone.securityOuvrage.name }}</span>
@@ -602,10 +602,10 @@
                   </div>
                 </div>
 
-                <div class="ouvrage-section prestation-ouvrages bg-white px-4 py-3 mt-2 mb-2">
+                <div class="ouvrage-section prestation-ouvrages bg-white px-4 py-3 mt-2 mb-2" :id="'zone-'+zoneIndex+'-prestation-ouvrages'">
                   <div class="ouvrage-header d-flex">
                     <div class="col-7">
-                      <div class="col-5 d-flex align-items-center cursor-pointer toggle-btn" @click="togglePanel">
+                      <div class="col-5 d-flex align-items-center cursor-pointer toggle-btn" @click="togglePanel('zone-'+zoneIndex+'-prestation-ouvrages')">
                         <span class="prestation-icon me-2"></span> 
                         <input type="text" @blur="zone.prestationOuvrage.edit = false" v-if="zone.prestationOuvrage.edit" class="form-control form-control-sm" v-model="zone.prestationOuvrage.name">
                         <span v-else class="me-4" @dblclick="zone.prestationOuvrage.edit = true">{{ zone.prestationOuvrage.name }}</span>                          
@@ -1266,9 +1266,8 @@ export default {
     const zoomImage = (content)=>{
       zoomModal.value.openModal(content);
     }
-    const togglePanel = (event)=>{
-      // toggle open class for 3th parent. (<div class="ouvrage-section bg-white px-4 py-3 mt-2 mb-2">)
-      event.path[3].classList.toggle('open');
+    const togglePanel = (eleID)=>{
+      document.getElementById(eleID).classList.toggle('open');
     }
     const openSecuriteModal = (zIndex)=>{
       securiteModal.value.openModal(zIndex);
@@ -1797,10 +1796,10 @@ export default {
     const storeDevis = ()=>{
       store.dispatch(`${LOADER_MODULE}${DISPLAY_LOADER}`, [true, 'Enregistrer le Devis...']);
       axios.post('/store-devis', form.value).then((res)=>{
-        console.log(res);
         if(res.data.success){
           router.push({
-            name: 'LandingPage'
+            name: 'DevisDetail',
+            params: { id: res.data.orderId }
           });
         }
       }).catch((error)=>{
@@ -2100,12 +2099,6 @@ export default {
           }
         }
         .ouvrage-section{
-          .toggle-btn{
-            // span,
-            svg{
-              pointer-events: none;
-            }
-          }
           .ouvrage-body{
             display: none;
             .details-table{

@@ -23,7 +23,7 @@
 
                 <base-button
                     prepend
-                    @click="featureunavailable('Nouveau Devis')"
+                    @click="createDevis"
                     class="btn btn-newrdv body_medium"
                     kind="warning"
                     title="Nouveau Devis"
@@ -57,7 +57,9 @@
             const slideinMenu = ()=> {
                 store.commit(`${SIDEBAR_MODULE}${SIDEBAR_SET_SLIDEIN}`);
             }
-
+            const createDevis = ()=>{
+                router.push( { name: 'CreateDevis' });
+            }
             const neworder=()=>{
                 router.push({
                     name: 'NewOrder',
@@ -69,7 +71,8 @@
            return {
                neworder,
                slideinMenu,
-               featureunavailable
+               featureunavailable,
+               createDevis
            }
         }
     }
