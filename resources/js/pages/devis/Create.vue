@@ -180,10 +180,10 @@
                       <div class="ged-cat-content mt-3 mb-3 d-flex flex-wrap">
                         <div class="img ms-2" v-for="(gedDetail, index) in gedCat[0].items" :key="index">
                           <div class="rounded border border-1 ged-image"
-                            :style="{ 'background-image': `url(${gedDetail.base64data})`}"
+                            :style="{ 'background-image': `url(${gedDetail.url != '' ? gedDetail.url : gedDetail.base64data})`}"
                           >
                             <div class="w-100 h-100 image-overlayer d-flex justify-content-around align-items-center">
-                              <span class="eye-icon" @click="zoomImage(gedDetail.base64data)"></span>
+                              <span class="eye-icon" @click="zoomImage(gedDetail.url != '' ? gedDetail.url : gedDetail.base64data)"></span>
                               <span class="cancel-icon" @click="removeImage(zoneIndex, gedCat[0].id,index)"></span>
                             </div>
                           </div>
@@ -1250,6 +1250,7 @@ export default {
         let reader = new FileReader();
         reader.onload = (e) => {
           form.value.zones[zoneIndex.value].gedCats[gedCatId.value][0].items.push({
+            url: '',
             base64data: reader.result,
             fileName: images[i].name,
           })
