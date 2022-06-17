@@ -736,7 +736,7 @@
                                         <td valign="middle" text="text-center">{{ detail.unit }}</td>
                                         <td valign="middle" v-if="detail.type == 'MO' || detail.type == 'Labor'">
                                           <div class="d-flex align-items-center">
-                                            <input type="text" v-model="detail.numberH" class="w-100 form-control form-control-sm custom-text-danger">hr
+                                            <input @keyup="updateAllValues" type="text" v-model="detail.numberH" class="w-100 form-control form-control-sm custom-text-danger">hr
                                           </div>
                                         </td>                                      
                                         <td valign="middle" class="text-center supplier" v-else-if="detail.type == 'COMMANDE FOURNISSEUR'">
