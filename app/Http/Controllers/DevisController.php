@@ -500,7 +500,7 @@ class DevisController extends Controller
                                     $data = base64_decode($data);                    
                                     $uuid_filename = DB::select('select UUID() AS uuid')[0]->uuid;
                                     $orderFilePath = "/SupplierOrder/{$uuid_filename}.{$type}";
-                                    Storage::put($orderFilePath, $data);
+                                    Storage::disk('public')->put($orderFilePath, $data);
                                     $detailData['orderfile'] = $orderFilePath;
                                 }
                             }
@@ -596,7 +596,7 @@ class DevisController extends Controller
                                     $data = base64_decode($data);                    
                                     $uuid_filename = DB::select('select UUID() AS uuid')[0]->uuid;
                                     $orderFilePath = "/SupplierOrder/{$uuid_filename}.{$type}";
-                                    Storage::put($orderFilePath, $data);
+                                    Storage::disk('public')->put($orderFilePath, $data);
                                     $detailData['orderfile'] = $orderFilePath;
                                 }
                             }
@@ -692,7 +692,7 @@ class DevisController extends Controller
                                     $data = base64_decode($data);                    
                                     $uuid_filename = DB::select('select UUID() AS uuid')[0]->uuid;
                                     $orderFilePath = "/SupplierOrder/{$uuid_filename}.{$type}";
-                                    Storage::put($orderFilePath, $data);
+                                    Storage::disk('public')->put($orderFilePath, $data);
                                     $detailData['orderfile'] = $orderFilePath;
                                 }
                             }
@@ -1174,7 +1174,7 @@ class DevisController extends Controller
                                     $data = base64_decode($data);                    
                                     $uuid_filename = DB::select('select UUID() AS uuid')[0]->uuid;
                                     $orderFilePath = "/SupplierOrder/{$uuid_filename}.{$type}";
-                                    Storage::put($orderFilePath, $data);
+                                    Storage::disk('public')->put($orderFilePath, $data);
                                     $detailData['orderfile'] = $orderFilePath;
                                 }
                             }
@@ -1316,7 +1316,7 @@ class DevisController extends Controller
                                     $data = base64_decode($data);                    
                                     $uuid_filename = DB::select('select UUID() AS uuid')[0]->uuid;
                                     $orderFilePath = "/SupplierOrder/{$uuid_filename}.{$type}";
-                                    Storage::put($orderFilePath, $data);
+                                    Storage::disk('public')->put($orderFilePath, $data);
                                     $detailData['orderfile'] = $orderFilePath;
                                 }
                             }
@@ -1460,7 +1460,7 @@ class DevisController extends Controller
                                     $data = base64_decode($data);                    
                                     $uuid_filename = DB::select('select UUID() AS uuid')[0]->uuid;
                                     $orderFilePath = "/SupplierOrder/{$uuid_filename}.{$type}";
-                                    Storage::put($orderFilePath, $data);
+                                    Storage::disk('public')->put($orderFilePath, $data);
                                     $detailData['orderfile'] = $orderFilePath;
                                 }
                             }
