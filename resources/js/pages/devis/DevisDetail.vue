@@ -5,7 +5,7 @@
             <page-title icon="pdf" :name="`N° ${order_id}`" class="almarai_extrabold_normal_normal"/>
         </div>
         <div class="col-8" style="padding-top:33px">
-            <order-state-tag :order_state_id="order.order_state_id" classes="almarai_700_normal"></order-state-tag>
+            <order-state-tag :order_state_id="order.order_state_id" classes="almarai_700_normal" width="auto"></order-state-tag>
         </div>
     </div>
     <div class="row"  v-if="show" style="margin:40px 0 0 8px;"><div class="col"><h2 class="almarai_700_normal">Date promise du devis</h2></div></div>
