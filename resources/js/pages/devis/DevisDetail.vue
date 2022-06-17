@@ -55,7 +55,7 @@
       
      </div>
      <div class="od_actions" v-if="show">
-        <button class="btn btn-outline-dark almarai_700_normal" @click="router.push({ name: 'EditDevis', params: { id: order_id } })">Editer</button>
+        <button class="btn btn-outline-dark almarai_700_normal" @click="goto()">Editer</button>
         <button class="btn btn-outline-success almarai_700_normal" @click="changeOrderState(4)">Gagne</button>
         <button class="btn btn-outline-secondary almarai_700_normal"  @click="changeOrderState(20)">Perdu</button>  
         <button class="btn btn-outline-primary almarai_700_normal"  @click="changeOrderState(18)">Abandonne</button>  
@@ -117,6 +117,10 @@ import Swal from 'sweetalert2';
                 });      
             }
 
+            const goto=()=>{
+                document.getElementsByTagName( 'body' )[0].className='';
+                router.push({ name: 'EditDevis', params: { id: order_id } })
+            }
              return {
                  show,
                  showloader,
@@ -126,7 +130,8 @@ import Swal from 'sweetalert2';
                  formatDate,
                  br,
                  router,
-                 changeOrderState
+                 changeOrderState,
+                 goto
              }
         }
     }
