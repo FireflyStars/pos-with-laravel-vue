@@ -38,6 +38,8 @@ export const removeDuplicatesBy=(keyFn, array)=>{
 }
 
 export const br=(str)=>{
+    if(typeof str=="undefined")
+    return '';
     if(str.trim()!=''&&str!=null)
     return `<br/>${str}`;
 
