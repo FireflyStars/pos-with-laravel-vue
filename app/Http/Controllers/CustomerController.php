@@ -106,6 +106,7 @@ class CustomerController extends Controller
                     'contact_type_id'       => $contact['type'],
                     'contact_qualite_id'    => $contact['qualite'],
                     'customer_id'           => $customerID,
+                    'actif'                 => $contact['actif'],
                     'address_id'            => 0,
                     'num_contact_gx'        => $contact['numGx'],
                     'name'                  => $contact['name'],

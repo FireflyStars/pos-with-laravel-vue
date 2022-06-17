@@ -659,7 +659,6 @@ export default {
             customerStatus: 1,
             sementation: '',
             customerCat: '',
-            customerPente: '',
             surfaceToiture: '',
             customerMateriau: '',
             naf: '',
@@ -683,13 +682,6 @@ export default {
             statusEtablissement: '',
             environment: '',
             zpe: '',
-            // information tab
-            dateCreated: '',
-            amiante: '',
-            interieur: '',
-            exterieur: '',
-            epc: '',
-            infoNote: '',
             // address tab
             addresses: [{
                 addressType: '',
@@ -706,6 +698,12 @@ export default {
                 phoneNumber: '',
                 latitude: 48.85560142492883,
                 longitude: 2.3491914978706396,
+                pente: '',
+                amiante: '',
+                interieur: '',
+                exterieur: '',
+                epc: '',
+                infoNote: '',
             }],
             // contacts
             contacts: [{

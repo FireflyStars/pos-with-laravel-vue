@@ -771,7 +771,7 @@ class DevisController extends Controller
                 if($ged_details->count() > 0){
                     foreach ($ged_details as $ged_detail) {
                         $item->items[] = [
-                            'base64data'    => getenv('APP_URL').Storage::url($ged_detail->url),
+                            'base64data'    => '',
                             'fileName'      => $ged_detail->fileName,
                             'url'           => getenv('APP_URL').Storage::url($ged_detail->url),
                             'id'            => $ged_detail->id,
