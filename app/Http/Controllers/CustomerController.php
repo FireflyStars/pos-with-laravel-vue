@@ -20,6 +20,8 @@ class CustomerController extends Controller
             'addressTypes'      => DB::table('address_type')->select('id as value', 'name as display')->orderBy('name')->get(),
             'contactTypes'      => DB::table('contact_type')->select('id as value', 'name as display')->orderBy('id')->get(),
             'customerQualites'  => DB::table('customer_qualite')->select('id as value', 'name as display')->orderBy('id')->get(),
+            'customerTypeBatiments' => DB::table('customer_typebatiment')->select('id as value', 'name as display')->orderBy('id')->get(),
+            'customerMateriaus'  => DB::table('customer_materiau')->select('name as value', 'name as display')->orderBy('id')->get(),
         ]);
     }
 
@@ -95,6 +97,18 @@ class CustomerController extends Controller
                     'city'                  => $address['city'],
                     'latitude'              => $address['latitude'],
                     'longitude'             => $address['longitude'],
+                    'pente'                 => $address['pente'],
+                    'surfacetoiture'        => $address['surfacetoiture'],
+                    'materiau'              => $address['materiau'],
+                    'presenceamiante'       => $address['presenceamiante'],
+                    'presenceepc'           => $address['presenceepc'],
+                    'accesexterieur'        => $address['accesexterieur'],
+                    'presenceapportlumiere' => $address['presenceapportlumiere'],
+                    'etattoiture'           => $address['etattoiture'],
+                    'accesinterieur'        => $address['accesinterieur'],
+                    'hauteurbatiment'       => $address['hauteurbatiment'],
+                    'typebatiment'          => $address['typebatiment'],
+                    'comment'               => $address['infoNote'],
                     'created_at'            => now(),
                     'updated_at'            => now(),
                 ];
@@ -178,6 +192,8 @@ class CustomerController extends Controller
             'address3'              => $request->address3,
             'postcode'              => $request->postCode,
             'city'                  => $request->city,
+            'latitude'              => $request->latitude,
+            'longitude'             => $request->longitude,
             'created_at'            => now(),
             'updated_at'            => now(),
         ];

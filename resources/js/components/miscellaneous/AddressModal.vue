@@ -73,6 +73,9 @@
                                     </div>
                                 </div>                                
                                 <div class="col-6 ps-3 d-flex">
+                                    <div class="address-map">
+                                        <GoogleMap v-model:latitude="address.latitude" v-model:longitude="address.longitude"></GoogleMap>
+                                    </div>
                                 </div>
                             </div>
                         </div>                        
@@ -91,6 +94,7 @@
 import {nextTick, onMounted, ref} from 'vue';
 import axios from 'axios';
 import SelectBox from '../../components/miscellaneous/SelectBox';
+import GoogleMap from '../../components/miscellaneous/GoogleMap';
 import {     
   DISPLAY_LOADER,
   HIDE_LOADER,
@@ -105,7 +109,8 @@ export default {
     },
     emits: ['addedNewAddress'],
     components:{
-        SelectBox
+        SelectBox,
+        GoogleMap
     },
     setup(props, { emit }){
         const store = useStore();
@@ -123,8 +128,8 @@ export default {
                 address3: '',
                 postcode: '',
                 city: '',
-                lat: '',
-                lon: '',
+                latitude: 48.85560142492883,
+                longitude: 2.3491914978706396,
             }
         );
         onMounted(()=>{
@@ -231,6 +236,10 @@ export default {
 }
 .list-move{
     transition:all 0.9s ease;
+}
+.address-map{
+    min-width: 270px;
+    min-height: 170px;
 }
 .search-layer{
     width: 100%;

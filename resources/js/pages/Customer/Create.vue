@@ -355,10 +355,11 @@
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <div class="form-group">
-                                        <label>MATERIAU (X)</label>
-                                        <input v-model="address.materiau" type="text" class="form-control">
-                                    </div>                                    
+                                    <select-box 
+                                        v-model="address.materiau" 
+                                        :options="customerMateriaus" 
+                                    :label="'MATERIAU (X)'" 
+                                    :name="'materiau'"></select-box>
                                 </div>
                             </div>
                             <div class="d-flex mt-3">
@@ -412,9 +413,10 @@
                                     <select-box 
                                         v-model="address.etattoiture" 
                                         :options="[
-                                            { value: 'OUI', display: 'OUI' },
-                                            { value: 'NON', display: 'NON' },
-                                            { value: 'PAS CONNU', display: 'PAS CONNU' },
+                                            { value: 'Neuf', display: 'Neuf' },
+                                            { value: 'Bon', display: 'Bon' },
+                                            { value: 'Vétuste', display: 'Vétuste' },
+                                            { value: 'Ne Sait pas', display: 'Ne Sait pas' },
                                         ]" 
                                     :label="'ETAT TOITURE'" 
                                     :name="'ETAT TOITURE'"></select-box>
@@ -423,9 +425,10 @@
                                     <select-box 
                                         v-model="address.hauteurbatiment" 
                                         :options="[
-                                            { value: 'OUI', display: 'OUI' },
-                                            { value: 'NON', display: 'NON' },
-                                            { value: 'PAS CONNU', display: 'PAS CONNU' },
+                                            { value: '1 à 5M', display: '1 à 5M' },
+                                            { value: '6 à 10M', display: '6 à 10M' },
+                                            { value: '10 à Plus', display: '10 à Plus' },
+                                            { value: 'Ne Sait pas', display: 'Ne Sait pas' },
                                         ]" 
                                     :label="'HAUTEUR BATIMENT'" 
                                     :name="'HAUTEUR BATIMENT'"></select-box>
@@ -435,15 +438,11 @@
                                 <div class="col-4 pe-3">
                                     <select-box 
                                         v-model="address.typebatiment" 
-                                        :options="[
-                                            { value: 'OUI', display: 'OUI' },
-                                            { value: 'NON', display: 'NON' },
-                                            { value: 'PAS CONNU', display: 'PAS CONNU' },
-                                        ]" 
-                                    :label="'PRESENCE EPC'" 
-                                    :name="'epc'"></select-box>
+                                        :options="customerTypeBatiments" 
+                                    :label="'TYPE BATIMENT'" 
+                                    :name="'BATIMENT'"></select-box>
                                 </div>
-                                <div class="col-4">
+                                <div class="col-4 pe-3">
                                     <select-box 
                                         v-model="address.presenceapportlumiere" 
                                         :options="[
@@ -451,8 +450,8 @@
                                             { value: 'NON', display: 'NON' },
                                             { value: 'PAS CONNU', display: 'PAS CONNU' },
                                         ]" 
-                                    :label="'ETAT TOITURE'" 
-                                    :name="'ETAT TOITURE'"></select-box>
+                                    :label="'PRESENCE APPORT LUMIERE'" 
+                                    :name="'PRESENCE APPORT LUMIERE'"></select-box>
                                 </div>
                             </div>
 
@@ -663,6 +662,8 @@ export default {
         const customerCats   = ref([]);
         const customerPentes   = ref([]);
         const customerQualites   = ref([]);
+        const customerTypeBatiments   = ref([]);
+        const customerMateriaus   = ref([]);
         const addressTypes     = ref([]);
         const contactTypes     = ref([]);
         const form = ref({
@@ -676,8 +677,6 @@ export default {
             customerStatus: 1,
             sementation: '',
             customerCat: '',
-            surfaceToiture: '',
-            customerMateriau: '',
             naf: '',
             nomNaf: '',
             gender: 'M',
@@ -847,6 +846,18 @@ export default {
                 phoneNumber: '',     
                 latitude: 48.85560142492883,
                 longitude: 2.3491914978706396,
+                pente: '',
+                surfacetoiture: '',
+                materiau: '',
+                presenceamiante: '',
+                presenceepc: '',
+                accesexterieur: '',
+                presenceapportlumiere: '',
+                etattoiture: '',
+                accesinterieur: '',
+                hauteurbatiment: '',
+                typebatiment: '',
+                infoNote: '',                
             });
         }     
         const addContact = ()=>{
@@ -913,6 +924,8 @@ export default {
                 addressTypes.value    = res.data.addressTypes;
                 contactTypes.value    = res.data.contactTypes;
                 customerQualites.value    = res.data.customerQualites;
+                customerTypeBatiments.value    = res.data.customerTypeBatiments;
+                customerMateriaus.value    = res.data.customerMateriaus;
             }).catch((errors)=>{
                 console.log(errors);
             }).finally(()=>{
@@ -931,6 +944,8 @@ export default {
             addressTypes,
             contactTypes,
             customerQualites,
+            customerMateriaus,
+            customerTypeBatiments,
             phoneCodesSorted,
             addAddress,
             addContact,
