@@ -11,7 +11,7 @@
                   <span class="ms-3 font-22 almarai_extrabold_normal_normal">CREATION / EDITION CLIENT</span>
                 </h1>
                 <ul class="full-nav d-flex p-0 m-0 bg-white">
-                    <li class="full-nav-item title border-right col-3 d-flex align-items-center justify-content-center"
+                    <li class="full-nav-item title border-right col-4 d-flex align-items-center justify-content-center"
                         :class="{ active: step == 'client-detail'}"
                         @click="selectNav('client-detail')"
                     >
@@ -33,7 +33,7 @@
                         </svg>
                         ENTITE
                     </li>
-                    <li class="full-nav-item title border-right col-3 d-flex align-items-center justify-content-center"
+                    <li class="full-nav-item title border-right col-4 d-flex align-items-center justify-content-center"
                         :class="{ active: step == 'address'}"
                         @click="selectNav('address')"
                     >
@@ -55,30 +55,8 @@
                         </svg>
                         BATIMENTS
                     </li>
-                    <li class="full-nav-item title border-right col-3 d-flex align-items-center justify-content-center"
-                        :class="{ active: step =='information'}"
-                        @click="selectNav('information')"
-                    >
-                        <svg class="icon" width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg"
-                            v-if="step == 'contact'"
-                        >
-                            <circle cx="10.9058" cy="10" r="9" stroke="#42A71E" stroke-width="2"/>
-                            <g clip-path="url(#clip0_807_2682)">
-                                <path d="M10.6555 15.0751L4.58057 9.07506L6.23053 7.42505L10.6555 11.925L19.5806 2.92505L21.2305 4.57506L10.6555 15.0751Z" fill="#05944F"/>
-                            </g>
-                            <defs>
-                                <clipPath id="clip0_807_2682">
-                                    <rect width="18" height="18" fill="white" transform="translate(3.90576)"/>
-                                </clipPath>
-                            </defs>
-                        </svg>
-                        <svg v-if="step != 'contact'" class="icon" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="10.9058" cy="10" r="9" stroke="#47454B" stroke-width="2"/>
-                        </svg>
-                        INFORMATIONS TECHNIQUES
-                    </li>
-                    <li class="full-nav-item title border-right col-3 d-flex align-items-center justify-content-center"
-                        :class="{ active: step =='contact'}"
+                    <li class="full-nav-item title border-right col-4 d-flex align-items-center justify-content-center"
+                        :class="{ active: step == 'contact'}"
                         @click="selectNav('contact')"
                     >
                         <svg class="icon" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -365,41 +343,28 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="text-end mt-3">
-                                <button @click="removeAddress(index)" class="custom-btn btn-danger text-nowrap">SUPPRIMER ADRESSE</button>
-                            </div>                            
-                        </div>
-                        <div class="btns d-flex justify-content-end mb-3">
-                            <button class="custom-btn btn-cancel me-3" @click="cancel">Annuler</button>
-                            <button class="custom-btn btn-ok text-uppercase" @click="nextStep">Suivant</button>
-                        </div>
-                    </div>
-                </transition>
-                <transition name="list" appear v-if="step == 'information'">
-                    <div class="cust-page-content m-auto pt-5">
-                        <div class="page-section">
-                            <h3 class="m-0 mulish-extrabold font-22">INFORMATIONS TECHNIQUES</h3>
+                            <hr class="border-bottom border-dark border-2 mt-3">
                             <div class="d-flex mt-3">
                                 <div class="col-4 pe-3">
-                                    <select-box v-model="form.customerPente" :options="customerPentes" :label="'PENTE (o)'" :name="'customerPente'"></select-box>
+                                    <select-box v-model="address.pente" :options="customerPentes" :label="'PENTE (o)'" :name="'customerPente'"></select-box>
                                 </div>
                                 <div class="col-4 pe-3">
                                     <div class="form-group">
                                         <label>SURFACE TOITURE (M2)</label>
-                                        <input v-model="form.surfaceToiture" type="text" class="form-control">
+                                        <input v-model="address.surfacetoiture" type="text" class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label>SURFACE TOITURE (M2)</label>
-                                        <input v-model="form.customerMateriau" type="text" class="form-control">
+                                        <label>MATERIAU (X)</label>
+                                        <input v-model="address.materiau" type="text" class="form-control">
                                     </div>                                    
                                 </div>
                             </div>
                             <div class="d-flex mt-3">
                                 <div class="col-4 pe-3">
                                     <select-box 
-                                        v-model="form.amiante" 
+                                        v-model="address.presenceamiante" 
                                         :options="[
                                             { value: 'OUI', display: 'OUI' },
                                             { value: 'NON', display: 'NON' },
@@ -410,7 +375,7 @@
                                 </div>
                                 <div class="col-4 pe-3">
                                     <select-box 
-                                        v-model="form.interieur" 
+                                        v-model="address.accesinterieur" 
                                         :options="[
                                             { value: 'OUI', display: 'OUI' },
                                             { value: 'NON', display: 'NON' },
@@ -421,7 +386,7 @@
                                 </div>
                                 <div class="col-4">
                                     <select-box 
-                                        v-model="form.exterieur" 
+                                        v-model="address.accesexterieur" 
                                         :options="[
                                             { value: 'OUI', display: 'OUI' },
                                             { value: 'NON', display: 'NON' },
@@ -434,7 +399,7 @@
                             <div class="d-flex mt-3">
                                 <div class="col-4 pe-3">
                                     <select-box 
-                                        v-model="form.epc" 
+                                        v-model="address.presenceepc" 
                                         :options="[
                                             { value: 'OUI', display: 'OUI' },
                                             { value: 'NON', display: 'NON' },
@@ -443,18 +408,70 @@
                                     :label="'PRESENCE EPC'" 
                                     :name="'epc'"></select-box>
                                 </div>
-                                <div class="col-8">
-                                    <div class="form-group">
-                                        <label class="text-nowrap">NOTES / INFORMATIONS / COMMENTAIRES</label>
-                                        <textarea rows="4" class="form-control" v-model="form.infoNote"></textarea>
-                                    </div>                                    
+                                <div class="col-4 pe-3">
+                                    <select-box 
+                                        v-model="address.etattoiture" 
+                                        :options="[
+                                            { value: 'OUI', display: 'OUI' },
+                                            { value: 'NON', display: 'NON' },
+                                            { value: 'PAS CONNU', display: 'PAS CONNU' },
+                                        ]" 
+                                    :label="'ETAT TOITURE'" 
+                                    :name="'ETAT TOITURE'"></select-box>
+                                </div>
+                                <div class="col-4 pe-3">
+                                    <select-box 
+                                        v-model="address.hauteurbatiment" 
+                                        :options="[
+                                            { value: 'OUI', display: 'OUI' },
+                                            { value: 'NON', display: 'NON' },
+                                            { value: 'PAS CONNU', display: 'PAS CONNU' },
+                                        ]" 
+                                    :label="'HAUTEUR BATIMENT'" 
+                                    :name="'HAUTEUR BATIMENT'"></select-box>
                                 </div>
                             </div>
+                            <div class="d-flex mt-3">
+                                <div class="col-4 pe-3">
+                                    <select-box 
+                                        v-model="address.typebatiment" 
+                                        :options="[
+                                            { value: 'OUI', display: 'OUI' },
+                                            { value: 'NON', display: 'NON' },
+                                            { value: 'PAS CONNU', display: 'PAS CONNU' },
+                                        ]" 
+                                    :label="'PRESENCE EPC'" 
+                                    :name="'epc'"></select-box>
+                                </div>
+                                <div class="col-4">
+                                    <select-box 
+                                        v-model="address.presenceapportlumiere" 
+                                        :options="[
+                                            { value: 'OUI', display: 'OUI' },
+                                            { value: 'NON', display: 'NON' },
+                                            { value: 'PAS CONNU', display: 'PAS CONNU' },
+                                        ]" 
+                                    :label="'ETAT TOITURE'" 
+                                    :name="'ETAT TOITURE'"></select-box>
+                                </div>
+                            </div>
+
+                        <div class="d-flex mt-3">
+                            <div class="col-8 pe-3">
+                                <div class="form-group">
+                                    <label class="text-nowrap">NOTES / INFORMATIONS / COMMENTAIRES</label>
+                                    <textarea rows="4" class="form-control" v-model="address.infoNote"></textarea>
+                                </div>                                    
+                            </div>
+                            <div class="col-4 d-flex align-items-end justify-content-end">
+                                <button @click="removeAddress(index)" class="custom-btn btn-danger text-nowrap">SUPPRIMER ADRESSE</button>
+                            </div>                            
+                        </div>
                         </div>
                         <div class="btns d-flex justify-content-end mb-3">
                             <button class="custom-btn btn-cancel me-3" @click="cancel">Annuler</button>
                             <button class="custom-btn btn-ok text-uppercase" @click="nextStep">Suivant</button>
-                        </div>                        
+                        </div>
                     </div>
                 </transition>
                 <transition name="list" appear v-if="step =='contact'">
@@ -699,10 +716,16 @@ export default {
                 latitude: 48.85560142492883,
                 longitude: 2.3491914978706396,
                 pente: '',
-                amiante: '',
-                interieur: '',
-                exterieur: '',
-                epc: '',
+                surfacetoiture: '',
+                materiau: '',
+                presenceamiante: '',
+                presenceepc: '',
+                accesexterieur: '',
+                presenceapportlumiere: '',
+                etattoiture: '',
+                accesinterieur: '',
+                hauteurbatiment: '',
+                typebatiment: '',
                 infoNote: '',
             }],
             // contacts
@@ -798,10 +821,10 @@ export default {
                     }
                 });
                 if(!flag){
-                    step.value = 'information';
+                    step.value = 'contact';
                 }
-            }else if(step.value == 'information'){
-                step.value = 'contact';
+            }else{
+
             }
         }
         const phoneCodesSorted = [...new Map(phoneCodes.map(item =>
