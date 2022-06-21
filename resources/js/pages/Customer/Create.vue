@@ -234,13 +234,13 @@
                                 <div class="col-3">
                                     <div class="form-group">
                                         <label>ENVIRONEMENT</label>
-                                        <input type="text" placeholder="ENVIRONEMENT" v-model="form.statusEtablissement" class="form-control">
+                                        <input type="text" placeholder="ENVIRONEMENT" v-model="form.environment" class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-3">
                                     <div class="form-group">
                                         <label>ZPE</label>
-                                        <input type="text" placeholder="ZPE" v-model="form.statusEtablissement" class="form-control">
+                                        <input type="text" placeholder="ZPE" v-model="form.zpe" class="form-control">
                                     </div>
                                 </div>
                             </div>
