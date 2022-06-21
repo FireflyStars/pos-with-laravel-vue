@@ -32,6 +32,19 @@
                                 
                                 <item-list-table :table_def="entiteList">
 
+                                    <template v-slot:statut_name="{ row }">
+
+                                        <span 
+                                            class="text-uppercase" 
+                                            :style="{ 
+                                                'color': row.statut_color, 
+                                            }"
+                                            >
+                                            {{ row.statut_name }}
+                                        </span>
+
+                                    </template>    
+
                                     <template v-slot:litige="{ row }">
                                         
                                         <span v-if="row.litige"><Icon name="check" /></span>
