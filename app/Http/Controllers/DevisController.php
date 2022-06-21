@@ -92,11 +92,13 @@ class DevisController extends Controller
         }
 
         //sortby
-        if($column_sortby!=null)
+        if($column_sortby!=null){
         foreach($column_sortby as $sortby){
             $orderList=$orderList->orderBy($sortby['id'],$sortby['orderby']);
         }
-        
+        }else{//by default newest first
+            $orderList=$orderList->orderBy('id','desc');
+        }
 
         $orderList=$orderList->groupBy('orders.id')->skip($skip)->take($take)->get();
         return response()->json($orderList);
@@ -114,12 +116,16 @@ class DevisController extends Controller
         $order->formatted_chantier_address=$chantier_address==null?'--/--':$chantier_address->getformattedAddress();
         $order->customer;
         $order->orderZones;
+    
         foreach($order->orderZones as &$orderzone){
             $orderzone->orderOuvrage;
+            $groupOrderOuvrage=[];
             foreach( $orderzone->orderOuvrage as $order_ouvrage){
+                
                 $order_ouvrage->orderCategory;
+                $groupOrderOuvrage[$order_ouvrage->orderCategory->name][]=$order_ouvrage;
             }
-
+            $orderzone->groupedOrderOuvrage=$groupOrderOuvrage;
         }
         $facturation_address=$order->customer->addresses()->where('address_type_id','=',1)->first();
         $order->formatted_facturation_address=$facturation_address==null?'--/--':$facturation_address->getformattedAddress();

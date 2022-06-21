@@ -28,33 +28,36 @@
      <div  v-for="orderzone,index in order.order_zones" :key="index" class="od_orderzone">
          <div class="row mb-3">
              <div class="col-8 almarai_700_normal font-14 lcdtgrey d-flex  align-items-center">{{orderzone.name}}</div>
-             <div class="col-2 almarai_700_normal font-14 d-flex justify-content-end align-items-center">0H</div>
-             <div class="col-2 almarai_700_normal font-14 d-flex justify-content-end align-items-center">0€</div>
+             <div class="col-2 almarai_700_normal font-14 d-flex justify-content-end align-items-center">{{sumZoneH(orderzone)}}H</div>
+             <div class="col-2 almarai_700_normal font-14 d-flex justify-content-end align-items-center">{{formatPrice(sumZoneTotal(orderzone))}}</div>
         </div>
         <div class="row mb-2">
              <div class="col-4"></div>
-             <div class="col-3 almarai-light font-12 d-flex lcdtgrey justify-content-center align-items-center">Ouvrages</div>
-             <div class="col-3 almarai-light font-12 d-flex lcdtgrey justify-content-end align-items-center">Main-d'œuvre</div>
-             <div class="col-2 almarai-light font-12 d-flex lcdtgrey justify-content-end align-items-center">Total</div>
-        </div>
-         <div class="row">
-             <div class="col-4 od_catname font-14 d-flex align-items-center almarai_700_normal">Installation</div>
-             <div class="col-3 almarai-light font-14 d-flex  justify-content-center align-items-center flex-column">
-                 <div class="row">
-                     <div class="col-3 d-flex align-items-center">9999</div>
-                     <div class="col-9 d-flex align-items-center">Installation nacelle</div>
-                 </div>
-                   <div class="row">
-                     <div class="col-3 d-flex align-items-center">9999</div>
-                     <div class="col-9 d-flex align-items-center">Installation nacelle</div>
-                 </div>
+             <div class="col-8">
+                <div class="row flex-grow-1 justify-content-between">
+                    <div class="col-2 almarai-light font-12 d-flex lcdtgrey justify-content-end align-items-center"></div>
+                    <div class="col-4 almarai-light font-12 d-flex lcdtgrey justify-content-center align-items-center">Ouvrages</div>
+                    <div class="col-3 almarai-light font-12 d-flex lcdtgrey justify-content-end align-items-center">Main-d'œuvre</div>
+                    <div class="col-3 almarai-light font-12 d-flex lcdtgrey justify-content-end align-items-center">Total</div>
+                </div>
              </div>
-             <div class="col-3 almarai-light font-14 d-flex  justify-content-end align-items-center">0H</div>
-             <div class="col-2 almarai-light font-14 d-flex  justify-content-end align-items-center">500€</div>
+        </div>
+         <div class="row" v-for="groupedOrderOuvrage,index2 in orderzone.groupedOrderOuvrage" :key="index2">
+             <div class="col-4 od_catname font-14 d-flex align-items-center almarai_700_normal">{{index2}}</div>
+             <div class="col-8 font-14 flex-column">
+                 <div class="row flex-grow-1 justify-content-between" v-for="orderOuvrage,index3 in groupedOrderOuvrage" :key="index3">
+                     <div class="col-2 d-flex align-items-center justify-content-end">{{orderOuvrage.qty}}</div>
+                     <div class="col-4 d-flex align-items-center">{{orderOuvrage.name}}</div>
+                    <div class="col-3 almarai-light font-14 d-flex  justify-content-end align-items-center">{{orderOuvrage.nbheure}}H</div>
+                    <div class="col-3 almarai-light font-14 d-flex  justify-content-end align-items-center">{{formatPrice(orderOuvrage.total)}}</div>
+                 </div>
+
+             </div>
+           
         </div>
       
      </div>
-     <div class="od_actions" v-if="show">
+     <div class="od_actions mb-3" v-if="show">
         <button class="btn btn-outline-dark almarai_700_normal" @click="goto()">Editer</button>
         <button class="btn btn-outline-success almarai_700_normal" @click="changeOrderState(4)">Gagne</button>
         <button class="btn btn-outline-secondary almarai_700_normal"  @click="changeOrderState(20)">Perdu</button>  
@@ -87,6 +90,7 @@ import Swal from 'sweetalert2';
             let order_id=route.params.id;
 
             onMounted(()=>{
+                     document.getElementsByTagName( 'body' )[0].className='hide-overflowY';
                 show.value=false;
                 showloader.value=true;
                 store.commit(`${DEVIS_DETAIL_MODULE}${DEVIS_DETAIL_SET}`,{})
@@ -121,6 +125,20 @@ import Swal from 'sweetalert2';
                 document.getElementsByTagName( 'body' )[0].className='';
                 router.push({ name: 'EditDevis', params: { id: order_id } })
             }
+            const sumZoneH=(orderzone)=>{
+                let sum=0;
+                for(const i in orderzone.groupedOrderOuvrage){
+                    sum+=orderzone.groupedOrderOuvrage[i].reduce((a, b) =>  a + b.nbheure, 0);
+                }
+                return sum;
+            }
+            const sumZoneTotal=(orderzone)=>{
+                  let sum=0;
+                for(const i in orderzone.groupedOrderOuvrage){
+                    sum+=orderzone.groupedOrderOuvrage[i].reduce((a, b) =>  a + b.total, 0);
+                }
+                return sum;
+            }
              return {
                  show,
                  showloader,
@@ -131,7 +149,10 @@ import Swal from 'sweetalert2';
                  br,
                  router,
                  changeOrderState,
-                 goto
+                 goto,
+                 sumZoneH,
+                 sumZoneTotal
+
              }
         }
     }

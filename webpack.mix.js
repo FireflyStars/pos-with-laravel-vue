@@ -28,8 +28,16 @@ const mix = require('laravel-mix');
      ],
  })
 
- mix.copy('resources/js/images','public/images');
- mix.js('resources/js/app.js', 'public/js')
-     .sass('resources/css/app.scss', 'public/css').vue()
-     .browserSync('http://lcdt.local').version();
+mix.copy('resources/js/images','public/images');
+
+mix.js('resources/js/app.js', 'public/js')
+.sass('resources/css/app.scss', 'public/css').vue()
+.browserSync({
+    proxy:'lcdt.local',
+    files: [
+        'resources/views/**/*.php',
+        'public/js/**/*.js',
+        'public/css/**/*.css'
+    ]
+}).version();
 
